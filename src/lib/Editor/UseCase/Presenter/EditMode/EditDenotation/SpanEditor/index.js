@@ -11,14 +11,14 @@ import validateNewDenotationSpan from './validateNewDenotationSpan'
 
 export default class SpanEditor {
   constructor(
-    editorHTMLElemnt,
+    editorHTMLElement,
     annotationModel,
     selectionModel,
     commander,
     controlViewModel,
     spanConfig
   ) {
-    this._editorHTMLElement = editorHTMLElemnt
+    this._editorHTMLElement = editorHTMLElement
     this._annotationModel = annotationModel
     this._spanModelContainer = annotationModel.span
     this._selectionModel = selectionModel
