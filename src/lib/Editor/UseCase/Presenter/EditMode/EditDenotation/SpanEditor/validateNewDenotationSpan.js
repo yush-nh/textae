@@ -8,7 +8,7 @@ import alertifyjs from 'alertifyjs'
 export default function (spanModelContainer, begin, end) {
   // The span cross exists spans.
   if (spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)) {
-    alertifyjs.warning('A span cannot be modifyed to make a boundary crossing.')
+    alertifyjs.warning('A span cannot be modified to make a boundary crossing.')
     return false
   }
 
