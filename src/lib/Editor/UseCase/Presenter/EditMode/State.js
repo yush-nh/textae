@@ -1,6 +1,6 @@
 import { MODE } from '../../../../MODE'
 
-export default class StateMachine {
+export default class State {
   /**
    *
    * @param {import('../../../AnnotationModel/RelationInstanceContainer').RelationInstanceContainer} relationContainer
