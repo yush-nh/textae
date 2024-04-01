@@ -54,7 +54,7 @@ export default class Buttons {
     return this._buttonList.find(({ type }) => type === 'paste')
   }
 
-  get enabelButtonsWhenSelecting() {
+  get enableButtonsWhenSelecting() {
     return this._buttonList.filter((b) => b.enableWhenSelecting)
   }
 

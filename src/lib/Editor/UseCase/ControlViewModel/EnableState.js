@@ -54,7 +54,7 @@ export default class EnableState {
 
   _updateButtons() {
     for (const { type, enableWhenSelecting } of new Buttons()
-      .enabelButtonsWhenSelecting) {
+      .enableButtonsWhenSelecting) {
       this.enable(
         type,
         enableWhenSelecting(this._selectionModel, this._clipBoard)
