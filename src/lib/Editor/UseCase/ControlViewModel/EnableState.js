@@ -108,6 +108,16 @@ export default class EnableState {
     this._propagate()
   }
 
+  /**
+   *
+   * @param {boolean} simple
+   * @param {boolean} replicateAuto
+   * @param {boolean} boundaryDetection
+   * @param {boolean} lineHeight
+   * @param {boolean} lineHeightAuto
+   * @param {boolean} span
+   * @param {boolean} pallet
+   */
   _updateButtonsForMode(
     simple,
     replicateAuto,
