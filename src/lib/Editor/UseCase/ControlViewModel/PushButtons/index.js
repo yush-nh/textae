@@ -15,9 +15,6 @@ export default class PushButtons {
     eventEmitter.on('textae-event.edit-mode.transition', (mode, withRelation) =>
       this.#setMode(mode, !withRelation)
     )
-
-    // default pushed;
-    this.#buttons.get('boundary detection').pushued = true
   }
 
   get(name) {
