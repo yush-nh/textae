@@ -1,31 +1,35 @@
 export default class PushButton {
+  #name
+  #eventEmitter
+  #isPushed
+
   constructor(name, eventEmitter = null) {
-    this._name = name
-    this._eventEmitter = eventEmitter
-    this._isPushed = false
+    this.#name = name
+    this.#eventEmitter = eventEmitter
+    this.#isPushed = false
   }
 
   get name() {
-    return this._name
+    return this.#name
   }
 
   get isPushed() {
-    return this._isPushed
+    return this.#isPushed
   }
 
   set isPushed(value) {
-    this._isPushed = value
-    this._propagate()
+    this.#isPushed = value
+    this.#propagate()
   }
 
   toggle() {
-    this._isPushed = !this._isPushed
-    this._propagate()
+    this.#isPushed = !this.#isPushed
+    this.#propagate()
   }
 
-  _propagate() {
-    if (this._eventEmitter) {
-      this._eventEmitter.emit('textae-event.control.button.push', this)
+  #propagate() {
+    if (this.#eventEmitter) {
+      this.#eventEmitter.emit('textae-event.control.button.push', this)
     }
   }
 }
