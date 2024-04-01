@@ -4,6 +4,8 @@ title: Inspect
 permalink: /docs/inspect/
 ---
 
+# Inspect
+
 The annotation being edited through a TextAE instance can be inspected by specifying the _inspect_ parameter for a TextAE instance.
 
 The example below, the _inspect_ parameter of a TextAE instance is specified,
@@ -35,6 +37,7 @@ The _div_ element coded above will be rendered as below:
 		]
 	}
 </div>
-<div id="annotation"></div>
+
+<div id="annotation" style="border:1px black solid; margin: 5px 0; padding:5px; background-color: #ddd"></div>
 
 You are suggested to use the developer tool of you browser to inspect the _div_ element whose _id_ is _annotation_ while you are editing the annotation.

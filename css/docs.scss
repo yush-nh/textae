@@ -21,9 +21,9 @@ article {
 		margin: 0.6em 0 0.4em 0;
 		padding: 0 5px;
 		border-style: none;
-		box-shadow: 5px 5px 5px #d8d8d8;
+		box-shadow: 3px 3px 3px #d8d8d8;
 		border-radius: 5px;
-		font-size: 1.8em;
+		font-size: 1.4em;
 	}
 
 	h2, h3, h4 {
@@ -32,7 +32,7 @@ article {
 	}
 
 	h2 {
-		font-size: 1.4em;
+		font-size: 1.2em;
 	}
 
 	h3, h4 {
@@ -56,12 +56,25 @@ article {
 		font-size: 12pt;
 	}
 
+	table {
+		border-collapse: collapse;
+ 		border: 2px solid;
+
+ 		thead {
+ 			background-color: lightgray;
+ 		}
+
+		th, td {
+			border: 1px solid;
+			padding: 4px;
+		}
+	}
 }
 
 .side-contents {
 	padding-left: 4px;
 	display: block;
-	width: 19%;
+	width: 16%;
 	float: left;
 }
 

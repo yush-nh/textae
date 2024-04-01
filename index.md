@@ -4,7 +4,51 @@ title: Intro
 ---
 
 <div class="textae-example">
-  <div class="textae-editor">
+  <div class="textae-editor" mode="term-edit">
+    {
+      "text":"Elon Musk is a member of the PayPal Mafia.",
+      "denotations":[
+        {"id":"T1", "span":{"begin":0,"end":9},"obj":"Person"},
+        {"id":"T2", "span":{"begin":29,"end":41},"obj":"Group"}
+      ],
+      "config": {
+        "entity types": [
+          {
+            "id": "Person",
+            "color": "#8888FF"
+          },
+          {
+            "id": "Group",
+            "color": "#FF8888"
+          }
+        ],
+        "function availability": {
+          "read": false,
+          "write": true,
+          "write-auto": false,
+          "line-height": false,
+          "line-height-auto": false,
+          "term": true,
+          "relation": false,
+          "block": false,
+          "simple": false,
+          "replicate": false,
+          "replicate-auto": false,
+          "undo": false,
+          "redo": false,
+          "setting": false,
+          "help": false
+        }
+      }
+    }
+  </div>
+  <div class="caption">
+    Term annotation (try edit or <a href="/docs/term-edit-mode">learn how to</a>)
+  </div>
+</div>
+
+<div class="textae-example" id="relation-example">
+  <div class="textae-editor" mode="relation-edit" padding_top="40px">
     {
       "text":"Elon Musk is a member of the PayPal Mafia.",
       "denotations":[
@@ -24,48 +68,35 @@ title: Intro
             "id": "Group",
             "color": "#FF8888"
           }
-        ]
+        ],
+        "function availability": {
+          "read": false,
+          "write": true,
+          "write-auto": false,
+          "line-height": false,
+          "line-height-auto": false,
+          "view": true,
+          "term": false,
+          "relation": true,
+          "block": false,
+          "simple": false,
+          "replicate": false,
+          "replicate-auto": false,
+          "undo": true,
+          "redo": true,
+          "setting": false,
+          "help": false
+        }
       }
     }
   </div>
   <div class="caption">
-    Term annotation and relation annotation
+    Relation annotation (try edit or <a href="/docs/relation-edit-mode">learn how to</a>)
   </div>
 </div>
 
 <div class="textae-example">
-  <div class="textae-editor">
-    {
-      "text":"Elon Musk is a member of the PayPal Mafia.",
-      "denotations":[
-        {"id":"T1", "span":{"begin":0,"end":9},"obj":"Person"},
-        {"id":"T2", "span":{"begin":29,"end":41},"obj":"Group"}
-      ],
-      "attributes": [
-        {"pred": "wikipage", "subj":"T1", "obj":"https://en.wikipedia.org/wiki/Elon_Musk"},
-        {"pred": "wikipage", "subj":"T2", "obj":"https://en.wikipedia.org/wiki/PayPal_Mafia"}
-      ],
-      "config": {
-        "entity types": [
-          {
-            "id": "Person",
-            "color": "#8888FF"
-          },
-          {
-            "id": "Group",
-            "color": "#FF8888"
-          }
-        ]
-      }
-    }
-  </div>
-  <div class="caption">
-    Attribute of annotation
-  </div>
-</div>
-
-<div class="textae-example">
-  <div class="textae-editor" style="line-height: 10px;">
+  <div class="textae-editor" mode="block-edit" style="line-height: 10px;">
   {
     "text":"How are you?\nI am doing well\nWhat is the mission of the company OpenAI?",
     "blocks":[
@@ -94,22 +125,99 @@ title: Intro
             }
           ]
         }
-      ]
+      ],
+      "function availability": {
+        "read": false,
+        "write": true,
+        "write-auto": false,
+        "line-height": false,
+        "line-height-auto": false,
+        "view": true,
+        "term": false,
+        "relation": false,
+        "block": true,
+        "simple": false,
+        "replicate": false,
+        "replicate-auto": false,
+        "undo": false,
+        "redo": false,
+        "setting": false,
+        "help": false
+      }
     }
   }
   </div>
   <div class="caption">
-    Block annotation
+    Block annotation (try edit or <a href="/docs/block-edit-mode">learn how to</a>)
   </div>
 </div>
 
 <div class="textae-example">
-  <div class="textae-editor">
+  <div class="textae-editor" mode="term-edit" padding_top="40px">
     {
-      "text":"今回私達は、腎不全を伴った大理石骨病の1例を経験したので報告する。",
+      "text":"Elon Musk is a member of the PayPal Mafia.",
       "denotations":[
-        {"id":"T2","span":{"begin":6,"end":9},"obj":"phenotype"},
-        {"id":"T1","span":{"begin":13,"end":18},"obj":"disease"}
+        {"id":"T1", "span":{"begin":0,"end":9},"obj":"Person"},
+        {"id":"T2", "span":{"begin":29,"end":41},"obj":"Group"}
+      ],
+      "relations": [
+        {"pred": "member", "subj":"T1", "obj":"T2"}
+      ],
+      "attributes": [
+        {"pred": "wikipage", "subj":"T1", "obj":"https://en.wikipedia.org/wiki/Elon_Musk"},
+        {"pred": "wikipage", "subj":"T2", "obj":"https://en.wikipedia.org/wiki/PayPal_Mafia"}
+      ],
+      "config": {
+        "entity types": [
+          {
+            "id": "Person",
+            "color": "#8888FF"
+          },
+          {
+            "id": "Group",
+            "color": "#FF8888"
+          }
+        ],
+        "function availability": {
+          "read": false,
+          "write": true,
+          "write-auto": false,
+          "line-height": false,
+          "line-height-auto": false,
+          "term": true,
+          "relation": false,
+          "block": false,
+          "simple": false,
+          "replicate": false,
+          "replicate-auto": false,
+          "undo": false,
+          "redo": false,
+          "setting": false,
+          "help": false
+        }
+      }
+    }
+  </div>
+  <div class="caption">
+    Attribute of annotation
+  </div>
+</div>
+
+
+<div class="textae-example" mode="view">
+
+  <style>
+    #multilingual .textae-editor__text-box {
+      padding-right: 16px;
+    }
+  </style>
+
+  <div class="textae-editor" mode="term-edit" id='multilingual'>
+    {
+      "text":"腎不全を伴った大理石骨病の1例を経験したので報告する。",
+      "denotations":[
+        {"id":"T2","span":{"begin":0,"end":3},"obj":"症状"},
+        {"id":"T1","span":{"begin":7,"end":12},"obj":"病気"}
       ],
       "attributes":[
         {"id":"A10","pred":"meaning","subj":"T1","obj":"骨の異常な増殖"},
@@ -124,7 +232,24 @@ title: Intro
             "value type": "string",
             "media height": "40px"
           }
-        ]
+        ],
+        "function availability": {
+          "read": false,
+          "write": true,
+          "write-auto": false,
+          "line-height": false,
+          "line-height-auto": false,
+          "term": true,
+          "relation": false,
+          "block": false,
+          "simple": false,
+          "replicate": false,
+          "replicate-auto": false,
+          "undo": false,
+          "redo": false,
+          "setting": false,
+          "help": false
+        }
       }
     }
   </div>
@@ -132,6 +257,7 @@ title: Intro
     Multilingual support, and annotation with images
   </div>
 </div>
+
 
 <br/>
 

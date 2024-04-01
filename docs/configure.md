@@ -7,7 +7,7 @@ permalink: /docs/configure/
 
 {:toc}
 
-# Configuring TextAE
+# Configuration
 
 A configuration of TextAE can be written inside an annotation JSON file,
 
@@ -278,6 +278,11 @@ Below is an example:
 ```
 {
   "function availability": {
+    "read": false,
+    "write": false,
+    "write-auto": false,
+    "line-height": false,
+    "line-height-auto": false,
     "term": false,
     "relation": false,
     "block": false,

@@ -12,7 +12,7 @@ There are two ways of using TextAE.
 
 ## Using a ready-to-use editor on the web
 
-The easiest way of using TextAE is to use the editor on the web, by choosing [EDITOR](http://textae.pubannotation.org/editor.html?mode=edit) from the top menu of this site.
+The easiest way of using TextAE is to use the editor on the web, by choosing [EDITOR](http://textae.pubannotation.org/editor.html?mode=edit) from the top menu of this site, or through its URL, [https://textae.pubannotation.org/editor.html](https://textae.pubannotation.org/editor.html). Do not forget to add the paramatter setting, _mode=edit_ for editting ([https://textae.pubannotation.org/editor.html?mode=edit](https://textae.pubannotation.org/editor.html?mode=edit)).
 
 ## Putting TextAE in a HTML document
 
@@ -124,11 +124,11 @@ Note that however that TextAE is a Javascript implementation and that accessibil
 *Github* has a relatively inclusive CORS setting, which makes it a good storage for annotation files for TextAE. Below is an example HTML code for insering a TextAE box with annotation from Github:
 
 ```HTML
-<div class="textae-editor" target="https://raw.githubusercontent.com/pubannotation/textae/stable/4/dist/demo/bionlp-st-ge/demo-annotations.json"></div>
+<div class="textae-editor" target="https://raw.githubusercontent.com/pubannotation/textae/gh-pages/examples/textae-annotation-example-1.json"></div>
 ```
-<div class="textae-editor" target="https://raw.githubusercontent.com/pubannotation/textae/stable/4/dist/demo/bionlp-st-ge/demo-annotations.json"></div>
+<div class="textae-editor" target="https://raw.githubusercontent.com/pubannotation/textae/gh-pages/examples/textae-annotation-example-1.json"></div>
 
-
+<br/>
 #### Tip) The style of a TextAE instance can be freely customized using CSS.
 
 <div class="textae-editor" style="color:yellow; width:400px; padding:5px; background:
@@ -147,4 +147,5 @@ background-size:16px 16px;">
 }
 </div>
 
+<br/>
 ### Tip) You can embed TextAE instances as many as you like in one HTML document, like [this page](https://www.pubannotation.org).

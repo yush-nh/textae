@@ -4,19 +4,20 @@ title: Attributes
 permalink: /docs/attributes/
 ---
 
-# Adding an attribute to a denotation
+# Attributes
 
-To add an attribute to a denotation,
-select a denotation and click
-the *Entity Configuration* icon ![](https://raw.githubusercontent.com/pubannotation/textae/stable/4/dist/lib/css/images/btn_pallet_16.png),
-to open the Entity Configuration dialog,
+Attributes can be added to annotations (denoations, blocks, relations).
+To add an attribute to an annotation,
+select the annotation and click
+the *Entity, Block or Relation Configuration* icon ![](https://raw.githubusercontent.com/pubannotation/textae/stable/4/dist/lib/css/images/btn_pallet_16.png),
+to open the Configuration dialog,
 where you can choose a predefined attribute type or define a new attribute type as you like.
 
 Choose the attribute type and the value you want to add to the selected denotation(s).
 
-# Shortcut keys for attribute annotation
+## Shortcut keys for attribute annotation
 
-Note that each attribute type gets its shortcut key among 1 through 9, in the order they appear in the Entity Configuration dialog:
+Note that each attribute type gets its shortcut key among 1 through 9, in the order they appear in the Configuration dialog:
 in the Entity Configuration dialog, the first tab is always 'Type', and following tabs correspond to attribute types.
 The leftmost attribute type gets the shortcut key '1',
 the next one gets the shortcut key '2', and so on.

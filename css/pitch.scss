@@ -21,15 +21,33 @@
 
 .textae-example {
 	display: inline-block;
-	width: 400px;
+	max-width: 420px;
 	margin: 5px 10px;
 
 	.textae-editor {
 		font-size: small;
+		box-shadow: 5px 5px 5px #d8d8d8;
 	}
 
 	.caption {
 		text-align: center;
 		font-weight: bold;
 	}
+}
+
+.textae-editor {
+	max-width: 550px;
+	background-color: lightyellow;
+}
+
+@media screen and (max-width: 568px) {
+
+	.textae-example {
+		display: block;
+	}
+
+	.textae-editor {
+		witdh: 100%
+	}
+
 }

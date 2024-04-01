@@ -29,4 +29,3 @@ TextAE works in one of the four modes described below:
 ## Relation edit mode (![](https://raw.githubusercontent.com/pubannotation/textae/stable/4/dist/lib/css/images/btn_relation_edit_mode_16.png))
 
 * Relation annotations can be created and edited.
-* The view mode will be automatically changed to the [Full View mode](/docs/views).
