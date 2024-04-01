@@ -2,7 +2,7 @@ export const definition = [
   {
     usage: {
       'keyboard device': ['control bar', 'context menu'],
-      'touce device': ['control bar']
+      'touch device': ['control bar']
     },
     list: [
       {
@@ -23,7 +23,7 @@ export const definition = [
   {
     usage: {
       'keyboard device': ['control bar', 'context menu'],
-      'touce device': ['control bar']
+      'touch device': ['control bar']
     },
     list: [
       {
@@ -51,7 +51,7 @@ export const definition = [
   {
     usage: {
       'keyboard device': ['control bar', 'context menu'],
-      'touce device': ['control bar']
+      'touch device': ['control bar']
     },
     list: [
       {
@@ -73,7 +73,7 @@ export const definition = [
   {
     usage: {
       'keyboard device': ['control bar', 'context menu'],
-      'touce device': ['control bar']
+      'touch device': ['control bar']
     },
     list: [
       {
@@ -89,7 +89,7 @@ export const definition = [
   {
     usage: {
       'keyboard device': ['control bar', 'context menu'],
-      'touce device': ['control bar']
+      'touch device': ['control bar']
     },
     list: [
       {
@@ -113,7 +113,7 @@ export const definition = [
   {
     usage: {
       'keyboard device': [],
-      'touce device': ['control bar', 'context menu']
+      'touch device': ['control bar', 'context menu']
     },
     list: [
       { type: 'create span by touch', title: 'Create span' },
@@ -124,7 +124,7 @@ export const definition = [
   {
     usage: {
       'keyboard device': ['control bar', 'context menu'],
-      'touce device': ['control bar']
+      'touch device': ['control bar']
     },
     list: [
       {
@@ -155,7 +155,7 @@ export const definition = [
   {
     usage: {
       'keyboard device': [],
-      'touce device': ['control bar']
+      'touch device': ['control bar']
     },
     list: [
       {
@@ -184,7 +184,7 @@ export const definition = [
   {
     usage: {
       'keyboard device': ['control bar'],
-      'touce device': ['control bar']
+      'touch device': ['control bar']
     },
     list: [
       {
@@ -196,7 +196,7 @@ export const definition = [
   {
     usage: {
       'keyboard device': ['control bar'],
-      'touce device': []
+      'touch device': []
     },
     list: [
       {

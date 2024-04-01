@@ -19,7 +19,7 @@ export default class Buttons {
       .filter(({ usage }) => {
         // To make it easier to guess the result, don't use the screen size to judge the device.
         if (isAndroid() || isIOS()) {
-          return usage['touce device'].includes('control bar')
+          return usage['touch device'].includes('control bar')
         } else {
           return usage['keyboard device'].includes('control bar')
         }
@@ -37,7 +37,7 @@ export default class Buttons {
     return definition
       .filter(({ usage }) => {
         if (isTouchable()) {
-          return usage['touce device'].includes('context menu')
+          return usage['touch device'].includes('context menu')
         } else {
           return usage['keyboard device'].includes('context menu')
         }
