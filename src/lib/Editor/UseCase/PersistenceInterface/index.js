@@ -8,6 +8,16 @@ import isJSON from '../../../isJSON'
 import readAnnotationText from './readAnnotationText'
 
 export default class PersistenceInterface {
+  #eventEmitter
+  #remoteResource
+  #annotationModel
+  #getOriginalAnnotation
+  #getOriginalConfig
+  #saveToParameter
+  #annotationModelEventsObserver
+  #controlViewModel
+  #filenameOfLastRead
+
   constructor(
     eventEmitter,
     remoteResource,
@@ -18,17 +28,17 @@ export default class PersistenceInterface {
     annotationModelEventsObserver,
     controlViewModel
   ) {
-    this._eventEmitter = eventEmitter
-    this._remoteResource = remoteResource
-    this._annotationModel = annotationModel
-    this._getOriginalAnnotation = getOriginalAnnotation
-    this._getOriginalConfig = getOriginalConfig
-    this._saveToParameter = saveToParameter
-    this._annotationModelEventsObserver = annotationModelEventsObserver
-    this._controlViewModel = controlViewModel
+    this.#eventEmitter = eventEmitter
+    this.#remoteResource = remoteResource
+    this.#annotationModel = annotationModel
+    this.#getOriginalAnnotation = getOriginalAnnotation
+    this.#getOriginalConfig = getOriginalConfig
+    this.#saveToParameter = saveToParameter
+    this.#annotationModelEventsObserver = annotationModelEventsObserver
+    this.#controlViewModel = controlViewModel
 
     // Store the filename of the annotation and configuration.
-    this._filenameOfLastRead = {
+    this.#filenameOfLastRead = {
       annotation: '',
       configuration: ''
     }
@@ -45,92 +55,92 @@ export default class PersistenceInterface {
   importAnnotation() {
     new LoadDialog(
       'Load Annotations',
-      this._remoteResource.annotationUrl,
-      (url) => this._remoteResource.loadAnnotation(url),
+      this.#remoteResource.annotationUrl,
+      (url) => this.#remoteResource.loadAnnotation(url),
       (file) => {
-        readAnnotationFile(file, this._eventEmitter)
-        this._filenameOfLastRead.annotation = file.name
+        readAnnotationFile(file, this.#eventEmitter)
+        this.#filenameOfLastRead.annotation = file.name
       },
       (text) => {
-        if (readAnnotationText(this._eventEmitter, text)) {
+        if (readAnnotationText(this.#eventEmitter, text)) {
           return
         }
 
-        this._eventEmitter.emit(
+        this.#eventEmitter.emit(
           'textae-event.resource.annotation.format.error',
           new DataSource('instant', null)
         )
       },
-      this._annotationModelEventsObserver.hasChange
+      this.#annotationModelEventsObserver.hasChange
     ).open()
   }
 
   uploadAnnotation() {
     new SaveAnnotationDialog(
-      this._eventEmitter,
-      this._saveToParameter || this._remoteResource.annotationUrl,
-      this._filenameOfLastRead.annotation,
-      this._editedAnnotation,
-      (url) => this._remoteResource.saveAnnotation(url, this._editedAnnotation)
+      this.#eventEmitter,
+      this.#saveToParameter || this.#remoteResource.annotationUrl,
+      this.#filenameOfLastRead.annotation,
+      this.#editedAnnotation,
+      (url) => this.#remoteResource.saveAnnotation(url, this.#editedAnnotation)
     ).open()
   }
 
   saveAnnotation() {
-    this._remoteResource.saveAnnotation(
-      this._saveToParameter || this._remoteResource.annotationUrl,
-      this._editedAnnotation
+    this.#remoteResource.saveAnnotation(
+      this.#saveToParameter || this.#remoteResource.annotationUrl,
+      this.#editedAnnotation
     )
   }
 
   importConfiguration() {
     new LoadDialog(
       'Load Configurations',
-      this._remoteResource.configurationUrl,
-      (url) => this._remoteResource.loadConfiguration(url),
+      this.#remoteResource.configurationUrl,
+      (url) => this.#remoteResource.loadConfiguration(url),
       (file) => {
-        readConfigurationFile(file, this._eventEmitter)
-        this._filenameOfLastRead.configuration = file.name
+        readConfigurationFile(file, this.#eventEmitter)
+        this.#filenameOfLastRead.configuration = file.name
       },
       (text) => {
         if (isJSON(text)) {
-          this._eventEmitter.emit(
+          this.#eventEmitter.emit(
             'textae-event.resource.configuration.load.success',
             new DataSource('instant', null, JSON.parse(text))
           )
         } else {
-          this._eventEmitter.emit(
+          this.#eventEmitter.emit(
             'textae-event.resource.configuration.format.error',
             new DataSource('instant', null)
           )
         }
       },
-      this._controlViewModel.diffOfConfiguration
+      this.#controlViewModel.diffOfConfiguration
     ).open()
   }
 
   uploadConfiguration() {
     // Merge with the original config and save the value unchanged in the editor.
     const editedConfig = {
-      ...this._getOriginalConfig(),
-      ...this._annotationModel.typeDefinition.config
+      ...this.#getOriginalConfig(),
+      ...this.#annotationModel.typeDefinition.config
     }
 
     new SaveConfigurationDialog(
-      this._eventEmitter,
-      this._remoteResource.configurationUrl,
-      this._filenameOfLastRead.configuration,
-      this._getOriginalConfig(),
+      this.#eventEmitter,
+      this.#remoteResource.configurationUrl,
+      this.#filenameOfLastRead.configuration,
+      this.#getOriginalConfig(),
       editedConfig,
-      (url) => this._remoteResource.saveConfiguration(url, editedConfig)
+      (url) => this.#remoteResource.saveConfiguration(url, editedConfig)
     ).open()
   }
 
-  get _editedAnnotation() {
+  get #editedAnnotation() {
     const annotation = {
-      ...this._getOriginalAnnotation(),
-      ...this._annotationModel.externalFormat,
+      ...this.#getOriginalAnnotation(),
+      ...this.#annotationModel.externalFormat,
       ...{
-        config: this._annotationModel.typeDefinition.config
+        config: this.#annotationModel.typeDefinition.config
       }
     }
 
