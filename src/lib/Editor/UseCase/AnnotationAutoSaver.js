@@ -1,6 +1,8 @@
 import debounce from 'debounce'
 
 export default class AnnotationAutoSaver {
+  #controlViewModel
+
   constructor(
     eventEmitter,
     controlViewModel,
@@ -8,7 +10,7 @@ export default class AnnotationAutoSaver {
     saveToParameter,
     annotationModelEventsObserver
   ) {
-    this._controlViewModel = controlViewModel
+    this.#controlViewModel = controlViewModel
 
     const debounceSaveAnnotation = debounce(
       () => persistenceInterface.saveAnnotation(),
@@ -17,9 +19,9 @@ export default class AnnotationAutoSaver {
 
     eventEmitter
       .on('textae-event.resource.annotation.load.success', () =>
-        this._disabled()
+        this.#disabled()
       )
-      .on('textae-event.resource.save.error', () => this._disabled())
+      .on('textae-event.resource.save.error', () => this.#disabled())
       .on('textae-event.resource.annotation.url.set', (dataSource) =>
         eventEmitter.emit(
           'textae-event.annotation-auto-saver.enable',
@@ -47,9 +49,9 @@ export default class AnnotationAutoSaver {
       )
   }
 
-  _disabled() {
-    if (this._controlViewModel.isPushed('upload automatically')) {
-      this._controlViewModel.toggleButton('upload automatically')
+  #disabled() {
+    if (this.#controlViewModel.isPushed('upload automatically')) {
+      this.#controlViewModel.toggleButton('upload automatically')
     }
   }
 }
