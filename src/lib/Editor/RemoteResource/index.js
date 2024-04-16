@@ -6,28 +6,31 @@ import openPopUp from './openPopUp'
 
 // A sub component to save and load data.
 export default class RemoteSource {
+  #eventEmitter
+  #urlOfLastRead
+
   constructor(eventEmitter) {
-    this._eventEmitter = eventEmitter
+    this.#eventEmitter = eventEmitter
 
     // Store the url the annotation data is loaded from per editor.
-    this._urlOfLastRead = {
+    this.#urlOfLastRead = {
       annotation: '',
       config: ''
     }
   }
 
   get annotationUrl() {
-    return this._urlOfLastRead.annotation
+    return this.#urlOfLastRead.annotation
   }
 
   set annotationUrl(dataSource) {
     if (dataSource.type === 'url') {
-      this._urlOfLastRead.annotation = dataSource.id
+      this.#urlOfLastRead.annotation = dataSource.id
     }
   }
 
   get configurationUrl() {
-    return this._urlOfLastRead.config
+    return this.#urlOfLastRead.config
   }
 
   // The configuration validation is done with setConfigAndAnnotation
@@ -35,14 +38,14 @@ export default class RemoteSource {
   // The URL is set after the validation.
   set configurationUrl(dataSource) {
     if (dataSource.type === 'url') {
-      this._urlOfLastRead.config = dataSource.id
+      this.#urlOfLastRead.config = dataSource.id
     }
   }
 
   loadAnnotation(url) {
     console.assert(url, 'url is necessary!')
 
-    this._eventEmitter.emit('textae-event.resource.startLoad')
+    this.#eventEmitter.emit('textae-event.resource.startLoad')
 
     $.ajax({
       type: 'GET',
@@ -54,9 +57,9 @@ export default class RemoteSource {
       timeout: 30000,
       dataType: 'json'
     })
-      .done((annotation) => this._annotationLoaded(url, annotation))
-      .fail((jqXHR) => this._annotationLoadFirstFailed(jqXHR, url))
-      .always(() => this._eventEmitter.emit('textae-event.resource.endLoad'))
+      .done((annotation) => this.#annotationLoaded(url, annotation))
+      .fail((jqXHR) => this.#annotationLoadFirstFailed(jqXHR, url))
+      .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
   // The second argument is the annotation you want to be notified of
@@ -66,7 +69,7 @@ export default class RemoteSource {
   loadConfiguration(url, annotationModelSource = null) {
     console.assert(url, 'url is necessary!')
 
-    this._eventEmitter.emit('textae-event.resource.startLoad')
+    this.#eventEmitter.emit('textae-event.resource.startLoad')
 
     $.ajax({
       type: 'GET',
@@ -78,14 +81,14 @@ export default class RemoteSource {
       timeout: 30000,
       dataType: 'json'
     })
-      .done((config) => this._configLoaded(url, config, annotationModelSource))
-      .fail(() => this._configLoadFailed(url))
-      .always(() => this._eventEmitter.emit('textae-event.resource.endLoad'))
+      .done((config) => this.#configLoaded(url, config, annotationModelSource))
+      .fail(() => this.#configLoadFailed(url))
+      .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
   saveAnnotation(url, editedData) {
     if (url) {
-      this._eventEmitter.emit('textae-event.resource.startSave')
+      this.#eventEmitter.emit('textae-event.resource.startSave')
 
       const opt = {
         type: 'post',
@@ -99,11 +102,11 @@ export default class RemoteSource {
       }
 
       $.ajax(opt)
-        .done(() => this._annotationSaved(editedData))
+        .done(() => this.#annotationSaved(editedData))
         .fail((jqXHR) =>
-          this._annotationSaveFirstFailed(jqXHR, url, editedData)
+          this.#annotationSaveFirstFailed(jqXHR, url, editedData)
         )
-        .always(() => this._eventEmitter.emit('textae-event.resource.endSave'))
+        .always(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
     }
   }
 
@@ -113,7 +116,7 @@ export default class RemoteSource {
     if (url) {
       const data = JSON.stringify(editedData)
 
-      this._eventEmitter.emit('textae-event.resource.startSave')
+      this.#eventEmitter.emit('textae-event.resource.startSave')
 
       $.ajax({
         type: 'patch',
@@ -125,34 +128,34 @@ export default class RemoteSource {
           withCredentials: true
         }
       })
-        .done(() => this._configSaved(editedData))
-        .fail(() => this._configSaveFirstFailed(url, editedData))
-        .always(() => this._eventEmitter.emit('textae-event.resource.endSave'))
+        .done(() => this.#configSaved(editedData))
+        .fail(() => this.#configSaveFirstFailed(url, editedData))
+        .always(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
     }
   }
 
-  _annotationLoaded(url, annotation) {
+  #annotationLoaded(url, annotation) {
     const dataSource = new DataSource('url', url, annotation)
     if (annotation && annotation.text) {
-      this._eventEmitter.emit(
+      this.#eventEmitter.emit(
         'textae-event.resource.annotation.load.success',
         dataSource
       )
-      this._eventEmitter.emit(
+      this.#eventEmitter.emit(
         'textae-event.resource.annotation.url.set',
         dataSource
       )
     } else {
-      this._eventEmitter.emit(
+      this.#eventEmitter.emit(
         'textae-event.resource.annotation.format.error',
         dataSource
       )
     }
   }
 
-  _annotationLoadFirstFailed(jqXHR, url) {
+  #annotationLoadFirstFailed(jqXHR, url) {
     if (jqXHR.status !== 401) {
-      return this._annotationLoadFinalFailed(url)
+      return this.#annotationLoadFinalFailed(url)
     }
 
     // When authentication is requested, give credential and try again.
@@ -166,42 +169,42 @@ export default class RemoteSource {
       timeout: 30000,
       dataType: 'json'
     })
-      .done((annotation) => this._annotationLoaded(url, annotation))
-      .fail(() => this._annotationLoadFinalFailed(url))
-      .always(() => this._eventEmitter.emit('textae-event.resource.endLoad'))
+      .done((annotation) => this.#annotationLoaded(url, annotation))
+      .fail(() => this.#annotationLoadFinalFailed(url))
+      .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
-  _annotationLoadFinalFailed(url) {
+  #annotationLoadFinalFailed(url) {
     alertifyjs.error(
       `Could not load the file from the location you specified.: ${url}`
     )
-    this._eventEmitter.emit('textae-event.resource.annotation.load.error', url)
+    this.#eventEmitter.emit('textae-event.resource.annotation.load.error', url)
   }
 
-  _configLoaded(url, config, annotationModelSource) {
-    this._eventEmitter.emit(
+  #configLoaded(url, config, annotationModelSource) {
+    this.#eventEmitter.emit(
       'textae-event.resource.configuration.load.success',
       new DataSource('url', url, config),
       annotationModelSource
     )
   }
 
-  _configLoadFailed(url) {
+  #configLoadFailed(url) {
     alertifyjs.error(
       `Could not load the file from the location you specified.: ${url}`
     )
-    this._eventEmitter.emit(
+    this.#eventEmitter.emit(
       'textae-event.resource.configuration.load.error',
       url
     )
   }
 
-  _annotationSaved(editedData) {
+  #annotationSaved(editedData) {
     alertifyjs.success('annotation saved')
-    this._eventEmitter.emit('textae-event.resource.annotation.save', editedData)
+    this.#eventEmitter.emit('textae-event.resource.annotation.save', editedData)
   }
 
-  _annotationSaveFirstFailed(jqXHR, url, editedData) {
+  #annotationSaveFirstFailed(jqXHR, url, editedData) {
     // Authenticate in popup window.
     const location = isServerAuthRequired(
       jqXHR.status,
@@ -209,12 +212,12 @@ export default class RemoteSource {
       jqXHR.getResponseHeader('Location')
     )
     if (!location) {
-      return this._annotationSaveFinalFailed()
+      return this.#annotationSaveFinalFailed()
     }
 
     const window = openPopUp(location)
     if (!window) {
-      return this._annotationSaveFinalFailed()
+      return this.#annotationSaveFinalFailed()
     }
 
     // Watching for cross-domain pop-up windows to close.
@@ -236,32 +239,32 @@ export default class RemoteSource {
 
         // Retry after authentication.
         $.ajax(opt)
-          .done(() => this._annotationSaved(editedData))
-          .fail(() => this._annotationSaveFinalFailed)
+          .done(() => this.#annotationSaved(editedData))
+          .fail(() => this.#annotationSaveFinalFailed)
           .always(() =>
-            this._eventEmitter.emit('textae-event.resource.endSave')
+            this.#eventEmitter.emit('textae-event.resource.endSave')
           )
       }
     }, 1000)
   }
 
-  _annotationSaveFinalFailed() {
+  #annotationSaveFinalFailed() {
     alertifyjs.error('could not save')
-    this._eventEmitter.emit('textae-event.resource.save.error')
+    this.#eventEmitter.emit('textae-event.resource.save.error')
   }
 
-  _configSaved(editedData) {
+  #configSaved(editedData) {
     alertifyjs.success('configuration saved')
-    this._eventEmitter.emit(
+    this.#eventEmitter.emit(
       'textae-event.resource.configuration.save',
       editedData
     )
   }
 
-  _configSaveFirstFailed(url, editedData) {
+  #configSaveFirstFailed(url, editedData) {
     {
       // Retry by a post method.
-      this._eventEmitter.emit('textae-event.resource.startSave')
+      this.#eventEmitter.emit('textae-event.resource.startSave')
 
       $.ajax({
         type: 'post',
@@ -273,14 +276,14 @@ export default class RemoteSource {
           withCredentials: true
         }
       })
-        .done(() => this._configSaved(editedData))
-        .fail(() => this._configSaveFinalFailed())
-        .always(() => this._eventEmitter.emit('textae-event.resource.endSave'))
+        .done(() => this.#configSaved(editedData))
+        .fail(() => this.#configSaveFinalFailed())
+        .always(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
     }
   }
 
-  _configSaveFinalFailed() {
+  #configSaveFinalFailed() {
     alertifyjs.error('could not save')
-    this._eventEmitter.emit('textae-event.resource.save.error')
+    this.#eventEmitter.emit('textae-event.resource.save.error')
   }
 }
