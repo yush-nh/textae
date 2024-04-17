@@ -1,25 +1,29 @@
 import toSourceString from './toSourceString'
 
 export default class DataSource {
+  #type
+  #id
+  #data
+
   constructor(type, id, data) {
-    this._type = type
-    this._id = id
-    this._data = data
+    this.#type = type
+    this.#id = id
+    this.#data = data
   }
 
   get type() {
-    return this._type
+    return this.#type
   }
 
   get id() {
-    return this._id
+    return this.#id
   }
 
   get data() {
-    return this._data
+    return this.#data
   }
 
   get displayName() {
-    return toSourceString(this._type, this._id)
+    return toSourceString(this.#type, this.#id)
   }
 }
