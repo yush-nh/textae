@@ -32,7 +32,6 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@typescript-eslint/parser": "^7.6.0",
     "clean-css-cli": "^5.6.3",
     "connect": "3.7.0",
     "cpx2": "^7.0.1",
