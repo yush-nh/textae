@@ -206,7 +206,7 @@ export default class UseCase {
             remoteResource.annotationUrl = loadedAnnotation
           }
 
-          originalData.configuration = dataSource
+          originalData.configuration = dataSource.data
           remoteResource.configurationUrl = dataSource
         }
       )
