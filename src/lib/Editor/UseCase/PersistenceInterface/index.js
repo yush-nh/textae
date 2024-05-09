@@ -68,7 +68,7 @@ export default class PersistenceInterface {
 
         this.#eventEmitter.emit(
           'textae-event.resource.annotation.format.error',
-          new DataSource('instant', null)
+          DataSource.createInstantSource()
         )
       },
       this.#annotationModelEventsObserver.hasChange
@@ -105,12 +105,12 @@ export default class PersistenceInterface {
         if (isJSON(text)) {
           this.#eventEmitter.emit(
             'textae-event.resource.configuration.load.success',
-            new DataSource('instant', null, JSON.parse(text))
+            DataSource.createInstantSource(JSON.parse(text))
           )
         } else {
           this.#eventEmitter.emit(
             'textae-event.resource.configuration.format.error',
-            new DataSource('instant', null)
+            DataSource.createInstantSource()
           )
         }
       },

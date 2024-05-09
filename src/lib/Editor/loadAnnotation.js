@@ -7,7 +7,7 @@ export default function loadAnnotation(eventEmitter, annotation) {
 
   eventEmitter.emit(
     'textae-event.resource.annotation.load.success',
-    new DataSource('instant', null, annotation)
+    DataSource.createInstantSource(annotation)
   )
 
   return true

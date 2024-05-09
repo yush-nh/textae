@@ -23,6 +23,10 @@ export default class DataSource {
     return new DataSource('local file', id, data)
   }
 
+  static createInstantSource(data) {
+    return new DataSource('instant', null, data)
+  }
+
   /**
    * @constructor
    * @param {string} type - Indicates the type of data source: url, inline, instant, or local file.
