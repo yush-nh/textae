@@ -49,7 +49,7 @@ export default class OriginalData {
     }
 
     if (dataSource.type) {
-      this.#statusBar.status = dataSource
+      this.#statusBar.status = dataSource.displayName
     }
   }
 

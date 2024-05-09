@@ -10,12 +10,10 @@ export default class StatusBar {
     this.#isShow = isShow
   }
 
-  set status(dataSource) {
+  set status(message) {
     if (!this.#isShow) {
       return
     }
-
-    const message = dataSource.displayName
 
     if (message !== '') {
       getAreaIn(this.#editorHTMLElement).innerHTML = isURI(message)
