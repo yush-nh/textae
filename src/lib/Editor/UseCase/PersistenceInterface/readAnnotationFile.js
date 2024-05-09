@@ -11,7 +11,7 @@ export default async function (file, eventEmitter) {
     // If this is .txt, New annotation json is made from .txt
     eventEmitter.emit(
       'textae-event.resource.annotation.load.success',
-      new DataSource('local file', file.name, {
+      DataSource.createFileSource(file.name, {
         text: fileContent
       })
     )
@@ -25,7 +25,7 @@ export default async function (file, eventEmitter) {
     if (annotation.text) {
       eventEmitter.emit(
         'textae-event.resource.annotation.load.success',
-        new DataSource('local file', file.name, annotation)
+        DataSource.createFileSource(file.name, annotation)
       )
 
       return
@@ -34,6 +34,6 @@ export default async function (file, eventEmitter) {
 
   eventEmitter.emit(
     'textae-event.resource.annotation.format.error',
-    new DataSource('local file', file.name)
+    DataSource.createFileSource(file.name)
   )
 }

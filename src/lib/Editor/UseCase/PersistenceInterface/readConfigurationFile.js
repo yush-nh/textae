@@ -7,12 +7,12 @@ export default function (file, eventEmitter) {
     if (isJSON(target.result)) {
       eventEmitter.emit(
         'textae-event.resource.configuration.load.success',
-        new DataSource('local file', file.name, JSON.parse(target.result))
+        DataSource.createFileSource(file.name, JSON.parse(target.result))
       )
     } else {
       eventEmitter.emit(
         'textae-event.resource.configuration.format.error',
-        new DataSource('local file', file.name)
+        DataSource.createFileSource(file.name)
       )
     }
   })
