@@ -5,6 +5,12 @@ export default class DataSource {
   #id
   #data
 
+  /**
+   * @constructor
+   * @param {string} type - Indicates the type of data source: url, inline, instant, or local file.
+   * @param {string | null} id - The url or file name of the data source.
+   * @param {object | null} data - The data from data source. This parameter becomes null when data cannot be load.
+   */
   constructor(type, id, data) {
     console.assert(
       type === 'url' ||
