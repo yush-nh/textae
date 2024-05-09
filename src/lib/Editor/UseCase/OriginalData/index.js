@@ -6,12 +6,12 @@ import patchConfiguration from '../patchConfiguration'
 export default class OriginalData {
   #eventEmitter
   #statusBar
-  #map
+  #annotation
+  #configuration
 
   constructor(eventEmitter, editorHTMLElement, isShow) {
     this.#eventEmitter = eventEmitter
     this.#statusBar = new StatusBar(editorHTMLElement, isShow)
-    this.#map = new Map()
 
     eventEmitter
       .on('textae-event.resource.annotation.save', (editedData) => {
@@ -36,16 +36,14 @@ export default class OriginalData {
    * @returns { import("../../DataSource").default }
    */
   get annotation() {
-    return this.#map.has('annotation')
-      ? this.#map.get('annotation').data
-      : this.defaultAnnotation
+    return this.#annotation ? this.#annotation.data : this.defaultAnnotation
   }
 
   /**
    * @param { import("../../DataSource").default } dataSource
    */
   set annotation(dataSource) {
-    this.#map.set('annotation', dataSource)
+    this.#annotation = dataSource
     if (dataSource.data.config) {
       this.configuration = new DataSource(null, null, dataSource.data.config)
     }
@@ -56,13 +54,11 @@ export default class OriginalData {
   }
 
   get configuration() {
-    return this.#map.has('configuration')
-      ? this.#map.get('configuration').data
-      : {}
+    return this.#configuration ? this.#configuration.data : {}
   }
 
   set configuration(dataSource) {
-    this.#map.set('configuration', dataSource)
+    this.#configuration = dataSource
     this.#eventEmitter.emit('textae-event.original-data.configuration.reset')
   }
 }
