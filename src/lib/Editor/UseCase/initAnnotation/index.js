@@ -21,9 +21,7 @@ export default function (
 ) {
   if (annotationParameter.isLoaded) {
     // Set an inline annotation.
-    const dataSource = new DataSource(
-      'inline',
-      null,
+    const dataSource = DataSource.createInlineSource(
       annotationParameter.annotation
     )
 
