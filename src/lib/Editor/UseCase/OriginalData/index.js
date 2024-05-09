@@ -4,13 +4,18 @@ import patchConfiguration from '../patchConfiguration'
 
 // Manage the original annotations and the original configuration and merge the changes when you save them.
 export default class OriginalData {
+  #eventEmitter
+  #statusBar
+  #map
+
   constructor(eventEmitter, editorHTMLElement, isShow) {
-    this._eventEmitter = eventEmitter
-    this._statusBar = new StatusBar(editorHTMLElement, isShow)
-    this._map = new Map()
+    this.#eventEmitter = eventEmitter
+    this.#statusBar = new StatusBar(editorHTMLElement, isShow)
+    this.#map = new Map()
 
     eventEmitter
       .on('textae-event.resource.annotation.save', (editedData) => {
+        console.log('aaaaa', editedData)
         this.annotation = new DataSource(null, null, editedData)
       })
       .on('textae-event.resource.configuration.save', (editedData) => {
@@ -29,30 +34,30 @@ export default class OriginalData {
   }
 
   get annotation() {
-    return this._map.has('annotation')
-      ? this._map.get('annotation').data
+    return this.#map.has('annotation')
+      ? this.#map.get('annotation').data
       : this.defaultAnnotation
   }
 
   set annotation(dataSource) {
-    this._map.set('annotation', dataSource)
+    this.#map.set('annotation', dataSource)
     if (dataSource.data.config) {
       this.configuration = new DataSource(null, null, dataSource.data.config)
     }
 
     if (dataSource.type) {
-      this._statusBar.status = dataSource
+      this.#statusBar.status = dataSource
     }
   }
 
   get configuration() {
-    return this._map.has('configuration')
-      ? this._map.get('configuration').data
+    return this.#map.has('configuration')
+      ? this.#map.get('configuration').data
       : {}
   }
 
   set configuration(dataSource) {
-    this._map.set('configuration', dataSource)
-    this._eventEmitter.emit('textae-event.original-data.configuration.reset')
+    this.#map.set('configuration', dataSource)
+    this.#eventEmitter.emit('textae-event.original-data.configuration.reset')
   }
 }
