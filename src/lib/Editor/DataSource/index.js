@@ -14,10 +14,10 @@ export default class DataSource {
         type === null,
       'type must be url, inline, instant, local file or null.'
     )
-    if (type === 'url') {
+    if (type === 'url' || type === 'local file') {
       console.assert(
         typeof id === 'string',
-        'id must be a string when type is url.'
+        'id must be a string when type is url or local file.'
       )
     } else {
       console.assert(id === null, 'id must be null when type is not url.')
