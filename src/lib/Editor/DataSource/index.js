@@ -42,9 +42,8 @@ export default class DataSource {
       type === 'url' ||
         type === 'inline' ||
         type === 'instant' ||
-        type === 'local file' ||
-        type === null,
-      'type must be url, inline, instant, local file or null.'
+        type === 'local file',
+      'type must be url, inline, instant, local file.'
     )
     if (type === 'url' || type === 'local file') {
       console.assert(
