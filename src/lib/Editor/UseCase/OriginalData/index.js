@@ -1,5 +1,4 @@
 import StatusBar from './StatusBar'
-import DataSource from '../../DataSource'
 import patchConfiguration from '../patchConfiguration'
 
 // Manage the original annotations and the original configuration and merge the changes when you save them.
@@ -15,7 +14,7 @@ export default class OriginalData {
 
     eventEmitter
       .on('textae-event.resource.annotation.save', (editedData) => {
-        this.annotation = new DataSource(null, null, editedData)
+        this.#annotationOnly = editedData
       })
       .on('textae-event.resource.configuration.save', (editedData) => {
         this.configuration = editedData
@@ -43,14 +42,8 @@ export default class OriginalData {
    * @param { import("../../DataSource").default } dataSource
    */
   set annotation(dataSource) {
-    this.#annotation = dataSource
-    if (dataSource.data.config) {
-      this.configuration = dataSource.data.config
-    }
-
-    if (dataSource.type) {
-      this.#statusBar.status = dataSource.displayName
-    }
+    this.#annotationOnly = dataSource.data
+    this.#statusBar.status = dataSource.displayName
   }
 
   get configuration() {
@@ -60,5 +53,12 @@ export default class OriginalData {
   set configuration(configuration) {
     this.#configuration = configuration
     this.#eventEmitter.emit('textae-event.original-data.configuration.reset')
+  }
+
+  set #annotationOnly(annotation) {
+    this.#annotation = annotation
+    if (annotation.config) {
+      this.#configuration = annotation.config
+    }
   }
 }
