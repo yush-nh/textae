@@ -135,7 +135,7 @@ export default class RemoteSource {
   }
 
   #annotationLoaded(url, annotation) {
-    const dataSource = new DataSource('url', url, annotation)
+    const dataSource = DataSource.createURLSource(url, annotation)
     if (annotation && annotation.text) {
       this.#eventEmitter.emit(
         'textae-event.resource.annotation.load.success',
@@ -184,7 +184,7 @@ export default class RemoteSource {
   #configLoaded(url, config, annotationModelSource) {
     this.#eventEmitter.emit(
       'textae-event.resource.configuration.load.success',
-      new DataSource('url', url, config),
+      DataSource.createURLSource(url, config),
       annotationModelSource
     )
   }

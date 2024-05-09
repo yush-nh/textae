@@ -5,6 +5,15 @@ export default class DataSource {
   #id
   #data
 
+  static createURLSource(id, data) {
+    console.assert(
+      typeof id === 'string',
+      'id must be a string when type is url.'
+    )
+
+    return new DataSource('url', id, data)
+  }
+
   /**
    * @constructor
    * @param {string} type - Indicates the type of data source: url, inline, instant, or local file.
