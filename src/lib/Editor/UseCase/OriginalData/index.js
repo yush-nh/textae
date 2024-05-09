@@ -15,7 +15,6 @@ export default class OriginalData {
 
     eventEmitter
       .on('textae-event.resource.annotation.save', (editedData) => {
-        console.log('aaaaa', editedData)
         this.annotation = new DataSource(null, null, editedData)
       })
       .on('textae-event.resource.configuration.save', (editedData) => {
@@ -33,12 +32,18 @@ export default class OriginalData {
     return patchConfiguration(this.defaultAnnotation)
   }
 
+  /**
+   * @returns { import("../../DataSource").default }
+   */
   get annotation() {
     return this.#map.has('annotation')
       ? this.#map.get('annotation').data
       : this.defaultAnnotation
   }
 
+  /**
+   * @param { import("../../DataSource").default } dataSource
+   */
   set annotation(dataSource) {
     this.#map.set('annotation', dataSource)
     if (dataSource.data.config) {
