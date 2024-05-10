@@ -8,9 +8,9 @@ export default class AnnotationResource {
     } else if (sourceURL) {
       this.#sourceURL = sourceURL
     } else {
+      // Read annotation from inline annotation.
       const inlineAnnotation = this.#deconstructInlineAnnotation(element)
       if (inlineAnnotation) {
-        // Read annotation from inline annotation.
         this.#annotation = inlineAnnotation
       }
     }
