@@ -15,6 +15,16 @@ export default class StartUpOptions {
     )
   }
 
+  get resourceType() {
+    if (this.annotation) {
+      return 'inline'
+    } else if (this.annotationURL) {
+      return 'remote'
+    }
+
+    return 'other'
+  }
+
   get annotation() {
     if (this.#resource.isLoaded) {
       return this.#resource.annotation
