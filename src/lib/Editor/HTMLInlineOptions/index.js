@@ -11,7 +11,8 @@ export default class HTMLInlineOptions {
     this.#annotationParameter = new AnnotationParameter(
       this.#element,
       this.#source,
-      this.#isIgnoreAnnotationParameter
+      this.#isIgnoreAnnotationParameter,
+      this.#annotationFromQueryParameter
     )
   }
 
@@ -128,5 +129,10 @@ export default class HTMLInlineOptions {
 
   get #isIgnoreAnnotationParameter() {
     return Boolean(this.#element.getAttribute('ignore_annotation_parameter'))
+  }
+
+  get #annotationFromQueryParameter() {
+    const params = new URLSearchParams(window.location.search)
+    return decodeURIComponent(params.get('annotation'))
   }
 }

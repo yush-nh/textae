@@ -2,11 +2,14 @@ export default class AnnotationParameter {
   #annotation
   #sourceURL
 
-  constructor(element, sourceURL, isIgnoreAnnotationParameter = false) {
-    const params = new URLSearchParams(window.location.search)
-    if (!isIgnoreAnnotationParameter && params.get('annotation') != null) {
-      // Read annotation from query parameter.
-      this.#annotation = decodeURIComponent(params.get('annotation'))
+  constructor(
+    element,
+    sourceURL,
+    isIgnoreAnnotationParameter,
+    annotationFromQueryParameter
+  ) {
+    if (!isIgnoreAnnotationParameter && annotationFromQueryParameter) {
+      this.#annotation = annotationFromQueryParameter
     } else if (sourceURL) {
       this.#sourceURL = decodeURIComponent(sourceURL)
     } else {
