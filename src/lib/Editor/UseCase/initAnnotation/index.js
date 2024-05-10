@@ -18,11 +18,9 @@ export default function (
   inlineOptions,
   functionAvailability
 ) {
-  if (inlineOptions.annotationParameter.isLoaded) {
+  if (inlineOptions.annotation) {
     // Set an inline annotation.
-    const dataSource = DataSource.createInlineSource(
-      inlineOptions.annotationParameter.annotation
-    )
+    const dataSource = DataSource.createInlineSource(inlineOptions.annotation)
 
     if (!dataSource.data.config && inlineOptions.configParameter) {
       remoteResource.loadConfiguration(

@@ -20,6 +20,14 @@ export default class HTMLInlineOptions {
     return this.#annotationParameter
   }
 
+  get annotation() {
+    if (this.#annotationParameter.isLoaded) {
+      return this.#annotationParameter.annotation
+    }
+
+    return null
+  }
+
   get autocompletionWS() {
     return this.#readAttributeAsURL('autocompletion_ws')
   }
