@@ -7,7 +7,7 @@ import setDefault from './setDefault.js'
 
 /**
  *
- * @param {import('../../HTMLInlineOptions/AnnotationParameter.js').default} annotationParameter
+ * @param {import('../../HTMLInlineOptions/index.js').default})} inlineOptions
  */
 export default function (
   spanConfig,
@@ -15,18 +15,20 @@ export default function (
   remoteResource,
   controlViewModel,
   originalData,
-  annotationParameter,
-  configParameter,
+  inlineOptions,
   functionAvailability
 ) {
-  if (annotationParameter.isLoaded) {
+  if (inlineOptions.annotationParameter.isLoaded) {
     // Set an inline annotation.
     const dataSource = DataSource.createInlineSource(
-      annotationParameter.annotation
+      inlineOptions.annotationParameter.annotation
     )
 
-    if (!dataSource.data.config && configParameter) {
-      remoteResource.loadConfiguration(configParameter, dataSource)
+    if (!dataSource.data.config && inlineOptions.configParameter) {
+      remoteResource.loadConfiguration(
+        inlineOptions.configParameter,
+        dataSource
+      )
     } else {
       warningIfBeginEndOfSpanAreNotInteger(dataSource.data)
 
@@ -57,12 +59,12 @@ export default function (
         originalData.annotation = dataSource
       }
     }
-  } else if (annotationParameter.isRemote) {
+  } else if (inlineOptions.annotationParameter.isRemote) {
     // Load an annotation from server.
-    remoteResource.loadAnnotation(annotationParameter.URL)
+    remoteResource.loadAnnotation(inlineOptions.annotationParameter.URL)
   } else {
-    if (configParameter) {
-      remoteResource.loadConfiguration(configParameter)
+    if (inlineOptions.configParameter) {
+      remoteResource.loadConfiguration(inlineOptions.configParameter)
     } else {
       setDefault(
         originalData,
