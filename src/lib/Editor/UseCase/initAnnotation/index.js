@@ -7,7 +7,7 @@ import setDefault from './setDefault.js'
 
 /**
  *
- * @param {import('../../HTMLInlineOptions/index.js').default})} inlineOptions
+ * @param {import('../../StartUpOptions/index.js').default)} startUpOptions
  */
 export default function (
   spanConfig,
@@ -15,16 +15,16 @@ export default function (
   remoteResource,
   controlViewModel,
   originalData,
-  inlineOptions,
+  startUpOptions,
   functionAvailability
 ) {
-  if (inlineOptions.annotation) {
+  if (startUpOptions.annotation) {
     // Set an inline annotation.
-    const dataSource = DataSource.createInlineSource(inlineOptions.annotation)
+    const dataSource = DataSource.createInlineSource(startUpOptions.annotation)
 
-    if (!dataSource.data.config && inlineOptions.configParameter) {
+    if (!dataSource.data.config && startUpOptions.configParameter) {
       remoteResource.loadConfiguration(
-        inlineOptions.configParameter,
+        startUpOptions.configParameter,
         dataSource
       )
     } else {
@@ -57,12 +57,12 @@ export default function (
         originalData.annotation = dataSource
       }
     }
-  } else if (inlineOptions.annotationURL) {
+  } else if (startUpOptions.annotationURL) {
     // Load an annotation from server.
-    remoteResource.loadAnnotation(inlineOptions.annotationURL)
+    remoteResource.loadAnnotation(startUpOptions.annotationURL)
   } else {
-    if (inlineOptions.configParameter) {
-      remoteResource.loadConfiguration(inlineOptions.configParameter)
+    if (startUpOptions.configParameter) {
+      remoteResource.loadConfiguration(startUpOptions.configParameter)
     } else {
       setDefault(
         originalData,

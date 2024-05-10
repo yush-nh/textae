@@ -12,11 +12,11 @@ export default class EditMode {
   #state
   #annotationModel
   #selectionModel
-  #inlineOptions
+  #startUpOptions
 
   /**
    *
-   * @param {import('../../../HTMLInlineOptions').HTMLInlineOption} inlineOptions
+   * @param {import('../../../StartUpOptions').default} startUpOptions
    */
   constructor(
     editorHTMLElement,
@@ -26,7 +26,7 @@ export default class EditMode {
     spanConfig,
     commander,
     controlViewModel,
-    inlineOptions,
+    startUpOptions,
     functionAvailability,
     mousePoint
   ) {
@@ -38,7 +38,7 @@ export default class EditMode {
       commander,
       controlViewModel,
       spanConfig,
-      inlineOptions.autocompletionWs,
+      startUpOptions.autocompletionWs,
       mousePoint
     )
 
@@ -50,7 +50,7 @@ export default class EditMode {
       spanConfig,
       commander,
       controlViewModel,
-      inlineOptions.autocompletionWs,
+      startUpOptions.autocompletionWs,
       mousePoint
     )
 
@@ -60,7 +60,7 @@ export default class EditMode {
       annotationModel,
       selectionModel,
       commander,
-      inlineOptions.autocompletionWs,
+      startUpOptions.autocompletionWs,
       controlViewModel,
       mousePoint
     )
@@ -83,7 +83,7 @@ export default class EditMode {
 
     this.#annotationModel = annotationModel
     this.#selectionModel = selectionModel
-    this.#inlineOptions = inlineOptions
+    this.#startUpOptions = startUpOptions
 
     eventEmitter
       .on('textae-event.editor.relation.click', (event, relation) =>
@@ -126,17 +126,17 @@ export default class EditMode {
    * For an initiation transition on an annotations data loaded.
    */
   reset() {
-    if (this.#inlineOptions.isTermEditMode) {
+    if (this.#startUpOptions.isTermEditMode) {
       this.#state.toTermMode(this.#annotationModel.relation.some)
       return
     }
 
-    if (this.#inlineOptions.isBlockEditMode) {
+    if (this.#startUpOptions.isBlockEditMode) {
       this.#state.toBlockMode(this.#annotationModel.relation.some)
       return
     }
 
-    if (this.#inlineOptions.isRelationEditMode) {
+    if (this.#startUpOptions.isRelationEditMode) {
       this.#state.toRelationMode()
       return
     }

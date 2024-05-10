@@ -23,7 +23,7 @@ export default class Presenter {
 
   /**
    *
-   * @param {import('../../HTMLInlineOptions').HTMLInlineOption} inlineOptions
+   * @param {import('../../StartUpOptions').default} startUpOptions
    */
   constructor(
     editorHTMLElement,
@@ -34,7 +34,7 @@ export default class Presenter {
     spanConfig,
     clipBoard,
     controlViewModel,
-    inlineOptions,
+    startUpOptions,
     functionAvailability,
     mousePoint
   ) {
@@ -46,14 +46,14 @@ export default class Presenter {
       spanConfig,
       commander,
       controlViewModel,
-      inlineOptions,
+      startUpOptions,
       functionAvailability,
       mousePoint
     )
 
     eventEmitter
       .on('textae-event.annotation-data.all.change', (_, hasMultiTracks) => {
-        if (inlineOptions.isEditMode && hasMultiTracks) {
+        if (startUpOptions.isEditMode && hasMultiTracks) {
           alertifyjs.success(
             'track annotations have been merged to root annotations.'
           )

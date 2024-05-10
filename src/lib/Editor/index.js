@@ -2,7 +2,7 @@
 import AnnotationModel from './AnnotationModel'
 import UseCase from './UseCase'
 import { EventEmitter } from 'events'
-import HTMLInlineOptions from './HTMLInlineOptions'
+import StartUpOptions from './StartUpOptions'
 import EditorCSSClass from './EditorCSSClass'
 import forwardMethods from './forwardMethods'
 import observeElement from './observeElement'
@@ -47,7 +47,7 @@ export default class Editor {
     const editorCSSClass = new EditorCSSClass(element)
     editorCSSClassObserve(eventEmitter, editorCSSClass)
 
-    const inlineOptions = new HTMLInlineOptions(element)
+    const startUpOptions = new StartUpOptions(element)
     const annotationModel = new AnnotationModel(
       editorID,
       element,
@@ -55,18 +55,18 @@ export default class Editor {
       editorCSSClass,
       startJQueryUIDialogWait,
       endJQueryUIDialogWait,
-      inlineOptions.configLock === 'true',
-      inlineOptions.additionalPaddingTop
+      startUpOptions.configLock === 'true',
+      startUpOptions.additionalPaddingTop
     )
 
     this.#element = element
     this.#annotationModel = annotationModel
     this.#eventEmitter = eventEmitter
 
-    if (inlineOptions.inspect) {
+    if (startUpOptions.inspect) {
       const callback = (annotation) => {
         const destinationElement = document.querySelector(
-          `#${inlineOptions.inspect}`
+          `#${startUpOptions.inspect}`
         )
         if (destinationElement) {
           destinationElement.textContent = JSON.stringify(annotation, null, 2)
@@ -87,7 +87,7 @@ export default class Editor {
       mousePoint,
       eventEmitter,
       annotationModel,
-      inlineOptions,
+      startUpOptions,
       selectionModel
     )
     this.#useCase = useCase

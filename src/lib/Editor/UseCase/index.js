@@ -27,7 +27,7 @@ export default class UseCase {
 
   /**
    *
-   * @param {import('../HTMLInlineOptions').default} inlineOptions
+   * @param {import('../StartUpOptions').StartUpOptions} startUpOptions
    */
   constructor(
     editorHTMLElement,
@@ -35,7 +35,7 @@ export default class UseCase {
     mousePoint,
     eventEmitter,
     annotationModel,
-    inlineOptions,
+    startUpOptions,
     selectionModel
   ) {
     const spanConfig = new SpanConfig()
@@ -59,7 +59,7 @@ export default class UseCase {
     const originalData = new OriginalData(
       eventEmitter,
       editorHTMLElement,
-      inlineOptions.statusBar
+      startUpOptions.statusBar
     )
 
     const annotationModelEventsObserver = new AnnotationModelEventsObserver(
@@ -86,7 +86,7 @@ export default class UseCase {
       spanConfig,
       clipBoard,
       controlViewModel,
-      inlineOptions,
+      startUpOptions,
       functionAvailability,
       mousePoint
     )
@@ -101,7 +101,7 @@ export default class UseCase {
       annotationModel,
       () => originalData.annotation,
       () => originalData.configuration,
-      inlineOptions.saveTo,
+      startUpOptions.saveTo,
       annotationModelEventsObserver,
       controlViewModel
     )
@@ -110,14 +110,14 @@ export default class UseCase {
       eventEmitter,
       controlViewModel,
       persistenceInterface,
-      inlineOptions.saveTo,
+      startUpOptions.saveTo,
       annotationModelEventsObserver
     )
 
     eventEmitter
       .on('textae-event.resource.annotation.load.success', (dataSource) => {
-        if (!dataSource.data.config && inlineOptions.config) {
-          remoteResource.loadConfiguration(inlineOptions.config, dataSource)
+        if (!dataSource.data.config && startUpOptions.config) {
+          remoteResource.loadConfiguration(startUpOptions.config, dataSource)
         } else {
           warningIfBeginEndOfSpanAreNotInteger(dataSource.data)
 
@@ -145,7 +145,7 @@ export default class UseCase {
               functionAvailability
             )
 
-            if (inlineOptions.isFocusFirstDenotation) {
+            if (startUpOptions.isFocusFirstDenotation) {
               const firstDenotation =
                 annotationModel.span.allDenotationSpans.at(0)
               if (firstDenotation) {
@@ -230,7 +230,7 @@ export default class UseCase {
       editorHTMLElement.childNodes[0]
     )
 
-    switch (inlineOptions.control) {
+    switch (startUpOptions.control) {
       case 'hidden':
         editorHTMLElement.classList.add('textae-editor--control-hidden')
         break
@@ -239,7 +239,7 @@ export default class UseCase {
         break
       default:
         // Set control bar visibility.
-        if (!inlineOptions.isEditMode) {
+        if (!startUpOptions.isEditMode) {
           editorHTMLElement.classList.add('textae-editor--control-hidden')
         }
         break
@@ -254,7 +254,7 @@ export default class UseCase {
       remoteResource,
       controlViewModel,
       originalData,
-      inlineOptions,
+      startUpOptions,
       functionAvailability
     )
 

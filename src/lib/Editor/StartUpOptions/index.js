@@ -1,6 +1,6 @@
 import AnnotationResource from './AnnotationResource'
 
-export default class HTMLInlineOptions {
+export default class StartUpOptions {
   #element
   #resource
 
