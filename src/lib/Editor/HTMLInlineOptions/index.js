@@ -1,14 +1,14 @@
-import AnnotationParameter from './AnnotationParameter'
+import AnnotationResource from './AnnotationResource'
 
 export default class HTMLInlineOptions {
   #element
-  #annotationParameter
+  #resource
 
   constructor(element) {
     this.#element = element
 
     // Reading inline annotations is a destructive operation, so it is done in the constructor.
-    this.#annotationParameter = new AnnotationParameter(
+    this.#resource = new AnnotationResource(
       this.#element,
       this.#source,
       this.#isIgnoreAnnotationParameter,
@@ -17,16 +17,16 @@ export default class HTMLInlineOptions {
   }
 
   get annotation() {
-    if (this.#annotationParameter.isLoaded) {
-      return this.#annotationParameter.annotation
+    if (this.#resource.isLoaded) {
+      return this.#resource.annotation
     }
 
     return null
   }
 
   get annotationURL() {
-    if (this.#annotationParameter.isRemote) {
-      return this.#annotationParameter.URL
+    if (this.#resource.isRemote) {
+      return this.#resource.URL
     }
 
     return null

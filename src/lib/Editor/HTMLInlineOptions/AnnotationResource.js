@@ -1,4 +1,4 @@
-export default class AnnotationParameter {
+export default class AnnotationResource {
   #annotation
   #sourceURL
 
