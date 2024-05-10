@@ -17,7 +17,9 @@
 
 <body>
     <div style="position: absolute; left: 700px; width: calc(100% - 700px); height: 1000px; overflow: scroll; top: 10px;">
-        <div class="textae-editor" mode="edit" source="query_parameter"></div>
+        <div class="textae-editor" mode="edit" source="ignore source url">
+            do not display inline annotation
+        </div>
     </div>
 
     <div id="css_area"></div>
@@ -36,6 +38,7 @@
             source="https://pubannotation.org/projects/DisGeNET/docs/sourcedb/PubMed/sourceid/10021369/annotations.json"
             config_lock="true"
             style="height: 400px; overflow-y: scroll;"
+            ignore_annotation_parameter="true"
         ></div>
     </div>
     <div id="abc"></div>
@@ -51,6 +54,7 @@
                 source="1_annotations.json?bbbb=aaa"
                 autocompletion_ws="/dev/autocomplete?order=desc"
                 config_lock="false"
+                ignore_annotation_parameter="true"
             ></div>
             <div style="height: 300px; margin-top: 100px;">Try scrolling. If no error occurs, the event listener has been deleted.</div>
         </div>
@@ -69,6 +73,7 @@
             config_lock="false"
             mode="edit"
             control="visible"
+            ignore_annotation_parameter="true"
         ></div>
         <div
             class="textae-editor"
@@ -77,6 +82,7 @@
             config="2_config.json"
             mode="edit"
             control="hidden"
+            ignore_annotation_parameter="true"
         ></div>
         <div
             class="textae-editor"
@@ -86,6 +92,7 @@
             status_bar="off"
             control="hidden"
             focus_first_denotation="true"
+            ignore_annotation_parameter="true"
         ></div>
         <div
             class="textae-editor"
@@ -94,6 +101,7 @@
             mode="relation-edit"
             status_bar='on'
             padding_top="100"
+            ignore_annotation_parameter="true"
         >
             {
                 "config": {
@@ -187,14 +195,20 @@
             target="3_annotations.json"
             save_to="http://pubannotation.org/projects/penguin-fly/docs/sourcedb/PubMed/sourceid/10089213/annotations.json"
             mode="edit"
+            ignore_annotation_parameter="true"
         ></div>
         <div
             class="textae-editor"
             title="editor7 import a target file from a text file."
             mode="edit"
             status_bar="on"
+            ignore_annotation_parameter="true"
         ></div>
-        <div class="textae-editor" title="editor8" mode="edit">
+        <div class="textae-editor"
+             title="editor8"
+             mode="edit"
+             ignore_annotation_parameter="true"
+        >
             {
                 "text":"   I have a stomach  ache.",
                 "denotations":[

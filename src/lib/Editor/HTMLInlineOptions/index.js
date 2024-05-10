@@ -10,7 +10,8 @@ export default class HTMLInlineOptions {
     // Reading inline annotations is a destructive operation, so it is done in the constructor.
     this.#annotationParameter = new AnnotationParameter(
       this.#element,
-      this.#source
+      this.#source,
+      this.#isIgnoreAnnotationParameter
     )
   }
 
@@ -123,5 +124,9 @@ export default class HTMLInlineOptions {
     }
 
     return null
+  }
+
+  get #isIgnoreAnnotationParameter() {
+    return Boolean(this.#element.getAttribute('ignore_annotation_parameter'))
   }
 }

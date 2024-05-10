@@ -2,22 +2,19 @@ export default class AnnotationParameter {
   #annotation
   #sourceURL
 
-  constructor(element, sourceURL) {
-    const inlineAnnotation = this.#deconstructInlineAnnotation(element)
-    if (inlineAnnotation) {
-      // Read annotation from inline annotation.
-      this.#annotation = inlineAnnotation
-    } else if (sourceURL == 'query_parameter') {
+  constructor(element, sourceURL, isIgnoreAnnotationParameter = false) {
+    const params = new URLSearchParams(window.location.search)
+    if (!isIgnoreAnnotationParameter && params.get('annotation') != null) {
       // Read annotation from query parameter.
-      const params = new URLSearchParams(window.location.search)
-      if (params.get('annotation') != null) {
-        this.#annotation = decodeURIComponent(params.get('annotation'))
-      }
-
-      // Clear sourceURL to avoid loading remote annotation.
-      this.#sourceURL = null
+      this.#annotation = decodeURIComponent(params.get('annotation'))
     } else if (sourceURL) {
       this.#sourceURL = decodeURIComponent(sourceURL)
+    } else {
+      const inlineAnnotation = this.#deconstructInlineAnnotation(element)
+      if (inlineAnnotation) {
+        // Read annotation from inline annotation.
+        this.#annotation = inlineAnnotation
+      }
     }
   }
 
