@@ -30,11 +30,6 @@ export default class AnnotationParameter {
   }
 
   get isRemote() {
-    // Inline annotation is prioritized.
-    if (this.isLoaded) {
-      return false
-    }
-
     return Boolean(this.#sourceURL)
   }
 
