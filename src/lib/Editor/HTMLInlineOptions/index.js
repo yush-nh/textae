@@ -28,6 +28,14 @@ export default class HTMLInlineOptions {
     return null
   }
 
+  get annotationURL() {
+    if (this.#annotationParameter.isRemote) {
+      return this.#annotationParameter.URL
+    }
+
+    return null
+  }
+
   get autocompletionWS() {
     return this.#readAttributeAsURL('autocompletion_ws')
   }

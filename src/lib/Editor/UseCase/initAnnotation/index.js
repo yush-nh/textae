@@ -57,9 +57,9 @@ export default function (
         originalData.annotation = dataSource
       }
     }
-  } else if (inlineOptions.annotationParameter.isRemote) {
+  } else if (inlineOptions.annotationURL) {
     // Load an annotation from server.
-    remoteResource.loadAnnotation(inlineOptions.annotationParameter.URL)
+    remoteResource.loadAnnotation(inlineOptions.annotationURL)
   } else {
     if (inlineOptions.configParameter) {
       remoteResource.loadConfiguration(inlineOptions.configParameter)
