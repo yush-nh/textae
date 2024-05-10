@@ -2,16 +2,11 @@ export default class AnnotationResource {
   #annotation
   #sourceURL
 
-  constructor(
-    element,
-    sourceURL,
-    isIgnoreAnnotationParameter,
-    annotationFromQueryParameter
-  ) {
-    if (!isIgnoreAnnotationParameter && annotationFromQueryParameter) {
+  constructor(element, sourceURL, annotationFromQueryParameter) {
+    if (annotationFromQueryParameter) {
       this.#annotation = annotationFromQueryParameter
     } else if (sourceURL) {
-      this.#sourceURL = decodeURIComponent(sourceURL)
+      this.#sourceURL = sourceURL
     } else {
       const inlineAnnotation = this.#deconstructInlineAnnotation(element)
       if (inlineAnnotation) {

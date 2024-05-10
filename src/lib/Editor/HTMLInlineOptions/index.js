@@ -10,8 +10,7 @@ export default class HTMLInlineOptions {
     // Reading inline annotations is a destructive operation, so it is done in the constructor.
     this.#resource = new AnnotationResource(
       this.#element,
-      this.#source,
-      this.#isIgnoreAnnotationParameter,
+      this.#sourceURL,
       this.#annotationFromQueryParameter
     )
   }
@@ -43,8 +42,8 @@ export default class HTMLInlineOptions {
   get configLock() {
     // Over write editor-div's config lock state by url's.
     // Url's default is 'unlock', so its default is also 'unlock'.
-    if (this.#source) {
-      const searchParams = new URLSearchParams(this.#source.split('?')[1])
+    if (this.#sourceURL) {
+      const searchParams = new URLSearchParams(this.#sourceURL.split('?')[1])
 
       if (searchParams.has('config_lock')) {
         return searchParams.get('config_lock')
@@ -119,8 +118,10 @@ export default class HTMLInlineOptions {
       : 0
   }
 
-  get #source() {
-    return this.#readAttribute('source') || this.#readAttribute('target')
+  get #sourceURL() {
+    return (
+      this.#readAttributeAsURL('source') || this.#readAttributeAsURL('target')
+    )
   }
 
   #readAttribute(name) {
@@ -139,12 +140,16 @@ export default class HTMLInlineOptions {
     return null
   }
 
-  get #isIgnoreAnnotationParameter() {
-    return Boolean(this.#element.getAttribute('ignore_annotation_parameter'))
-  }
-
   get #annotationFromQueryParameter() {
+    if (this.#isIgnoreAnnotationParameter) {
+      return null
+    }
+
     const params = new URLSearchParams(window.location.search)
     return decodeURIComponent(params.get('annotation'))
+  }
+
+  get #isIgnoreAnnotationParameter() {
+    return Boolean(this.#element.getAttribute('ignore_annotation_parameter'))
   }
 }
