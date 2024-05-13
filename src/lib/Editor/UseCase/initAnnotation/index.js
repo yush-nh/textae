@@ -20,7 +20,7 @@ export default function (
     case RESOURCE_TYPE.QUERY_PARAMETER:
       setLoadedAnnotation(
         DataSource.createParameterSource(startUpOptions.annotation),
-        startUpOptions.configParameter,
+        startUpOptions.config,
         remoteResource,
         controlViewModel,
         spanConfig,
@@ -32,7 +32,7 @@ export default function (
     case RESOURCE_TYPE.INLINE:
       setLoadedAnnotation(
         DataSource.createInlineSource(startUpOptions.annotation),
-        startUpOptions.configParameter,
+        startUpOptions.config,
         remoteResource,
         controlViewModel,
         spanConfig,
@@ -46,8 +46,8 @@ export default function (
       remoteResource.loadAnnotation(startUpOptions.annotationURL)
       break
     default:
-      if (startUpOptions.configParameter) {
-        remoteResource.loadConfiguration(startUpOptions.configParameter)
+      if (startUpOptions.config) {
+        remoteResource.loadConfiguration(startUpOptions.config)
       } else {
         setDefault(
           originalData,
