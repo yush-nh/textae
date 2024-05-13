@@ -78,7 +78,9 @@ export default class PersistenceInterface {
   uploadAnnotation() {
     new SaveAnnotationDialog(
       this.#eventEmitter,
-      this.#saveToParameter || this.#remoteResource.annotationUrl,
+      this.#saveToParameter ||
+        this.#remoteResource.annotationUrl ||
+        'https://pubannotatoin.org/annotations.json',
       this.#filenameOfLastRead.annotation,
       this.#editedAnnotation,
       (url) => this.#remoteResource.saveAnnotation(url, this.#editedAnnotation)
