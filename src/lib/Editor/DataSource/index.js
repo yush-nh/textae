@@ -31,6 +31,10 @@ export default class DataSource {
     return new DataSource('inline', null, data)
   }
 
+  static createParameterSource(data) {
+    return new DataSource('parameter', null, data)
+  }
+
   /**
    * @constructor
    * @param {string} type - Indicates the type of data source: url, inline, instant, or local file.
@@ -39,7 +43,8 @@ export default class DataSource {
    */
   constructor(type, id, data) {
     console.assert(
-      type === 'url' ||
+      type === 'parameter' ||
+        type === 'url' ||
         type === 'inline' ||
         type === 'instant' ||
         type === 'local file',

@@ -19,9 +19,23 @@ export default function (
   functionAvailability
 ) {
   switch (startUpOptions.resourceType) {
+    case 'parameter':
+      setInlineAnnotation(
+        // Set an inline annotation.
+        DataSource.createParameterSource(startUpOptions.annotation),
+        startUpOptions.configParameter,
+        remoteResource,
+        controlViewModel,
+        spanConfig,
+        annotationModel,
+        functionAvailability,
+        originalData
+      )
+      break
     case 'inline':
       setInlineAnnotation(
-        startUpOptions,
+        DataSource.createInlineSource(startUpOptions.annotation),
+        startUpOptions.configParameter,
         remoteResource,
         controlViewModel,
         spanConfig,
@@ -50,7 +64,8 @@ export default function (
 }
 
 function setInlineAnnotation(
-  startUpOptions,
+  dataSource,
+  configurationURL,
   remoteResource,
   controlViewModel,
   spanConfig,
@@ -58,11 +73,8 @@ function setInlineAnnotation(
   functionAvailability,
   originalData
 ) {
-  // Set an inline annotation.
-  const dataSource = DataSource.createInlineSource(startUpOptions.annotation)
-
-  if (!dataSource.data.config && startUpOptions.configParameter) {
-    remoteResource.loadConfiguration(startUpOptions.configParameter, dataSource)
+  if (!dataSource.data.config && configurationURL) {
+    remoteResource.loadConfiguration(configurationURL, dataSource)
   } else {
     warningIfBeginEndOfSpanAreNotInteger(dataSource.data)
 

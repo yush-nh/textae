@@ -16,7 +16,9 @@ export default class StartUpOptions {
   }
 
   get resourceType() {
-    if (this.annotation) {
+    if (this.#annotationFromQueryParameter) {
+      return 'parameter'
+    } else if (this.annotation) {
       return 'inline'
     } else if (this.annotationURL) {
       return 'remote'
