@@ -1,4 +1,5 @@
 import DataSource from '../../DataSource.js'
+import { RESOURCE_TYPE } from '../../RESOURCE_TYPE.js'
 import setDefault from './setDefault.js'
 import setLoadedAnnotation from './setLoadedAnnotation.js'
 
@@ -16,7 +17,7 @@ export default function (
   functionAvailability
 ) {
   switch (startUpOptions.resourceType) {
-    case 'parameter':
+    case RESOURCE_TYPE.QUERY_PARAMETER:
       setLoadedAnnotation(
         DataSource.createParameterSource(startUpOptions.annotation),
         startUpOptions.configParameter,
@@ -28,7 +29,7 @@ export default function (
         originalData
       )
       break
-    case 'inline':
+    case RESOURCE_TYPE.INLINE:
       setLoadedAnnotation(
         DataSource.createInlineSource(startUpOptions.annotation),
         startUpOptions.configParameter,
@@ -40,7 +41,7 @@ export default function (
         originalData
       )
       break
-    case 'remote':
+    case RESOURCE_TYPE.REMOTE_URL:
       // Load an annotation from server.
       remoteResource.loadAnnotation(startUpOptions.annotationURL)
       break

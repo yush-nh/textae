@@ -1,3 +1,4 @@
+import { RESOURCE_TYPE } from '../RESOURCE_TYPE'
 import AnnotationResource from './AnnotationResource'
 
 export default class StartUpOptions {
@@ -17,14 +18,14 @@ export default class StartUpOptions {
 
   get resourceType() {
     if (this.#annotationFromQueryParameter) {
-      return 'parameter'
+      return RESOURCE_TYPE.QUERY_PARAMETER
     } else if (this.annotation) {
-      return 'inline'
+      return RESOURCE_TYPE.INLINE
     } else if (this.annotationURL) {
-      return 'remote'
+      return RESOURCE_TYPE.REMOTE_URL
     }
 
-    return 'other'
+    return RESOURCE_TYPE.UNKNOWN
   }
 
   get annotation() {

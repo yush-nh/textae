@@ -3,6 +3,7 @@ import alertifyjs from 'alertifyjs'
 import DataSource from '../DataSource'
 import isServerAuthRequired from './isServerAuthRequired'
 import openPopUp from './openPopUp'
+import { RESOURCE_TYPE } from '../RESOURCE_TYPE'
 
 // A sub component to save and load data.
 export default class RemoteSource {
@@ -24,7 +25,7 @@ export default class RemoteSource {
   }
 
   set annotationUrl(dataSource) {
-    if (dataSource.type === 'url') {
+    if (dataSource.type === RESOURCE_TYPE.REMOTE_URL) {
       this.#urlOfLastRead.annotation = dataSource.id
     }
   }
@@ -37,7 +38,7 @@ export default class RemoteSource {
   // because it requires both configuration and annotation.
   // The URL is set after the validation.
   set configurationUrl(dataSource) {
-    if (dataSource.type === 'url') {
+    if (dataSource.type === RESOURCE_TYPE.REMOTE_URL) {
       this.#urlOfLastRead.config = dataSource.id
     }
   }

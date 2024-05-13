@@ -1,3 +1,5 @@
+import { RESOURCE_TYPE } from './RESOURCE_TYPE'
+
 export default class DataSource {
   #type
   #id
@@ -9,7 +11,7 @@ export default class DataSource {
       'id must be a string when type is url.'
     )
 
-    return new DataSource('url', id, data)
+    return new DataSource(RESOURCE_TYPE.REMOTE_URL, id, data)
   }
 
   static createFileSource(id, data) {
@@ -18,19 +20,19 @@ export default class DataSource {
       'id must be a string when type is local file.'
     )
 
-    return new DataSource('local file', id, data)
+    return new DataSource(RESOURCE_TYPE.LOCAL_FILE, id, data)
   }
 
   static createInstantSource(data) {
-    return new DataSource('instant', null, data)
+    return new DataSource(RESOURCE_TYPE.INSTANT, null, data)
   }
 
   static createInlineSource(data) {
-    return new DataSource('inline', null, data)
+    return new DataSource(RESOURCE_TYPE.INLINE, null, data)
   }
 
   static createParameterSource(data) {
-    return new DataSource('parameter', null, data)
+    return new DataSource(RESOURCE_TYPE.QUERY_PARAMETER, null, data)
   }
 
   /**
@@ -41,14 +43,13 @@ export default class DataSource {
    */
   constructor(type, id, data) {
     console.assert(
-      type === 'parameter' ||
-        type === 'url' ||
-        type === 'inline' ||
-        type === 'instant' ||
-        type === 'local file',
+      RESOURCE_TYPE[type] !== undefined,
       'type must be url, inline, instant, local file.'
     )
-    if (type === 'url' || type === 'local file') {
+    if (
+      type === RESOURCE_TYPE.REMOTE_URL ||
+      type === RESOURCE_TYPE.LOCAL_FILE
+    ) {
       console.assert(
         typeof id === 'string',
         'id must be a string when type is url or local file.'
@@ -76,9 +77,9 @@ export default class DataSource {
 
   get displayName() {
     switch (this.#type) {
-      case 'url':
+      case RESOURCE_TYPE.REMOTE_URL:
         return new URL(this.#id, location.href).href
-      case 'local file':
+      case RESOURCE_TYPE.LOCAL_FILE:
         return `${this.#id}(local file)`
       default:
         return `${this.#type}`
