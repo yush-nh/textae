@@ -18,6 +18,10 @@ export default class PersistenceInterface {
   #controlViewModel
   #filenameOfLastRead
 
+  /**
+   *
+   * @param {import('../../RemoteResource/index.js').default} remoteResource
+   */
   constructor(
     eventEmitter,
     remoteResource,
