@@ -1,5 +1,3 @@
-import toSourceString from './toSourceString'
-
 export default class DataSource {
   #type
   #id
@@ -77,6 +75,13 @@ export default class DataSource {
   }
 
   get displayName() {
-    return toSourceString(this.#type, this.#id)
+    switch (this.#type) {
+      case 'url':
+        return new URL(this.#id, location.href).href
+      case 'local file':
+        return `${this.#id}(local file)`
+      default:
+        return `${this.#type}`
+    }
   }
 }
