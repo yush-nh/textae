@@ -20,7 +20,7 @@ export default function (
 ) {
   switch (startUpOptions.resourceType) {
     case 'parameter':
-      setInlineAnnotation(
+      setLoadedAnnotation(
         DataSource.createParameterSource(startUpOptions.annotation),
         startUpOptions.configParameter,
         remoteResource,
@@ -32,7 +32,7 @@ export default function (
       )
       break
     case 'inline':
-      setInlineAnnotation(
+      setLoadedAnnotation(
         DataSource.createInlineSource(startUpOptions.annotation),
         startUpOptions.configParameter,
         remoteResource,
@@ -62,7 +62,7 @@ export default function (
   }
 }
 
-function setInlineAnnotation(
+function setLoadedAnnotation(
   dataSource,
   configurationURL,
   remoteResource,
