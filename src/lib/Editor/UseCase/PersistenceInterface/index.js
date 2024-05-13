@@ -55,7 +55,7 @@ export default class PersistenceInterface {
   importAnnotation() {
     new LoadDialog(
       'Load Annotations',
-      this.#remoteResource.annotationUrl,
+      this.#remoteResource.annotationURL,
       (url) => this.#remoteResource.loadAnnotation(url),
       (file) => {
         readAnnotationFile(file, this.#eventEmitter)
@@ -78,7 +78,7 @@ export default class PersistenceInterface {
   uploadAnnotation() {
     const url =
       this.#saveToParameter ||
-      this.#remoteResource.annotationUrl ||
+      this.#remoteResource.annotationURL ||
       'https://pubannotatoin.org/annotations.json' // Default destination URL
 
     new SaveAnnotationDialog(
@@ -92,7 +92,7 @@ export default class PersistenceInterface {
 
   saveAnnotation() {
     this.#remoteResource.saveAnnotation(
-      this.#saveToParameter || this.#remoteResource.annotationUrl,
+      this.#saveToParameter || this.#remoteResource.annotationURL,
       this.#editedAnnotation
     )
   }

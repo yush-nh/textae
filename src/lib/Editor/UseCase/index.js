@@ -154,7 +154,7 @@ export default class UseCase {
             }
 
             originalData.annotation = dataSource
-            remoteResource.annotationUrl = dataSource
+            remoteResource.annotationURL = dataSource
           }
         }
       })
@@ -203,7 +203,7 @@ export default class UseCase {
 
           if (loadedAnnotation) {
             originalData.annotation = loadedAnnotation
-            remoteResource.annotationUrl = loadedAnnotation
+            remoteResource.annotationURL = loadedAnnotation
           }
 
           originalData.configuration = dataSource.data

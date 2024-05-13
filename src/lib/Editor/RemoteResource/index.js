@@ -20,11 +20,11 @@ export default class RemoteSource {
     }
   }
 
-  get annotationUrl() {
+  get annotationURL() {
     return this.#urlOfLastRead.annotation
   }
 
-  set annotationUrl(dataSource) {
+  set annotationURL(dataSource) {
     if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
       this.#urlOfLastRead.annotation = dataSource.id
     }
