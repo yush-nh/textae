@@ -30,14 +30,14 @@ export default class RemoteSource {
     }
   }
 
-  get configurationUrl() {
+  get configurationURL() {
     return this.#urlOfLastRead.config
   }
 
   // The configuration validation is done with setConfigAndAnnotation
   // because it requires both configuration and annotation.
   // The URL is set after the validation.
-  set configurationUrl(dataSource) {
+  set configurationURL(dataSource) {
     if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
       this.#urlOfLastRead.config = dataSource.id
     }

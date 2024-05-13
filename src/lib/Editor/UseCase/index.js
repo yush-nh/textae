@@ -207,7 +207,7 @@ export default class UseCase {
           }
 
           originalData.configuration = dataSource.data
-          remoteResource.configurationUrl = dataSource
+          remoteResource.configurationURL = dataSource
         }
       )
 
