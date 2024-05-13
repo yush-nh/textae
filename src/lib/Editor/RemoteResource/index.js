@@ -25,7 +25,7 @@ export default class RemoteSource {
   }
 
   set annotationUrl(dataSource) {
-    if (dataSource.type === RESOURCE_TYPE.REMOTE_URL) {
+    if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
       this.#urlOfLastRead.annotation = dataSource.id
     }
   }
@@ -38,7 +38,7 @@ export default class RemoteSource {
   // because it requires both configuration and annotation.
   // The URL is set after the validation.
   set configurationUrl(dataSource) {
-    if (dataSource.type === RESOURCE_TYPE.REMOTE_URL) {
+    if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
       this.#urlOfLastRead.config = dataSource.id
     }
   }

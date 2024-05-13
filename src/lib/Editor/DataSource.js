@@ -63,7 +63,7 @@ export default class DataSource {
     this.#data = data
   }
 
-  get type() {
+  get resourceType() {
     return this.#type
   }
 
