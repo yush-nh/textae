@@ -79,7 +79,7 @@ export default class PersistenceInterface {
     const url =
       this.#saveToParameter ||
       this.#remoteResource.annotationUrl ||
-      'https://pubannotatoin.org/annotations.json'
+      'https://pubannotatoin.org/annotations.json' // Default destination URL
 
     new SaveAnnotationDialog(
       this.#eventEmitter,
