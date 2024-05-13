@@ -21,7 +21,6 @@ export default function (
   switch (startUpOptions.resourceType) {
     case 'parameter':
       setInlineAnnotation(
-        // Set an inline annotation.
         DataSource.createParameterSource(startUpOptions.annotation),
         startUpOptions.configParameter,
         remoteResource,
