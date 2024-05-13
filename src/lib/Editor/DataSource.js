@@ -43,8 +43,8 @@ export default class DataSource {
    */
   constructor(type, id, data) {
     console.assert(
-      RESOURCE_TYPE[type] !== undefined,
-      'type must be url, inline, instant, local file.'
+      Object.values(RESOURCE_TYPE).includes(type),
+      `type must be a member of RESOURCE_TYPE. type: ${type}`
     )
     if (
       type === RESOURCE_TYPE.REMOTE_URL ||
