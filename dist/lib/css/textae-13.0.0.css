@@ -1349,9 +1349,9 @@ a.ui-button:active,
   box-shadow: -5px -5px 5px #000;
 }
 /**
- * alertifyjs 1.13.1 http://alertifyjs.com
+ * alertifyjs 1.14.0 http://alertifyjs.com
  * AlertifyJS is a javascript framework for developing pretty browser dialogs and notifications.
- * Copyright 2019 Mohammad Younes <Mohammad@alertifyjs.com> (http://alertifyjs.com) 
+ * Copyright 2024 Mohammad Younes <Mohammad@alertifyjs.com> (http://alertifyjs.com) 
  * Licensed under GPL 3 <https://opensource.org/licenses/gpl-3.0>*/
 .alertify .ajs-dimmer {
   position: fixed;
@@ -2317,9 +2317,9 @@ a.ui-button:active,
   }
 }
 /**
- * alertifyjs 1.13.1 http://alertifyjs.com
+ * alertifyjs 1.14.0 http://alertifyjs.com
  * AlertifyJS is a javascript framework for developing pretty browser dialogs and notifications.
- * Copyright 2019 Mohammad Younes <Mohammad@alertifyjs.com> (http://alertifyjs.com) 
+ * Copyright 2024 Mohammad Younes <Mohammad@alertifyjs.com> (http://alertifyjs.com) 
  * Licensed under GPL 3 <https://opensource.org/licenses/gpl-3.0>*/
 .alertify .ajs-dialog {
   background-color: white;
@@ -3975,9 +3975,7 @@ ul.jsondiffpatch-textdiff {
 }
 .textae-editor__footer {
   background: linear-gradient(to left, #ffffff, #ddddff);
-  bottom: -2px;
   height: 20px;
-  left: -2px;
   line-height: normal;
   opacity: 0.9;
   overflow-y: hidden;

@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.0.0](https://github.com/pubannotation/textae/compare/v12.15.1...v13.0.0) (2024-05-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* In order of priority
+1. the JSON specified in the annotation_parameter of the query parameter
+2. the URL specified in the source attribute of the HTML element
+3. the JSON specified in the child element of the HTML element
+
+### Features
+
+* Change the priority of the source to read annotations ([d048026](https://github.com/pubannotation/textae/commit/d048026e58e4714f2d2eef25c7bc219d4344da74))
+* If an annotation is set by query parameters, "parameter" is displayed in the status bar. ([afebb2e](https://github.com/pubannotation/textae/commit/afebb2eb6e2ee0f2028330dce110e1dda77fcc3a))
+* Set default destination URL to https://pubannotatoin.org/annotations.json ([99b3729](https://github.com/pubannotation/textae/commit/99b37299826acbc9077365692e53862be3c2624c))
+
+
+### Bug Fixes
+
+* Error occurs when loading local files ([594e90d](https://github.com/pubannotation/textae/commit/594e90da55a8ca1704d60161df4f202548d2347a))
+* Status bar pops out of the editor ([14d5365](https://github.com/pubannotation/textae/commit/14d53651f649f7ed443cf1b222d43f2ecd038c4b))
+
 ### [12.15.1](https://github.com/pubannotation/textae/compare/v12.15.0...v12.15.1) (2024-05-08)
 
 ## [12.15.0](https://github.com/pubannotation/textae/compare/v12.14.0...v12.15.0) (2024-03-13)
