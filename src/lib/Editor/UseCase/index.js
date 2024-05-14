@@ -160,32 +160,33 @@ export default class UseCase {
       })
       .on(
         'textae-event.resource.configuration.load.success',
-        (dataSource, loadedAnnotation = null) => {
+        (configurationDataSource, annotationDataSource = null) => {
           // When config is specified, it must be JSON.
           // For example, when we load an HTML file, we treat it as text here.
-          if (typeof dataSource.data !== 'object') {
+          if (typeof configurationDataSource.data !== 'object') {
             alertifyjs.error(
-              `${dataSource.displayName} is not a configuration file or its format is invalid.`
+              `${configurationDataSource.displayName} is not a configuration file or its format is invalid.`
             )
             return
           }
 
-          if (loadedAnnotation) {
-            warningIfBeginEndOfSpanAreNotInteger(loadedAnnotation.data)
+          if (annotationDataSource) {
+            warningIfBeginEndOfSpanAreNotInteger(annotationDataSource.data)
           }
 
           // If an annotation that does not contain a configuration is loaded
           // and a configuration is loaded from a textae attribute value,
           // both the loaded configuration and the annotation are passed.
           // If only the configuration is read, the annotation is null.
-          const annotation = (loadedAnnotation && loadedAnnotation.data) || {
+          const annotation = (annotationDataSource &&
+            annotationDataSource.data) || {
             ...originalData.annotation,
             ...annotationModel.externalFormat
           }
 
           const validConfig = validateConfigurationAndAlert(
             annotation,
-            dataSource.data
+            configurationDataSource.data
           )
 
           if (!validConfig) {
@@ -201,13 +202,13 @@ export default class UseCase {
             functionAvailability
           )
 
-          if (loadedAnnotation) {
-            originalData.annotation = loadedAnnotation
-            remoteResource.annotationURL = loadedAnnotation
+          if (annotationDataSource) {
+            originalData.annotation = annotationDataSource
+            remoteResource.annotationURL = annotationDataSource
           }
 
-          originalData.configuration = dataSource.data
-          remoteResource.configurationURL = dataSource
+          originalData.configuration = configurationDataSource.data
+          remoteResource.configurationURL = configurationDataSource
         }
       )
 
