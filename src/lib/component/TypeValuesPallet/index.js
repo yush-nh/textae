@@ -71,7 +71,7 @@ export default class TypeValuesPallet extends Pallet {
 
     eventEmitter
       .on('textae-event.editor.unselect', () => this.hide()) // Close pallet when selecting other editor.
-      .on('textae-event.original-data.configuration.reset', () =>
+      .on('textae-event.resource.configuration.save', () =>
         this.updateDisplay()
       )
       .on(`textae-event.type-definition.lock`, () => this.updateDisplay())

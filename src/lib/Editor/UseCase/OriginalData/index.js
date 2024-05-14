@@ -18,9 +18,6 @@ export default class OriginalData {
       })
       .on('textae-event.resource.configuration.save', (editedConfiguration) => {
         this.#configuration = editedConfiguration
-        this.#eventEmitter.emit(
-          'textae-event.original-data.configuration.reset'
-        )
       })
   }
 
