@@ -38,7 +38,7 @@ export default class OriginalData {
    * @returns { import("../../DataSource").default }
    */
   get annotation() {
-    return this.#annotation ? this.#annotation.data : this.defaultAnnotation
+    return this.#annotation ? this.#annotation : this.defaultAnnotation
   }
 
   /**
