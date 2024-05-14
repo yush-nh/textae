@@ -6,6 +6,36 @@ import readConfigurationFile from './readConfigurationFile'
 import DataSource from '../../DataSource'
 import isJSON from '../../../isJSON'
 import readAnnotationText from './readAnnotationText'
+import { RESOURCE_TYPE } from '../../RESOURCE_TYPE.js'
+
+class LastLoadedURL {
+  #annotation
+  #configuration
+
+  constructor(eventEmitter) {
+    // The configuration validation is done with setConfigAndAnnotation
+    // because it requires both configuration and annotation.
+    // The URL is set after the validation.
+    eventEmitter
+      .on('textae-event.original-data.annotation.reset', (dataSource) => {
+        if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
+          this.#annotation = dataSource.id
+        }
+      })
+      .on('textae-event.original-data.configuration.reset', (dataSource) => {
+        if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
+          this.#configuration = dataSource.id
+        }
+      })
+  }
+
+  get annotation() {
+    return this.#annotation
+  }
+  get configuration() {
+    return this.#configuration
+  }
+}
 
 export default class PersistenceInterface {
   #eventEmitter
@@ -16,6 +46,7 @@ export default class PersistenceInterface {
   #saveToParameter
   #annotationModelEventsObserver
   #controlViewModel
+  #lastLoadedURL
   #filenameOfLastRead
 
   /**
@@ -41,6 +72,8 @@ export default class PersistenceInterface {
     this.#annotationModelEventsObserver = annotationModelEventsObserver
     this.#controlViewModel = controlViewModel
 
+    this.#lastLoadedURL = new LastLoadedURL(eventEmitter)
+
     // Store the filename of the annotation and configuration.
     this.#filenameOfLastRead = {
       annotation: '',
@@ -59,7 +92,7 @@ export default class PersistenceInterface {
   importAnnotation() {
     new LoadDialog(
       'Load Annotations',
-      this.#remoteResource.annotationURL,
+      this.#lastLoadedURL.annotation,
       (url) => this.#remoteResource.loadAnnotation(url),
       (file) => {
         readAnnotationFile(file, this.#eventEmitter)
@@ -82,7 +115,7 @@ export default class PersistenceInterface {
   uploadAnnotation() {
     const url =
       this.#saveToParameter ||
-      this.#remoteResource.annotationURL ||
+      this.#lastLoadedURL.annotation ||
       'https://pubannotatoin.org/annotations.json' // Default destination URL
 
     new SaveAnnotationDialog(
@@ -96,7 +129,7 @@ export default class PersistenceInterface {
 
   saveAnnotation() {
     this.#remoteResource.saveAnnotation(
-      this.#saveToParameter || this.#remoteResource.annotationURL,
+      this.#saveToParameter || this.#lastLoadedURL.annotation,
       this.#editedAnnotation
     )
   }
@@ -104,7 +137,7 @@ export default class PersistenceInterface {
   importConfiguration() {
     new LoadDialog(
       'Load Configurations',
-      this.#remoteResource.configurationURL,
+      this.#lastLoadedURL.configuration,
       (url) => this.#remoteResource.loadConfiguration(url),
       (file) => {
         readConfigurationFile(file, this.#eventEmitter)
@@ -136,7 +169,7 @@ export default class PersistenceInterface {
 
     new SaveConfigurationDialog(
       this.#eventEmitter,
-      this.#remoteResource.configurationURL,
+      this.#lastLoadedURL.configuration,
       this.#filenameOfLastRead.configuration,
       this.#getOriginalConfig(),
       editedConfig,
