@@ -56,7 +56,10 @@ export default class OriginalData {
 
   set configuration(dataSource) {
     this.#configuration = dataSource.data
-    this.#eventEmitter.emit('textae-event.original-data.configuration.reset')
+    this.#eventEmitter.emit(
+      'textae-event.original-data.configuration.reset',
+      dataSource
+    )
   }
 
   set #annotationAndConfiguration(annotation) {

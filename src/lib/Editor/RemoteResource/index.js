@@ -19,14 +19,20 @@ export default class RemoteSource {
       config: ''
     }
 
-    eventEmitter.on(
-      'textae-event.original-data.annotation.reset',
-      (dataSource) => {
+    // The configuration validation is done with setConfigAndAnnotation
+    // because it requires both configuration and annotation.
+    // The URL is set after the validation.
+    eventEmitter
+      .on('textae-event.original-data.annotation.reset', (dataSource) => {
         if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
           this.#urlOfLastRead.annotation = dataSource.id
         }
-      }
-    )
+      })
+      .on('textae-event.original-data.configuration.reset', (dataSource) => {
+        if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
+          this.#urlOfLastRead.config = dataSource.id
+        }
+      })
   }
 
   get annotationURL() {
@@ -35,15 +41,6 @@ export default class RemoteSource {
 
   get configurationURL() {
     return this.#urlOfLastRead.config
-  }
-
-  // The configuration validation is done with setConfigAndAnnotation
-  // because it requires both configuration and annotation.
-  // The URL is set after the validation.
-  set configurationURL(dataSource) {
-    if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
-      this.#urlOfLastRead.config = dataSource.id
-    }
   }
 
   loadAnnotation(url) {
