@@ -22,7 +22,7 @@ export default class RemoteSource {
     eventEmitter.on(
       'textae-event.original-data.annotation.reset',
       (dataSource) => {
-        this.annotationURL = dataSource
+        this.#annotationURL = dataSource
       }
     )
   }
@@ -31,7 +31,7 @@ export default class RemoteSource {
     return this.#urlOfLastRead.annotation
   }
 
-  set annotationURL(dataSource) {
+  set #annotationURL(dataSource) {
     if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
       this.#urlOfLastRead.annotation = dataSource.id
     }
