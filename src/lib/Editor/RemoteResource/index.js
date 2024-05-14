@@ -3,44 +3,13 @@ import alertifyjs from 'alertifyjs'
 import DataSource from '../DataSource'
 import isServerAuthRequired from './isServerAuthRequired'
 import openPopUp from './openPopUp'
-import { RESOURCE_TYPE } from '../RESOURCE_TYPE'
 
 // A sub component to save and load data.
 export default class RemoteSource {
   #eventEmitter
-  #urlOfLastRead
 
   constructor(eventEmitter) {
     this.#eventEmitter = eventEmitter
-
-    // Store the url the annotation data is loaded from per editor.
-    this.#urlOfLastRead = {
-      annotation: '',
-      config: ''
-    }
-
-    // The configuration validation is done with setConfigAndAnnotation
-    // because it requires both configuration and annotation.
-    // The URL is set after the validation.
-    eventEmitter
-      .on('textae-event.original-data.annotation.reset', (dataSource) => {
-        if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
-          this.#urlOfLastRead.annotation = dataSource.id
-        }
-      })
-      .on('textae-event.original-data.configuration.reset', (dataSource) => {
-        if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
-          this.#urlOfLastRead.config = dataSource.id
-        }
-      })
-  }
-
-  get annotationURL() {
-    return this.#urlOfLastRead.annotation
-  }
-
-  get configurationURL() {
-    return this.#urlOfLastRead.config
   }
 
   loadAnnotation(url) {
