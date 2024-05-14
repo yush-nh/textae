@@ -14,7 +14,7 @@ export default class OriginalData {
 
     eventEmitter
       .on('textae-event.resource.annotation.save', (editedData) => {
-        this.#annotationOnly = editedData
+        this.#annotationAndConfiguration = editedData
       })
       .on('textae-event.resource.configuration.save', (editedData) => {
         this.configuration = editedData
@@ -42,7 +42,7 @@ export default class OriginalData {
    * @param { import("../../DataSource").default } dataSource
    */
   set annotation(dataSource) {
-    this.#annotationOnly = dataSource.data
+    this.#annotationAndConfiguration = dataSource.data
     this.#statusBar.status = dataSource.displayName
     this.#eventEmitter.emit(
       'textae-event.original-data.annotation.reset',
@@ -59,7 +59,7 @@ export default class OriginalData {
     this.#eventEmitter.emit('textae-event.original-data.configuration.reset')
   }
 
-  set #annotationOnly(annotation) {
+  set #annotationAndConfiguration(annotation) {
     this.#annotation = annotation
     if (annotation.config) {
       this.#configuration = annotation.config
