@@ -67016,7 +67016,7 @@
       bindChangeLockConfig(content, typeDefinition)
     } // CONCATENATED MODULE: ./package.json
 
-    const package_namespaceObject = { rE: '13.0.0' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
+    const package_namespaceObject = { rE: '13.0.1' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
     function template_template(context) {
       const {
         typeGap,
@@ -106444,12 +106444,18 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         this.#statusBar = new StatusBar(editorHTMLElement, isShow)
 
         eventEmitter
-          .on('textae-event.resource.annotation.save', (editedData) => {
-            this.#annotationOnly = editedData
+          .on('textae-event.resource.annotation.save', (editedAnnotation) => {
+            this.#annotationAndConfiguration = editedAnnotation
           })
-          .on('textae-event.resource.configuration.save', (editedData) => {
-            this.configuration = editedData
-          })
+          .on(
+            'textae-event.resource.configuration.save',
+            (editedConfiguration) => {
+              this.#configuration = editedConfiguration
+              this.#eventEmitter.emit(
+                'textae-event.original-data.configuration.reset'
+              )
+            }
+          )
       }
 
       get defaultAnnotation() {
@@ -106466,14 +106472,14 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
        * @returns { import("../../DataSource").default }
        */
       get annotation() {
-        return this.#annotation ? this.#annotation.data : this.defaultAnnotation
+        return this.#annotation ? this.#annotation : this.defaultAnnotation
       }
 
       /**
        * @param { import("../../DataSource").default } dataSource
        */
       set annotation(dataSource) {
-        this.#annotationOnly = dataSource.data
+        this.#annotationAndConfiguration = dataSource.data
         this.#statusBar.status = dataSource.displayName
         this.#eventEmitter.emit(
           'textae-event.original-data.annotation.reset',
@@ -106485,14 +106491,14 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         return this.#configuration ? this.#configuration : {}
       }
 
-      set configuration(configuration) {
-        this.#configuration = configuration
+      set configuration(dataSource) {
+        this.#configuration = dataSource.data
         this.#eventEmitter.emit(
           'textae-event.original-data.configuration.reset'
         )
       }
 
-      set #annotationOnly(annotation) {
+      set #annotationAndConfiguration(annotation) {
         this.#annotation = annotation
         if (annotation.config) {
           this.#configuration = annotation.config
@@ -109110,7 +109116,7 @@ data-button-type="${type}">
                 originalData.annotation = annotationDataSource
               }
 
-              originalData.configuration = configurationDataSource.data
+              originalData.configuration = configurationDataSource
               remoteResource.configurationURL = configurationDataSource
             }
           )

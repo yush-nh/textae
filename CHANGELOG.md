@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.0.1](https://github.com/pubannotation/textae/compare/v13.0.0...v13.0.1) (2024-05-14)
+
+
+### Bug Fixes
+
+* Error occurs when creating new denotation ([65ff3d4](https://github.com/pubannotation/textae/commit/65ff3d4a39b0a2116cf7137d39fff052d122d455))
+
 ## [13.0.0](https://github.com/pubannotation/textae/compare/v12.15.1...v13.0.0) (2024-05-14)
 
 
