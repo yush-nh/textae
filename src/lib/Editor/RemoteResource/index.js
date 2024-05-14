@@ -18,6 +18,13 @@ export default class RemoteSource {
       annotation: '',
       config: ''
     }
+
+    eventEmitter.on(
+      'textae-event.original-data.annotation.reset',
+      (dataSource) => {
+        this.annotationURL = dataSource
+      }
+    )
   }
 
   get annotationURL() {

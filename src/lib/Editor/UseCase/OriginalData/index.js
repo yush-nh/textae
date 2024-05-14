@@ -44,6 +44,10 @@ export default class OriginalData {
   set annotation(dataSource) {
     this.#annotationOnly = dataSource.data
     this.#statusBar.status = dataSource.displayName
+    this.#eventEmitter.emit(
+      'textae-event.original-data.annotation.reset',
+      dataSource
+    )
   }
 
   get configuration() {
