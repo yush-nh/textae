@@ -13,11 +13,11 @@ export default class OriginalData {
     this.#statusBar = new StatusBar(editorHTMLElement, isShow)
 
     eventEmitter
-      .on('textae-event.resource.annotation.save', (editedData) => {
-        this.#annotationAndConfiguration = editedData
+      .on('textae-event.resource.annotation.save', (editedAnnotation) => {
+        this.#annotationAndConfiguration = editedAnnotation
       })
-      .on('textae-event.resource.configuration.save', (editedData) => {
-        this.configuration = editedData
+      .on('textae-event.resource.configuration.save', (editedConfiguration) => {
+        this.configuration = editedConfiguration
       })
   }
 
