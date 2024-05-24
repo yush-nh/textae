@@ -18,8 +18,8 @@ export default class RelationInstanceContainer extends IdIssueContainer {
   }
 
   /** @param {number} value */
-  set controlBarHeight(value) {
-    this._controlBarHeight = value
+  set toolBarHeight(value) {
+    this._toolBarHeight = value
   }
 
   _toInstance(relation) {
@@ -31,7 +31,7 @@ export default class RelationInstanceContainer extends IdIssueContainer {
       relation,
       this._namespace,
       this._definitionContainer,
-      this._controlBarHeight
+      this._toolBarHeight
     )
   }
 
@@ -48,7 +48,7 @@ export default class RelationInstanceContainer extends IdIssueContainer {
             newValue,
             this._namespace,
             this._definitionContainer,
-            this._controlBarHeight
+            this._toolBarHeight
           )
     const newInstance = super.add(newValue)
 

@@ -14,7 +14,7 @@ export default class RelationInstance {
     { id, pred, subj, obj },
     namespace,
     definitionContainer,
-    controlBarHeight
+    toolBarHeight
   ) {
     this._editorHTMLElement = editorHTMLElement
     this._eventEmitter = eventEmitter
@@ -26,7 +26,7 @@ export default class RelationInstance {
     this._obj = obj
     this._namespace = namespace
     this._definitionContainer = definitionContainer
-    this._controlBarHeight = controlBarHeight
+    this._toolBarHeight = toolBarHeight
     this._isSelected = false
 
     // When you click on a relation to deselect it, the display of the relation will be in hover.
@@ -127,7 +127,7 @@ export default class RelationInstance {
         this._arrow = new Arrow(
           this._editorHTMLElement,
           this,
-          this._controlBarHeight,
+          this._toolBarHeight,
           (event) => {
             this._eventEmitter.emit(
               'textae-event.editor.relation.click',

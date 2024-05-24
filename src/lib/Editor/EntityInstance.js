@@ -23,7 +23,7 @@ export default class EntityInstance {
     span,
     typeName,
     namespace,
-    controlBarHeight,
+    toolBarHeight,
     id = null
   ) {
     this._editorID = editorID
@@ -35,7 +35,7 @@ export default class EntityInstance {
     this._typeGap = typeGap
     this._typeDefinition = typeDefinition
     this._namespace = namespace
-    this._controlBarHeight = controlBarHeight
+    this._toolBarHeight = toolBarHeight
 
     this._isSelected = false
     this._isHovered = false
@@ -186,8 +186,7 @@ export default class EntityInstance {
 
   isInViewport(clientHeight) {
     return (
-      this._controlBarHeight <= this.clientBottom &&
-      this.clientTop <= clientHeight
+      this._toolBarHeight <= this.clientBottom && this.clientTop <= clientHeight
     )
   }
 

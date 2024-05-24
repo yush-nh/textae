@@ -34,8 +34,8 @@ export default class EntityInstanceContainer extends IdIssueContainer {
   }
 
   /** @param {number} value */
-  set controlBarHeight(value) {
-    this._controlBarHeight = value
+  set toolBarHeight(value) {
+    this._toolBarHeight = value
   }
 
   _toInstance(denotation, type) {
@@ -50,7 +50,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       span,
       denotation.obj,
       this._namespace,
-      this._controlBarHeight,
+      this._toolBarHeight,
       denotation.id
     )
 
@@ -79,7 +79,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       span,
       newValue.typeName,
       this._namespace,
-      this._controlBarHeight
+      this._toolBarHeight
     )
 
     console.assert(

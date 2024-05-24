@@ -33,6 +33,6 @@ export default class PointingDownCurveAlgorithm extends CurveAlgorithm {
   }
 
   get sourceY() {
-    return this._controlBarHeight - this._clientTopOfContainer
+    return this._toolBarHeight - this._clientTopOfContainer
   }
 }

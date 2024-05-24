@@ -34,6 +34,6 @@ export default class PointingUpCurveAlgorithm extends CurveAlgorithm {
   }
 
   get targetY() {
-    return this._controlBarHeight - this._clientTopOfContainer
+    return this._toolBarHeight - this._clientTopOfContainer
   }
 }

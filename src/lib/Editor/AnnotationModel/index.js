@@ -289,9 +289,9 @@ export default class AnnotationModel {
   }
 
   /** @param {number} value */
-  set controlBarHeight(value) {
-    this.entity.controlBarHeight = value
-    this.relation.controlBarHeight = value
+  set toolBarHeight(value) {
+    this.entity.toolBarHeight = value
+    this.relation.toolBarHeight = value
   }
 
   get #isEditorInSight() {

@@ -17,7 +17,7 @@ export default class CurveAlgorithmFactory {
     alignSourceBollards,
     alignTargetBollards,
     clientTopOfContainer,
-    controlBarHeight
+    toolBarHeight
   ) {
     const startAndEnd = new StartAndEnd(
       relation,
@@ -28,27 +28,27 @@ export default class CurveAlgorithmFactory {
     const { sourceEntity, targetEntity } = relation
 
     if (
-      targetEntity.clientBottom < controlBarHeight &&
+      targetEntity.clientBottom < toolBarHeight &&
       targetEntity.clientTop < sourceEntity.clientTop
     ) {
       return new PointingUpCurveAlgorithm(
         startAndEnd,
         alignSourceBollards,
         alignTargetBollards,
-        controlBarHeight,
+        toolBarHeight,
         clientTopOfContainer
       )
     }
 
     if (
-      sourceEntity.clientBottom < controlBarHeight &&
+      sourceEntity.clientBottom < toolBarHeight &&
       sourceEntity.clientTop < targetEntity.clientTop
     ) {
       return new PointingDownCurveAlgorithm(
         startAndEnd,
         alignSourceBollards,
         alignTargetBollards,
-        controlBarHeight,
+        toolBarHeight,
         clientTopOfContainer
       )
     }
@@ -63,7 +63,7 @@ export default class CurveAlgorithmFactory {
           startAndEnd,
           alignSourceBollards,
           alignTargetBollards,
-          controlBarHeight,
+          toolBarHeight,
           clientTopOfContainer
         )
       }
@@ -73,7 +73,7 @@ export default class CurveAlgorithmFactory {
           startAndEnd,
           alignSourceBollards,
           alignTargetBollards,
-          controlBarHeight,
+          toolBarHeight,
           clientTopOfContainer
         )
       }
@@ -82,7 +82,7 @@ export default class CurveAlgorithmFactory {
         startAndEnd,
         alignSourceBollards,
         alignTargetBollards,
-        controlBarHeight,
+        toolBarHeight,
         clientTopOfContainer
       )
     }
@@ -93,7 +93,7 @@ export default class CurveAlgorithmFactory {
           startAndEnd,
           alignSourceBollards,
           alignTargetBollards,
-          controlBarHeight,
+          toolBarHeight,
           clientTopOfContainer
         )
       }
@@ -103,7 +103,7 @@ export default class CurveAlgorithmFactory {
           startAndEnd,
           alignSourceBollards,
           alignTargetBollards,
-          controlBarHeight,
+          toolBarHeight,
           clientTopOfContainer
         )
       }
@@ -112,7 +112,7 @@ export default class CurveAlgorithmFactory {
         startAndEnd,
         alignSourceBollards,
         alignTargetBollards,
-        controlBarHeight,
+        toolBarHeight,
         clientTopOfContainer
       )
     } else {
@@ -121,7 +121,7 @@ export default class CurveAlgorithmFactory {
           startAndEnd,
           alignSourceBollards,
           alignTargetBollards,
-          controlBarHeight,
+          toolBarHeight,
           clientTopOfContainer
         )
       }
@@ -131,7 +131,7 @@ export default class CurveAlgorithmFactory {
           startAndEnd,
           alignSourceBollards,
           alignTargetBollards,
-          controlBarHeight,
+          toolBarHeight,
           clientTopOfContainer
         )
       }
@@ -140,7 +140,7 @@ export default class CurveAlgorithmFactory {
         startAndEnd,
         alignSourceBollards,
         alignTargetBollards,
-        controlBarHeight,
+        toolBarHeight,
         clientTopOfContainer
       )
     }

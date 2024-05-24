@@ -12,7 +12,7 @@ export default class CurveAlgorithm {
     startAndEnd,
     alignSourceBollards,
     alignTargetBollards,
-    controlBarHeight,
+    toolBarHeight,
     clientTopOfContainer
   ) {
     this._controlY =
@@ -21,7 +21,7 @@ export default class CurveAlgorithm {
       20 +
       (alignSourceBollards && alignTargetBollards ? 3 : 0)
     this._startAndEnd = startAndEnd
-    this._controlBarHeight = controlBarHeight
+    this._toolBarHeight = toolBarHeight
     this._clientTopOfContainer = clientTopOfContainer
 
     this._virtualEntityWidth = 100

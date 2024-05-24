@@ -10,7 +10,7 @@ import CurveAlgorithmFactory from './CurveAlgorithmFactory'
 export default class Arrow {
   #container
   #relation
-  #controlBarHeight
+  #toolBarHeight
   #sourceBollard
   #targetBollard
   #path
@@ -24,7 +24,7 @@ export default class Arrow {
   constructor(
     editorHTMLElement,
     relation,
-    controlBarHeight,
+    toolBarHeight,
     onAuraClick,
     onBollardClick,
     onMouseEnter,
@@ -34,7 +34,7 @@ export default class Arrow {
       '.textae-editor__relation-box'
     )
     this.#relation = relation
-    this.#controlBarHeight = controlBarHeight
+    this.#toolBarHeight = toolBarHeight
 
     const sourceBollard = createSourceBollard()
     this.#container.appendChild(sourceBollard)
@@ -88,7 +88,7 @@ export default class Arrow {
       pointUpSourceBollards,
       pointUpTargetBollards,
       this.#container.getBoundingClientRect().top,
-      this.#controlBarHeight
+      this.#toolBarHeight
     )
     updatePath(this.#path, curveAlgorithm, this.#relation.color, pointUpPath)
     updatePath(this.#pathAura, curveAlgorithm, this.#relation.color, false)

@@ -243,7 +243,7 @@ export default class UseCase {
         break
     }
 
-    annotationModel.controlBarHeight =
+    annotationModel.toolBarHeight =
       toolBarHTMLElement.getBoundingClientRect().height
 
     initAnnotation(
