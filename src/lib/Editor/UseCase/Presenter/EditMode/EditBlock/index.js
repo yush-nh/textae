@@ -96,7 +96,7 @@ export default class EditBlock extends Edit {
     this.#spanEditor.cerateSpanForTouchDevice()
   }
 
-  expandSpan() {
+  expandSpanWithTouchDevice() {
     this.#spanEditor.expandForTouchDevice()
   }
 

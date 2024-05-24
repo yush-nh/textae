@@ -96,7 +96,7 @@ export default class EditDenotation extends Edit {
     this.#spanEditor.cerateSpanForTouchDevice()
   }
 
-  expandSpan() {
+  expandSpanWithTouchDevice() {
     this.#spanEditor.expandForTouchDevice()
   }
 

@@ -18,7 +18,7 @@ export default class IconEventMap {
       ['redo', () => commander.redo()],
       ['replicate span annotation', () => presenter.replicate()],
       ['create span by touch', () => presenter.createSpanWithTouchDevice()],
-      ['expand span by touch', () => presenter.expandSpan()],
+      ['expand span by touch', () => presenter.expandSpanWithTouchDevice()],
       ['shrink span by touch', () => presenter.shrinkSpan()],
       ['new entity', () => presenter.createEntity()],
       ['edit properties', () => presenter.editProperties()],
