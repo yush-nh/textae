@@ -15,7 +15,7 @@ export default class SpanEditor {
     annotationModel,
     selectionModel,
     commander,
-    controlViewModel,
+    menuState,
     spanConfig
   ) {
     this._editorHTMLElement = editorHTMLElement
@@ -23,7 +23,7 @@ export default class SpanEditor {
     this._spanModelContainer = annotationModel.span
     this._selectionModel = selectionModel
     this._commander = commander
-    this._controlViewModel = controlViewModel
+    this._menuState = menuState
     this._spanConfig = spanConfig
   }
 
@@ -194,7 +194,7 @@ export default class SpanEditor {
         ...this._spanModelContainer
           .get(spanID)
           .getExpandedInAnchorNodeToFocusNodeDirection(
-            this._controlViewModel.spanAdjuster,
+            this._menuState.spanAdjuster,
             selectionWrapper,
             this._annotationModel.sourceDoc,
             this._spanConfig
@@ -216,7 +216,7 @@ export default class SpanEditor {
         ...this._spanModelContainer
           .get(spanID)
           .getExpandedInFocusNodeToAnchorNodeDirection(
-            this._controlViewModel.spanAdjuster,
+            this._menuState.spanAdjuster,
             selectionWrapper,
             this._annotationModel.sourceDoc,
             this._spanConfig
@@ -260,7 +260,7 @@ export default class SpanEditor {
         ...this._spanModelContainer
           .get(spanID)
           .getShortenInFocusNodeToAnchorNodeDirection(
-            this._controlViewModel.spanAdjuster,
+            this._menuState.spanAdjuster,
             selectionWrapper,
             this._annotationModel.sourceDoc,
             this._spanConfig
@@ -282,7 +282,7 @@ export default class SpanEditor {
         ...this._spanModelContainer
           .get(spanID)
           .getShortenInAnchorNodeToFocusNodeDirection(
-            this._controlViewModel.spanAdjuster,
+            this._menuState.spanAdjuster,
             selectionWrapper,
             this._annotationModel.sourceDoc,
             this._spanConfig
@@ -596,11 +596,11 @@ export default class SpanEditor {
         this._annotationModel.sourceDoc,
         this._spanModelContainer,
         this._commander,
-        this._controlViewModel.spanAdjuster,
+        this._menuState.spanAdjuster,
         this._isReplicateAuto,
         selectionWrapper,
         this._spanConfig,
-        getIsDelimiterFunc(this._controlViewModel, this._spanConfig)
+        getIsDelimiterFunc(this._menuState, this._spanConfig)
       )
     }
     clearTextSelection()
@@ -612,7 +612,7 @@ export default class SpanEditor {
     const { begin, end } = this._spanModelContainer
       .get(spanID)
       .getExpandedInAnchorNodeToFocusNodeDirection(
-        this._controlViewModel.spanAdjuster,
+        this._menuState.spanAdjuster,
         selectionWrapper,
         this._annotationModel.sourceDoc,
         this._spanConfig
@@ -634,7 +634,7 @@ export default class SpanEditor {
       this._annotationModel.sourceDoc,
       this._selectionModel,
       this._commander,
-      this._controlViewModel.spanAdjuster,
+      this._menuState.spanAdjuster,
       spanID,
       selectionWrapper,
       this._spanConfig,
@@ -649,6 +649,6 @@ export default class SpanEditor {
   }
 
   get _isReplicateAuto() {
-    return this._controlViewModel.isPushed('auto replicate')
+    return this._menuState.isPushed('auto replicate')
   }
 }

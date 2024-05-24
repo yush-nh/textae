@@ -25,7 +25,7 @@ export default class EditMode {
     selectionModel,
     spanConfig,
     commander,
-    controlViewModel,
+    menuState,
     startUpOptions,
     functionAvailability,
     mousePoint
@@ -36,7 +36,7 @@ export default class EditMode {
       annotationModel,
       selectionModel,
       commander,
-      controlViewModel,
+      menuState,
       spanConfig,
       startUpOptions.autocompletionWs,
       mousePoint
@@ -49,7 +49,7 @@ export default class EditMode {
       selectionModel,
       spanConfig,
       commander,
-      controlViewModel,
+      menuState,
       startUpOptions.autocompletionWs,
       mousePoint
     )
@@ -61,7 +61,7 @@ export default class EditMode {
       selectionModel,
       commander,
       startUpOptions.autocompletionWs,
-      controlViewModel,
+      menuState,
       mousePoint
     )
 

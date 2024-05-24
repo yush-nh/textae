@@ -13,7 +13,7 @@ import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 export default class EditDenotation extends Edit {
   #mouseEventHandler
   #spanEditor
-  #controlViewModel
+  #menuState
   #textBox
   #spanModelContainer
   #mousePoint
@@ -24,7 +24,7 @@ export default class EditDenotation extends Edit {
     annotationModel,
     selectionModel,
     commander,
-    controlViewModel,
+    menuState,
     spanConfig,
     autocompletionWs,
     mousePoint
@@ -38,7 +38,7 @@ export default class EditDenotation extends Edit {
       selectionModel.entity,
       commander,
       'Term configuration',
-      controlViewModel,
+      menuState,
       mousePoint
     )
 
@@ -47,7 +47,7 @@ export default class EditDenotation extends Edit {
       annotationModel,
       selectionModel,
       commander,
-      controlViewModel,
+      menuState,
       spanConfig
     )
 
@@ -82,7 +82,7 @@ export default class EditDenotation extends Edit {
       spanEditor
     )
     this.#spanEditor = spanEditor
-    this.#controlViewModel = controlViewModel
+    this.#menuState = menuState
     this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
     this.#spanModelContainer = annotationModel.span
     this.#mousePoint = mousePoint
@@ -113,13 +113,13 @@ export default class EditDenotation extends Edit {
       const isSelectionTextCrossingAnySpan =
         this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
-      this.#controlViewModel.updateManipulateSpanButtons(
+      this.#menuState.updateManipulateSpanButtons(
         selectionWrapper.isParentOfBothNodesSame,
         isSelectionTextCrossingAnySpan,
         isSelectionTextCrossingAnySpan
       )
     } else {
-      this.#controlViewModel.updateManipulateSpanButtons(false, false, false)
+      this.#menuState.updateManipulateSpanButtons(false, false, false)
     }
   }
 

@@ -1,17 +1,17 @@
 /**
  *
- * @param {import('./ControlViewModel').default} controlViewModel
+ * @param {import('./MenuState').MenuState} menuState
  * @param {import('../AnnotationModel').AnnotationModel} annotationModel
  */
 export default function (
   validConfig,
-  controlViewModel,
+  menuState,
   spanConfig,
   annotationModel,
   annotation,
   functionAvailability
 ) {
-  controlViewModel.setPushButtons(validConfig)
+  menuState.setPushButtons(validConfig)
   spanConfig.set(validConfig)
   annotationModel.reset(annotation, validConfig)
   functionAvailability.availability = validConfig['function availability']

@@ -34,12 +34,12 @@ function template(context) {
 export default class ControlBar extends Control {
   /**
    *
-   * @param {import('../../UseCase/ControlViewModel').default} controlViewModel
+   * @param {import('../../UseCase/MenuState').MenuState} menuState
    */
-  constructor(eventEmitter, controlViewModel, iconEventMap) {
-    super(template(controlViewModel), iconEventMap)
+  constructor(eventEmitter, menuState, iconEventMap) {
+    super(template(menuState), iconEventMap)
 
-    this._controlViewModel = controlViewModel
+    this._menuState = menuState
 
     // If you use position: sticky,
     // the height of the toolbar will affect the Y coordinate of the textae-body
@@ -122,7 +122,7 @@ export default class ControlBar extends Control {
     )
 
     if (button) {
-      if (this._controlViewModel.getState(buttonName, stateName)) {
+      if (this._menuState.getState(buttonName, stateName)) {
         button.classList.add(`textae-control-icon--${stateName}`)
       } else {
         button.classList.remove(`textae-control-icon--${stateName}`)
@@ -132,6 +132,6 @@ export default class ControlBar extends Control {
 
   _redrawAllButtons() {
     this.el.innerHTML = ''
-    this.el.insertAdjacentHTML('beforeend', template(this._controlViewModel))
+    this.el.insertAdjacentHTML('beforeend', template(this._menuState))
   }
 }

@@ -11,7 +11,7 @@ export default function (
   spanConfig,
   annotationModel,
   remoteResource,
-  controlViewModel,
+  menuState,
   originalData,
   startUpOptions,
   functionAvailability
@@ -22,7 +22,7 @@ export default function (
         DataSource.createParameterSource(startUpOptions.annotation),
         startUpOptions.config,
         remoteResource,
-        controlViewModel,
+        menuState,
         spanConfig,
         annotationModel,
         functionAvailability,
@@ -34,7 +34,7 @@ export default function (
         DataSource.createInlineSource(startUpOptions.annotation),
         startUpOptions.config,
         remoteResource,
-        controlViewModel,
+        menuState,
         spanConfig,
         annotationModel,
         functionAvailability,
@@ -51,7 +51,7 @@ export default function (
       } else {
         setDefault(
           originalData,
-          controlViewModel,
+          menuState,
           spanConfig,
           annotationModel,
           functionAvailability

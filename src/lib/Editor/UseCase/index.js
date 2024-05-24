@@ -5,7 +5,7 @@ import Presenter from './Presenter'
 import PersistenceInterface from './PersistenceInterface'
 import initAnnotation from './initAnnotation'
 import OriginalData from './OriginalData'
-import ControlViewModel from './ControlViewModel'
+import MenuState from './MenuState'
 import Clipboard from './Clipboard'
 import AnnotationAutoSaver from './AnnotationAutoSaver'
 import ControlBar from '../control/ControlBar'
@@ -68,7 +68,7 @@ export default class UseCase {
       annotationModel
     )
     const functionAvailability = new FunctionAvailability()
-    const controlViewModel = new ControlViewModel(
+    const menuState = new MenuState(
       eventEmitter,
       selectionModel,
       clipBoard,
@@ -85,7 +85,7 @@ export default class UseCase {
       commander,
       spanConfig,
       clipBoard,
-      controlViewModel,
+      menuState,
       startUpOptions,
       functionAvailability,
       mousePoint
@@ -103,12 +103,12 @@ export default class UseCase {
       () => originalData.configuration,
       startUpOptions.saveTo,
       annotationModelEventsObserver,
-      controlViewModel
+      menuState
     )
 
     new AnnotationAutoSaver(
       eventEmitter,
-      controlViewModel,
+      menuState,
       persistenceInterface,
       startUpOptions.saveTo,
       annotationModelEventsObserver
@@ -138,7 +138,7 @@ export default class UseCase {
           if (validConfig) {
             setAnnotationAndConfiguration(
               validConfig,
-              controlViewModel,
+              menuState,
               spanConfig,
               annotationModel,
               dataSource.data,
@@ -194,7 +194,7 @@ export default class UseCase {
 
           setAnnotationAndConfiguration(
             validConfig,
-            controlViewModel,
+            menuState,
             spanConfig,
             annotationModel,
             annotation,
@@ -213,14 +213,14 @@ export default class UseCase {
       commander,
       presenter,
       persistenceInterface,
-      controlViewModel,
+      menuState,
       annotationModel
     )
 
     // add control bar
     const controlBarHTMLElement = new ControlBar(
       eventEmitter,
-      controlViewModel,
+      menuState,
       iconEventMap
     ).el
     editorHTMLElement.insertBefore(
@@ -250,7 +250,7 @@ export default class UseCase {
       spanConfig,
       annotationModel,
       remoteResource,
-      controlViewModel,
+      menuState,
       originalData,
       startUpOptions,
       functionAvailability
@@ -259,7 +259,7 @@ export default class UseCase {
     // add context menu
     const contextMenu = new ContextMenu(
       editorHTMLElement,
-      controlViewModel,
+      menuState,
       iconEventMap
     )
     editorHTMLElement.appendChild(contextMenu.el)

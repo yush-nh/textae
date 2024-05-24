@@ -13,7 +13,7 @@ export default class Presenter {
   #commander
   #selectionModel
   #annotationModel
-  #controlViewModel
+  #menuState
   #spanConfig
   #clipBoard
   #editMode
@@ -33,7 +33,7 @@ export default class Presenter {
     commander,
     spanConfig,
     clipBoard,
-    controlViewModel,
+    menuState,
     startUpOptions,
     functionAvailability,
     mousePoint
@@ -45,7 +45,7 @@ export default class Presenter {
       selectionModel,
       spanConfig,
       commander,
-      controlViewModel,
+      menuState,
       startUpOptions,
       functionAvailability,
       mousePoint
@@ -76,7 +76,7 @@ export default class Presenter {
     this.#commander = commander
     this.#selectionModel = selectionModel
     this.#annotationModel = annotationModel
-    this.#controlViewModel = controlViewModel
+    this.#menuState = menuState
     this.#spanConfig = spanConfig
     this.#clipBoard = clipBoard
     this.#editMode = editMode
@@ -110,7 +110,7 @@ export default class Presenter {
       'pasteEntitiesFromLocalClipboard',
       'pasteEntitiesFromSystemClipboard'
     ])
-    forwardMethods(this, () => this.#controlViewModel, ['toggleButton'])
+    forwardMethods(this, () => this.#menuState, ['toggleButton'])
   }
 
   removeSelectedElements() {
@@ -135,7 +135,7 @@ export default class Presenter {
 
   replicate() {
     const isDelimiterFunc = getIsDelimiterFunc(
-      this.#controlViewModel,
+      this.#menuState,
       this.#spanConfig
     )
 

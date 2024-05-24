@@ -1,16 +1,16 @@
 import debounce from 'debounce'
 
 export default class AnnotationAutoSaver {
-  #controlViewModel
+  #menuState
 
   constructor(
     eventEmitter,
-    controlViewModel,
+    menuState,
     persistenceInterface,
     saveToParameter,
     annotationModelEventsObserver
   ) {
-    this.#controlViewModel = controlViewModel
+    this.#menuState = menuState
 
     const debounceSaveAnnotation = debounce(
       () => persistenceInterface.saveAnnotation(),
@@ -42,7 +42,7 @@ export default class AnnotationAutoSaver {
       .on(
         'textae-event.annotation-data.events-observer.unsaved-change',
         (val) => {
-          if (val && controlViewModel.isPushed('upload automatically')) {
+          if (val && menuState.isPushed('upload automatically')) {
             debounceSaveAnnotation()
           }
         }
@@ -50,8 +50,8 @@ export default class AnnotationAutoSaver {
   }
 
   #disabled() {
-    if (this.#controlViewModel.isPushed('upload automatically')) {
-      this.#controlViewModel.toggleButton('upload automatically')
+    if (this.#menuState.isPushed('upload automatically')) {
+      this.#menuState.toggleButton('upload automatically')
     }
   }
 }

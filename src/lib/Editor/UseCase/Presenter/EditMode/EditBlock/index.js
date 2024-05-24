@@ -13,7 +13,7 @@ import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 export default class EditBlock extends Edit {
   #mouseEventHandler
   #spanEditor
-  #controlViewModel
+  #menuState
   #textBox
   #spanModelContainer
   #mousePoint
@@ -25,7 +25,7 @@ export default class EditBlock extends Edit {
     selectionModel,
     spanConfig,
     commander,
-    controlViewModel,
+    menuState,
     autocompletionWs,
     mousePoint
   ) {
@@ -34,7 +34,7 @@ export default class EditBlock extends Edit {
       annotationModel,
       spanConfig,
       commander,
-      controlViewModel,
+      menuState,
       selectionModel
     )
 
@@ -47,7 +47,7 @@ export default class EditBlock extends Edit {
       selectionModel.entity,
       commander,
       'Block configuration',
-      controlViewModel,
+      menuState,
       mousePoint
     )
 
@@ -82,7 +82,7 @@ export default class EditBlock extends Edit {
       blockPallet
     )
     this.#spanEditor = spanEditor
-    this.#controlViewModel = controlViewModel
+    this.#menuState = menuState
     this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
     this.#spanModelContainer = annotationModel.span
     this.#mousePoint = mousePoint
@@ -113,13 +113,13 @@ export default class EditBlock extends Edit {
       const isSelectionTextCrossingAnySpan =
         this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
-      this.#controlViewModel.updateManipulateSpanButtons(
+      this.#menuState.updateManipulateSpanButtons(
         selectionWrapper.isParentOfBothNodesTextBox,
         isSelectionTextCrossingAnySpan,
         isSelectionTextCrossingAnySpan
       )
     } else {
-      this.#controlViewModel.updateManipulateSpanButtons(false, false, false)
+      this.#menuState.updateManipulateSpanButtons(false, false, false)
     }
   }
 

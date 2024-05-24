@@ -2,14 +2,14 @@ import setAnnotationAndConfiguration from '../setAnnotationAndConfiguration'
 
 export default function (
   originalData,
-  controlViewModel,
+  menuState,
   spanConfig,
   annotationModel,
   functionAvailability
 ) {
   setAnnotationAndConfiguration(
     originalData.defaultConfiguration,
-    controlViewModel,
+    menuState,
     spanConfig,
     annotationModel,
     originalData.defaultAnnotation,

@@ -19,7 +19,7 @@ export default class TypeValuesPallet extends Pallet {
     selectionModelEntity,
     commander,
     title,
-    controlViewModel,
+    menuState,
     mousePoint
   ) {
     super(editorHTMLElement, title, mousePoint)
@@ -29,7 +29,7 @@ export default class TypeValuesPallet extends Pallet {
     this._attributeInstanceContainer = attributeInstanceContainer
     this._definitionContainer = definitionContainer
     this._selectionModelItems = selectionModelEntity
-    this._controlViewModel = controlViewModel
+    this._menuState = menuState
 
     delegate(this._el, `.textae-editor__pallet__import-button`, 'click', () =>
       eventEmitter.emit('textae-event.pallet.import-button.click')
@@ -159,7 +159,7 @@ export default class TypeValuesPallet extends Pallet {
   get _content() {
     return createContentHtml(
       this._definitionContainer.pallet,
-      this._controlViewModel.diffOfConfiguration,
+      this._menuState.diffOfConfiguration,
       this._selectedPred,
       this._selectionModelItems,
       this._typeDefinition.attribute,

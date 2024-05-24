@@ -7,7 +7,7 @@ export default function setLoadedAnnotation(
   dataSource,
   configurationURL,
   remoteResource,
-  controlViewModel,
+  menuState,
   spanConfig,
   annotationModel,
   functionAvailability,
@@ -35,7 +35,7 @@ export default function setLoadedAnnotation(
     if (validConfig) {
       setAnnotationAndConfiguration(
         validConfig,
-        controlViewModel,
+        menuState,
         spanConfig,
         annotationModel,
         dataSource.data,

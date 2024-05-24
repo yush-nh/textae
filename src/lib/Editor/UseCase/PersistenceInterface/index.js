@@ -17,7 +17,7 @@ export default class PersistenceInterface {
   #getOriginalConfig
   #saveToParameter
   #annotationModelEventsObserver
-  #controlViewModel
+  #menuState
   #lastLoadedURL
   #lastLoadedFilename
 
@@ -33,7 +33,7 @@ export default class PersistenceInterface {
     getOriginalConfig,
     saveToParameter,
     annotationModelEventsObserver,
-    controlViewModel
+    menuState
   ) {
     this.#eventEmitter = eventEmitter
     this.#remoteResource = remoteResource
@@ -42,7 +42,7 @@ export default class PersistenceInterface {
     this.#getOriginalConfig = getOriginalConfig
     this.#saveToParameter = saveToParameter
     this.#annotationModelEventsObserver = annotationModelEventsObserver
-    this.#controlViewModel = controlViewModel
+    this.#menuState = menuState
     this.#lastLoadedURL = new LastLoadedURL(eventEmitter)
     this.#lastLoadedFilename = new LastLoadedFilename(eventEmitter)
 
@@ -116,7 +116,7 @@ export default class PersistenceInterface {
           )
         }
       },
-      this.#controlViewModel.diffOfConfiguration
+      this.#menuState.diffOfConfiguration
     ).open()
   }
 

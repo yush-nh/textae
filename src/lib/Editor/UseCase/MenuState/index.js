@@ -7,7 +7,7 @@ import Buttons from './Buttons'
 import isTouchable from '../../isTouchable'
 import getPalletButtonTitleFor from '../../getPalletButtonTitleFor'
 
-export default class ControlViewModel {
+export default class MenuState {
   #enableState
   #pushButtons
   #annotationModelEventsObserver

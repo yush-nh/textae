@@ -8,7 +8,7 @@ import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 
 export default class EditRelation extends Edit {
   #mouseEventHandler
-  #controlViewModel
+  #menuState
   #mousePoint
 
   constructor(
@@ -18,7 +18,7 @@ export default class EditRelation extends Edit {
     selectionModel,
     commander,
     autocompletionWs,
-    controlViewModel,
+    menuState,
     mousePoint
   ) {
     const relationPallet = new TypeValuesPallet(
@@ -30,7 +30,7 @@ export default class EditRelation extends Edit {
       selectionModel.relation,
       commander,
       'Relation configuration',
-      controlViewModel,
+      menuState,
       mousePoint
     )
 
@@ -64,7 +64,7 @@ export default class EditRelation extends Edit {
       annotationModel.typeDefinition,
       relationPallet
     )
-    this.#controlViewModel = controlViewModel
+    this.#menuState = menuState
     this.#mousePoint = mousePoint
   }
 
@@ -73,7 +73,7 @@ export default class EditRelation extends Edit {
   }
 
   applyTextSelection() {
-    this.#controlViewModel.updateManipulateSpanButtons(false, false, false)
+    this.#menuState.updateManipulateSpanButtons(false, false, false)
   }
 
   editProperties() {
