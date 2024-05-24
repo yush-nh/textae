@@ -73,7 +73,11 @@ export default class EditRelation extends Edit {
   }
 
   applyTextSelection() {
-    this.#menuState.updateManipulateSpanButtons(false, false, false)
+    this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+      false,
+      false,
+      false
+    )
   }
 
   editProperties() {

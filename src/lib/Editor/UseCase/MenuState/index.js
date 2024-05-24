@@ -126,8 +126,12 @@ export default class MenuState {
     }
   }
 
-  updateManipulateSpanButtons(enableToCreate, enableToExpand, enableToShrink) {
-    this.#enableState.updateManipulateSpanButtons(
+  updateButtonsToOperateSpanWithTouchDevice(
+    enableToCreate,
+    enableToExpand,
+    enableToShrink
+  ) {
+    this.#enableState.updateButtonsToOperateSpanWithTouchDevice(
       enableToCreate,
       enableToExpand,
       enableToShrink

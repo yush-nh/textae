@@ -113,13 +113,17 @@ export default class EditBlock extends Edit {
       const isSelectionTextCrossingAnySpan =
         this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
-      this.#menuState.updateManipulateSpanButtons(
+      this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
         selectionWrapper.isParentOfBothNodesTextBox,
         isSelectionTextCrossingAnySpan,
         isSelectionTextCrossingAnySpan
       )
     } else {
-      this.#menuState.updateManipulateSpanButtons(false, false, false)
+      this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+        false,
+        false,
+        false
+      )
     }
   }
 
