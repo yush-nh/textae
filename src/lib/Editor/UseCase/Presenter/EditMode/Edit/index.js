@@ -5,6 +5,7 @@ export default class Edit {
   #pallet
   #commander
   #attributeEditor
+  #menuState
 
   constructor(
     editorHTMLElement,
@@ -21,6 +22,7 @@ export default class Edit {
     this.#pallet = pallet
     this.#commander = commander
     this.#attributeEditor = attributeEditor
+    this.#menuState = menuState
 
     // protected fields referenced by the child classes
     this._editorHTMLElement = editorHTMLElement
@@ -28,7 +30,6 @@ export default class Edit {
     this._annotationModel = annotationModel
     this._getAutocompletionWs = getAutocompletionWs
     this._definitionContainer = definitionContainer
-    this._menuState = menuState
 
     bindPalletEvents(
       pallet,
@@ -61,10 +62,19 @@ export default class Edit {
   relationBollardClicked() {}
 
   applyTextSelectionWithTouchDevice() {
-    this._menuState.updateButtonsToOperateSpanWithTouchDevice(
-      false,
-      false,
-      false
+    this._updateButtonsToOperateSpanWithTouchDevice(false, false, false)
+  }
+
+  // A protected method
+  _updateButtonsToOperateSpanWithTouchDevice(
+    enableToCreate,
+    enableToExpand,
+    enableToShrink
+  ) {
+    this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+      enableToCreate,
+      enableToExpand,
+      enableToShrink
     )
   }
 
