@@ -133,7 +133,7 @@ export default class ControlViewModel {
     })
   }
 
-  setPushBUttons(configuration) {
+  setPushButtons(configuration) {
     if (configuration.autosave === true) {
       this.push('upload automatically')
     } else {

@@ -11,7 +11,7 @@ export default function (
   annotation,
   functionAvailability
 ) {
-  controlViewModel.setPushBUttons(validConfig)
+  controlViewModel.setPushButtons(validConfig)
   spanConfig.set(validConfig)
   annotationModel.reset(annotation, validConfig)
   functionAvailability.availability = validConfig['function availability']
