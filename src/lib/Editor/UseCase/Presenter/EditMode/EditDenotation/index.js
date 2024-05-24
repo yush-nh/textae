@@ -88,7 +88,7 @@ export default class EditDenotation extends Edit {
   }
 
   bindMouseEvents() {
-    return bindMouseEvents(this._editorHTMLElement, this.#mouseEventHandler)
+    return super._bindMouseEvents(bindMouseEvents, this.#mouseEventHandler)
   }
 
   createSpanWithTouchDevice() {

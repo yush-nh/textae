@@ -65,6 +65,19 @@ export default class Edit {
     this._updateButtonsToOperateSpanWithTouchDevice(false, false, false)
   }
 
+  manipulateAttribute(number, shiftKey) {
+    if (shiftKey) {
+      this.#attributeEditor.deleteAt(number)
+    } else {
+      this.#attributeEditor.addOrEditAt(number)
+    }
+  }
+
+  // A protected method
+  _bindMouseEvents(bindMethod, mouseEventHandler) {
+    return bindMethod(this._editorHTMLElement, mouseEventHandler)
+  }
+
   // A protected method
   _updateButtonsToOperateSpanWithTouchDevice(
     enableToCreate,
@@ -76,14 +89,6 @@ export default class Edit {
       enableToExpand,
       enableToShrink
     )
-  }
-
-  manipulateAttribute(number, shiftKey) {
-    if (shiftKey) {
-      this.#attributeEditor.deleteAt(number)
-    } else {
-      this.#attributeEditor.addOrEditAt(number)
-    }
   }
 
   // A protected method
