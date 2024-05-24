@@ -122,13 +122,11 @@ export default class EditDenotation extends Edit {
   }
 
   editProperties() {
-    if (this._selectionModel.entity.some) {
-      this._editProperties(
-        'Entity',
-        'Denotation',
-        this._selectionModel.entity.all,
-        this.#mousePoint
-      )
-    }
+    this._editProperties(
+      this._selectionModel.entity,
+      'Entity',
+      'Denotation',
+      this.#mousePoint
+    )
   }
 }

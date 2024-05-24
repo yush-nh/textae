@@ -71,14 +71,12 @@ export default class EditRelation extends Edit {
   }
 
   editProperties() {
-    if (this._selectionModel.relation.some) {
-      this._editPropertiesDialog(
-        'Relation',
-        'Relation',
-        this._selectionModel.relation.all,
-        this.#mousePoint
-      )
-    }
+    this._editProperties(
+      this._selectionModel.relation,
+      'Relation',
+      'Relation',
+      this.#mousePoint
+    )
   }
 
   relationClicked(event, relation) {

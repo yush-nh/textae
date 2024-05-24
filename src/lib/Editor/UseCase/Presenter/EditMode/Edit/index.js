@@ -94,15 +94,17 @@ export default class Edit {
   }
 
   // A protected method
-  _editProperties(annotationType, palletName, selectedItems, mousePoint) {
-    this.#createEditPropertiesDialog(
-      annotationType,
-      palletName,
-      selectedItems,
-      mousePoint
-    )
-      .open()
-      .then((values) => this.#typeValuesChanged(values))
+  _editProperties(selectionModel, annotationType, palletName, mousePoint) {
+    if (selectionModel.some) {
+      this.#createEditPropertiesDialog(
+        annotationType,
+        palletName,
+        selectionModel.all,
+        mousePoint
+      )
+        .open()
+        .then((values) => this.#typeValuesChanged(values))
+    }
   }
 
   #typeValuesChanged({ typeName, label, attributes = [] }) {

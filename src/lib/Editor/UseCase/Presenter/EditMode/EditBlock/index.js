@@ -122,13 +122,11 @@ export default class EditBlock extends Edit {
   }
 
   editProperties() {
-    if (this._selectionModel.entity.some) {
-      this._editProperties(
-        'Block',
-        'Entity',
-        this._selectionModel.entity.all,
-        this.#mousePoint
-      )
-    }
+    this._editProperties(
+      this._selectionModel.entity,
+      'Block',
+      'Entity',
+      this.#mousePoint
+    )
   }
 }
