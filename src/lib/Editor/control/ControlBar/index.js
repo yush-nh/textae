@@ -1,4 +1,4 @@
-import Control from '../Control'
+import Menu from '../Menu'
 import isTouchable from '../../isTouchable'
 import toButtonGroup from './toButtonGroup'
 import Sticky from 'sticky-js'
@@ -31,7 +31,7 @@ function template(context) {
 }
 
 // The control is a control bar in an editor.
-export default class ControlBar extends Control {
+export default class ControlBar extends Menu {
   /**
    *
    * @param {import('../../UseCase/MenuState').MenuState} menuState

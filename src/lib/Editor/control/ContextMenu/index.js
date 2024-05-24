@@ -1,10 +1,10 @@
 import dohtml from 'dohtml'
 import isTouchable from '../../isTouchable'
 import classify from '../classify'
-import Control from '../Control'
+import Menu from '../Menu'
 import toContextMenuItem from './toContextMenuItem'
 
-export default class ContextMenu extends Control {
+export default class ContextMenu extends Menu {
   constructor(editorHTMLElement, menuState, iconEventMap) {
     super(
       `<div class="textae-control ${

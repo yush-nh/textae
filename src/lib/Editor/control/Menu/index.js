@@ -2,7 +2,7 @@ import dohtml from 'dohtml'
 import bindEventHandler from './bindEventHandler'
 
 // The control is a control bar in an editor.
-export default class Control {
+export default class Menu {
   constructor(html, iconEventMap) {
     const el = dohtml.create(html)
 
