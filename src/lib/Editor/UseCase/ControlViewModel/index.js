@@ -8,6 +8,14 @@ import isTouchable from '../../isTouchable'
 import getPalletButtonTitleFor from '../../getPalletButtonTitleFor'
 
 export default class ControlViewModel {
+  #enableState
+  #pushButtons
+  #annotationModelEventsObserver
+  #originalData
+  #typeDefinition
+  #functionAvailability
+  #mode
+
   constructor(
     eventEmitter,
     selectionModel,
@@ -17,42 +25,42 @@ export default class ControlViewModel {
     typeDefinition,
     functionAvailability
   ) {
-    this._enableState = new EnableState(eventEmitter, selectionModel, clipBoard)
+    this.#enableState = new EnableState(eventEmitter, selectionModel, clipBoard)
     // Save state of push control buttons.
-    this._pushButtons = new PushButtons(eventEmitter)
+    this.#pushButtons = new PushButtons(eventEmitter)
 
-    this._annotationModelEventsObserver = annotationModelEventsObserver
+    this.#annotationModelEventsObserver = annotationModelEventsObserver
 
-    this._originalData = originalData
+    this.#originalData = originalData
 
-    this._typeDefinition = typeDefinition
+    this.#typeDefinition = typeDefinition
 
-    this._functionAvailability = functionAvailability
+    this.#functionAvailability = functionAvailability
 
     // Change the title of the palette button to match the edit mode.
     eventEmitter.on('textae-event.edit-mode.transition', (mode) => {
-      this._mode = mode
+      this.#mode = mode
     })
   }
 
   get pushButtonNames() {
-    return this._pushButtons.names
+    return this.#pushButtons.names
   }
 
   isPushed(buttonName) {
-    return this._pushButtons.get(buttonName).isPushed
+    return this.#pushButtons.get(buttonName).isPushed
   }
 
   push(buttonName) {
-    this._pushButtons.get(buttonName).isPushed = true
+    this.#pushButtons.get(buttonName).isPushed = true
   }
 
   release(buttonName) {
-    this._pushButtons.get(buttonName).isPushed = false
+    this.#pushButtons.get(buttonName).isPushed = false
   }
 
   toggleButton(buttonName) {
-    return this._pushButtons.get(buttonName).toggle()
+    return this.#pushButtons.get(buttonName).toggle()
   }
 
   get spanAdjuster() {
@@ -65,8 +73,8 @@ export default class ControlViewModel {
     return new Buttons().controlBar
       .map(({ list }) =>
         list
-          .filter(({ type }) => this._functionAvailability.get(type))
-          .map(({ type, title }) => this._getPalletButtonTitle(type, title))
+          .filter(({ type }) => this.#functionAvailability.get(type))
+          .map(({ type, title }) => this.#getPalletButtonTitle(type, title))
           .map(({ type, title }) => ({
             type,
             title,
@@ -83,14 +91,14 @@ export default class ControlViewModel {
     return new Buttons().contextMenu
       .map(({ list }) =>
         list
-          .filter(({ type }) => this._functionAvailability.get(type))
-          .map(({ type, title }) => this._getPalletButtonTitle(type, title))
+          .filter(({ type }) => this.#functionAvailability.get(type))
+          .map(({ type, title }) => this.#getPalletButtonTitle(type, title))
           .reduce((acc, { type, title }) => {
             if (!isTouchable() && this.getState(type, 'disabled')) {
               return acc
             }
 
-            acc.push(this._convertToButtonHash(type, title))
+            acc.push(this.#convertToButtonHash(type, title))
             return acc
           }, [])
       )
@@ -100,13 +108,13 @@ export default class ControlViewModel {
   getState(name, state) {
     switch (state) {
       case 'pushed':
-        return this._pushButtons.get(name).isPushed
+        return this.#pushButtons.get(name).isPushed
       case 'disabled':
-        return !this._enableState.get(name)
+        return !this.#enableState.get(name)
       case 'transit':
         switch (name) {
           case 'upload':
-            return this._annotationModelEventsObserver.hasChange
+            return this.#annotationModelEventsObserver.hasChange
           case 'pallet':
             return this.diffOfConfiguration
           default:
@@ -119,7 +127,7 @@ export default class ControlViewModel {
   }
 
   updateManipulateSpanButtons(enableToCreate, enableToExpand, enableToShrink) {
-    this._enableState.updateManipulateSpanButtons(
+    this.#enableState.updateManipulateSpanButtons(
       enableToCreate,
       enableToExpand,
       enableToShrink
@@ -127,9 +135,9 @@ export default class ControlViewModel {
   }
 
   get diffOfConfiguration() {
-    return diff(this._originalData.configuration, {
-      ...this._originalData.configuration,
-      ...this._typeDefinition.config
+    return diff(this.#originalData.configuration, {
+      ...this.#originalData.configuration,
+      ...this.#typeDefinition.config
     })
   }
 
@@ -154,18 +162,18 @@ export default class ControlViewModel {
   }
 
   get detailModifierClassName() {
-    return this._functionAvailability.get('show logo')
+    return this.#functionAvailability.get('show logo')
       ? 'textae-control-details--show-logo'
       : 'textae-control-details--hide-logo'
   }
 
-  _getPalletButtonTitle(type, title) {
+  #getPalletButtonTitle(type, title) {
     return type == 'pallet'
-      ? { type, title: getPalletButtonTitleFor(this._mode) }
+      ? { type, title: getPalletButtonTitleFor(this.#mode) }
       : { type, title }
   }
 
-  _convertToButtonHash(type, title) {
+  #convertToButtonHash(type, title) {
     return {
       type,
       title,
