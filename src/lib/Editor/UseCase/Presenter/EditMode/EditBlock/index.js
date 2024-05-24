@@ -92,7 +92,7 @@ export default class EditBlock extends Edit {
     return bindMouseEvents(this._editorHTMLElement, this.#mouseEventHandler)
   }
 
-  createSpan() {
+  createSpanWithTouchDevice() {
     this.#spanEditor.cerateSpanForTouchDevice()
   }
 

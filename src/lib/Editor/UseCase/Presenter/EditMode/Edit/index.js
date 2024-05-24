@@ -52,7 +52,7 @@ export default class Edit {
   }
 
   // Dummy functions
-  createSpan() {}
+  createSpanWithTouchDevice() {}
   expandSpan() {}
   shrinkSpan() {}
   relationClicked() {}

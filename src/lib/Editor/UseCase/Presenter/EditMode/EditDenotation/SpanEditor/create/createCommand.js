@@ -1,5 +1,5 @@
 export default function (commander, newSpan, isReplicateAuto, isDelimiterFunc) {
-  return commander.factory.createSpanAndAutoReplicateCommand(
+  return commander.factory.createSpanWithTouchDeviceAndAutoReplicateCommand(
     {
       begin: newSpan.begin,
       end: newSpan.end

@@ -93,7 +93,7 @@ export default class Presenter {
       'changeModeByShortcut'
     ])
     forwardMethods(this, () => this.#editMode.currentEdit, [
-      'createSpan',
+      'createSpanWithTouchDevice',
       'expandSpan',
       'shrinkSpan',
       'showPallet',
