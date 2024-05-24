@@ -46,6 +46,14 @@ export default class EditDenotation extends Edit {
 
     const getAutocompletionWs = () =>
       autocompletionWs || annotationModel.typeDefinition.autocompletionWs
+    const attributeEditor = new AttributeEditor(
+      commander,
+      annotationModel,
+      selectionModel.entity,
+      new SelectionAttributePallet(editorHTMLElement, mousePoint),
+      () => this.editProperties(),
+      denotationPallet
+    )
 
     super(
       editorHTMLElement,
@@ -53,6 +61,7 @@ export default class EditDenotation extends Edit {
       annotationModel,
       denotationPallet,
       commander,
+      attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.denotation,
       'entity'
@@ -69,15 +78,6 @@ export default class EditDenotation extends Edit {
     this._controlViewModel = controlViewModel
     this._textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
     this._spanModelContainer = annotationModel.span
-
-    this._attributeEditor = new AttributeEditor(
-      commander,
-      annotationModel,
-      selectionModel.entity,
-      new SelectionAttributePallet(editorHTMLElement, mousePoint),
-      () => this.editProperties(),
-      denotationPallet
-    )
     this._mousePoint = mousePoint
   }
 

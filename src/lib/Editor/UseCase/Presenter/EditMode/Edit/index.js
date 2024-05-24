@@ -4,6 +4,7 @@ import bindPalletEvents from './bindPalletEvents'
 export default class Edit {
   #pallet
   #commander
+  #attributeEditor
 
   constructor(
     editorHTMLElement,
@@ -11,12 +12,14 @@ export default class Edit {
     annotationModel,
     pallet,
     commander,
+    attributeEditor,
     getAutocompletionWs,
     definitionContainer,
     annotationType
   ) {
     this.#pallet = pallet
     this.#commander = commander
+    this.#attributeEditor = attributeEditor
 
     // protected fields referenced by the child classes
     this._editorHTMLElement = editorHTMLElement
@@ -57,9 +60,9 @@ export default class Edit {
 
   manipulateAttribute(number, shiftKey) {
     if (shiftKey) {
-      this._attributeEditor.deleteAt(number)
+      this.#attributeEditor.deleteAt(number)
     } else {
-      this._attributeEditor.addOrEditAt(number)
+      this.#attributeEditor.addOrEditAt(number)
     }
   }
 

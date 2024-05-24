@@ -46,6 +46,14 @@ export default class EditBlock extends Edit {
 
     const getAutocompletionWs = () =>
       autocompletionWs || annotationModel.typeDefinition.autocompletionWs
+    const attributeEditor = new AttributeEditor(
+      commander,
+      annotationModel,
+      selectionModel.entity,
+      new SelectionAttributePallet(editorHTMLElement, mousePoint),
+      () => this.editProperties(),
+      blockPallet
+    )
 
     super(
       editorHTMLElement,
@@ -53,6 +61,7 @@ export default class EditBlock extends Edit {
       annotationModel,
       blockPallet,
       commander,
+      attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.block,
       'entity'
@@ -69,15 +78,6 @@ export default class EditBlock extends Edit {
     this._controlViewModel = controlViewModel
     this._textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
     this._spanModelContainer = annotationModel.span
-
-    this._attributeEditor = new AttributeEditor(
-      commander,
-      annotationModel,
-      selectionModel.entity,
-      new SelectionAttributePallet(editorHTMLElement, mousePoint),
-      () => this.editProperties(),
-      blockPallet
-    )
     this._mousePoint = mousePoint
   }
 
