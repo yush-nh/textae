@@ -2,6 +2,9 @@ import forwardMethods from '../../../../forwardMethods'
 import bindPalletEvents from './bindPalletEvents'
 
 export default class Edit {
+  #pallet
+  #commander
+
   constructor(
     editorHTMLElement,
     selectionModel,
@@ -12,14 +15,15 @@ export default class Edit {
     definitionContainer,
     annotationType
   ) {
+    this.#pallet = pallet
+    this.#commander = commander
+
+    // protected fields referenced by the child classes
     this._editorHTMLElement = editorHTMLElement
     this._selectionModel = selectionModel
     this._annotationModel = annotationModel
     this._getAutocompletionWs = getAutocompletionWs
     this._definitionContainer = definitionContainer
-    this._commander = commander
-
-    this._pallet = pallet
 
     bindPalletEvents(
       pallet,
@@ -41,7 +45,7 @@ export default class Edit {
   }
 
   get pallet() {
-    return this._pallet
+    return this.#pallet
   }
 
   // Dummy functions
@@ -60,7 +64,7 @@ export default class Edit {
   }
 
   _typeValuesChanged({ typeName, label, attributes = [] }) {
-    const commands = this._commander.factory.changeTypeValuesCommand(
+    const commands = this.#commander.factory.changeTypeValuesCommand(
       label,
       typeName,
       this._definitionContainer,
@@ -68,7 +72,7 @@ export default class Edit {
     )
 
     if (typeName) {
-      this._commander.invoke(commands)
+      this.#commander.invoke(commands)
     }
   }
 }
