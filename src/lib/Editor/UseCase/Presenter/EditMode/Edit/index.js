@@ -3,6 +3,7 @@ import forwardMethods from '../../../../forwardMethods'
 import bindPalletEvents from './bindPalletEvents'
 
 export default class Edit {
+  #editorHTMLElement
   #pallet
   #commander
   #attributeEditor
@@ -20,13 +21,13 @@ export default class Edit {
     definitionContainer,
     annotationType
   ) {
+    this.#editorHTMLElement = editorHTMLElement
     this.#pallet = pallet
     this.#commander = commander
     this.#attributeEditor = attributeEditor
     this.#menuState = menuState
 
     // protected fields referenced by the child classes
-    this._editorHTMLElement = editorHTMLElement
     this._selectionModel = selectionModel
     this._annotationModel = annotationModel
     this._getAutocompletionWs = getAutocompletionWs
@@ -76,7 +77,7 @@ export default class Edit {
 
   // A protected method
   _bindMouseEvents(bindMethod, mouseEventHandler) {
-    return bindMethod(this._editorHTMLElement, mouseEventHandler)
+    return bindMethod(this.#editorHTMLElement, mouseEventHandler)
   }
 
   // A protected method
@@ -114,7 +115,7 @@ export default class Edit {
     mousePoint
   ) {
     return new EditPropertiesDialog(
-      this._editorHTMLElement,
+      this.#editorHTMLElement,
       annotationType,
       palletName,
       this._definitionContainer,
