@@ -95,7 +95,7 @@ export default class Presenter {
     forwardMethods(this, () => this.#editMode.currentEdit, [
       'createSpanWithTouchDevice',
       'expandSpanWithTouchDevice',
-      'shrinkSpan',
+      'shrinkSpanWithTouchDevice',
       'showPallet',
       'selectLeftAttributeTab',
       'selectRightAttributeTab',

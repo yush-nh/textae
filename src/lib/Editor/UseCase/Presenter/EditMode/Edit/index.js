@@ -54,7 +54,7 @@ export default class Edit {
   // Dummy functions
   createSpanWithTouchDevice() {}
   expandSpanWithTouchDevice() {}
-  shrinkSpan() {}
+  shrinkSpanWithTouchDevice() {}
   relationClicked() {}
   relationBollardClicked() {}
 

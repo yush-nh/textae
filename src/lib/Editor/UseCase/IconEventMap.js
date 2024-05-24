@@ -19,7 +19,7 @@ export default class IconEventMap {
       ['replicate span annotation', () => presenter.replicate()],
       ['create span by touch', () => presenter.createSpanWithTouchDevice()],
       ['expand span by touch', () => presenter.expandSpanWithTouchDevice()],
-      ['shrink span by touch', () => presenter.shrinkSpan()],
+      ['shrink span by touch', () => presenter.shrinkSpanWithTouchDevice()],
       ['new entity', () => presenter.createEntity()],
       ['edit properties', () => presenter.editProperties()],
       ['pallet', () => presenter.showPallet()],
