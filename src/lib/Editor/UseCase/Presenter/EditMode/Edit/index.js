@@ -66,6 +66,7 @@ export default class Edit {
     }
   }
 
+  // A protected method
   _typeValuesChanged({ typeName, label, attributes = [] }) {
     const commands = this.#commander.factory.changeTypeValuesCommand(
       label,
