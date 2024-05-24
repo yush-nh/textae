@@ -8,7 +8,7 @@ import OriginalData from './OriginalData'
 import MenuState from './MenuState'
 import Clipboard from './Clipboard'
 import AnnotationAutoSaver from './AnnotationAutoSaver'
-import ControlBar from '../control/ControlBar'
+import ToolBar from '../control/ToolBar'
 import ContextMenu from '../control/ContextMenu'
 import KeyEventMap from './KeyEventMap'
 import IconEventMap from './IconEventMap'
@@ -217,14 +217,14 @@ export default class UseCase {
       annotationModel
     )
 
-    // add control bar
-    const controlBarHTMLElement = new ControlBar(
+    // Add the tool bar
+    const toolBarHTMLElement = new ToolBar(
       eventEmitter,
       menuState,
       iconEventMap
     ).el
     editorHTMLElement.insertBefore(
-      controlBarHTMLElement,
+      toolBarHTMLElement,
       editorHTMLElement.childNodes[0]
     )
 
@@ -244,7 +244,7 @@ export default class UseCase {
     }
 
     annotationModel.controlBarHeight =
-      controlBarHTMLElement.getBoundingClientRect().height
+      toolBarHTMLElement.getBoundingClientRect().height
 
     initAnnotation(
       spanConfig,

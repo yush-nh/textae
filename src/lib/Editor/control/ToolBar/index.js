@@ -31,7 +31,7 @@ function template(context) {
 }
 
 // The control is a control bar in an editor.
-export default class ControlBar extends Menu {
+export default class ToolBar extends Menu {
   /**
    *
    * @param {import('../../UseCase/MenuState').MenuState} menuState
