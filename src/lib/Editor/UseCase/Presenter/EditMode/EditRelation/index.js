@@ -8,7 +8,6 @@ import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 
 export default class EditRelation extends Edit {
   #mouseEventHandler
-  #menuState
   #mousePoint
 
   constructor(
@@ -54,6 +53,7 @@ export default class EditRelation extends Edit {
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.relation,
+      menuState,
       'relation'
     )
 
@@ -64,20 +64,11 @@ export default class EditRelation extends Edit {
       annotationModel.typeDefinition,
       relationPallet
     )
-    this.#menuState = menuState
     this.#mousePoint = mousePoint
   }
 
   bindMouseEvents() {
     return bindMouseEvents(this._editorHTMLElement, this.#mouseEventHandler)
-  }
-
-  applyTextSelectionWithTouchDevice() {
-    this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
-      false,
-      false,
-      false
-    )
   }
 
   editProperties() {

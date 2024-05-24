@@ -15,6 +15,7 @@ export default class Edit {
     attributeEditor,
     getAutocompletionWs,
     definitionContainer,
+    menuState,
     annotationType
   ) {
     this.#pallet = pallet
@@ -27,6 +28,7 @@ export default class Edit {
     this._annotationModel = annotationModel
     this._getAutocompletionWs = getAutocompletionWs
     this._definitionContainer = definitionContainer
+    this._menuState = menuState
 
     bindPalletEvents(
       pallet,
@@ -57,6 +59,14 @@ export default class Edit {
   shrinkSpanWithTouchDevice() {}
   relationClicked() {}
   relationBollardClicked() {}
+
+  applyTextSelectionWithTouchDevice() {
+    this._menuState.updateButtonsToOperateSpanWithTouchDevice(
+      false,
+      false,
+      false
+    )
+  }
 
   manipulateAttribute(number, shiftKey) {
     if (shiftKey) {

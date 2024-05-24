@@ -13,7 +13,6 @@ import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 export default class EditDenotation extends Edit {
   #mouseEventHandler
   #spanEditor
-  #menuState
   #textBox
   #spanModelContainer
   #mousePoint
@@ -71,6 +70,7 @@ export default class EditDenotation extends Edit {
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.denotation,
+      menuState,
       'entity'
     )
 
@@ -82,7 +82,6 @@ export default class EditDenotation extends Edit {
       spanEditor
     )
     this.#spanEditor = spanEditor
-    this.#menuState = menuState
     this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
     this.#spanModelContainer = annotationModel.span
     this.#mousePoint = mousePoint
@@ -113,17 +112,13 @@ export default class EditDenotation extends Edit {
       const isSelectionTextCrossingAnySpan =
         this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
-      this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+      this._menuState.updateButtonsToOperateSpanWithTouchDevice(
         selectionWrapper.isParentOfBothNodesSame,
         isSelectionTextCrossingAnySpan,
         isSelectionTextCrossingAnySpan
       )
     } else {
-      this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
-        false,
-        false,
-        false
-      )
+      super.applyTextSelectionWithTouchDevice()
     }
   }
 
