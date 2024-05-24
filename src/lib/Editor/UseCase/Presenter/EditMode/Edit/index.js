@@ -94,7 +94,18 @@ export default class Edit {
   }
 
   // A protected method
-  _typeValuesChanged({ typeName, label, attributes = [] }) {
+  _editProperties(annotationType, palletName, selectedItems, mousePoint) {
+    this.#createEditPropertiesDialog(
+      annotationType,
+      palletName,
+      selectedItems,
+      mousePoint
+    )
+      .open()
+      .then((values) => this.#typeValuesChanged(values))
+  }
+
+  #typeValuesChanged({ typeName, label, attributes = [] }) {
     const commands = this.#commander.factory.changeTypeValuesCommand(
       label,
       typeName,
@@ -107,8 +118,7 @@ export default class Edit {
     }
   }
 
-  // A protected method
-  _createEditPropertiesDialog(
+  #createEditPropertiesDialog(
     annotationType,
     palletName,
     selectedItems,

@@ -123,14 +123,12 @@ export default class EditBlock extends Edit {
 
   editProperties() {
     if (this._selectionModel.entity.some) {
-      this._createEditPropertiesDialog(
+      this._editProperties(
         'Block',
         'Entity',
         this._selectionModel.entity.all,
         this.#mousePoint
       )
-        .open()
-        .then((values) => this._typeValuesChanged(values))
     }
   }
 }
