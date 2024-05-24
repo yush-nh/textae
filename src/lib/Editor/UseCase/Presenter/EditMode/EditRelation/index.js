@@ -7,6 +7,10 @@ import SelectionAttributePallet from '../../../../../component/SelectionAttribut
 import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 
 export default class EditRelation extends Edit {
+  #mouseEventHandler
+  #controlViewModel
+  #mousePoint
+
   constructor(
     editorHTMLElement,
     eventEmitter,
@@ -53,24 +57,23 @@ export default class EditRelation extends Edit {
       'relation'
     )
 
-    this._editorHTMLElement = editorHTMLElement
-    this._mouseEventHandler = new MouseEventHandler(
+    this.#mouseEventHandler = new MouseEventHandler(
       editorHTMLElement,
       selectionModel,
       commander,
       annotationModel.typeDefinition,
       relationPallet
     )
-    this._controlViewModel = controlViewModel
-    this._mousePoint = mousePoint
+    this.#controlViewModel = controlViewModel
+    this.#mousePoint = mousePoint
   }
 
   bindMouseEvents() {
-    return bindMouseEvents(this._editorHTMLElement, this._mouseEventHandler)
+    return bindMouseEvents(this._editorHTMLElement, this.#mouseEventHandler)
   }
 
   applyTextSelection() {
-    this._controlViewModel.updateManipulateSpanButtons(false, false, false)
+    this.#controlViewModel.updateManipulateSpanButtons(false, false, false)
   }
 
   editProperties() {
@@ -84,7 +87,7 @@ export default class EditRelation extends Edit {
         this._getAutocompletionWs(),
         this._selectionModel.relation.all,
         this.pallet,
-        this._mousePoint
+        this.#mousePoint
       )
         .open()
         .then((values) => this._typeValuesChanged(values))
