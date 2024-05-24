@@ -11,6 +11,13 @@ import SelectionAttributePallet from '../../../../../component/SelectionAttribut
 import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 
 export default class EditBlock extends Edit {
+  #mouseEventHandler
+  #spanEditor
+  #controlViewModel
+  #textBox
+  #spanModelContainer
+  #mousePoint
+
   constructor(
     editorHTMLElement,
     eventEmitter,
@@ -67,52 +74,52 @@ export default class EditBlock extends Edit {
       'entity'
     )
 
-    this._mouseEventHandler = new MouseEventHandler(
+    this.#mouseEventHandler = new MouseEventHandler(
       editorHTMLElement,
       annotationModel,
       selectionModel,
       spanEditor,
       blockPallet
     )
-    this._spanEditor = spanEditor
-    this._controlViewModel = controlViewModel
-    this._textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
-    this._spanModelContainer = annotationModel.span
-    this._mousePoint = mousePoint
+    this.#spanEditor = spanEditor
+    this.#controlViewModel = controlViewModel
+    this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
+    this.#spanModelContainer = annotationModel.span
+    this.#mousePoint = mousePoint
   }
 
   bindMouseEvents() {
-    return bindMouseEvents(this._editorHTMLElement, this._mouseEventHandler)
+    return bindMouseEvents(this._editorHTMLElement, this.#mouseEventHandler)
   }
 
   createSpan() {
-    this._spanEditor.cerateSpanForTouchDevice()
+    this.#spanEditor.cerateSpanForTouchDevice()
   }
 
   expandSpan() {
-    this._spanEditor.expandForTouchDevice()
+    this.#spanEditor.expandForTouchDevice()
   }
 
   shrinkSpan() {
-    this._spanEditor.shrinkForTouchDevice()
+    this.#spanEditor.shrinkForTouchDevice()
   }
 
   applyTextSelection() {
-    if (isRangeInTextBox(window.getSelection(), this._textBox)) {
-      const selectionWrapper = new SelectionWrapper(this._spanModelContainer)
+    if (isRangeInTextBox(window.getSelection(), this.#textBox)) {
+      const selectionWrapper = new SelectionWrapper(this.#spanModelContainer)
       const { begin, end } = new OrderedPositions(
         selectionWrapper.positionsOnAnnotation
       )
       const isSelectionTextCrossingAnySpan =
-        this._spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
+        this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
-      this._controlViewModel.updateManipulateSpanButtons(
+      this.#controlViewModel.updateManipulateSpanButtons(
         selectionWrapper.isParentOfBothNodesTextBox,
         isSelectionTextCrossingAnySpan,
         isSelectionTextCrossingAnySpan
       )
     } else {
-      this._controlViewModel.updateManipulateSpanButtons(false, false, false)
+      this.#controlViewModel.updateManipulateSpanButtons(false, false, false)
     }
   }
 
@@ -127,7 +134,7 @@ export default class EditBlock extends Edit {
         this._getAutocompletionWs(),
         this._selectionModel.entity.all,
         this.pallet,
-        this._mousePoint
+        this.#mousePoint
       )
         .open()
         .then((values) => this._typeValuesChanged(values))
