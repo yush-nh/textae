@@ -4,7 +4,6 @@ import Edit from '../Edit'
 import TypeValuesPallet from '../../../../../component/TypeValuesPallet'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
-import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 
 export default class EditRelation extends Edit {
   #mouseEventHandler
@@ -73,15 +72,10 @@ export default class EditRelation extends Edit {
 
   editProperties() {
     if (this._selectionModel.relation.some) {
-      new EditPropertiesDialog(
-        this._editorHTMLElement,
+      this._createEditPropertiesDialog(
         'Relation',
         'Relation',
-        this._definitionContainer,
-        this._annotationModel.typeDefinition.attribute,
-        this._getAutocompletionWs(),
         this._selectionModel.relation.all,
-        this.pallet,
         this.#mousePoint
       )
         .open()

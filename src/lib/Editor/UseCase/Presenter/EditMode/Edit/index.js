@@ -1,3 +1,4 @@
+import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 import forwardMethods from '../../../../forwardMethods'
 import bindPalletEvents from './bindPalletEvents'
 
@@ -103,5 +104,25 @@ export default class Edit {
     if (typeName) {
       this.#commander.invoke(commands)
     }
+  }
+
+  // A protected method
+  _createEditPropertiesDialog(
+    annotationType,
+    palletName,
+    selectedItems,
+    mousePoint
+  ) {
+    return new EditPropertiesDialog(
+      this._editorHTMLElement,
+      annotationType,
+      palletName,
+      this._definitionContainer,
+      this._annotationModel.typeDefinition.attribute,
+      this._getAutocompletionWs(),
+      selectedItems,
+      this.#pallet,
+      mousePoint
+    )
   }
 }
