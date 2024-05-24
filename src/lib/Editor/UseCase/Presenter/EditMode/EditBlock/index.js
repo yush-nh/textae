@@ -26,15 +26,6 @@ export default class EditBlock extends Edit {
     autocompletionWs,
     mousePoint
   ) {
-    const spanEditor = new SpanEditor(
-      editorHTMLElement,
-      annotationModel,
-      spanConfig,
-      commander,
-      menuState,
-      selectionModel
-    )
-
     const blockPallet = new TypeValuesPallet(
       editorHTMLElement,
       eventEmitter,
@@ -73,6 +64,15 @@ export default class EditBlock extends Edit {
       mousePoint
     )
 
+    const spanEditor = new SpanEditor(
+      editorHTMLElement,
+      annotationModel,
+      spanConfig,
+      commander,
+      menuState,
+      selectionModel
+    )
+
     this.#mouseEventHandler = new MouseEventHandler(
       editorHTMLElement,
       annotationModel,
@@ -80,6 +80,8 @@ export default class EditBlock extends Edit {
       spanEditor,
       blockPallet
     )
+
+    // For touch device actions
     this.#spanEditor = spanEditor
     this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
     this.#spanModelContainer = annotationModel.span

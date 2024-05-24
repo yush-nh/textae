@@ -39,15 +39,6 @@ export default class EditDenotation extends Edit {
       mousePoint
     )
 
-    const spanEditor = new SpanEditor(
-      editorHTMLElement,
-      annotationModel,
-      selectionModel,
-      commander,
-      menuState,
-      spanConfig
-    )
-
     const getAutocompletionWs = () =>
       autocompletionWs || annotationModel.typeDefinition.autocompletionWs
     const attributeEditor = new AttributeEditor(
@@ -73,6 +64,15 @@ export default class EditDenotation extends Edit {
       mousePoint
     )
 
+    const spanEditor = new SpanEditor(
+      editorHTMLElement,
+      annotationModel,
+      selectionModel,
+      commander,
+      menuState,
+      spanConfig
+    )
+
     this.#mouseEventHandler = new MouseEventHandler(
       editorHTMLElement,
       annotationModel,
@@ -80,6 +80,8 @@ export default class EditDenotation extends Edit {
       denotationPallet,
       spanEditor
     )
+
+    // For touch device actions
     this.#spanEditor = spanEditor
     this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
     this.#spanModelContainer = annotationModel.span
