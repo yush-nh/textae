@@ -3,5 +3,6 @@ export const MODE = {
   VIEW: 'View',
   EDIT_DENOTATION: 'Term',
   EDIT_BLOCK: 'Block',
-  EDIT_RELATION: 'Relation'
+  EDIT_RELATION: 'Relation',
+  EDIT_TEXT: 'Text'
 }
