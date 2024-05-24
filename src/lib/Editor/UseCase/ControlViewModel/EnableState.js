@@ -102,6 +102,9 @@ export default class EnableState {
       case MODE.EDIT_RELATION:
         this._updateButtonsForMode(false, false, false, true, true, false, true)
         break
+      case MODE.EDIT_TEXT:
+        this._updateButtonsForMode(true, false, true, true, true, false, false)
+        break
       default:
         throw `unknown edit mode!${mode}`
     }
