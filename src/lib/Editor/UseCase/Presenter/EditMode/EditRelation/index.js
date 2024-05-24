@@ -46,14 +46,14 @@ export default class EditRelation extends Edit {
 
     super(
       editorHTMLElement,
-      selectionModel,
       annotationModel,
-      relationPallet,
+      selectionModel,
       commander,
+      menuState,
+      relationPallet,
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.relation,
-      menuState,
       'relation'
     )
 

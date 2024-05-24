@@ -63,14 +63,14 @@ export default class EditDenotation extends Edit {
 
     super(
       editorHTMLElement,
-      selectionModel,
       annotationModel,
-      denotationPallet,
+      selectionModel,
       commander,
+      menuState,
+      denotationPallet,
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.denotation,
-      menuState,
       'entity'
     )
 

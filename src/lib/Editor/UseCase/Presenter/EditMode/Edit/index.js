@@ -9,14 +9,14 @@ export default class Edit {
 
   constructor(
     editorHTMLElement,
-    selectionModel,
     annotationModel,
-    pallet,
+    selectionModel,
     commander,
+    menuState,
+    pallet,
     attributeEditor,
     getAutocompletionWs,
     definitionContainer,
-    menuState,
     annotationType
   ) {
     this.#pallet = pallet

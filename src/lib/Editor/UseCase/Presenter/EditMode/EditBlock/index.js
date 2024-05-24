@@ -63,14 +63,14 @@ export default class EditBlock extends Edit {
 
     super(
       editorHTMLElement,
-      selectionModel,
       annotationModel,
-      blockPallet,
+      selectionModel,
       commander,
+      menuState,
+      blockPallet,
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.block,
-      menuState,
       'entity'
     )
 
