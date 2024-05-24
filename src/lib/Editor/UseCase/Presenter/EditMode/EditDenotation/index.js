@@ -14,7 +14,6 @@ export default class EditDenotation extends Edit {
   #spanEditor
   #textBox
   #spanModelContainer
-  #mousePoint
 
   constructor(
     editorHTMLElement,
@@ -70,7 +69,8 @@ export default class EditDenotation extends Edit {
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.denotation,
-      'entity'
+      'entity',
+      mousePoint
     )
 
     this.#mouseEventHandler = new MouseEventHandler(
@@ -83,7 +83,6 @@ export default class EditDenotation extends Edit {
     this.#spanEditor = spanEditor
     this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
     this.#spanModelContainer = annotationModel.span
-    this.#mousePoint = mousePoint
   }
 
   bindMouseEvents() {
@@ -122,11 +121,6 @@ export default class EditDenotation extends Edit {
   }
 
   editProperties() {
-    this._editProperties(
-      this._selectionModel.entity,
-      'Entity',
-      'Denotation',
-      this.#mousePoint
-    )
+    this._editProperties(this._selectionModel.entity, 'Entity', 'Denotation')
   }
 }

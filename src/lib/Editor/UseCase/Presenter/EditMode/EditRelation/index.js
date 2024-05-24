@@ -7,7 +7,6 @@ import SelectionAttributePallet from '../../../../../component/SelectionAttribut
 
 export default class EditRelation extends Edit {
   #mouseEventHandler
-  #mousePoint
 
   constructor(
     editorHTMLElement,
@@ -53,7 +52,8 @@ export default class EditRelation extends Edit {
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.relation,
-      'relation'
+      'relation',
+      mousePoint
     )
 
     this.#mouseEventHandler = new MouseEventHandler(
@@ -63,7 +63,6 @@ export default class EditRelation extends Edit {
       annotationModel.typeDefinition,
       relationPallet
     )
-    this.#mousePoint = mousePoint
   }
 
   bindMouseEvents() {
@@ -71,12 +70,7 @@ export default class EditRelation extends Edit {
   }
 
   editProperties() {
-    this._editProperties(
-      this._selectionModel.relation,
-      'Relation',
-      'Relation',
-      this.#mousePoint
-    )
+    this._editProperties(this._selectionModel.relation, 'Relation', 'Relation')
   }
 
   relationClicked(event, relation) {

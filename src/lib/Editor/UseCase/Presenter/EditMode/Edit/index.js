@@ -8,6 +8,7 @@ export default class Edit {
   #commander
   #attributeEditor
   #menuState
+  #mousePoint
 
   constructor(
     editorHTMLElement,
@@ -19,13 +20,15 @@ export default class Edit {
     attributeEditor,
     getAutocompletionWs,
     definitionContainer,
-    annotationType
+    annotationType,
+    mousePoint
   ) {
     this.#editorHTMLElement = editorHTMLElement
     this.#pallet = pallet
     this.#commander = commander
     this.#attributeEditor = attributeEditor
     this.#menuState = menuState
+    this.#mousePoint = mousePoint
 
     // protected fields referenced by the child classes
     this._selectionModel = selectionModel
@@ -120,12 +123,7 @@ export default class Edit {
     }
   }
 
-  #createEditPropertiesDialog(
-    annotationType,
-    palletName,
-    selectedItems,
-    mousePoint
-  ) {
+  #createEditPropertiesDialog(annotationType, palletName, selectedItems) {
     return new EditPropertiesDialog(
       this.#editorHTMLElement,
       annotationType,
@@ -135,7 +133,7 @@ export default class Edit {
       this._getAutocompletionWs(),
       selectedItems,
       this.#pallet,
-      mousePoint
+      this.#mousePoint
     )
   }
 }
