@@ -63,6 +63,7 @@ export default class Edit {
   createSpanWithTouchDevice() {}
   expandSpanWithTouchDevice() {}
   shrinkSpanWithTouchDevice() {}
+  editProperties() {}
   relationClicked() {}
   relationBollardClicked() {}
 
