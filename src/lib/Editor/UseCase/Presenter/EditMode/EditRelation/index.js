@@ -72,7 +72,7 @@ export default class EditRelation extends Edit {
     return bindMouseEvents(this._editorHTMLElement, this.#mouseEventHandler)
   }
 
-  applyTextSelection() {
+  applyTextSelectionWithTouchDevice() {
     this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
       false,
       false,

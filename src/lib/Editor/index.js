@@ -98,7 +98,7 @@ export default class Editor {
       'pasteEntitiesFromSystemClipboard',
       'activate',
       'deactivate',
-      'applyTextSelection',
+      'applyTextSelectionWithTouchDevice',
       'showContextMenu',
       'hideContextMenu',
       'focusDenotation'

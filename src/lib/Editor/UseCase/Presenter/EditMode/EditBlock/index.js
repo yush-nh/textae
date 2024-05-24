@@ -104,7 +104,7 @@ export default class EditBlock extends Edit {
     this.#spanEditor.shrinkForTouchDevice()
   }
 
-  applyTextSelection() {
+  applyTextSelectionWithTouchDevice() {
     if (isRangeInTextBox(window.getSelection(), this.#textBox)) {
       const selectionWrapper = new SelectionWrapper(this.#spanModelContainer)
       const { begin, end } = new OrderedPositions(

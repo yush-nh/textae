@@ -188,7 +188,7 @@ export default class EditMode {
           relationBollardClicked(entity) {
             entity.focus()
           },
-          applyTextSelection() {}
+          applyTextSelectionWithTouchDevice() {}
         }
     }
   }

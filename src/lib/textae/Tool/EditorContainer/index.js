@@ -131,13 +131,13 @@ export default class EditorContainer {
       'selectionchange',
       debounce(() => {
         if (this.selected) {
-          this._editors.get(this.selected).applyTextSelection()
+          this._editors.get(this.selected).applyTextSelectionWithTouchDevice()
         }
       }, 100)
     )
     document.addEventListener('contextmenu', () => {
       if (this.selected) {
-        this._editors.get(this.selected).applyTextSelection()
+        this._editors.get(this.selected).applyTextSelectionWithTouchDevice()
       }
     })
 

@@ -211,9 +211,9 @@ export default class Presenter {
     }
   }
 
-  applyTextSelection() {
+  applyTextSelectionWithTouchDevice() {
     if (this.#isActive) {
-      this.#editMode.currentEdit.applyTextSelection()
+      this.#editMode.currentEdit.applyTextSelectionWithTouchDevice()
     }
   }
 }
