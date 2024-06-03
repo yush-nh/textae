@@ -2,9 +2,14 @@ import Buttons from './Buttons'
 import { MODE } from '../../../MODE'
 
 export default class EnableState {
+  #states
+  #eventEmitter
+  #selectionModel
+  #clipBoard
+
   constructor(eventEmitter, selectionModel, clipBoard) {
     // Enable always enabled buttons.
-    this._states = new Map([
+    this.#states = new Map([
       ['import', true],
       ['upload', true],
       ['view mode', true],
@@ -16,9 +21,9 @@ export default class EnableState {
       ['help', true]
     ])
 
-    this._eventEmitter = eventEmitter
-    this._selectionModel = selectionModel
-    this._clipBoard = clipBoard
+    this.#eventEmitter = eventEmitter
+    this.#selectionModel = selectionModel
+    this.#clipBoard = clipBoard
 
     eventEmitter
       .on('textae-event.history.change', (history) => {
@@ -26,23 +31,23 @@ export default class EnableState {
         this.enable('undo', history.hasAnythingToUndo)
         this.enable('redo', history.hasAnythingToRedo)
       })
-      .on('textae-event.selection.span.change', () => this._updateButtons())
-      .on('textae-event.selection.relation.change', () => this._updateButtons())
-      .on('textae-event.selection.entity.change', () => this._updateButtons())
-      .on('textae-event.edit-mode.transition', (mode) => this._setForMode(mode))
-      .on('textae-event.clip-board.change', () => this._updateByClipboard())
+      .on('textae-event.selection.span.change', () => this.#updateButtons())
+      .on('textae-event.selection.relation.change', () => this.#updateButtons())
+      .on('textae-event.selection.entity.change', () => this.#updateButtons())
+      .on('textae-event.edit-mode.transition', (mode) => this.#setForMode(mode))
+      .on('textae-event.clip-board.change', () => this.#updateByClipboard())
       .on('textae-event.annotation-auto-saver.enable', (enable) =>
         this.enable('upload automatically', enable)
       )
   }
 
   get(button) {
-    return this._states.get(button)
+    return this.#states.get(button)
   }
 
   enable(button, enable) {
-    this._states.set(button, enable)
-    this._propagate()
+    this.#states.set(button, enable)
+    this.#propagate()
   }
 
   updateButtonsToOperateSpanWithTouchDevice(
@@ -50,44 +55,44 @@ export default class EnableState {
     enableToExpand,
     enableToShrink
   ) {
-    this._states.set('create span by touch', enableToCreate)
-    this._states.set('expand span by touch', enableToExpand)
-    this._states.set('shrink span by touch', enableToShrink)
-    this._propagate()
+    this.#states.set('create span by touch', enableToCreate)
+    this.#states.set('expand span by touch', enableToExpand)
+    this.#states.set('shrink span by touch', enableToShrink)
+    this.#propagate()
   }
 
-  _updateButtons() {
+  #updateButtons() {
     for (const { type, enableWhenSelecting } of new Buttons()
       .enableButtonsWhenSelecting) {
       this.enable(
         type,
-        enableWhenSelecting(this._selectionModel, this._clipBoard)
+        enableWhenSelecting(this.#selectionModel, this.#clipBoard)
       )
     }
-    this._propagate()
+    this.#propagate()
   }
 
-  _updateByClipboard() {
+  #updateByClipboard() {
     this.enable(
       'paste',
       new Buttons().pasteButton.enableWhenSelecting(
-        this._selectionModel,
-        this._clipBoard
+        this.#selectionModel,
+        this.#clipBoard
       )
     )
   }
 
-  _propagate() {
-    this._eventEmitter.emit(
+  #propagate() {
+    this.#eventEmitter.emit(
       'textae-event.control.buttons.change',
-      this._states.keys()
+      this.#states.keys()
     )
   }
 
-  _setForMode(mode) {
+  #setForMode(mode) {
     switch (mode) {
       case MODE.VIEW:
-        this._updateButtonsForMode(
+        this.#updateButtonsForMode(
           true,
           false,
           false,
@@ -98,21 +103,21 @@ export default class EnableState {
         )
         break
       case MODE.EDIT_DENOTATION:
-        this._updateButtonsForMode(true, true, true, true, true, true, true)
+        this.#updateButtonsForMode(true, true, true, true, true, true, true)
         break
       case MODE.EDIT_BLOCK:
-        this._updateButtonsForMode(true, false, true, true, true, true, true)
+        this.#updateButtonsForMode(true, false, true, true, true, true, true)
         break
       case MODE.EDIT_RELATION:
-        this._updateButtonsForMode(false, false, false, true, true, false, true)
+        this.#updateButtonsForMode(false, false, false, true, true, false, true)
         break
       case MODE.EDIT_TEXT:
-        this._updateButtonsForMode(true, false, true, true, true, false, false)
+        this.#updateButtonsForMode(true, false, true, true, true, false, false)
         break
       default:
         throw `unknown edit mode!${mode}`
     }
-    this._propagate()
+    this.#propagate()
   }
 
   /**
@@ -125,7 +130,7 @@ export default class EnableState {
    * @param {boolean} span
    * @param {boolean} pallet
    */
-  _updateButtonsForMode(
+  #updateButtonsForMode(
     simple,
     replicateAuto,
     boundaryDetection,
@@ -134,14 +139,14 @@ export default class EnableState {
     span,
     pallet
   ) {
-    this._states.set('simple view', simple)
-    this._states.set('auto replicate', replicateAuto)
-    this._states.set('boundary detection', boundaryDetection)
-    this._states.set('adjust lineheight', lineHeight)
-    this._states.set('auto adjust lineheight', lineHeightAuto)
-    this._states.set('create span by touch', span)
-    this._states.set('expand span by touch', span)
-    this._states.set('shrink span by touch', span)
-    this._states.set('pallet', pallet)
+    this.#states.set('simple view', simple)
+    this.#states.set('auto replicate', replicateAuto)
+    this.#states.set('boundary detection', boundaryDetection)
+    this.#states.set('adjust lineheight', lineHeight)
+    this.#states.set('auto adjust lineheight', lineHeightAuto)
+    this.#states.set('create span by touch', span)
+    this.#states.set('expand span by touch', span)
+    this.#states.set('shrink span by touch', span)
+    this.#states.set('pallet', pallet)
   }
 }
