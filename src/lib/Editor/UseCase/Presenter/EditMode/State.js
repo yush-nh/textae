@@ -122,17 +122,17 @@ export default class State {
       },
       {
         name: MODE.EDIT_DENOTATION,
-        availabilityName: 'term edit mode',
+        availabilityName: 'edit term mode',
         funcName: 'toEditTermMode'
       },
       {
         name: MODE.EDIT_BLOCK,
-        availabilityName: 'block edit mode',
+        availabilityName: 'edit block mode',
         funcName: 'toEditBlockMode'
       },
       {
         name: MODE.EDIT_RELATION,
-        availabilityName: 'relation edit mode',
+        availabilityName: 'edit relation mode',
         funcName: 'toEditRelationMode'
       }
     ]

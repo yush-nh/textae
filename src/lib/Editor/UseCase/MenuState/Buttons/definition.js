@@ -32,17 +32,17 @@ export const definition = [
         push: true
       },
       {
-        type: 'term edit mode',
+        type: 'edit term mode',
         title: 'Term Edit Mode',
         push: true
       },
       {
-        type: 'block edit mode',
+        type: 'edit block mode',
         title: 'Block Edit Mode',
         push: true
       },
       {
-        type: 'relation edit mode',
+        type: 'edit relation mode',
         title: 'Relation Edit Mode',
         push: true
       }

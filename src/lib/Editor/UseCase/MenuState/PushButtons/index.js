@@ -51,9 +51,9 @@ export default class PushButtons {
 
   #updateModeButtons(view, term, block, relation, simple) {
     this.#buttons.get('view mode').isPushed = view
-    this.#buttons.get('term edit mode').isPushed = term
-    this.#buttons.get('block edit mode').isPushed = block
-    this.#buttons.get('relation edit mode').isPushed = relation
+    this.#buttons.get('edit term mode').isPushed = term
+    this.#buttons.get('edit block mode').isPushed = block
+    this.#buttons.get('edit relation mode').isPushed = relation
     this.#buttons.get('simple view').isPushed = simple
   }
 }
