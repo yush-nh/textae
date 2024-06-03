@@ -50,6 +50,12 @@ export default class State {
     this.#emit()
   }
 
+  toEditTextMode(showRelation) {
+    this.#currentShowRelation = showRelation
+    this.#currentState = MODE.EDIT_TEXT
+    this.#emit()
+  }
+
   toggleSimpleMode() {
     switch (this.currentState) {
       case MODE.EDIT_DENOTATION:
