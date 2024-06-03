@@ -10,6 +10,7 @@ const NAME_MAP = new Map([
   ['term', 'term edit mode'],
   ['block', 'block edit mode'],
   ['relation', 'relation edit mode'],
+  ['edit-text', 'text edit mode'],
   ['simple', 'simple view'],
   ['line-height', 'adjust lineheight'],
   ['line-height-auto', 'auto adjust lineheight'],
@@ -60,7 +61,11 @@ export default class FunctionAvailability {
 
     // All functions are enabled by default.
     for (const key of NAME_MAP.values()) {
-      map.set(key, true)
+      if (key === 'edit-text') {
+        map.set(key, false)
+      } else {
+        map.set(key, true)
+      }
     }
 
     return map
