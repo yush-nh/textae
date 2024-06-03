@@ -123,7 +123,7 @@ export default class State {
     ]
 
     return all.filter((mode) =>
-      this._functionAvailability.get(mode.availabilityName)
+      this._functionAvailability.isAvailable(mode.availabilityName)
     )
   }
 }

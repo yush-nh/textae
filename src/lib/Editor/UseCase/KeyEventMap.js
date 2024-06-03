@@ -21,52 +21,58 @@ export default class KeyEventMap {
       ['7', (shiftKey) => presenter.manipulateAttribute(7, shiftKey)],
       ['8', (shiftKey) => presenter.manipulateAttribute(8, shiftKey)],
       ['9', (shiftKey) => presenter.manipulateAttribute(9, shiftKey)],
-      ['a', () => functionAvailability.get('redo') && commander.redo()],
+      ['a', () => functionAvailability.isAvailable('redo') && commander.redo()],
       [
         'b',
         () =>
-          functionAvailability.get('boundary detection') &&
+          functionAvailability.isAvailable('boundary detection') &&
           presenter.toggleButton('boundary detection')
       ],
       [
         'd',
         () =>
-          functionAvailability.get('delete') &&
+          functionAvailability.isAvailable('delete') &&
           presenter.removeSelectedElements()
       ],
       [
         'e',
-        () => functionAvailability.get('new entity') && presenter.createEntity()
+        () =>
+          functionAvailability.isAvailable('new entity') &&
+          presenter.createEntity()
       ],
       ['f', () => presenter.changeModeByShortcut()],
       [
         'i',
         () =>
-          functionAvailability.get('import') &&
+          functionAvailability.isAvailable('import') &&
           persistenceInterface.importAnnotation()
       ],
       ['m', () => presenter.changeModeByShortcut()],
-      ['q', () => functionAvailability.get('pallet') && presenter.showPallet()],
+      [
+        'q',
+        () =>
+          functionAvailability.isAvailable('pallet') && presenter.showPallet()
+      ],
       [
         'r',
         () =>
-          functionAvailability.get('replicate span annotation') &&
+          functionAvailability.isAvailable('replicate span annotation') &&
           presenter.replicate()
       ],
       [
         'u',
         () =>
-          functionAvailability.get('upload') &&
+          functionAvailability.isAvailable('upload') &&
           persistenceInterface.uploadAnnotation()
       ],
       [
         'w',
         () =>
-          functionAvailability.get('edit properties') &&
+          functionAvailability.isAvailable('edit properties') &&
           presenter.editProperties()
       ],
-      ['y', () => functionAvailability.get('redo') && commander.redo()],
-      ['z', () => functionAvailability.get('undo') && commander.undo()],
+      ['y', () => functionAvailability.isAvailable('redo') && commander.redo()],
+      ['z', () => functionAvailability.isAvailable('undo') && commander.undo()],
       ['ArrowDown', () => presenter.selectDown()],
       ['ArrowLeft', (shiftKey) => presenter.selectLeft(shiftKey)],
       ['ArrowRight', (shiftKey) => presenter.selectRight(shiftKey)],

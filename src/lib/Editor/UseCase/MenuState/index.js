@@ -73,7 +73,7 @@ export default class MenuState {
     return new Buttons().controlBar
       .map(({ list }) =>
         list
-          .filter(({ type }) => this.#functionAvailability.get(type))
+          .filter(({ type }) => this.#functionAvailability.isAvailable(type))
           .map(({ type, title }) => this.#getPalletButtonTitle(type, title))
           .map(({ type, title }) => ({
             type,
@@ -91,7 +91,7 @@ export default class MenuState {
     return new Buttons().contextMenu
       .map(({ list }) =>
         list
-          .filter(({ type }) => this.#functionAvailability.get(type))
+          .filter(({ type }) => this.#functionAvailability.isAvailable(type))
           .map(({ type, title }) => this.#getPalletButtonTitle(type, title))
           .reduce((acc, { type, title }) => {
             if (!isTouchable() && this.getState(type, 'disabled')) {
@@ -166,7 +166,7 @@ export default class MenuState {
   }
 
   get detailModifierClassName() {
-    return this.#functionAvailability.get('show logo')
+    return this.#functionAvailability.isAvailable('show logo')
       ? 'textae-control-details--show-logo'
       : 'textae-control-details--hide-logo'
   }

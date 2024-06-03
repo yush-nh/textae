@@ -40,7 +40,7 @@ export default class FunctionAvailability {
     this._availabilities = this._default
   }
 
-  get(type) {
+  isAvailable(type) {
     return this._availabilities.get(type)
   }
 
