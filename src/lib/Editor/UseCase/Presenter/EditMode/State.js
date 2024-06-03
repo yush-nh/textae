@@ -64,6 +64,9 @@ export default class State {
       case MODE.EDIT_BLOCK:
         this.toEditBlockMode(!this.#currentShowRelation)
         break
+      case MODE.EDIT_TEXT:
+        this.toEditTextMode(!this.#currentShowRelation)
+        break
       case MODE.VIEW:
         this.toViewMode(!this.#currentShowRelation)
         break
