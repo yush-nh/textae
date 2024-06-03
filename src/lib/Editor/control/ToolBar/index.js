@@ -81,7 +81,7 @@ export default class ToolBar extends Menu {
       .on('textae-event.edit-mode.transition', (mode) => {
         // The palette is not used in text editing mode.
         const title = getPalletButtonTitleFor(mode)
-        const button = this._el.querySelector(`.textae-control-pallet-button`)
+        const button = super._querySelector(`.textae-control-pallet-button`)
         button.title = title
       })
       .on('textae-event.original-data.configuration.reset', () =>
@@ -120,7 +120,7 @@ export default class ToolBar extends Menu {
   }
 
   #updateButton(buttonName, stateName) {
-    const button = this._el.querySelector(
+    const button = super._querySelector(
       `.textae-control-${buttonName.replaceAll(' ', '-')}-button`
     )
 
@@ -134,7 +134,7 @@ export default class ToolBar extends Menu {
   }
 
   #redrawAllButtons() {
-    this.el.innerHTML = ''
-    this.el.insertAdjacentHTML('beforeend', template(this.#menuState))
+    super.el.innerHTML = ''
+    super.el.insertAdjacentHTML('beforeend', template(this.#menuState))
   }
 }
