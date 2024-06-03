@@ -77,6 +77,7 @@ export default class ToolBar extends Menu {
         this._updateButton('upload', 'transit')
       })
       .on('textae-event.edit-mode.transition', (mode) => {
+        // The palette is not used in text editing mode.
         const title = getPalletButtonTitleFor(mode)
         const button = this._el.querySelector(`.textae-control-pallet-button`)
         button.title = title
