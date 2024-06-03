@@ -9,10 +9,14 @@ const helpDialog = new HelpDialog()
 const tipsDialog = new TipsDialog()
 
 export default class EditorContainer {
+  #editors
+  #selected
+  #counter
+
   constructor() {
-    this._editors = new Map()
-    this._selected = null
-    this._counter = 0
+    this.#editors = new Map()
+    this.#selected = null
+    this.#counter = 0
 
     delegate(window, '.textae-editor', 'keyup', (event) => {
       // Keyup events occurs without selected editor, When editor is focused before initializing.
@@ -31,64 +35,64 @@ export default class EditorContainer {
       }
     })
 
-    this._observeDocumentEvents()
+    this.#observeDocumentEvents()
   }
 
   set(element, editor) {
-    this._editors.set(element, editor)
-    this._counter++
+    this.#editors.set(element, editor)
+    this.#counter++
   }
 
   remove(element) {
-    this._editors.get(element).dispose()
-    this._editors.delete(element)
+    this.#editors.get(element).dispose()
+    this.#editors.delete(element)
 
     if (this.selected === element) {
-      this._selected = null
+      this.#selected = null
     }
   }
 
   get selected() {
-    return this._selected
+    return this.#selected
   }
 
   set selected(element) {
     if (element === null) {
-      this._selectedEditor.deactivate()
-      this._selected = null
+      this.#selectedEditor.deactivate()
+      this.#selected = null
     } else {
-      this._selected = element
-      this._selectedEditor.activate()
+      this.#selected = element
+      this.#selectedEditor.activate()
     }
   }
 
   drawGridsInSight() {
-    for (const editor of this._editors.values()) {
+    for (const editor of this.#editors.values()) {
       editor.drawGridsInSight()
     }
   }
 
   updateDenotationEntitiesWidth() {
-    for (const editor of this._editors.values()) {
+    for (const editor of this.#editors.values()) {
       editor.updateDenotationEntitiesWidth()
     }
   }
 
   reLayout() {
-    for (const editor of this._editors.values()) {
+    for (const editor of this.#editors.values()) {
       editor.reLayout()
     }
   }
 
   has(element) {
-    return this._editors.has(element)
+    return this.#editors.has(element)
   }
 
   get nextID() {
-    return `editor${this._counter}`
+    return `editor${this.#counter}`
   }
 
-  _observeDocumentEvents() {
+  #observeDocumentEvents() {
     document.addEventListener(
       'scroll',
       throttle(() => {
@@ -104,7 +108,7 @@ export default class EditorContainer {
       }
 
       if (this.selected) {
-        this._editors.get(this.selected).copyEntitiesToSystemClipboard(e)
+        this.#editors.get(this.selected).copyEntitiesToSystemClipboard(e)
       }
     })
     document.addEventListener('cut', (e) => {
@@ -113,7 +117,7 @@ export default class EditorContainer {
       }
 
       if (this.selected) {
-        this._editors.get(this.selected).cutEntitiesToSystemClipboard(e)
+        this.#editors.get(this.selected).cutEntitiesToSystemClipboard(e)
       }
     })
     document.addEventListener('paste', (e) => {
@@ -122,7 +126,7 @@ export default class EditorContainer {
       }
 
       if (this.selected) {
-        this._editors.get(this.selected).pasteEntitiesFromSystemClipboard(e)
+        this.#editors.get(this.selected).pasteEntitiesFromSystemClipboard(e)
       }
     })
 
@@ -131,13 +135,13 @@ export default class EditorContainer {
       'selectionchange',
       debounce(() => {
         if (this.selected) {
-          this._editors.get(this.selected).applyTextSelectionWithTouchDevice()
+          this.#editors.get(this.selected).applyTextSelectionWithTouchDevice()
         }
       }, 100)
     )
     document.addEventListener('contextmenu', () => {
       if (this.selected) {
-        this._editors.get(this.selected).applyTextSelectionWithTouchDevice()
+        this.#editors.get(this.selected).applyTextSelectionWithTouchDevice()
       }
     })
 
@@ -151,21 +155,21 @@ export default class EditorContainer {
         return
       }
 
-      for (const api of this._editors.values()) {
+      for (const api of this.#editors.values()) {
         api.hideContextMenu()
       }
     })
 
     document.addEventListener('contextmenu', (contextmenuEvent) => {
       // Close ContextMenu when another editor is clicked.
-      for (const api of this._editors.values()) {
+      for (const api of this.#editors.values()) {
         api.hideContextMenu()
       }
 
       // If the editor you click on is selected and editable,
       // it will display its own context menu, rather than the browser's context menu.
       const clickedEditor = contextmenuEvent.target.closest('.textae-editor')
-      if (clickedEditor === this._selected) {
+      if (clickedEditor === this.#selected) {
         if (
           clickedEditor.classList.contains(
             'textae-editor__mode--view-with-relation'
@@ -179,12 +183,12 @@ export default class EditorContainer {
 
         // Prevent show browser default context menu
         contextmenuEvent.preventDefault()
-        this._selectedEditor.showContextMenu(contextmenuEvent)
+        this.#selectedEditor.showContextMenu(contextmenuEvent)
       }
     })
   }
 
-  get _selectedEditor() {
-    return this._editors.get(this._selected)
+  get #selectedEditor() {
+    return this.#editors.get(this.#selected)
   }
 }
