@@ -90,7 +90,7 @@ export default class StartUpOptions {
     }
   }
 
-  get isTermEditMode() {
+  get isEditTermMode() {
     // Same as edit mode and term-edit mode for compatibility.
     return (
       this.#readAttribute('mode') === 'edit' ||
@@ -98,11 +98,11 @@ export default class StartUpOptions {
     )
   }
 
-  get isBlockEditMode() {
+  get isEditBlockMode() {
     return this.#readAttribute('mode') === 'block-edit'
   }
 
-  get isRelationEditMode() {
+  get isEditRelationMode() {
     return this.#readAttribute('mode') === 'relation-edit'
   }
 

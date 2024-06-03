@@ -126,17 +126,17 @@ export default class EditMode {
    * For an initiation transition on an annotations data loaded.
    */
   reset() {
-    if (this.#startUpOptions.isTermEditMode) {
+    if (this.#startUpOptions.isEditTermMode) {
       this.#state.toTermMode(this.#annotationModel.relation.some)
       return
     }
 
-    if (this.#startUpOptions.isBlockEditMode) {
+    if (this.#startUpOptions.isEditBlockMode) {
       this.#state.toBlockMode(this.#annotationModel.relation.some)
       return
     }
 
-    if (this.#startUpOptions.isRelationEditMode) {
+    if (this.#startUpOptions.isEditRelationMode) {
       this.#state.toRelationMode()
       return
     }
