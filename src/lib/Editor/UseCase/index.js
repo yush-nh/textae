@@ -298,7 +298,7 @@ export default class UseCase {
   }
 
   focusDenotation(denotationID) {
-    this.#presenter.toTermMode()
+    this.#presenter.toEditTermMode()
     this.#annotationModel.focusDenotation(denotationID)
   }
 }

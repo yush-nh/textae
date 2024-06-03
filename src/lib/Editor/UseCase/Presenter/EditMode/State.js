@@ -32,7 +32,7 @@ export default class State {
     this.#emit()
   }
 
-  toTermMode(showRelation) {
+  toEditTermMode(showRelation) {
     this.#currentShowRelation = showRelation
     this.#currentState = MODE.EDIT_DENOTATION
     this.#emit()
@@ -53,7 +53,7 @@ export default class State {
   toggleSimpleMode() {
     switch (this.currentState) {
       case MODE.EDIT_DENOTATION:
-        this.toTermMode(!this.#currentShowRelation)
+        this.toEditTermMode(!this.#currentShowRelation)
         break
       case MODE.EDIT_BLOCK:
         this.toBlockMode(!this.#currentShowRelation)
@@ -114,7 +114,7 @@ export default class State {
       {
         name: MODE.EDIT_DENOTATION,
         availabilityName: 'term edit mode',
-        funcName: 'toTermMode'
+        funcName: 'toEditTermMode'
       },
       {
         name: MODE.EDIT_BLOCK,
