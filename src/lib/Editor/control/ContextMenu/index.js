@@ -5,6 +5,9 @@ import Menu from '../Menu'
 import toContextMenuItem from './toContextMenuItem'
 
 export default class ContextMenu extends Menu {
+  #editorHTMLElement
+  #menuState
+
   constructor(editorHTMLElement, menuState, iconEventMap) {
     super(
       `<div class="textae-control ${
@@ -13,21 +16,21 @@ export default class ContextMenu extends Menu {
       iconEventMap
     )
 
-    this._editorHTMLElement = editorHTMLElement
-    this._menuState = menuState
+    this.#editorHTMLElement = editorHTMLElement
+    this.#menuState = menuState
   }
 
   show(contextmenuEvent) {
     const selection = window.getSelection()
-    const editorClientRect = this._editorHTMLElement.getBoundingClientRect()
+    const editorClientRect = this.#editorHTMLElement.getBoundingClientRect()
 
     if (isTouchable() && selection.rangeCount === 1) {
       const rectOfSelection = selection.getRangeAt(0).getBoundingClientRect()
-      const rectOfTextBox = this._editorHTMLElement
+      const rectOfTextBox = this.#editorHTMLElement
         .querySelector('.textae-editor__text-box')
         .getBoundingClientRect()
 
-      this._showAbove(
+      this.#showAbove(
         rectOfSelection.y - editorClientRect.y,
         rectOfSelection.x - rectOfTextBox.x
       )
@@ -36,7 +39,7 @@ export default class ContextMenu extends Menu {
       // I want the coordinates where you right-click with the mouse,
       // starting from the upper left of the editor.
       // So the Y coordinate is pageY minus the editor's offsetTop.
-      this._showLowerRight(
+      this.#showLowerRight(
         contextmenuEvent.pageY - editorClientRect.y,
         contextmenuEvent.pageX - editorClientRect.x
       )
@@ -44,18 +47,18 @@ export default class ContextMenu extends Menu {
   }
 
   hide() {
-    if (this._isOpen) {
+    if (this.#isOpen) {
       super.el.classList.remove('textae-context-menu--show')
       super.el.classList.add('textae-context-menu--hide')
     }
   }
 
-  get _isOpen() {
+  get #isOpen() {
     return super.el.classList.contains('textae-context-menu--show')
   }
 
-  _showAbove(positionTop, positionLeft) {
-    this._show()
+  #showAbove(positionTop, positionLeft) {
+    this.#show()
 
     const { height } = this.el.getBoundingClientRect()
     super.el.setAttribute(
@@ -64,8 +67,8 @@ export default class ContextMenu extends Menu {
     )
   }
 
-  _showLowerRight(positionTop, positionLeft) {
-    this._show()
+  #showLowerRight(positionTop, positionLeft) {
+    this.#show()
 
     super.el.setAttribute(
       'style',
@@ -73,8 +76,8 @@ export default class ContextMenu extends Menu {
     )
   }
 
-  _show() {
-    const context = classify(this._menuState.contextMenuButton)
+  #show() {
+    const context = classify(this.#menuState.contextMenuButton)
     const html = `
     <div">
       ${context
