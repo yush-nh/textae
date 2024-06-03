@@ -88,7 +88,7 @@ export default class Presenter {
       'toViewMode',
       'toEditTermMode',
       'toEditBlockMode',
-      'toRelationMode',
+      'toEditRelationMode',
       'toggleSimpleMode',
       'changeModeByShortcut'
     ])

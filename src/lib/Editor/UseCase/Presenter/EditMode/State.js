@@ -44,7 +44,7 @@ export default class State {
     this.#emit()
   }
 
-  toRelationMode() {
+  toEditRelationMode() {
     this.#currentShowRelation = true
     this.#currentState = MODE.EDIT_RELATION
     this.#emit()
@@ -124,7 +124,7 @@ export default class State {
       {
         name: MODE.EDIT_RELATION,
         availabilityName: 'relation edit mode',
-        funcName: 'toRelationMode'
+        funcName: 'toEditRelationMode'
       }
     ]
 
