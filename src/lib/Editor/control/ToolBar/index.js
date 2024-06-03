@@ -32,6 +32,8 @@ function template(context) {
 
 // The control is a control bar in an editor.
 export default class ToolBar extends Menu {
+  #menuState
+
   /**
    *
    * @param {import('../../UseCase/MenuState').MenuState} menuState
@@ -39,7 +41,7 @@ export default class ToolBar extends Menu {
   constructor(eventEmitter, menuState, iconEventMap) {
     super(template(menuState), iconEventMap)
 
-    this._menuState = menuState
+    this.#menuState = menuState
 
     // If you use position: sticky,
     // the height of the toolbar will affect the Y coordinate of the textae-body
@@ -66,15 +68,15 @@ export default class ToolBar extends Menu {
 
     eventEmitter
       .on('textae-event.control.button.push', ({ name }) => {
-        this._updateButton(name, 'pushed')
+        this.#updateButton(name, 'pushed')
       })
       .on('textae-event.control.buttons.change', (buttons) => {
         for (const name of buttons) {
-          this._updateButton(name, 'disabled')
+          this.#updateButton(name, 'disabled')
         }
       })
       .on('textae-event.annotation-data.events-observer.unsaved-change', () => {
-        this._updateButton('upload', 'transit')
+        this.#updateButton('upload', 'transit')
       })
       .on('textae-event.edit-mode.transition', (mode) => {
         // The palette is not used in text editing mode.
@@ -83,47 +85,47 @@ export default class ToolBar extends Menu {
         button.title = title
       })
       .on('textae-event.original-data.configuration.reset', () =>
-        this._redrawAllButtons()
+        this.#redrawAllButtons()
       )
       .on('textae-event.type-definition.entity.change', () =>
-        this._updateButton('pallet', 'transit')
+        this.#updateButton('pallet', 'transit')
       )
       .on('textae-event.type-definition.entity.delete', () =>
-        this._updateButton('pallet', 'transit')
+        this.#updateButton('pallet', 'transit')
       )
       .on('textae-event.type-definition.entity.change-default', () =>
-        this._updateButton('pallet', 'transit')
+        this.#updateButton('pallet', 'transit')
       )
       .on('textae-event.type-definition.relation.change', () =>
-        this._updateButton('pallet', 'transit')
+        this.#updateButton('pallet', 'transit')
       )
       .on('textae-event.type-definition.relation.delete', () =>
-        this._updateButton('pallet', 'transit')
+        this.#updateButton('pallet', 'transit')
       )
       .on('textae-event.type-definition.relation.change-default', () =>
-        this._updateButton('pallet', 'transit')
+        this.#updateButton('pallet', 'transit')
       )
       .on('textae-event.type-definition.attribute.create', () =>
-        this._updateButton('pallet', 'transit')
+        this.#updateButton('pallet', 'transit')
       )
       .on('textae-event.type-definition.attribute.change', () =>
-        this._updateButton('pallet', 'transit')
+        this.#updateButton('pallet', 'transit')
       )
       .on('textae-event.type-definition.attribute.delete', () =>
-        this._updateButton('pallet', 'transit')
+        this.#updateButton('pallet', 'transit')
       )
       .on('textae-event.type-definition.attribute.move', () =>
-        this._updateButton('pallet', 'transit')
+        this.#updateButton('pallet', 'transit')
       )
   }
 
-  _updateButton(buttonName, stateName) {
+  #updateButton(buttonName, stateName) {
     const button = this._el.querySelector(
       `.textae-control-${buttonName.replaceAll(' ', '-')}-button`
     )
 
     if (button) {
-      if (this._menuState.getState(buttonName, stateName)) {
+      if (this.#menuState.getState(buttonName, stateName)) {
         button.classList.add(`textae-control-icon--${stateName}`)
       } else {
         button.classList.remove(`textae-control-icon--${stateName}`)
@@ -131,8 +133,8 @@ export default class ToolBar extends Menu {
     }
   }
 
-  _redrawAllButtons() {
+  #redrawAllButtons() {
     this.el.innerHTML = ''
-    this.el.insertAdjacentHTML('beforeend', template(this._menuState))
+    this.el.insertAdjacentHTML('beforeend', template(this.#menuState))
   }
 }
