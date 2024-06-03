@@ -67,7 +67,7 @@ export default class State {
   }
 
   changeModeByShortcut() {
-    const modes = this.#availableModes
+    const modes = this.#modesCanBeTransitionedByShortcutKey
 
     // No mode to change.
     if (modes.length <= 1) {
@@ -103,8 +103,8 @@ export default class State {
     )
   }
 
-  // Look at Function Availability and return the possible transition modes.
-  get #availableModes() {
+  get #modesCanBeTransitionedByShortcutKey() {
+    // Shortcut keys do not transition to text edit mode.
     const all = [
       {
         name: MODE.VIEW,
@@ -128,6 +128,7 @@ export default class State {
       }
     ]
 
+    // Look at Function Availability and return the possible transition modes.
     return all.filter((mode) =>
       this.#functionAvailability.isAvailable(mode.availabilityName)
     )
