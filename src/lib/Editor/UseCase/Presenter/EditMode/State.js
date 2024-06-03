@@ -1,6 +1,12 @@
 import { MODE } from '../../../../MODE'
 
 export default class State {
+  #currentShowRelation
+  #currentState
+  #relationContainer
+  #eventEmitter
+  #functionAvailability
+
   /**
    *
    * @param {import('../../../AnnotationModel/RelationInstanceContainer').RelationInstanceContainer} relationContainer
@@ -8,52 +14,52 @@ export default class State {
    * @param {import('../../FunctionAvailability').default} functionAvailability
    */
   constructor(relationContainer, eventEmitter, functionAvailability) {
-    this._currentShowRelation = false
-    this._currentState = MODE.INIT
+    this.#currentShowRelation = false
+    this.#currentState = MODE.INIT
 
-    this._relationContainer = relationContainer
-    this._eventEmitter = eventEmitter
-    this._functionAvailability = functionAvailability
+    this.#relationContainer = relationContainer
+    this.#eventEmitter = eventEmitter
+    this.#functionAvailability = functionAvailability
   }
 
   get currentState() {
-    return this._currentState
+    return this.#currentState
   }
 
   toViewMode(showRelation) {
-    this._currentShowRelation = showRelation
-    this._currentState = MODE.VIEW
-    this._emit()
+    this.#currentShowRelation = showRelation
+    this.#currentState = MODE.VIEW
+    this.#emit()
   }
 
   toTermMode(showRelation) {
-    this._currentShowRelation = showRelation
-    this._currentState = MODE.EDIT_DENOTATION
-    this._emit()
+    this.#currentShowRelation = showRelation
+    this.#currentState = MODE.EDIT_DENOTATION
+    this.#emit()
   }
 
   toBlockMode(showRelation) {
-    this._currentShowRelation = showRelation
-    this._currentState = MODE.EDIT_BLOCK
-    this._emit()
+    this.#currentShowRelation = showRelation
+    this.#currentState = MODE.EDIT_BLOCK
+    this.#emit()
   }
 
   toRelationMode() {
-    this._currentShowRelation = true
-    this._currentState = MODE.EDIT_RELATION
-    this._emit()
+    this.#currentShowRelation = true
+    this.#currentState = MODE.EDIT_RELATION
+    this.#emit()
   }
 
   toggleSimpleMode() {
     switch (this.currentState) {
       case MODE.EDIT_DENOTATION:
-        this.toTermMode(!this._currentShowRelation)
+        this.toTermMode(!this.#currentShowRelation)
         break
       case MODE.EDIT_BLOCK:
-        this.toBlockMode(!this._currentShowRelation)
+        this.toBlockMode(!this.#currentShowRelation)
         break
       case MODE.VIEW:
-        this.toViewMode(!this._currentShowRelation)
+        this.toViewMode(!this.#currentShowRelation)
         break
       default:
         throw new Error(`Invalid state: ${this.currentState}`)
@@ -61,7 +67,7 @@ export default class State {
   }
 
   changeModeByShortcut() {
-    const modes = this._availableModes
+    const modes = this.#availableModes
 
     // No mode to change.
     if (modes.length <= 1) {
@@ -82,23 +88,23 @@ export default class State {
   }
 
   get nextShowRelation() {
-    if (this._currentState === MODE.EDIT_RELATION) {
-      return this._relationContainer.some
+    if (this.#currentState === MODE.EDIT_RELATION) {
+      return this.#relationContainer.some
     } else {
-      return this._currentShowRelation
+      return this.#currentShowRelation
     }
   }
 
-  _emit() {
-    this._eventEmitter.emit(
+  #emit() {
+    this.#eventEmitter.emit(
       'textae-event.edit-mode.transition',
-      this._currentState,
-      this._currentShowRelation
+      this.#currentState,
+      this.#currentShowRelation
     )
   }
 
   // Look at Function Availability and return the possible transition modes.
-  get _availableModes() {
+  get #availableModes() {
     const all = [
       {
         name: MODE.VIEW,
@@ -123,7 +129,7 @@ export default class State {
     ]
 
     return all.filter((mode) =>
-      this._functionAvailability.isAvailable(mode.availabilityName)
+      this.#functionAvailability.isAvailable(mode.availabilityName)
     )
   }
 }
