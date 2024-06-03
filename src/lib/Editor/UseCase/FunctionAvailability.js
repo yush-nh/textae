@@ -61,7 +61,8 @@ export default class FunctionAvailability {
 
     // All functions are enabled by default.
     for (const key of NAME_MAP.values()) {
-      if (key === 'edit-text') {
+      // Text edit mode is disabled by default because it is under development.
+      if (key === 'edit text mode') {
         map.set(key, false)
       } else {
         map.set(key, true)

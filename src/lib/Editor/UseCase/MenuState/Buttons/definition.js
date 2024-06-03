@@ -45,6 +45,11 @@ export const definition = [
         type: 'edit relation mode',
         title: 'Relation Edit Mode',
         push: true
+      },
+      {
+        type: 'edit text mode',
+        title: 'Text Edit Mode',
+        push: true
       }
     ]
   },

@@ -30,30 +30,38 @@ export default class PushButtons {
   #setMode(mode, isSimple) {
     switch (mode) {
       case MODE.VIEW:
-        this.#updateModeButtons(true, false, false, false, isSimple)
+        this.#updateModeButtons(true, false, false, false, false, isSimple)
         break
       case MODE.EDIT_DENOTATION:
-        this.#updateModeButtons(false, true, false, false, isSimple)
+        this.#updateModeButtons(false, true, false, false, false, isSimple)
         break
       case MODE.EDIT_BLOCK:
-        this.#updateModeButtons(false, false, true, false, isSimple)
+        this.#updateModeButtons(false, false, true, false, false, isSimple)
         break
       case MODE.EDIT_RELATION:
-        this.#updateModeButtons(false, false, false, true, false)
+        this.#updateModeButtons(false, false, false, true, false, false)
         break
       case MODE.EDIT_TEXT:
-        this.#updateModeButtons(false, false, false, false, isSimple)
+        this.#updateModeButtons(false, false, false, false, true, isSimple)
         break
       default:
         throw `unknown edit mode!${mode}`
     }
   }
 
-  #updateModeButtons(view, term, block, relation, simple) {
+  #updateModeButtons(
+    view,
+    editTerm,
+    editBlock,
+    editRelation,
+    editText,
+    simple
+  ) {
     this.#buttons.get('view mode').isPushed = view
-    this.#buttons.get('edit term mode').isPushed = term
-    this.#buttons.get('edit block mode').isPushed = block
-    this.#buttons.get('edit relation mode').isPushed = relation
+    this.#buttons.get('edit term mode').isPushed = editTerm
+    this.#buttons.get('edit block mode').isPushed = editBlock
+    this.#buttons.get('edit relation mode').isPushed = editRelation
+    this.#buttons.get('edit text mode').isPushed = editText
     this.#buttons.get('simple view').isPushed = simple
   }
 }
