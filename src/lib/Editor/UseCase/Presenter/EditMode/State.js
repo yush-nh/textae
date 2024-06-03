@@ -38,7 +38,7 @@ export default class State {
     this.#emit()
   }
 
-  toBlockMode(showRelation) {
+  toEditBlockMode(showRelation) {
     this.#currentShowRelation = showRelation
     this.#currentState = MODE.EDIT_BLOCK
     this.#emit()
@@ -56,7 +56,7 @@ export default class State {
         this.toEditTermMode(!this.#currentShowRelation)
         break
       case MODE.EDIT_BLOCK:
-        this.toBlockMode(!this.#currentShowRelation)
+        this.toEditBlockMode(!this.#currentShowRelation)
         break
       case MODE.VIEW:
         this.toViewMode(!this.#currentShowRelation)
@@ -119,7 +119,7 @@ export default class State {
       {
         name: MODE.EDIT_BLOCK,
         availabilityName: 'block edit mode',
-        funcName: 'toBlockMode'
+        funcName: 'toEditBlockMode'
       },
       {
         name: MODE.EDIT_RELATION,

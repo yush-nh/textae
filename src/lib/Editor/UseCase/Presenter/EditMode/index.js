@@ -102,8 +102,8 @@ export default class EditMode {
     this.#state.toEditTermMode(this.#state.nextShowRelation)
   }
 
-  toBlockMode() {
-    this.#state.toBlockMode(this.#state.nextShowRelation)
+  toEditBlockMode() {
+    this.#state.toEditBlockMode(this.#state.nextShowRelation)
   }
 
   toRelationMode() {
@@ -132,7 +132,7 @@ export default class EditMode {
     }
 
     if (this.#startUpOptions.isEditBlockMode) {
-      this.#state.toBlockMode(this.#annotationModel.relation.some)
+      this.#state.toEditBlockMode(this.#annotationModel.relation.some)
       return
     }
 

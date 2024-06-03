@@ -9,7 +9,7 @@ export default class IconEventMap {
     this._map = new Map([
       ['view mode', () => presenter.toViewMode()],
       ['term edit mode', () => presenter.toEditTermMode()],
-      ['block edit mode', () => presenter.toBlockMode()],
+      ['block edit mode', () => presenter.toEditBlockMode()],
       ['relation edit mode', () => presenter.toRelationMode()],
       ['simple view', () => presenter.toggleSimpleMode()],
       ['import', () => persistenceInterface.importAnnotation()],
