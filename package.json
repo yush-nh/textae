@@ -8,9 +8,9 @@
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
-    "@codemirror/language": "^6.10.1",
+    "@codemirror/language": "^6.10.2",
     "@codemirror/legacy-modes": "^6.4.0",
-    "ajv": "^8.14.0",
+    "ajv": "^8.16.0",
     "ajv-formats": "3.0.1",
     "ajv-keywords": "^5.1.0",
     "alertifyjs": "1.14.0",
