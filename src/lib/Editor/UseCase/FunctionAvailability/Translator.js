@@ -43,17 +43,12 @@ export default class Translator {
   }
 
   get defaultAvailabilities() {
-    const map = new Map()
-
-    for (const { name, enabled } of this.#map
+    return this.#map
       .values()
       .filter(
         ({ name, enabled }) => name !== undefined && enabled !== undefined
-      )) {
-      map.set(name, enabled)
-    }
-
-    return map
+      )
+      .reduce((map, { name, enabled }) => map.set(name, enabled), new Map())
   }
 
   translateToInnerNameFrom(functionName) {
