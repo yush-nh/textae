@@ -10,7 +10,7 @@ const NAME_MAP = new Map([
   ['term', 'edit term mode'],
   ['block', 'edit block mode'],
   ['relation', 'edit relation mode'],
-  ['edit-text', 'edit text mode'],
+  ['text-edit', 'edit text mode'],
   ['simple', 'simple view'],
   ['line-height', 'adjust lineheight'],
   ['line-height-auto', 'auto adjust lineheight'],
