@@ -14,7 +14,8 @@ export default class Translator {
       ['term', { name: 'edit term mode', enabled: true }],
       ['block', { name: 'edit block mode', enabled: true }],
       ['relation', { name: 'edit relation mode', enabled: true }],
-      ['text-edit', { name: 'edit text mode', enabled: true }],
+      // Text edit mode is disabled by default because it is under development.
+      ['text-edit', { name: 'edit text mode', enabled: false }],
       ['simple', { name: 'simple view', enabled: true }],
       ['line-height', { name: 'adjust lineheight', enabled: true }],
       ['line-height-auto', { name: 'auto adjust lineheight', enabled: true }],
@@ -38,8 +39,8 @@ export default class Translator {
     ])
   }
 
-  get innerNames() {
-    return this.#map.values().map((value) => value.name)
+  get values() {
+    return this.#map.values()
   }
 
   translateToInnerNameFrom(functionName) {

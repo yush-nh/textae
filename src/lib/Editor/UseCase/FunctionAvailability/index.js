@@ -35,13 +35,8 @@ export default class FunctionAvailability {
     const map = new Map()
 
     // All functions are enabled by default.
-    for (const innerName of this.#translator.innerNames) {
-      // Text edit mode is disabled by default because it is under development.
-      if (innerName === 'edit text mode') {
-        map.set(innerName, false)
-      } else {
-        map.set(innerName, true)
-      }
+    for (const { name, enabled } of this.#translator.values) {
+      map.set(name, enabled)
     }
 
     return map
