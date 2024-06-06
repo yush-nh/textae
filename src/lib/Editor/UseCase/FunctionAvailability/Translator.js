@@ -12,8 +12,11 @@ export default class Translator {
       ['write-auto', { name: 'upload automatically', enabled: true }],
       ['view', { name: 'view mode', enabled: true }],
       ['term', { name: 'edit term mode', enabled: true }],
+      ['term-edit', { alias: 'term' }],
       ['block', { name: 'edit block mode', enabled: true }],
+      ['block-edit', { alias: 'block' }],
       ['relation', { name: 'edit relation mode', enabled: true }],
+      ['relation-edit', { alias: 'relation' }],
       // Text edit mode is disabled by default because it is under development.
       ['text-edit', { name: 'edit text mode', enabled: false }],
       ['simple', { name: 'simple view', enabled: true }],

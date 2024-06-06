@@ -34,7 +34,9 @@
   "autocompletion_ws": "/dev/autocomplete?order=desc",
   "function availability": {
     "logo": false,
-    "relation": false,
+    "term-edit": true,
+    "block-edit": false,
+    "relation-edit": false,
     "undo": false,
     "redo": false
   }
