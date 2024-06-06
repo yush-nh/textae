@@ -42,12 +42,18 @@ export default class Translator {
     ])
   }
 
-  get values() {
-    return this.#map
+  get defaultAvailabilities() {
+    const map = new Map()
+
+    for (const { name, enabled } of this.#map
       .values()
       .filter(
         ({ name, enabled }) => name !== undefined && enabled !== undefined
-      )
+      )) {
+      map.set(name, enabled)
+    }
+
+    return map
   }
 
   translateToInnerNameFrom(functionName) {
