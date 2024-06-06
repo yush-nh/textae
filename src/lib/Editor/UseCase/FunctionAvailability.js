@@ -34,29 +34,31 @@ const NAME_MAP = new Map([
 ])
 
 export default class FunctionAvailability {
+  #availabilities
+
   constructor() {
     // This is a map whose key is the function name
     // and its value is boolean value that is true if enabled.
-    this._availabilities = this._default
+    this.#availabilities = this.#default
   }
 
   isAvailable(type) {
-    return this._availabilities.get(type)
+    return this.#availabilities.get(type)
   }
 
   set availability(values) {
-    const availabilities = this._default
+    const availabilities = this.#default
 
     if (values) {
       for (const [key, value] of Object.entries(values)) {
-        availabilities.set(this._translate(key), value)
+        availabilities.set(this.#translate(key), value)
       }
     }
 
-    this._availabilities = availabilities
+    this.#availabilities = availabilities
   }
 
-  get _default() {
+  get #default() {
     const map = new Map()
 
     // All functions are enabled by default.
@@ -72,7 +74,7 @@ export default class FunctionAvailability {
     return map
   }
 
-  _translate(keyName) {
+  #translate(keyName) {
     if (NAME_MAP.has(keyName)) {
       return NAME_MAP.get(keyName)
     }
