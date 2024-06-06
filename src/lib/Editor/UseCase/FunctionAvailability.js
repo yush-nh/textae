@@ -39,7 +39,7 @@ export default class FunctionAvailability {
   constructor() {
     // This is a map whose key is the function name
     // and its value is boolean value that is true if enabled.
-    this.#availabilities = this.#default
+    this.#availabilities = this.#defaultAvailabilities
   }
 
   isAvailable(type) {
@@ -47,42 +47,42 @@ export default class FunctionAvailability {
   }
 
   set availability(values) {
-    const availabilities = this.#default
+    const availabilities = this.#defaultAvailabilities
 
     if (values) {
-      for (const [key, value] of Object.entries(values)) {
-        availabilities.set(this.#translate(key), value)
+      for (const [functionName, value] of Object.entries(values)) {
+        availabilities.set(this.#translateToInnerNameFrom(functionName), value)
       }
     }
 
     this.#availabilities = availabilities
   }
 
-  get #default() {
+  get #defaultAvailabilities() {
     const map = new Map()
 
     // All functions are enabled by default.
-    for (const key of NAME_MAP.values()) {
+    for (const innerName of NAME_MAP.values()) {
       // Text edit mode is disabled by default because it is under development.
-      if (key === 'edit text mode') {
-        map.set(key, false)
+      if (innerName === 'edit text mode') {
+        map.set(innerName, false)
       } else {
-        map.set(key, true)
+        map.set(innerName, true)
       }
     }
 
     return map
   }
 
-  #translate(keyName) {
-    if (NAME_MAP.has(keyName)) {
-      return NAME_MAP.get(keyName)
+  #translateToInnerNameFrom(functionName) {
+    if (NAME_MAP.has(functionName)) {
+      return NAME_MAP.get(functionName)
     }
 
     alertifyjs.warning(
-      `'${keyName}' is an unknown function name for function availabilities.`
+      `'${functionName}' is an unknown function name for function availabilities.`
     )
 
-    return keyName
+    return functionName
   }
 }
