@@ -40,12 +40,21 @@ export default class Translator {
   }
 
   get values() {
-    return this.#map.values()
+    return this.#map
+      .values()
+      .filter(
+        ({ name, enabled }) => name !== undefined && enabled !== undefined
+      )
   }
 
   translateToInnerNameFrom(functionName) {
     if (this.#map.has(functionName)) {
-      return this.#map.get(functionName).name
+      const value = this.#map.get(functionName)
+      if (value.alias) {
+        return this.#map.get(value.alias).name
+      } else {
+        return value.name
+      }
     }
 
     alertifyjs.warning(
