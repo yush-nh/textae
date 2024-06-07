@@ -5,7 +5,7 @@ import TypeValuesPallet from '../../../../../component/TypeValuesPallet'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
 
-export default class EditRelation extends EditMode {
+export default class RelationEditMode extends EditMode {
   #mouseEventHandler
 
   constructor(

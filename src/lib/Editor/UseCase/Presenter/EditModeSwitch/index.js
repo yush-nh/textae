@@ -2,13 +2,13 @@ import { MODE } from '../../../../MODE'
 import State from './State'
 import DenotationEditMode from './DenotationEditMode'
 import BlockEditMode from './BlockEditMode'
-import EditRelation from './EditRelation'
+import RelationEditMode from './RelationEditMode'
 import ModeTransitionReactor from './ModeTransitionReactor'
 
 export default class EditModeSwitch {
   #denotationEditMode
   #blockEditMode
-  #editRelation
+  #relationEditMode
   #state
   #annotationModel
   #startUpOptions
@@ -53,7 +53,7 @@ export default class EditModeSwitch {
       mousePoint
     )
 
-    this.#editRelation = new EditRelation(
+    this.#relationEditMode = new RelationEditMode(
       editorHTMLElement,
       eventEmitter,
       annotationModel,
@@ -70,7 +70,7 @@ export default class EditModeSwitch {
       annotationModel,
       this.#denotationEditMode,
       this.#blockEditMode,
-      this.#editRelation
+      this.#relationEditMode
     )
 
     this.#state = new State(
@@ -170,7 +170,7 @@ export default class EditModeSwitch {
       case MODE.EDIT_BLOCK:
         return this.#blockEditMode
       case MODE.EDIT_RELATION:
-        return this.#editRelation
+        return this.#relationEditMode
       default:
         return {
           showPallet() {},
