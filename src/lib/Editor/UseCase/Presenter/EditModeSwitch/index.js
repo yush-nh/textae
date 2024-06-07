@@ -148,11 +148,11 @@ export default class EditModeSwitch {
   }
 
   closePallet() {
-    this.currentMode.pallet.hide()
+    this.currentMode.closePallet()
   }
 
   get isTypeValuesPalletShown() {
-    return this.currentMode.pallet.visibly
+    return this.currentMode.isPalletShown
   }
 
   selectLeftAttributeTab() {
@@ -183,13 +183,9 @@ export default class EditModeSwitch {
             entity.focus()
           },
           applyTextSelectionWithTouchDevice() {},
-          get pallet() {
-            return {
-              hide() {},
-              get visibly() {
-                return false
-              }
-            }
+          closePallet() {},
+          get isPalletShown() {
+            return false
           }
         }
     }

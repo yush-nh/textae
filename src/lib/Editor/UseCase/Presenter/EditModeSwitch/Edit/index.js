@@ -55,8 +55,12 @@ export default class Edit {
     ])
   }
 
-  get pallet() {
-    return this.#pallet
+  closePallet() {
+    this.#pallet.hide()
+  }
+
+  get isPalletShown() {
+    return this.#pallet.visibility
   }
 
   // Dummy functions
