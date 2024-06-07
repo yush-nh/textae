@@ -1,13 +1,13 @@
 import { MODE } from '../../../../MODE'
 import State from './State'
 import EditDenotation from './EditDenotation'
-import EditBlock from './EditBlock'
+import BlockEditMode from './BlockEditMode'
 import EditRelation from './EditRelation'
 import ModeTransitionReactor from './ModeTransitionReactor'
 
 export default class EditModeSwitch {
   #editDenotation
-  #editBlock
+  #blockEditMode
   #editRelation
   #state
   #annotationModel
@@ -41,7 +41,7 @@ export default class EditModeSwitch {
       mousePoint
     )
 
-    this.#editBlock = new EditBlock(
+    this.#blockEditMode = new BlockEditMode(
       editorHTMLElement,
       eventEmitter,
       annotationModel,
@@ -69,7 +69,7 @@ export default class EditModeSwitch {
       eventEmitter,
       annotationModel,
       this.#editDenotation,
-      this.#editBlock,
+      this.#blockEditMode,
       this.#editRelation
     )
 
@@ -168,7 +168,7 @@ export default class EditModeSwitch {
       case MODE.EDIT_DENOTATION:
         return this.#editDenotation
       case MODE.EDIT_BLOCK:
-        return this.#editBlock
+        return this.#blockEditMode
       case MODE.EDIT_RELATION:
         return this.#editRelation
       default:

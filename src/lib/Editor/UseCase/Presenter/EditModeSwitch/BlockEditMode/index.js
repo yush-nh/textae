@@ -9,7 +9,7 @@ import SelectionWrapper from '../SelectionWrapper'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
 
-export default class EditBlock extends EditMode {
+export default class BlockEditMode extends EditMode {
   #mouseEventHandler
   #spanEditor
   #textBox
