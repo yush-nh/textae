@@ -2,7 +2,8 @@ import clearTextSelection from '../clearTextSelection'
 import SelectionWrapper from '../SelectionWrapper'
 import selectSpan from '../selectSpan'
 import isRangeInTextBox from '../isRangeInTextBox'
-import bindMouseEvents from './bindMouseEvents'
+import delegate from 'delegate'
+import getEntityHTMLelementFromChild from '../../../getEntityHTMLelementFromChild'
 
 export default class MouseEventHandler {
   #editorHTMLElement
@@ -26,15 +27,120 @@ export default class MouseEventHandler {
   }
 
   bind() {
-    return bindMouseEvents(this.#editorHTMLElement, this)
+    const listeners = []
+
+    // In Friefox, the text box click event fires when you shrink and erase a span.
+    // To do this, the span mouse-up event selects the span to the right of the erased span,
+    // and then the text box click event deselects it.
+    // To prevent this, we set a flag to indicate that it is immediately after the span's mouse-up event.
+    let afterSpanMouseUpEventFlag = false
+
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__text-box',
+        'click',
+        (e) => {
+          if (
+            e.target.classList.contains('textae-editor__text-box') &&
+            !afterSpanMouseUpEventFlag
+          ) {
+            this.#textBoxClicked()
+          }
+        }
+      )
+    )
+
+    // When extending span, the behavior depends on whether span is selected or not;
+    // you must not deselect span before editing it.
+    listeners.push(
+      delegate(this.#editorHTMLElement, '.textae-editor', 'click', (e) => {
+        // The delegate also fires events for child elements of the selector.
+        // Ignores events that occur in child elements.
+        // Otherwise, you cannot select child elements.
+        if (e.target.classList.contains('textae-editor')) {
+          this.#bodyClicked()
+        }
+      })
+    )
+
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__signboard',
+        'mousedown',
+        () => this.#signboardClicked()
+      )
+    )
+
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__signboard__type-values',
+        'click',
+        (event) => {
+          const entityID = getEntityHTMLelementFromChild(event.target).dataset
+            .id
+          this.#typeValuesClicked(event, entityID)
+        }
+      )
+    )
+
+    // To shrink a span listen the mouseup event.
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__span',
+        'mouseup',
+        (e) => {
+          if (e.target.classList.contains('textae-editor__span')) {
+            this.#denotationSpanClicked(e)
+            afterSpanMouseUpEventFlag = true
+
+            // In Chrome, the text box click event does not fire when you shrink the span and erase it.
+            // Instead of beating the flag on the text box click event,
+            // it uses a timer to beat the flag instantly, faster than any user action.
+            setTimeout(() => (afterSpanMouseUpEventFlag = false), 0)
+          }
+        }
+      )
+    )
+
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__block',
+        'mouseup',
+        (e) => {
+          if (e.target.classList.contains('textae-editor__block')) {
+            this.#blockSpanClicked(e)
+          }
+        }
+      )
+    )
+
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__style',
+        'mouseup',
+        (e) => {
+          if (e.target.classList.contains('textae-editor__style')) {
+            this.#styleSpanClicked(e)
+          }
+        }
+      )
+    )
+
+    return listeners
   }
 
-  bodyClicked() {
+  #bodyClicked() {
     this.#pallet.hide()
     this.#selectionModel.removeAll()
   }
 
-  textBoxClicked() {
+  #textBoxClicked() {
     this.#pallet.hide()
 
     const selection = window.getSelection()
@@ -51,7 +157,7 @@ export default class MouseEventHandler {
     }
   }
 
-  denotationSpanClicked(event) {
+  #denotationSpanClicked(event) {
     // When you click on the text, the browser will automatically select the word.
     // Therefore, the editor shrinks spans instead of selecting spans.
     // Deselect the text.
@@ -78,7 +184,7 @@ export default class MouseEventHandler {
     }
   }
 
-  blockSpanClicked(e) {
+  #blockSpanClicked(e) {
     // When you click on the text, the browser will automatically select the word.
     // Therefore, the editor shrinks spans instead of selecting spans.
     // Deselect the text.
@@ -102,7 +208,7 @@ export default class MouseEventHandler {
     }
   }
 
-  styleSpanClicked(e) {
+  #styleSpanClicked(e) {
     // When you click on the text, the browser will automatically select the word.
     // Therefore, the editor shrinks spans instead of selecting spans.
     // Deselect the text.
@@ -131,11 +237,11 @@ export default class MouseEventHandler {
     }
   }
 
-  signboardClicked() {
+  #signboardClicked() {
     this.#editorHTMLElement.focus()
   }
 
-  typeValuesClicked(event, entityID) {
+  #typeValuesClicked(event, entityID) {
     if (this.#annotationModel.entity.get(entityID).isDenotation) {
       if (event.ctrlKey || event.metaKey) {
         this.#selectionModel.entity.toggle(entityID)
