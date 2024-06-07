@@ -50,7 +50,7 @@ export default class State {
     this.#emit()
   }
 
-  toEditTextMode(showRelation) {
+  toTextEditMode(showRelation) {
     this.#currentShowRelation = showRelation
     this.#currentState = MODE.EDIT_TEXT
     this.#emit()
@@ -65,7 +65,7 @@ export default class State {
         this.toBlockEditMode(!this.#currentShowRelation)
         break
       case MODE.EDIT_TEXT:
-        this.toEditTextMode(!this.#currentShowRelation)
+        this.toTextEditMode(!this.#currentShowRelation)
         break
       case MODE.VIEW:
         this.toViewMode(!this.#currentShowRelation)

@@ -116,6 +116,11 @@ export default class EditModeSwitch {
     this.#state.toRelationEditMode()
   }
 
+  toTextEditMode() {
+    this.hidePallet()
+    this.#state.toTextEditMode(this.#state.nextShowRelation)
+  }
+
   toggleSimpleMode() {
     this.hidePallet()
     this.#state.toggleSimpleMode()
