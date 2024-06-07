@@ -4,6 +4,12 @@ import selectSpan from '../selectSpan'
 import isRangeInTextBox from '../isRangeInTextBox'
 
 export default class MouseEventHandler {
+  #editorHTMLElement
+  #annotationModel
+  #selectionModel
+  #spanEditor
+  #pallet
+
   /**
    *
    * @param {import('./SpanEditor').default} spanEditor
@@ -15,33 +21,33 @@ export default class MouseEventHandler {
     spanEditor,
     pallet
   ) {
-    this._editorHTMLElement = editorHTMLElement
-    this._annotationModel = annotationModel
-    this._selectionModel = selectionModel
-    this._spanEditor = spanEditor
-    this._pallet = pallet
+    this.#editorHTMLElement = editorHTMLElement
+    this.#annotationModel = annotationModel
+    this.#selectionModel = selectionModel
+    this.#spanEditor = spanEditor
+    this.#pallet = pallet
   }
 
   bodyClicked() {
-    this._pallet.hide()
-    this._selectionModel.removeAll()
+    this.#pallet.hide()
+    this.#selectionModel.removeAll()
   }
 
   textBoxClicked() {
     const selection = window.getSelection()
 
     if (selection.type === 'Caret') {
-      this._pallet.hide()
-      this._selectionModel.removeAll()
+      this.#pallet.hide()
+      this.#selectionModel.removeAll()
     }
 
     if (
       isRangeInTextBox(
         selection,
-        this._editorHTMLElement.querySelector('.textae-editor__text-box')
+        this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this._spanEditor.editFor(new SelectionWrapper(this._annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
     }
   }
 
@@ -49,18 +55,18 @@ export default class MouseEventHandler {
     const selection = window.getSelection()
 
     if (selection.type === 'Caret') {
-      this._pallet.hide()
+      this.#pallet.hide()
       clearTextSelection()
-      this._selectionModel.removeAll()
+      this.#selectionModel.removeAll()
     }
 
     if (
       isRangeInTextBox(
         selection,
-        this._editorHTMLElement.querySelector('.textae-editor__text-box')
+        this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this._spanEditor.editFor(new SelectionWrapper(this._annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
     }
   }
 
@@ -82,23 +88,23 @@ export default class MouseEventHandler {
     if (selection.type === 'Caret' || selection.type === 'None') {
       const spanId = e.target.dataset.id
 
-      this._selectSpanAndEntity(e, spanId)
+      this.#selectSpanAndEntity(e, spanId)
     }
   }
 
   styleSpanClicked(e) {
     const selection = window.getSelection()
     if (selection.type === 'Caret') {
-      this._selectionModel.removeAll()
+      this.#selectionModel.removeAll()
     }
 
     if (
       isRangeInTextBox(
         selection,
-        this._editorHTMLElement.querySelector('.textae-editor__text-box')
+        this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this._spanEditor.editFor(new SelectionWrapper(this._annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
       e.stopPropagation()
     }
   }
@@ -106,57 +112,57 @@ export default class MouseEventHandler {
   denotationSpanClicked(e) {
     const selection = window.getSelection()
     if (selection.type === 'Caret') {
-      this._selectionModel.removeAll()
+      this.#selectionModel.removeAll()
     }
 
     if (
       isRangeInTextBox(
         selection,
-        this._editorHTMLElement.querySelector('.textae-editor__text-box')
+        this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this._spanEditor.editFor(new SelectionWrapper(this._annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
       e.stopPropagation()
     }
   }
 
   signboardClicked() {
-    this._editorHTMLElement.focus()
+    this.#editorHTMLElement.focus()
   }
 
   typeValuesClicked(event, entityID) {
-    const entity = this._annotationModel.entity.get(entityID)
+    const entity = this.#annotationModel.entity.get(entityID)
 
     if (entity.isBlock) {
       if (event.ctrlKey || event.metaKey) {
-        this._selectionModel.entity.toggle(entityID)
+        this.#selectionModel.entity.toggle(entityID)
       } else {
-        this._selectionModel.selectEntity(entityID)
+        this.#selectionModel.selectEntity(entityID)
       }
 
       // Select span of the selected entity.
-      const spans = this._selectionModel.entity.all
+      const spans = this.#selectionModel.entity.all
         .map((entity) => entity.span)
         .map((span) => span.id)
-      this._selectionModel.add('span', spans)
+      this.#selectionModel.add('span', spans)
     }
   }
 
-  _selectSpanAndEntity(event, spanID) {
-    const selectedSpanID = this._selectionModel.span.singleId
+  #selectSpanAndEntity(event, spanID) {
+    const selectedSpanID = this.#selectionModel.span.singleId
     const rangeOfSpans =
       event.shiftKey && selectedSpanID
-        ? this._annotationModel.span.rangeBlockSpan(selectedSpanID, spanID)
+        ? this.#annotationModel.span.rangeBlockSpan(selectedSpanID, spanID)
         : []
 
-    selectSpan(this._selectionModel, rangeOfSpans, event, spanID)
+    selectSpan(this.#selectionModel, rangeOfSpans, event, spanID)
 
     // Select entities of the selected span.
     // Block is a first entity of the span.
-    const entities = this._selectionModel.span.all
+    const entities = this.#selectionModel.span.all
       .map((span) => span.entities.at(0))
       .map((entity) => entity.id)
 
-    this._selectionModel.add('entity', entities)
+    this.#selectionModel.add('entity', entities)
   }
 }
