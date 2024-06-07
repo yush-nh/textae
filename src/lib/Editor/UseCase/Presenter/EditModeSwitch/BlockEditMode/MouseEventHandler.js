@@ -2,7 +2,8 @@ import clearTextSelection from '../clearTextSelection'
 import SelectionWrapper from '../SelectionWrapper'
 import selectSpan from '../selectSpan'
 import isRangeInTextBox from '../isRangeInTextBox'
-import bindMouseEvents from './bindMouseEvents'
+import delegate from 'delegate'
+import getEntityHTMLelementFromChild from '../../../getEntityHTMLelementFromChild'
 
 export default class MouseEventHandler {
   #editorHTMLElement
@@ -30,9 +31,108 @@ export default class MouseEventHandler {
   }
 
   bind() {
-    return bindMouseEvents(this.#editorHTMLElement, this)
-  }
+    const listeners = []
 
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__text-box',
+        'click',
+        (e) => {
+          if (e.target.classList.contains('textae-editor__text-box')) {
+            this.textBoxClicked()
+          }
+        }
+      )
+    )
+
+    listeners.push(
+      delegate(this.#editorHTMLElement, '.textae-editor', 'click', (e) => {
+        // The delegate also fires events for child elements of the selector.
+        // Ignores events that occur in child elements.
+        // Otherwise, you cannot select child elements.
+        if (e.target.classList.contains('textae-editor')) {
+          this.bodyClicked()
+        }
+      })
+    )
+
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__signboard',
+        'mousedown',
+        () => this.signboardClicked()
+      )
+    )
+
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__signboard__type-values',
+        'click',
+        (event) => {
+          const entityID = getEntityHTMLelementFromChild(event.target).dataset
+            .id
+          this.typeValuesClicked(event, entityID)
+        }
+      )
+    )
+
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__block',
+        'mouseup',
+        (e) => {
+          if (e.target.classList.contains('textae-editor__block')) {
+            this.blockSpanClicked()
+          }
+        }
+      )
+    )
+
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__block-hit-area',
+        'mouseup',
+        (e) => {
+          if (e.target.classList.contains('textae-editor__block-hit-area')) {
+            this.blockHitAreaClicked(e)
+          }
+        }
+      )
+    )
+
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__style',
+        'mouseup',
+        (e) => {
+          if (e.target.classList.contains('textae-editor__style')) {
+            this.styleSpanClicked(e)
+          }
+        }
+      )
+    )
+
+    listeners.push(
+      delegate(
+        this.#editorHTMLElement,
+        '.textae-editor__span',
+        'mouseup',
+        (e) => {
+          if (e.target.classList.contains('textae-editor__span')) {
+            this.denotationSpanClicked(e)
+          }
+        }
+      )
+    )
+
+    return listeners
+  }
   bodyClicked() {
     this.#pallet.hide()
     this.#selectionModel.removeAll()
