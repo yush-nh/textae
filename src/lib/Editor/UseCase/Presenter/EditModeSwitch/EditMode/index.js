@@ -77,10 +77,7 @@ export default class EditMode {
   editProperties() {}
   relationClicked() {}
   relationBollardClicked() {}
-
-  applyTextSelectionWithTouchDevice() {
-    this._updateButtonsToOperateSpanWithTouchDevice(false, false, false)
-  }
+  applyTextSelectionWithTouchDevice() {}
 
   manipulateAttribute(number, shiftKey) {
     if (shiftKey) {

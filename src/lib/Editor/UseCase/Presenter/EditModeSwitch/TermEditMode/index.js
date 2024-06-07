@@ -117,7 +117,7 @@ export default class TermEditMode extends EditMode {
         isSelectionTextCrossingAnySpan
       )
     } else {
-      super.applyTextSelectionWithTouchDevice()
+      this._updateButtonsToOperateSpanWithTouchDevice(false, false, false)
     }
   }
 
