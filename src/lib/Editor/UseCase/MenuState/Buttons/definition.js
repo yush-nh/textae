@@ -47,7 +47,7 @@ export const definition = [
         push: true
       },
       {
-        type: 'edit text mode',
+        type: 'text edit mode',
         title: 'Text Edit Mode',
         push: true
       }
