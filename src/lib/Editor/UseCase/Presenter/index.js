@@ -89,7 +89,7 @@ export default class Presenter {
     forwardMethods(this, () => this.#editModeSwitch, [
       'toViewMode',
       'toTermEditMode',
-      'toEditBlockMode',
+      'toBlockEditMode',
       'toEditRelationMode',
       'toggleSimpleMode',
       'changeModeByShortcut'

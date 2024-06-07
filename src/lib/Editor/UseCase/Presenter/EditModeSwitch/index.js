@@ -101,9 +101,9 @@ export default class EditModeSwitch {
     this.#state.toTermEditMode(this.#state.nextShowRelation)
   }
 
-  toEditBlockMode() {
+  toBlockEditMode() {
     this.hidePallet()
-    this.#state.toEditBlockMode(this.#state.nextShowRelation)
+    this.#state.toBlockEditMode(this.#state.nextShowRelation)
   }
 
   toEditRelationMode() {
@@ -135,7 +135,7 @@ export default class EditModeSwitch {
     }
 
     if (this.#startUpOptions.isEditBlockMode) {
-      this.#state.toEditBlockMode(this.#annotationModel.relation.some)
+      this.#state.toBlockEditMode(this.#annotationModel.relation.some)
       return
     }
 
