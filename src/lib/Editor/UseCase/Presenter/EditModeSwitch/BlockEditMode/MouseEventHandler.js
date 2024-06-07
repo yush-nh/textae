@@ -40,7 +40,7 @@ export default class MouseEventHandler {
         'click',
         (e) => {
           if (e.target.classList.contains('textae-editor__text-box')) {
-            this.textBoxClicked()
+            this.#textBoxClicked()
           }
         }
       )
@@ -52,7 +52,7 @@ export default class MouseEventHandler {
         // Ignores events that occur in child elements.
         // Otherwise, you cannot select child elements.
         if (e.target.classList.contains('textae-editor')) {
-          this.bodyClicked()
+          this.#bodyClicked()
         }
       })
     )
@@ -62,7 +62,7 @@ export default class MouseEventHandler {
         this.#editorHTMLElement,
         '.textae-editor__signboard',
         'mousedown',
-        () => this.signboardClicked()
+        () => this.#signboardClicked()
       )
     )
 
@@ -74,7 +74,7 @@ export default class MouseEventHandler {
         (event) => {
           const entityID = getEntityHTMLelementFromChild(event.target).dataset
             .id
-          this.typeValuesClicked(event, entityID)
+          this.#typeValuesClicked(event, entityID)
         }
       )
     )
@@ -86,7 +86,7 @@ export default class MouseEventHandler {
         'mouseup',
         (e) => {
           if (e.target.classList.contains('textae-editor__block')) {
-            this.blockSpanClicked()
+            this.#blockSpanClicked()
           }
         }
       )
@@ -99,7 +99,7 @@ export default class MouseEventHandler {
         'mouseup',
         (e) => {
           if (e.target.classList.contains('textae-editor__block-hit-area')) {
-            this.blockHitAreaClicked(e)
+            this.#blockHitAreaClicked(e)
           }
         }
       )
@@ -112,7 +112,7 @@ export default class MouseEventHandler {
         'mouseup',
         (e) => {
           if (e.target.classList.contains('textae-editor__style')) {
-            this.styleSpanClicked(e)
+            this.#styleSpanClicked(e)
           }
         }
       )
@@ -125,7 +125,7 @@ export default class MouseEventHandler {
         'mouseup',
         (e) => {
           if (e.target.classList.contains('textae-editor__span')) {
-            this.denotationSpanClicked(e)
+            this.#denotationSpanClicked(e)
           }
         }
       )
@@ -133,12 +133,13 @@ export default class MouseEventHandler {
 
     return listeners
   }
-  bodyClicked() {
+
+  #bodyClicked() {
     this.#pallet.hide()
     this.#selectionModel.removeAll()
   }
 
-  textBoxClicked() {
+  #textBoxClicked() {
     const selection = window.getSelection()
 
     if (selection.type === 'Caret') {
@@ -156,7 +157,7 @@ export default class MouseEventHandler {
     }
   }
 
-  blockSpanClicked() {
+  #blockSpanClicked() {
     const selection = window.getSelection()
 
     if (selection.type === 'Caret') {
@@ -177,7 +178,7 @@ export default class MouseEventHandler {
 
   // Mouse events to the block span are handled by the hit area instead,
   // to show the block span shifted up half a line.
-  blockHitAreaClicked(e) {
+  #blockHitAreaClicked(e) {
     // When you click on the text, the browser will automatically select the word.
     // Therefore, the editor shrinks spans instead of selecting spans.
     // Deselect the text.
@@ -197,7 +198,7 @@ export default class MouseEventHandler {
     }
   }
 
-  styleSpanClicked(e) {
+  #styleSpanClicked(e) {
     const selection = window.getSelection()
     if (selection.type === 'Caret') {
       this.#selectionModel.removeAll()
@@ -214,7 +215,7 @@ export default class MouseEventHandler {
     }
   }
 
-  denotationSpanClicked(e) {
+  #denotationSpanClicked(e) {
     const selection = window.getSelection()
     if (selection.type === 'Caret') {
       this.#selectionModel.removeAll()
@@ -231,11 +232,11 @@ export default class MouseEventHandler {
     }
   }
 
-  signboardClicked() {
+  #signboardClicked() {
     this.#editorHTMLElement.focus()
   }
 
-  typeValuesClicked(event, entityID) {
+  #typeValuesClicked(event, entityID) {
     const entity = this.#annotationModel.entity.get(entityID)
 
     if (entity.isBlock) {
