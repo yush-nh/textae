@@ -55,7 +55,7 @@ export default class Edit {
     ])
   }
 
-  closePallet() {
+  hidePallet() {
     this.#pallet.hide()
   }
 

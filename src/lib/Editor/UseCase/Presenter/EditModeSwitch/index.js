@@ -92,32 +92,32 @@ export default class EditModeSwitch {
   }
 
   toViewMode() {
-    this.closePallet()
+    this.hidePallet()
     this.#state.toViewMode(this.#state.nextShowRelation)
   }
 
   toEditTermMode() {
-    this.closePallet()
+    this.hidePallet()
     this.#state.toEditTermMode(this.#state.nextShowRelation)
   }
 
   toEditBlockMode() {
-    this.closePallet()
+    this.hidePallet()
     this.#state.toEditBlockMode(this.#state.nextShowRelation)
   }
 
   toEditRelationMode() {
-    this.closePallet()
+    this.hidePallet()
     this.#state.toEditRelationMode()
   }
 
   toggleSimpleMode() {
-    this.closePallet()
+    this.hidePallet()
     this.#state.toggleSimpleMode()
   }
 
   changeModeByShortcut() {
-    this.closePallet()
+    this.hidePallet()
     this.#state.changeModeByShortcut()
   }
 
@@ -147,8 +147,8 @@ export default class EditModeSwitch {
     this.#state.toViewMode(this.#annotationModel.relation.some)
   }
 
-  closePallet() {
-    this.currentMode.closePallet()
+  hidePallet() {
+    this.currentMode.hidePallet()
   }
 
   get isTypeValuesPalletShown() {
@@ -183,7 +183,7 @@ export default class EditModeSwitch {
             entity.focus()
           },
           applyTextSelectionWithTouchDevice() {},
-          closePallet() {},
+          hidePallet() {},
           get isPalletShown() {
             return false
           }

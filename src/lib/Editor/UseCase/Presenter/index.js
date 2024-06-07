@@ -157,7 +157,7 @@ export default class Presenter {
   }
 
   cancelSelect() {
-    this.#editModeSwitch.closePallet()
+    this.#editModeSwitch.hidePallet()
     this.#selectionModel.removeAll()
     // Focus the editor for ESC key
     this.#editorHTMLElement.focus()
