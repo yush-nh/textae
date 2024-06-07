@@ -68,7 +68,10 @@ export default class EditModeSwitch {
       editorHTMLElement,
       eventEmitter,
       annotationModel,
-      () => this.cancelSelect(),
+      () => {
+        this.closePallet()
+        selectionModel.removeAll()
+      },
       this.#editDenotation,
       this.#editBlock,
       this.#editRelation
@@ -142,7 +145,7 @@ export default class EditModeSwitch {
     this.#state.toViewMode(this.#annotationModel.relation.some)
   }
 
-  cancelSelect() {
+  closePallet() {
     // Close all pallets.
     this.#editDenotation.pallet.hide()
     this.#editBlock.pallet.hide()
