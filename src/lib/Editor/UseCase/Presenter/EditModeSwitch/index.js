@@ -68,10 +68,7 @@ export default class EditModeSwitch {
       editorHTMLElement,
       eventEmitter,
       annotationModel,
-      () => {
-        this.closePallet()
-        selectionModel.removeAll()
-      },
+      () => this.closePallet(),
       this.#editDenotation,
       this.#editBlock,
       this.#editRelation

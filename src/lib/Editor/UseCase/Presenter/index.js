@@ -62,6 +62,8 @@ export default class Presenter {
         editModeSwitch.reset()
       })
       .on('textae-event.edit-mode.transition', (mode) => {
+        selectionModel.removeAll()
+
         switch (mode) {
           case MODE.VIEW:
             annotationModel.entity.clarifyLabelOfAll()
