@@ -66,7 +66,7 @@ export default class RelationEditMode extends EditMode {
   }
 
   bindMouseEvents() {
-    return super._bindMouseEvents(bindMouseEvents, this.#mouseEventHandler)
+    return bindMouseEvents(this._element, this.#mouseEventHandler)
   }
 
   editProperties() {

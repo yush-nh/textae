@@ -84,8 +84,8 @@ export default class EditMode {
   }
 
   // A protected method
-  _bindMouseEvents(bindMethod, mouseEventHandler) {
-    return bindMethod(this.#editorHTMLElement, mouseEventHandler)
+  get _element() {
+    return this.#editorHTMLElement
   }
 
   // A protected method

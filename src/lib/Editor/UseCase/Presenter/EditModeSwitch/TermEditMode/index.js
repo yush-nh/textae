@@ -88,7 +88,7 @@ export default class TermEditMode extends EditMode {
   }
 
   bindMouseEvents() {
-    return super._bindMouseEvents(bindMouseEvents, this.#mouseEventHandler)
+    return bindMouseEvents(this._element, this.#mouseEventHandler)
   }
 
   createSpanWithTouchDevice() {
