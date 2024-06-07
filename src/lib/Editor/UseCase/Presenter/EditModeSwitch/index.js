@@ -96,9 +96,9 @@ export default class EditModeSwitch {
     this.#state.toViewMode(this.#state.nextShowRelation)
   }
 
-  toEditTermMode() {
+  toTermEditMode() {
     this.hidePallet()
-    this.#state.toEditTermMode(this.#state.nextShowRelation)
+    this.#state.toTermEditMode(this.#state.nextShowRelation)
   }
 
   toEditBlockMode() {
@@ -130,7 +130,7 @@ export default class EditModeSwitch {
    */
   reset() {
     if (this.#startUpOptions.isEditTermMode) {
-      this.#state.toEditTermMode(this.#annotationModel.relation.some)
+      this.#state.toTermEditMode(this.#annotationModel.relation.some)
       return
     }
 
