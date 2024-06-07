@@ -1,7 +1,7 @@
 import { MODE } from '../../../../../MODE'
 import EditorCSS from './EditorCSS'
 
-export default class ModeReactor {
+export default class ModeTransitionReactor {
   #listeners
 
   constructor(

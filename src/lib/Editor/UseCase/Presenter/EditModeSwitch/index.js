@@ -3,7 +3,7 @@ import State from './State'
 import EditDenotation from './EditDenotation'
 import EditBlock from './EditBlock'
 import EditRelation from './EditRelation'
-import ModeReactor from './ModeReactor'
+import ModeTransitionReactor from './ModeTransitionReactor'
 
 export default class EditModeSwitch {
   #editDenotation
@@ -64,7 +64,7 @@ export default class EditModeSwitch {
       mousePoint
     )
 
-    new ModeReactor(
+    new ModeTransitionReactor(
       editorHTMLElement,
       eventEmitter,
       annotationModel,
