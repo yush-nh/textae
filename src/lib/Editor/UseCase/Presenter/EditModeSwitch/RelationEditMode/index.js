@@ -47,12 +47,12 @@ export default class RelationEditMode extends EditMode {
       selectionModel,
       commander,
       menuState,
-      relationPallet,
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.relation,
       'relation',
-      mousePoint
+      mousePoint,
+      relationPallet
     )
 
     this.#mouseEventHandler = new MouseEventHandler(

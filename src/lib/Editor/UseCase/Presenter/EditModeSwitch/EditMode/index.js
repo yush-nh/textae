@@ -4,11 +4,11 @@ import bindPalletEvents from './bindPalletEvents'
 
 export default class EditMode {
   #editorHTMLElement
-  #pallet
   #commander
   #attributeEditor
   #menuState
   #mousePoint
+  #pallet
 
   constructor(
     editorHTMLElement,
@@ -16,15 +16,14 @@ export default class EditMode {
     selectionModel,
     commander,
     menuState,
-    pallet,
     attributeEditor,
     getAutocompletionWs,
     definitionContainer,
     annotationType,
-    mousePoint
+    mousePoint,
+    pallet = null
   ) {
     this.#editorHTMLElement = editorHTMLElement
-    this.#pallet = pallet
     this.#commander = commander
     this.#attributeEditor = attributeEditor
     this.#menuState = menuState
@@ -36,30 +35,38 @@ export default class EditMode {
     this._getAutocompletionWs = getAutocompletionWs
     this._definitionContainer = definitionContainer
 
-    bindPalletEvents(
-      pallet,
-      commander,
-      getAutocompletionWs,
-      definitionContainer,
-      annotationType,
-      selectionModel,
-      annotationModel
-    )
+    if (pallet) {
+      this.#pallet = pallet
 
-    editorHTMLElement.appendChild(pallet.el)
+      bindPalletEvents(
+        pallet,
+        commander,
+        getAutocompletionWs,
+        definitionContainer,
+        annotationType,
+        selectionModel,
+        annotationModel
+      )
 
-    forwardMethods(this, () => pallet, [
-      'showPallet',
-      'selectLeftAttributeTab',
-      'selectRightAttributeTab'
-    ])
+      editorHTMLElement.appendChild(pallet.el)
+
+      forwardMethods(this, () => pallet, [
+        'showPallet',
+        'selectLeftAttributeTab',
+        'selectRightAttributeTab'
+      ])
+    }
   }
 
   hidePallet() {
+    if (!this.#pallet) return
+
     this.#pallet.hide()
   }
 
   get isPalletShown() {
+    if (!this.#pallet) return false
+
     return this.#pallet.visibility
   }
 

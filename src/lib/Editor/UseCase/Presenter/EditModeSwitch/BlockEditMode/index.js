@@ -55,12 +55,12 @@ export default class BlockEditMode extends EditMode {
       selectionModel,
       commander,
       menuState,
-      blockPallet,
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.block,
       'entity',
-      mousePoint
+      mousePoint,
+      blockPallet
     )
 
     const spanEditor = new SpanEditor(

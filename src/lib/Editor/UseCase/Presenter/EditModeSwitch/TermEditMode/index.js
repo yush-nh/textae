@@ -55,12 +55,12 @@ export default class TermEditMode extends EditMode {
       selectionModel,
       commander,
       menuState,
-      denotationPallet,
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.denotation,
       'entity',
-      mousePoint
+      mousePoint,
+      denotationPallet
     )
 
     const spanEditor = new SpanEditor(
