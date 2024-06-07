@@ -5,7 +5,7 @@ import EditBlock from './EditBlock'
 import EditRelation from './EditRelation'
 import ModeReactor from './ModeReactor'
 
-export default class EditMode {
+export default class EditModeSwitch {
   #editDenotation
   #editBlock
   #editRelation
