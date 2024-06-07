@@ -18,7 +18,7 @@ export default class Translator {
       ['view', { name: 'view mode', enabled: true }],
       ['term', { name: 'term edit mode', enabled: true }],
       ['term-edit', { alias: 'term' }],
-      ['block', { name: 'edit block mode', enabled: true }],
+      ['block', { name: 'block edit mode', enabled: true }],
       ['block-edit', { alias: 'block' }],
       ['relation', { name: 'edit relation mode', enabled: true }],
       ['relation-edit', { alias: 'relation' }],

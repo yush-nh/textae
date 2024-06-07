@@ -127,7 +127,7 @@ export default class State {
       },
       {
         name: MODE.EDIT_BLOCK,
-        availabilityName: 'edit block mode',
+        availabilityName: 'block edit mode',
         funcName: 'toBlockEditMode'
       },
       {
