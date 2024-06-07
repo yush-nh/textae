@@ -66,6 +66,8 @@ export default class Translator {
       }
     }
 
+    // It is sad to see an error when a user makes a mistake in a config value,
+    // so we will just display a warning.
     alertifyjs.warning(
       `'${functionName}' is an unknown function name for function availabilities.`
     )
