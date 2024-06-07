@@ -4,11 +4,13 @@ import TermEditMode from './TermEditMode'
 import BlockEditMode from './BlockEditMode'
 import RelationEditMode from './RelationEditMode'
 import ModeTransitionReactor from './ModeTransitionReactor'
+import TextEditMode from './TextEditMode'
 
 export default class EditModeSwitch {
   #termEditMode
   #blockEditMode
   #relationEditMode
+  #textEditMode
   #state
   #annotationModel
   #startUpOptions
@@ -64,13 +66,16 @@ export default class EditModeSwitch {
       mousePoint
     )
 
+    this.#textEditMode = new TextEditMode()
+
     new ModeTransitionReactor(
       editorHTMLElement,
       eventEmitter,
       annotationModel,
       this.#termEditMode,
       this.#blockEditMode,
-      this.#relationEditMode
+      this.#relationEditMode,
+      this.#textEditMode
     )
 
     this.#state = new State(
@@ -171,6 +176,8 @@ export default class EditModeSwitch {
         return this.#blockEditMode
       case MODE.EDIT_RELATION:
         return this.#relationEditMode
+      case MODE.EDIT_TEXT:
+        return this.#textEditMode
       default:
         return {
           showPallet() {},

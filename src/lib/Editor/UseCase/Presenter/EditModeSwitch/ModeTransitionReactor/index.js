@@ -10,7 +10,8 @@ export default class ModeTransitionReactor {
     annotationModel,
     termEditMode,
     blockEditMode,
-    relationEditMode
+    relationEditMode,
+    textEditMode
   ) {
     this.#listeners = []
 
@@ -52,6 +53,15 @@ export default class ModeTransitionReactor {
             annotationModel.typeGap.show = true
             this.#listeners = relationEditMode.bindMouseEvents()
             editorCSS.setFor('relation')
+            break
+          case MODE.EDIT_TEXT:
+            annotationModel.typeGap.show = showRelation
+            this.#listeners = textEditMode.bindMouseEvents()
+            if (showRelation) {
+              editorCSS.setFor('text-with-relation')
+            } else {
+              editorCSS.setFor('text-without-relation')
+            }
             break
           default:
             throw new Error(`Unknown mode: ${mode}`)
