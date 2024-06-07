@@ -37,6 +37,7 @@
     "term-edit": true,
     "block-edit": false,
     "relation-edit": false,
+    "text-edit": true,
     "undo": false,
     "redo": false
   }

@@ -1,5 +1,5 @@
 import alertifyjs from 'alertifyjs'
-import EditMode from './EditMode'
+import EditModeSwitch from './EditModeSwitch'
 import Horizontal from './Horizontal'
 import Vertical from './Vertical'
 import forwardMethods from '../../forwardMethods'
@@ -16,7 +16,7 @@ export default class Presenter {
   #menuState
   #spanConfig
   #clipBoard
-  #editMode
+  #editModeSwitch
   #horizontal
   #vertical
   #isActive
@@ -38,7 +38,7 @@ export default class Presenter {
     functionAvailability,
     mousePoint
   ) {
-    const editMode = new EditMode(
+    const editModeSwitch = new EditModeSwitch(
       editorHTMLElement,
       eventEmitter,
       annotationModel,
@@ -59,7 +59,7 @@ export default class Presenter {
           )
         }
 
-        editMode.reset()
+        editModeSwitch.reset()
       })
       .on('textae-event.edit-mode.transition', (mode) => {
         switch (mode) {
@@ -79,12 +79,12 @@ export default class Presenter {
     this.#menuState = menuState
     this.#spanConfig = spanConfig
     this.#clipBoard = clipBoard
-    this.#editMode = editMode
+    this.#editModeSwitch = editModeSwitch
     this.#horizontal = new Horizontal(editorHTMLElement, selectionModel)
     this.#vertical = new Vertical(editorHTMLElement, selectionModel)
     this.#isActive = false
 
-    forwardMethods(this, () => this.#editMode, [
+    forwardMethods(this, () => this.#editModeSwitch, [
       'toViewMode',
       'toEditTermMode',
       'toEditBlockMode',
@@ -92,7 +92,7 @@ export default class Presenter {
       'toggleSimpleMode',
       'changeModeByShortcut'
     ])
-    forwardMethods(this, () => this.#editMode.currentEdit, [
+    forwardMethods(this, () => this.#editModeSwitch.currentEdit, [
       'createSpanWithTouchDevice',
       'expandSpanWithTouchDevice',
       'shrinkSpanWithTouchDevice',
@@ -155,7 +155,7 @@ export default class Presenter {
   }
 
   cancelSelect() {
-    this.#editMode.cancelSelect()
+    this.#editModeSwitch.cancelSelect()
     // Focus the editor for ESC key
     this.#editorHTMLElement.focus()
   }
@@ -184,7 +184,7 @@ export default class Presenter {
   }
 
   selectLeft(shiftKey) {
-    if (this.#editMode.isTypeValuesPalletShown) {
+    if (this.#editModeSwitch.isTypeValuesPalletShown) {
       this.selectLeftAttributeTab()
     } else {
       this.#horizontal.left(shiftKey)
@@ -192,7 +192,7 @@ export default class Presenter {
   }
 
   selectRight(shiftKey) {
-    if (this.#editMode.isTypeValuesPalletShown) {
+    if (this.#editModeSwitch.isTypeValuesPalletShown) {
       this.selectRightAttributeTab()
     } else {
       this.#horizontal.right(shiftKey)
@@ -200,20 +200,20 @@ export default class Presenter {
   }
 
   selectUp() {
-    if (this.#editMode.isEditDenotation) {
+    if (this.#editModeSwitch.isEditDenotation) {
       this.#vertical.up()
     }
   }
 
   selectDown() {
-    if (this.#editMode.isEditDenotation) {
+    if (this.#editModeSwitch.isEditDenotation) {
       this.#vertical.down()
     }
   }
 
   applyTextSelectionWithTouchDevice() {
     if (this.#isActive) {
-      this.#editMode.currentEdit.applyTextSelectionWithTouchDevice()
+      this.#editModeSwitch.currentEdit.applyTextSelectionWithTouchDevice()
     }
   }
 }
