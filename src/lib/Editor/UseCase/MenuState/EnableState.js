@@ -13,7 +13,7 @@ export default class EnableState {
       ['import', true],
       ['upload', true],
       ['view mode', true],
-      ['edit term mode', true],
+      ['term edit mode', true],
       ['edit block mode', true],
       ['edit relation mode', true],
       ['edit text mode', true],

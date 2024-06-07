@@ -122,7 +122,7 @@ export default class State {
       },
       {
         name: MODE.EDIT_DENOTATION,
-        availabilityName: 'edit term mode',
+        availabilityName: 'term edit mode',
         funcName: 'toTermEditMode'
       },
       {

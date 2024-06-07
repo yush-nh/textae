@@ -32,7 +32,7 @@ export const definition = [
         push: true
       },
       {
-        type: 'edit term mode',
+        type: 'term edit mode',
         title: 'Term Edit Mode',
         push: true
       },

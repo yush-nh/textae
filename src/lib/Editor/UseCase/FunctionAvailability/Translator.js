@@ -16,7 +16,7 @@ export default class Translator {
       ['write', { name: 'upload', enabled: true }],
       ['write-auto', { name: 'upload automatically', enabled: true }],
       ['view', { name: 'view mode', enabled: true }],
-      ['term', { name: 'edit term mode', enabled: true }],
+      ['term', { name: 'term edit mode', enabled: true }],
       ['term-edit', { alias: 'term' }],
       ['block', { name: 'edit block mode', enabled: true }],
       ['block-edit', { alias: 'block' }],
