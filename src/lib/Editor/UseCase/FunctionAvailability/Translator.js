@@ -5,6 +5,11 @@ export default class Translator {
   #map
 
   constructor() {
+    // The key is the function name specified in config.
+    // The value is an object with the following properties:
+    // - name: The function name used internally.
+    // - enabled: Whether the function is enabled or not in default.
+    // - alias: The function name specified in config that is an alias of the function.
     this.#map = new Map([
       ['logo', { name: 'show logo', enabled: true }],
       ['read', { name: 'import', enabled: true }],
