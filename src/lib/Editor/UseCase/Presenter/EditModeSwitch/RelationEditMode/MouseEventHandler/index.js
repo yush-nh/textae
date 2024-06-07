@@ -1,6 +1,12 @@
 import typeValuesClicked from './typeValuesClicked'
 
 export default class MouseEventHandler {
+  #editorHTMLElement
+  #selectionModel
+  #commander
+  #typeDefinition
+  #pallet
+
   constructor(
     editorHTMLElement,
     selectionModel,
@@ -8,27 +14,27 @@ export default class MouseEventHandler {
     typeDefinition,
     pallet
   ) {
-    this._editorHTMLElement = editorHTMLElement
-    this._selectionModel = selectionModel
-    this._commander = commander
-    this._typeDefinition = typeDefinition
-    this._pallet = pallet
+    this.#editorHTMLElement = editorHTMLElement
+    this.#selectionModel = selectionModel
+    this.#commander = commander
+    this.#typeDefinition = typeDefinition
+    this.#pallet = pallet
   }
 
   bodyClicked() {
-    this._pallet.hide()
-    this._selectionModel.removeAll()
+    this.#pallet.hide()
+    this.#selectionModel.removeAll()
   }
 
   signboardClicked() {
-    this._editorHTMLElement.focus()
+    this.#editorHTMLElement.focus()
   }
 
   typeValuesClicked(event, entityID) {
     typeValuesClicked(
-      this._selectionModel,
-      this._commander,
-      this._typeDefinition.relation,
+      this.#selectionModel,
+      this.#commander,
+      this.#typeDefinition.relation,
       event,
       entityID
     )
