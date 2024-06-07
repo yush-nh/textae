@@ -1,4 +1,3 @@
-import bindMouseEvents from './bindMouseEvents'
 import MouseEventHandler from './MouseEventHandler'
 import EditMode from '../EditMode'
 import TypeValuesPallet from '../../../../../component/TypeValuesPallet'
@@ -66,7 +65,7 @@ export default class RelationEditMode extends EditMode {
   }
 
   bindMouseEvents() {
-    return bindMouseEvents(this._element, this.#mouseEventHandler)
+    return this.#mouseEventHandler.bind()
   }
 
   editProperties() {

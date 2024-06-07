@@ -1,3 +1,4 @@
+import bindMouseEvents from '../bindMouseEvents'
 import typeValuesClicked from './typeValuesClicked'
 
 export default class MouseEventHandler {
@@ -19,6 +20,10 @@ export default class MouseEventHandler {
     this.#commander = commander
     this.#typeDefinition = typeDefinition
     this.#pallet = pallet
+  }
+
+  bind() {
+    return bindMouseEvents(this.#editorHTMLElement, this)
   }
 
   bodyClicked() {
