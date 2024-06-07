@@ -84,11 +84,6 @@ export default class EditMode {
   }
 
   // A protected method
-  get _element() {
-    return this.#editorHTMLElement
-  }
-
-  // A protected method
   _updateButtonsToOperateSpanWithTouchDevice(
     enableToCreate,
     enableToExpand,
