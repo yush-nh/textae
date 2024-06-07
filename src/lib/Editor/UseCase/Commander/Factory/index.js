@@ -265,7 +265,7 @@ export default class Factory {
     return new RemoveSpanCommand(this._annotationModel, id)
   }
 
-  removeSelectedComand() {
+  removeSelectedCommand() {
     return new RemoveSelectedCommand(
       this._annotationModel,
       this._selectionModel

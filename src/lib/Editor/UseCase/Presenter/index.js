@@ -114,7 +114,7 @@ export default class Presenter {
   }
 
   removeSelectedElements() {
-    const commands = this.#commander.factory.removeSelectedComand()
+    const commands = this.#commander.factory.removeSelectedCommand()
 
     // Select the next element before clear selection.
     this.#horizontal.right(null)
