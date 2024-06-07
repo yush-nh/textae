@@ -1,6 +1,6 @@
 import MouseEventHandler from './MouseEventHandler'
 import SpanEditor from './SpanEditor'
-import Edit from '../Edit'
+import EditMode from '../EditMode'
 import bindMouseEvents from './bindMouseEvents'
 import TypeValuesPallet from '../../../../../component/TypeValuesPallet'
 import isRangeInTextBox from '../isRangeInTextBox'
@@ -9,7 +9,7 @@ import SelectionWrapper from '../SelectionWrapper'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
 
-export default class EditDenotation extends Edit {
+export default class EditDenotation extends EditMode {
   #mouseEventHandler
   #spanEditor
   #textBox

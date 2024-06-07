@@ -1,11 +1,11 @@
 import bindMouseEvents from './bindMouseEvents'
 import MouseEventHandler from './MouseEventHandler'
-import Edit from '../Edit'
+import EditMode from '../EditMode'
 import TypeValuesPallet from '../../../../../component/TypeValuesPallet'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
 
-export default class EditRelation extends Edit {
+export default class EditRelation extends EditMode {
   #mouseEventHandler
 
   constructor(

@@ -2,7 +2,7 @@ import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 import forwardMethods from '../../../../forwardMethods'
 import bindPalletEvents from './bindPalletEvents'
 
-export default class Edit {
+export default class EditMode {
   #editorHTMLElement
   #pallet
   #commander

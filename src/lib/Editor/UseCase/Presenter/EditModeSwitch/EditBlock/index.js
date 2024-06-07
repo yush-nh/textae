@@ -1,7 +1,7 @@
 import SpanEditor from './SpanEditor'
 import bindMouseEvents from './bindMouseEvents'
 import MouseEventHandler from './MouseEventHandler'
-import Edit from '../Edit'
+import EditMode from '../EditMode'
 import TypeValuesPallet from '../../../../../component/TypeValuesPallet'
 import isRangeInTextBox from '../isRangeInTextBox'
 import OrderedPositions from '../OrderedPositions'
@@ -9,7 +9,7 @@ import SelectionWrapper from '../SelectionWrapper'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
 
-export default class EditBlock extends Edit {
+export default class EditBlock extends EditMode {
   #mouseEventHandler
   #spanEditor
   #textBox
