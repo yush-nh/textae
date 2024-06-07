@@ -2,6 +2,8 @@ import { MODE } from '../../../../../MODE'
 import EditorCSS from './EditorCSS'
 
 export default class ModeReactor {
+  #listeners
+
   constructor(
     editorHTMLElement,
     eventEmitter,
@@ -11,14 +13,14 @@ export default class ModeReactor {
     editBlock,
     editRelation
   ) {
-    this._listeners = []
+    this.#listeners = []
 
     const editorCSS = new EditorCSS(editorHTMLElement)
     eventEmitter.on(
       'textae-event.edit-mode.transition',
       (mode, showRelation) => {
         cancelSelect()
-        this._unbindAllMouseEventHandler()
+        this.#unbindAllMouseEventHandler()
         editorCSS.clear()
 
         switch (mode) {
@@ -32,7 +34,7 @@ export default class ModeReactor {
             break
           case MODE.EDIT_DENOTATION:
             annotationModel.typeGap.show = showRelation
-            this._listeners = editDenotation.bindMouseEvents()
+            this.#listeners = editDenotation.bindMouseEvents()
             if (showRelation) {
               editorCSS.setFor('denotation-with-relation')
             } else {
@@ -41,7 +43,7 @@ export default class ModeReactor {
             break
           case MODE.EDIT_BLOCK:
             annotationModel.typeGap.show = showRelation
-            this._listeners = editBlock.bindMouseEvents()
+            this.#listeners = editBlock.bindMouseEvents()
             if (showRelation) {
               editorCSS.setFor('block-with-relation')
             } else {
@@ -50,7 +52,7 @@ export default class ModeReactor {
             break
           case MODE.EDIT_RELATION:
             annotationModel.typeGap.show = true
-            this._listeners = editRelation.bindMouseEvents()
+            this.#listeners = editRelation.bindMouseEvents()
             editorCSS.setFor('relation')
             break
           default:
@@ -60,10 +62,10 @@ export default class ModeReactor {
     )
   }
 
-  _unbindAllMouseEventHandler() {
-    for (const listener of this._listeners) {
+  #unbindAllMouseEventHandler() {
+    for (const listener of this.#listeners) {
       listener.destroy()
     }
-    this._listeners = []
+    this.#listeners = []
   }
 }
