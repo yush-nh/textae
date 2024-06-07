@@ -8,7 +8,6 @@ export default class ModeReactor {
     editorHTMLElement,
     eventEmitter,
     annotationModel,
-    cancelSelect,
     editDenotation,
     editBlock,
     editRelation
@@ -19,7 +18,6 @@ export default class ModeReactor {
     eventEmitter.on(
       'textae-event.edit-mode.transition',
       (mode, showRelation) => {
-        cancelSelect()
         this.#unbindAllMouseEventHandler()
         editorCSS.clear()
 

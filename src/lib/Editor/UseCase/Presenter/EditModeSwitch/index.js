@@ -68,7 +68,6 @@ export default class EditModeSwitch {
       editorHTMLElement,
       eventEmitter,
       annotationModel,
-      () => this.closePallet(),
       this.#editDenotation,
       this.#editBlock,
       this.#editRelation
@@ -93,26 +92,32 @@ export default class EditModeSwitch {
   }
 
   toViewMode() {
+    this.closePallet()
     this.#state.toViewMode(this.#state.nextShowRelation)
   }
 
   toEditTermMode() {
+    this.closePallet()
     this.#state.toEditTermMode(this.#state.nextShowRelation)
   }
 
   toEditBlockMode() {
+    this.closePallet()
     this.#state.toEditBlockMode(this.#state.nextShowRelation)
   }
 
   toEditRelationMode() {
+    this.closePallet()
     this.#state.toEditRelationMode()
   }
 
   toggleSimpleMode() {
+    this.closePallet()
     this.#state.toggleSimpleMode()
   }
 
   changeModeByShortcut() {
+    this.closePallet()
     this.#state.changeModeByShortcut()
   }
 
