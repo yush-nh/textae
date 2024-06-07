@@ -1,7 +1,6 @@
 import MouseEventHandler from './MouseEventHandler'
 import SpanEditor from './SpanEditor'
 import EditMode from '../EditMode'
-import bindMouseEvents from './bindMouseEvents'
 import TypeValuesPallet from '../../../../../component/TypeValuesPallet'
 import isRangeInTextBox from '../isRangeInTextBox'
 import OrderedPositions from '../OrderedPositions'
@@ -88,7 +87,7 @@ export default class TermEditMode extends EditMode {
   }
 
   bindMouseEvents() {
-    return bindMouseEvents(this._element, this.#mouseEventHandler)
+    return this.#mouseEventHandler.bind()
   }
 
   createSpanWithTouchDevice() {

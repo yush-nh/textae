@@ -2,6 +2,7 @@ import clearTextSelection from '../clearTextSelection'
 import SelectionWrapper from '../SelectionWrapper'
 import selectSpan from '../selectSpan'
 import isRangeInTextBox from '../isRangeInTextBox'
+import bindMouseEvents from './bindMouseEvents'
 
 export default class MouseEventHandler {
   #editorHTMLElement
@@ -22,6 +23,10 @@ export default class MouseEventHandler {
     this.#selectionModel = selectionModel
     this.#spanEditor = spanEditor
     this.#pallet = pallet
+  }
+
+  bind() {
+    return bindMouseEvents(this.#editorHTMLElement, this)
   }
 
   bodyClicked() {
