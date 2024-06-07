@@ -4,6 +4,12 @@ import selectSpan from '../selectSpan'
 import isRangeInTextBox from '../isRangeInTextBox'
 
 export default class MouseEventHandler {
+  #editorHTMLElement
+  #annotationModel
+  #selectionModel
+  #spanEditor
+  #pallet
+
   constructor(
     editorHTMLElement,
     annotationModel,
@@ -11,32 +17,32 @@ export default class MouseEventHandler {
     pallet,
     spanEditor
   ) {
-    this._annotationModel = annotationModel
-    this._selectionModel = selectionModel
-    this._spanEditor = spanEditor
-    this._editorHTMLElement = editorHTMLElement
-    this._pallet = pallet
+    this.#editorHTMLElement = editorHTMLElement
+    this.#annotationModel = annotationModel
+    this.#selectionModel = selectionModel
+    this.#spanEditor = spanEditor
+    this.#pallet = pallet
   }
 
   bodyClicked() {
-    this._pallet.hide()
-    this._selectionModel.removeAll()
+    this.#pallet.hide()
+    this.#selectionModel.removeAll()
   }
 
   textBoxClicked() {
-    this._pallet.hide()
+    this.#pallet.hide()
 
     const selection = window.getSelection()
 
     if (
       isRangeInTextBox(
         selection,
-        this._editorHTMLElement.querySelector('.textae-editor__text-box')
+        this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this._spanEditor.editFor(new SelectionWrapper(this._annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
     } else {
-      this._selectionModel.removeAll()
+      this.#selectionModel.removeAll()
     }
   }
 
@@ -54,16 +60,16 @@ export default class MouseEventHandler {
     // click on another denotation span while holding down the Shift key,
     // the Selection type will be 'None'.
     if (selection.type === 'Caret' || selection.type === 'None') {
-      this._selectSpan(event, event.target.id)
+      this.#selectSpan(event, event.target.id)
     }
 
     if (
       isRangeInTextBox(
         selection,
-        this._editorHTMLElement.querySelector('.textae-editor__text-box')
+        this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this._spanEditor.editFor(new SelectionWrapper(this._annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
     }
   }
 
@@ -78,16 +84,16 @@ export default class MouseEventHandler {
     const selection = window.getSelection()
 
     if (selection.type === 'Caret') {
-      this._selectionModel.removeAll()
+      this.#selectionModel.removeAll()
     }
 
     if (
       isRangeInTextBox(
         selection,
-        this._editorHTMLElement.querySelector('.textae-editor__text-box')
+        this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this._spanEditor.editFor(new SelectionWrapper(this._annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
     }
   }
 
@@ -104,43 +110,43 @@ export default class MouseEventHandler {
     if (selection.type === 'Caret') {
       const span = e.target.closest('.textae-editor__span')
       if (span) {
-        this._selectSpan(e, span.id)
+        this.#selectSpan(e, span.id)
       } else {
-        this._selectionModel.removeAll()
+        this.#selectionModel.removeAll()
       }
     }
 
     if (
       isRangeInTextBox(
         selection,
-        this._editorHTMLElement.querySelector('.textae-editor__text-box')
+        this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this._spanEditor.editFor(new SelectionWrapper(this._annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
     }
   }
 
   signboardClicked() {
-    this._editorHTMLElement.focus()
+    this.#editorHTMLElement.focus()
   }
 
   typeValuesClicked(event, entityID) {
-    if (this._annotationModel.entity.get(entityID).isDenotation) {
+    if (this.#annotationModel.entity.get(entityID).isDenotation) {
       if (event.ctrlKey || event.metaKey) {
-        this._selectionModel.entity.toggle(entityID)
+        this.#selectionModel.entity.toggle(entityID)
       } else {
-        this._selectionModel.selectEntity(entityID)
+        this.#selectionModel.selectEntity(entityID)
       }
     }
   }
 
-  _selectSpan(event, spanID) {
-    const selectedSpanID = this._selectionModel.span.singleId
+  #selectSpan(event, spanID) {
+    const selectedSpanID = this.#selectionModel.span.singleId
     const rangeOfSpans =
       event.shiftKey && selectedSpanID
-        ? this._annotationModel.span.rangeDenotationSpan(selectedSpanID, spanID)
+        ? this.#annotationModel.span.rangeDenotationSpan(selectedSpanID, spanID)
         : []
 
-    selectSpan(this._selectionModel, rangeOfSpans, event, spanID)
+    selectSpan(this.#selectionModel, rangeOfSpans, event, spanID)
   }
 }
