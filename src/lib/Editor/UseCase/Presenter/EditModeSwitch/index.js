@@ -11,7 +11,6 @@ export default class EditModeSwitch {
   #editRelation
   #state
   #annotationModel
-  #selectionModel
   #startUpOptions
 
   /**
@@ -82,7 +81,6 @@ export default class EditModeSwitch {
     )
 
     this.#annotationModel = annotationModel
-    this.#selectionModel = selectionModel
     this.#startUpOptions = startUpOptions
 
     eventEmitter
@@ -149,8 +147,6 @@ export default class EditModeSwitch {
     this.#editDenotation.pallet.hide()
     this.#editBlock.pallet.hide()
     this.#editRelation.pallet.hide()
-
-    this.#selectionModel.removeAll()
   }
 
   get isTypeValuesPalletShown() {
