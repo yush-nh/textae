@@ -132,7 +132,7 @@ export default class State {
       },
       {
         name: MODE.EDIT_RELATION,
-        availabilityName: 'edit relation mode',
+        availabilityName: 'relation edit mode',
         funcName: 'toRelationEditMode'
       }
     ]

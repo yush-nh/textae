@@ -15,7 +15,7 @@ export default class EnableState {
       ['view mode', true],
       ['term edit mode', true],
       ['block edit mode', true],
-      ['edit relation mode', true],
+      ['relation edit mode', true],
       ['edit text mode', true],
       ['simple view', true],
       ['setting', true],

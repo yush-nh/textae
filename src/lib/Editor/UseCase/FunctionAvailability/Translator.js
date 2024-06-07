@@ -20,7 +20,7 @@ export default class Translator {
       ['term-edit', { alias: 'term' }],
       ['block', { name: 'block edit mode', enabled: true }],
       ['block-edit', { alias: 'block' }],
-      ['relation', { name: 'edit relation mode', enabled: true }],
+      ['relation', { name: 'relation edit mode', enabled: true }],
       ['relation-edit', { alias: 'relation' }],
       // Text edit mode is disabled by default because it is under development.
       ['text-edit', { name: 'edit text mode', enabled: false }],
