@@ -106,9 +106,9 @@ export default class EditModeSwitch {
     this.#state.toBlockEditMode(this.#state.nextShowRelation)
   }
 
-  toEditRelationMode() {
+  toRelationEditMode() {
     this.hidePallet()
-    this.#state.toEditRelationMode()
+    this.#state.toRelationEditMode()
   }
 
   toggleSimpleMode() {
@@ -140,7 +140,7 @@ export default class EditModeSwitch {
     }
 
     if (this.#startUpOptions.isEditRelationMode) {
-      this.#state.toEditRelationMode()
+      this.#state.toRelationEditMode()
       return
     }
 

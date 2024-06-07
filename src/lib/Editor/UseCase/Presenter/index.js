@@ -90,7 +90,7 @@ export default class Presenter {
       'toViewMode',
       'toTermEditMode',
       'toBlockEditMode',
-      'toEditRelationMode',
+      'toRelationEditMode',
       'toggleSimpleMode',
       'changeModeByShortcut'
     ])
