@@ -148,10 +148,7 @@ export default class EditModeSwitch {
   }
 
   closePallet() {
-    // Close all pallets.
-    this.#editDenotation.pallet.hide()
-    this.#editBlock.pallet.hide()
-    this.#editRelation.pallet.hide()
+    this.currentMode.pallet.hide()
   }
 
   get isTypeValuesPalletShown() {
@@ -189,7 +186,12 @@ export default class EditModeSwitch {
           relationBollardClicked(entity) {
             entity.focus()
           },
-          applyTextSelectionWithTouchDevice() {}
+          applyTextSelectionWithTouchDevice() {},
+          get pallet() {
+            return {
+              hide() {}
+            }
+          }
         }
     }
   }
