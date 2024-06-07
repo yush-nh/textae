@@ -92,7 +92,7 @@ export default class Presenter {
       'toggleSimpleMode',
       'changeModeByShortcut'
     ])
-    forwardMethods(this, () => this.#editModeSwitch.currentEdit, [
+    forwardMethods(this, () => this.#editModeSwitch.currentMode, [
       'createSpanWithTouchDevice',
       'expandSpanWithTouchDevice',
       'shrinkSpanWithTouchDevice',
@@ -213,7 +213,7 @@ export default class Presenter {
 
   applyTextSelectionWithTouchDevice() {
     if (this.#isActive) {
-      this.#editModeSwitch.currentEdit.applyTextSelectionWithTouchDevice()
+      this.#editModeSwitch.currentMode.applyTextSelectionWithTouchDevice()
     }
   }
 }

@@ -87,10 +87,10 @@ export default class EditMode {
 
     eventEmitter
       .on('textae-event.editor.relation.click', (event, relation) =>
-        this.currentEdit.relationClicked(event, relation)
+        this.currentMode.relationClicked(event, relation)
       )
       .on('textae-event.editor.relation-bollard.click', (event, entity) =>
-        this.currentEdit.relationBollardClicked(entity)
+        this.currentMode.relationBollardClicked(entity)
       )
   }
 
@@ -162,14 +162,14 @@ export default class EditMode {
   }
 
   selectLeftAttributeTab() {
-    this.currentEdit.pallet.selectLeftAttributeTab()
+    this.currentMode.pallet.selectLeftAttributeTab()
   }
 
   selectRightAttributeTab() {
-    this.currentEdit.pallet.selectRightAttributeTab()
+    this.currentMode.pallet.selectRightAttributeTab()
   }
 
-  get currentEdit() {
+  get currentMode() {
     switch (this.#state.currentState) {
       case MODE.EDIT_DENOTATION:
         return this.#editDenotation
