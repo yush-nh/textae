@@ -66,7 +66,11 @@ export default class EditModeSwitch {
       mousePoint
     )
 
-    this.#textEditMode = new TextEditMode(editorHTMLElement)
+    this.#textEditMode = new TextEditMode(
+      editorHTMLElement,
+      annotationModel,
+      spanConfig
+    )
 
     new ModeTransitionReactor(
       editorHTMLElement,
