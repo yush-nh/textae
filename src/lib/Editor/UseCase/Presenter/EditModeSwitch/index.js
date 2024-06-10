@@ -69,7 +69,8 @@ export default class EditModeSwitch {
     this.#textEditMode = new TextEditMode(
       editorHTMLElement,
       annotationModel,
-      spanConfig
+      spanConfig,
+      menuState.spanAdjuster
     )
 
     new ModeTransitionReactor(

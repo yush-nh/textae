@@ -3,17 +3,20 @@ import EditMode from './EditMode'
 import isRangeInTextBox from './isRangeInTextBox'
 import hasCharacters from './hasCharacters'
 import SelectionWrapper from './SelectionWrapper'
+import getNewSpan from './getNewSpan'
 
 export default class TextEditMode extends EditMode {
   #editorHTMLElement
   #annotationModel
   #spanConfig
+  #spanAdjuster
 
-  constructor(editorHTMLElement, annotationModel, spanConfig) {
+  constructor(editorHTMLElement, annotationModel, spanConfig, spanAdjuster) {
     super()
     this.#editorHTMLElement = editorHTMLElement
     this.#annotationModel = annotationModel
     this.#spanConfig = spanConfig
+    this.#spanAdjuster = spanAdjuster
   }
 
   bindMouseEvents() {
@@ -39,7 +42,13 @@ export default class TextEditMode extends EditMode {
                   selectionWrapper
                 )
               ) {
-                console.log('selection', selection)
+                const { begin, end } = getNewSpan(
+                  this.#annotationModel.sourceDoc,
+                  this.#spanAdjuster,
+                  selectionWrapper,
+                  this.#spanConfig
+                )
+                console.log('selection', selection, begin, end)
               }
             }
           }
