@@ -1,5 +1,6 @@
 import delegate from 'delegate'
 import EditMode from './EditMode'
+import isRangeInTextBox from './isRangeInTextBox'
 
 export default class TextEditMode extends EditMode {
   #editorHTMLElement
@@ -20,7 +21,10 @@ export default class TextEditMode extends EditMode {
         (e) => {
           if (e.target.classList.contains('textae-editor__text-box')) {
             const selection = window.getSelection()
-            console.log('selection', selection)
+
+            if (isRangeInTextBox(selection, e.target)) {
+              console.log('selection', selection)
+            }
           }
         }
       )
