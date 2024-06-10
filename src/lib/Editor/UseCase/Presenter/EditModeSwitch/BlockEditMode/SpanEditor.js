@@ -8,6 +8,13 @@ import validateNewBlockSpan from './validateNewBlockSpan'
 import getRightSpanElement from '../../../../getRightSpanElement'
 
 export default class SpanEditor {
+  #editorHTMLElement
+  #annotationModel
+  #spanConfig
+  #commander
+  #menuState
+  #selectionModel
+
   constructor(
     editorHTMLElement,
     annotationModel,
@@ -16,12 +23,12 @@ export default class SpanEditor {
     menuState,
     selectionModel
   ) {
-    this._editorHTMLElement = editorHTMLElement
-    this._annotationModel = annotationModel
-    this._spanConfig = spanConfig
-    this._commander = commander
-    this._menuState = menuState
-    this._selectionModel = selectionModel
+    this.#editorHTMLElement = editorHTMLElement
+    this.#annotationModel = annotationModel
+    this.#spanConfig = spanConfig
+    this.#commander = commander
+    this.#menuState = menuState
+    this.#selectionModel = selectionModel
   }
 
   /**
@@ -31,7 +38,7 @@ export default class SpanEditor {
   editFor(selectionWrapper) {
     if (selectionWrapper.isParentOfAnchorNodeTextBox) {
       if (selectionWrapper.isParentOfFocusNodeTextBox) {
-        this._create(selectionWrapper)
+        this.#create(selectionWrapper)
         return
       }
 
@@ -40,16 +47,16 @@ export default class SpanEditor {
         selectionWrapper.isParentOfFocusNodeStyleSpan
       ) {
         if (selectionWrapper.ancestorBlockSpanOfFocusNode) {
-          this._shrink(selectionWrapper)
+          this.#shrink(selectionWrapper)
         } else {
-          this._create(selectionWrapper)
+          this.#create(selectionWrapper)
         }
 
         return
       }
 
       if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-        this._shrink(selectionWrapper)
+        this.#shrink(selectionWrapper)
         return
       }
     }
@@ -66,10 +73,10 @@ export default class SpanEditor {
         if (selectionWrapper.ancestorBlockSpanOfAnchorNode) {
           if (selectionWrapper.doesFitInOneBlockSpan) {
             const { anchor, focus } = selectionWrapper.positionsOnAnnotation
-            const spanOnAnchor = this._annotationModel.span.get(
+            const spanOnAnchor = this.#annotationModel.span.get(
               selectionWrapper.parentOfAnchorNode.id
             )
-            const blockSpanOnAnchor = this._annotationModel.span.get(
+            const blockSpanOnAnchor = this.#annotationModel.span.get(
               selectionWrapper.ancestorBlockSpanOfAnchorNode.id
             )
 
@@ -77,23 +84,23 @@ export default class SpanEditor {
               anchor < focus &&
               spanOnAnchor.begin === blockSpanOnAnchor.begin
             ) {
-              this._shrink(selectionWrapper)
+              this.#shrink(selectionWrapper)
             } else if (
               focus < anchor &&
               spanOnAnchor.end === blockSpanOnAnchor.end
             ) {
-              this._shrink(selectionWrapper)
+              this.#shrink(selectionWrapper)
             } else {
               clearTextSelection()
             }
           } else {
             // Expand when the selection exceeds a single block span.
-            this._expand(selectionWrapper)
+            this.#expand(selectionWrapper)
           }
         } else if (selectionWrapper.ancestorBlockSpanOfFocusNode) {
-          this._shrink(selectionWrapper)
+          this.#shrink(selectionWrapper)
         } else {
-          this._create(selectionWrapper)
+          this.#create(selectionWrapper)
         }
 
         return
@@ -103,7 +110,7 @@ export default class SpanEditor {
       // and also when the beginning or end of the text is a denotation or style span,
       // the anchor node is within the denotation or style span.
       if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-        this._shrink(selectionWrapper)
+        this.#shrink(selectionWrapper)
         return
       }
     }
@@ -115,9 +122,9 @@ export default class SpanEditor {
         selectionWrapper.isParentOfFocusNodeStyleSpan
       ) {
         if (selectionWrapper.ancestorBlockSpanOfFocusNode) {
-          this._shrink(selectionWrapper)
+          this.#shrink(selectionWrapper)
         } else {
-          this._expand(selectionWrapper)
+          this.#expand(selectionWrapper)
         }
 
         return
@@ -127,7 +134,7 @@ export default class SpanEditor {
       // the anchor node is in the block.
       if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
         const { anchor } = selectionWrapper.positionsOnAnnotation
-        const blockSpanOnFocus = this._annotationModel.span.get(
+        const blockSpanOnFocus = this.#annotationModel.span.get(
           selectionWrapper.parentOfFocusNode.id
         )
 
@@ -137,7 +144,7 @@ export default class SpanEditor {
           anchor === blockSpanOnFocus.begin ||
           anchor === blockSpanOnFocus.end
         ) {
-          this._shrink(selectionWrapper)
+          this.#shrink(selectionWrapper)
           return
         }
       }
@@ -147,35 +154,35 @@ export default class SpanEditor {
   }
 
   cerateSpanForTouchDevice() {
-    const selectionWrapper = new SelectionWrapper(this._annotationModel.span)
+    const selectionWrapper = new SelectionWrapper(this.#annotationModel.span)
 
     if (selectionWrapper.isParentOfBothNodesTextBox) {
-      this._create(selectionWrapper)
+      this.#create(selectionWrapper)
     }
   }
 
   expandForTouchDevice() {
-    const expandedSpan = this._getExpandedSpanForTouchDevice()
+    const expandedSpan = this.#getExpandedSpanForTouchDevice()
     if (expandedSpan) {
       const { spanID, begin, end } = expandedSpan
 
-      if (validateNewBlockSpan(this._annotationModel, begin, end, spanID)) {
-        this._commander.invoke(
-          this._commander.factory.moveBlockSpanCommand(spanID, begin, end)
+      if (validateNewBlockSpan(this.#annotationModel, begin, end, spanID)) {
+        this.#commander.invoke(
+          this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
         )
       }
     }
   }
 
   shrinkForTouchDevice() {
-    const shrinkedSpan = this._getShrinkedSpanForTouchDevice()
+    const shrinkedSpan = this.#getShrinkedSpanForTouchDevice()
     if (shrinkedSpan) {
       const { spanID, begin, end } = shrinkedSpan
-      const nextSpan = getRightSpanElement(this._editorHTMLElement, spanID)
+      const nextSpan = getRightSpanElement(this.#editorHTMLElement, spanID)
 
       // The span cross exists spans.
       if (
-        this._annotationModel.span.isBoundaryCrossingWithOtherSpans(begin, end)
+        this.#annotationModel.span.isBoundaryCrossingWithOtherSpans(begin, end)
       ) {
         alertifyjs.warning(
           'A span cannot be modifyed to make a boundary crossing.'
@@ -184,85 +191,85 @@ export default class SpanEditor {
       }
 
       // There is parant span.
-      if (this._annotationModel.span.hasParentOf(begin, end, spanID)) {
+      if (this.#annotationModel.span.hasParentOf(begin, end, spanID)) {
         return
       }
 
-      const doesExists = this._annotationModel.span.hasBlockSpan(begin, end)
+      const doesExists = this.#annotationModel.span.hasBlockSpan(begin, end)
       if (begin < end && !doesExists) {
-        this._commander.invoke(
-          this._commander.factory.moveBlockSpanCommand(spanID, begin, end)
+        this.#commander.invoke(
+          this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
         )
       } else {
-        this._commander.invoke(
-          this._commander.factory.removeSpanCommand(spanID)
+        this.#commander.invoke(
+          this.#commander.factory.removeSpanCommand(spanID)
         )
         if (nextSpan) {
-          this._selectionModel.selectSpan(nextSpan.id)
+          this.#selectionModel.selectSpan(nextSpan.id)
         }
       }
     }
   }
 
-  _create(selectionWrapper) {
+  #create(selectionWrapper) {
     if (
       hasCharacters(
-        this._annotationModel.sourceDoc,
-        this._spanConfig,
+        this.#annotationModel.sourceDoc,
+        this.#spanConfig,
         selectionWrapper
       )
     ) {
-      this._selectionModel.removeAll()
+      this.#selectionModel.removeAll()
       create(
-        this._annotationModel,
-        this._commander,
-        this._menuState.spanAdjuster,
+        this.#annotationModel,
+        this.#commander,
+        this.#menuState.spanAdjuster,
         selectionWrapper,
-        this._spanConfig
+        this.#spanConfig
       )
     }
     clearTextSelection()
   }
 
-  _expand(selectionWrapper) {
+  #expand(selectionWrapper) {
     const spanID = selectionWrapper.ancestorBlockSpanOfAnchorNode.id
 
-    this._selectionModel.removeAll()
+    this.#selectionModel.removeAll()
 
-    const { begin, end } = this._annotationModel.span
+    const { begin, end } = this.#annotationModel.span
       .get(spanID)
       .getExpandedInAnchorNodeToFocusNodeDirection(
-        this._menuState.spanAdjuster,
+        this.#menuState.spanAdjuster,
         selectionWrapper,
-        this._annotationModel.sourceDoc,
-        this._spanConfig
+        this.#annotationModel.sourceDoc,
+        this.#spanConfig
       )
 
-    if (validateNewBlockSpan(this._annotationModel, begin, end, spanID)) {
-      this._commander.invoke(
-        this._commander.factory.moveBlockSpanCommand(spanID, begin, end)
+    if (validateNewBlockSpan(this.#annotationModel, begin, end, spanID)) {
+      this.#commander.invoke(
+        this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
       )
     }
 
     clearTextSelection()
   }
 
-  _shrink(selectionWrapper) {
+  #shrink(selectionWrapper) {
     const spanID = selectionWrapper.ancestorBlockSpanOfFocusNode.id
 
     shrinkSpan(
-      this._editorHTMLElement,
-      this._annotationModel.span,
-      this._annotationModel.sourceDoc,
-      this._selectionModel,
-      this._commander,
-      this._menuState.spanAdjuster,
+      this.#editorHTMLElement,
+      this.#annotationModel.span,
+      this.#annotationModel.sourceDoc,
+      this.#selectionModel,
+      this.#commander,
+      this.#menuState.spanAdjuster,
       spanID,
       selectionWrapper,
-      this._spanConfig,
+      this.#spanConfig,
       (begin, end) => {
-        this._commander.invoke(
-          this._commander.factory.moveBlockSpanCommand(spanID, begin, end)
+        this.#commander.invoke(
+          this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
         )
       }
     )
@@ -270,8 +277,8 @@ export default class SpanEditor {
     clearTextSelection()
   }
 
-  _getExpandedSpanForTouchDevice() {
-    const selectionWrapper = new SelectionWrapper(this._annotationModel.span)
+  #getExpandedSpanForTouchDevice() {
+    const selectionWrapper = new SelectionWrapper(this.#annotationModel.span)
 
     // When there is no denotation span in ancestors of anchor node and focus node,
     // a span to expand does not exist.
@@ -294,13 +301,13 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this._annotationModel.span
+        ...this.#annotationModel.span
           .get(spanID)
           .getExpandedInAnchorNodeToFocusNodeDirection(
-            this._menuState.spanAdjuster,
+            this.#menuState.spanAdjuster,
             selectionWrapper,
-            this._annotationModel.sourceDoc,
-            this._spanConfig
+            this.#annotationModel.sourceDoc,
+            this.#spanConfig
           )
       }
     }
@@ -316,20 +323,20 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this._annotationModel.span
+        ...this.#annotationModel.span
           .get(spanID)
           .getExpandedInFocusNodeToAnchorNodeDirection(
-            this._menuState.spanAdjuster,
+            this.#menuState.spanAdjuster,
             selectionWrapper,
-            this._annotationModel.sourceDoc,
-            this._spanConfig
+            this.#annotationModel.sourceDoc,
+            this.#spanConfig
           )
       }
     }
   }
 
-  _getShrinkedSpanForTouchDevice() {
-    const selectionWrapper = new SelectionWrapper(this._annotationModel.span)
+  #getShrinkedSpanForTouchDevice() {
+    const selectionWrapper = new SelectionWrapper(this.#annotationModel.span)
 
     // When there is no denotation span in ancestors of anchor node and focus node,
     // a span to shrink does not exist.
@@ -360,13 +367,13 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this._annotationModel.span
+        ...this.#annotationModel.span
           .get(spanID)
           .getShortenInFocusNodeToAnchorNodeDirection(
-            this._menuState.spanAdjuster,
+            this.#menuState.spanAdjuster,
             selectionWrapper,
-            this._annotationModel.sourceDoc,
-            this._spanConfig
+            this.#annotationModel.sourceDoc,
+            this.#spanConfig
           )
       }
     }
@@ -382,13 +389,13 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this._annotationModel.span
+        ...this.#annotationModel.span
           .get(spanID)
           .getShortenInAnchorNodeToFocusNodeDirection(
-            this._menuState.spanAdjuster,
+            this.#menuState.spanAdjuster,
             selectionWrapper,
-            this._annotationModel.sourceDoc,
-            this._spanConfig
+            this.#annotationModel.sourceDoc,
+            this.#spanConfig
           )
       }
     }
