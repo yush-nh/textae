@@ -185,7 +185,7 @@ export default class SpanEditor {
         this.#annotationModel.span.isBoundaryCrossingWithOtherSpans(begin, end)
       ) {
         alertifyjs.warning(
-          'A span cannot be modifyed to make a boundary crossing.'
+          'A span cannot be modified to make a boundary crossing.'
         )
         return
       }
