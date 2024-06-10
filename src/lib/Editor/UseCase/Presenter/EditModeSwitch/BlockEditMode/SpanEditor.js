@@ -190,7 +190,7 @@ export default class SpanEditor {
         return
       }
 
-      // There is parant span.
+      // There is parent span.
       if (this.#annotationModel.span.hasParentOf(begin, end, spanID)) {
         return
       }
