@@ -4,18 +4,18 @@ export default function (
   selectionWrapper,
   spanConfig
 ) {
-  const { orderedPositions } = selectionWrapper
+  const { positionsOnAnnotation } = selectionWrapper
 
   return {
     begin: spanAdjuster.backFromBegin(
       sourceDoc,
-      orderedPositions.begin,
+      positionsOnAnnotation.begin,
       spanConfig
     ),
     end:
       spanAdjuster.forwardFromEnd(
         sourceDoc,
-        orderedPositions.end - 1,
+        positionsOnAnnotation.end - 1,
         spanConfig
       ) + 1
   }
