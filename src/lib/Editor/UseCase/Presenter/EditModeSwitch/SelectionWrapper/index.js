@@ -3,7 +3,7 @@ import isNodeTextBox from './isNodeTextBox'
 import isNodeStyleSpan from './isNodeStyleSpan'
 import isNodeBlockSpan from './isNodeBlockSpan'
 import PositionsOnAnnotation from './PositionsOnAnnotation'
-import OrderedPositions from '../OrderedPositions'
+import OrderedPositions from './OrderedPositions'
 
 export default class SelectionWrapper {
   constructor(spanModelContainer) {
