@@ -338,9 +338,10 @@ export default class SpanInstance {
     spanAdjuster,
     selectionWrapper,
     sourceDoc,
+    spanModelContainer,
     spanConfig
   ) {
-    const { anchor, focus } = selectionWrapper.positionsOnAnnotation
+    const { anchor, focus } = new PositionsOnAnnotation(spanModelContainer)
 
     if (anchor < focus) {
       // expand to the right
