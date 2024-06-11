@@ -1,16 +1,13 @@
-import OrderedPositions from '../OrderedPositions'
 import getOffsetFromParent from './getOffsetFromParent'
 import getParentOffset from './getParentOffset'
 
 export default class PositionsOnAnnotation {
   #spanModelContainer
   #selection
-  #orderedPositions
 
   constructor(spanModelContainer, selectionWrapper) {
     this.#spanModelContainer = spanModelContainer
     this.#selection = selectionWrapper.selection
-    this.#orderedPositions = new OrderedPositions(this)
   }
 
   get anchor() {
@@ -30,10 +27,18 @@ export default class PositionsOnAnnotation {
   }
 
   get begin() {
-    return this.#orderedPositions.begin
+    if (this.anchor < this.focus) {
+      return this.anchor
+    }
+
+    return this.focus
   }
 
   get end() {
-    return this.#orderedPositions.end
+    if (this.anchor < this.focus) {
+      return this.focus
+    }
+
+    return this.anchor
   }
 }
