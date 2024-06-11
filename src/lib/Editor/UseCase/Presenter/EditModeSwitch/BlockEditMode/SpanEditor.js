@@ -216,7 +216,7 @@ export default class SpanEditor {
       hasCharacters(
         this.#annotationModel.sourceDoc,
         this.#spanConfig,
-        selectionWrapper
+        selectionWrapper.positionsOnAnnotation
       )
     ) {
       this.#selectionModel.removeAll()
