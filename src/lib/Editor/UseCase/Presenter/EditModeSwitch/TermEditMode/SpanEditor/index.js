@@ -512,7 +512,7 @@ export default class SpanEditor {
 
   #getShrinkableEndSpanID(selectionWrapper) {
     if (selectionWrapper.ancestorDenotationSpanOfAnchorNode) {
-      const { anchor } = selectionWrapper.positionsOnAnnotation
+      const { anchor } = new PositionsOnAnnotation(this.#spanModelContainer)
 
       const { begin, end } = this.#spanModelContainer.getDenotationSpan(
         selectionWrapper.ancestorDenotationSpanOfAnchorNode.id
