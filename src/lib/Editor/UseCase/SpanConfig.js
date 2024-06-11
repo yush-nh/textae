@@ -53,7 +53,7 @@ export default class SpanConfig {
     return this._blankCharacters.indexOf(char) >= 0
   }
 
-  removeBlankChractors(str) {
+  removeBlankCharacters(str) {
     for (const char of this._blankCharacters) {
       str = str.replaceAll(char, '')
     }

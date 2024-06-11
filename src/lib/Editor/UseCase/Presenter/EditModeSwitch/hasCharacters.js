@@ -9,5 +9,5 @@ export default function (sourceDoc, spanConfig, selectionWrapper) {
     orderedPositions.end
   )
 
-  return spanConfig.removeBlankChractors(selectedString).length > 0
+  return spanConfig.removeBlankCharacters(selectedString).length > 0
 }
