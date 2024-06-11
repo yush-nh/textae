@@ -5,8 +5,8 @@ export default class PositionsOnAnnotation {
   #selection
   #spanModelContainer
 
-  constructor(selectionWrapper, spanModelContainer) {
-    this.#selection = selectionWrapper.selection
+  constructor(spanModelContainer) {
+    this.#selection = window.getSelection()
     this.#spanModelContainer = spanModelContainer
   }
 

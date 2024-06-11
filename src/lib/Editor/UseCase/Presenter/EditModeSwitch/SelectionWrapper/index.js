@@ -101,6 +101,6 @@ export default class SelectionWrapper {
   }
 
   get positionsOnAnnotation() {
-    return new PositionsOnAnnotation(this, this.#spanModelContainer)
+    return new PositionsOnAnnotation(this.#spanModelContainer)
   }
 }
