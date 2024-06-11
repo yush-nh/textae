@@ -6,6 +6,8 @@ import PositionsOnAnnotation from './PositionsOnAnnotation'
 import OrderedPositions from './OrderedPositions'
 
 export default class SelectionWrapper {
+  #spanModelContainer
+
   constructor(spanModelContainer) {
     this.selection = window.getSelection()
 
@@ -15,7 +17,7 @@ export default class SelectionWrapper {
       'Text selection across editors is disabled'
     )
 
-    this._spanModelContainer = spanModelContainer
+    this.#spanModelContainer = spanModelContainer
   }
 
   get isParentOfAnchorNodeTextBox() {
@@ -100,7 +102,7 @@ export default class SelectionWrapper {
   }
 
   get positionsOnAnnotation() {
-    return new PositionsOnAnnotation(this._spanModelContainer, this)
+    return new PositionsOnAnnotation(this.#spanModelContainer, this)
   }
 
   get orderedPositions() {
