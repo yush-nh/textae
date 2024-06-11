@@ -14,6 +14,7 @@ export default function (
 ) {
   const { begin, end } = getNewSpan(
     sourceDoc,
+    spanModelContainer,
     spanAdjuster,
     selectionWrapper,
     spanConfig

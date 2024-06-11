@@ -46,6 +46,7 @@ export default class TextEditMode extends EditMode {
               ) {
                 const { begin, end } = getNewSpan(
                   sourceDoc,
+                  this.#annotationModel.span,
                   this.#spanAdjuster,
                   selectionWrapper,
                   this.#spanConfig

@@ -10,6 +10,7 @@ export default function (
 ) {
   const { begin, end } = getNewSpan(
     annotationModel.sourceDoc,
+    annotationModel.span,
     spanAdjuster,
     selectionWrapper,
     spanConfig
