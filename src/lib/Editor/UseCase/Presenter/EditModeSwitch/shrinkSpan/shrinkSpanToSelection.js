@@ -18,7 +18,6 @@ export default function (
     .get(spanId)
     .getShortenInAnchorNodeToFocusNodeDirection(
       spanAdjuster,
-      selectionWrapper,
       sourceDoc,
       spanModelContainer,
       spanConfig
