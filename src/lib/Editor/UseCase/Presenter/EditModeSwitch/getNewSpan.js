@@ -4,7 +4,6 @@ export default function (
   sourceDoc,
   spanModelContainer,
   spanAdjuster,
-  selectionWrapper,
   spanConfig
 ) {
   const { begin, end } = new PositionsOnAnnotation(spanModelContainer)

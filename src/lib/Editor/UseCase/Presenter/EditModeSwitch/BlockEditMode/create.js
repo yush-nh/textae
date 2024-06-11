@@ -12,7 +12,6 @@ export default function (
     annotationModel.sourceDoc,
     annotationModel.span,
     spanAdjuster,
-    selectionWrapper,
     spanConfig
   )
 

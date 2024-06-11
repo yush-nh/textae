@@ -48,7 +48,6 @@ export default class TextEditMode extends EditMode {
                   sourceDoc,
                   this.#annotationModel.span,
                   this.#spanAdjuster,
-                  selectionWrapper,
                   this.#spanConfig
                 )
                 console.log('selection', selection, begin, end)
