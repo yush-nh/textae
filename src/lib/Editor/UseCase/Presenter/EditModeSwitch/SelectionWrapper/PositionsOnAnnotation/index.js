@@ -2,12 +2,12 @@ import getOffsetFromParent from './getOffsetFromParent'
 import getParentOffset from './getParentOffset'
 
 export default class PositionsOnAnnotation {
-  #spanModelContainer
   #selection
+  #spanModelContainer
 
-  constructor(spanModelContainer, selectionWrapper) {
-    this.#spanModelContainer = spanModelContainer
+  constructor(selectionWrapper, spanModelContainer) {
     this.#selection = selectionWrapper.selection
+    this.#spanModelContainer = spanModelContainer
   }
 
   get anchor() {
