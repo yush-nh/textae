@@ -10,6 +10,14 @@ import getRightSpanElement from '../../../../../getRightSpanElement'
 import validateNewDenotationSpan from './validateNewDenotationSpan'
 
 export default class SpanEditor {
+  #editorHTMLElement
+  #annotationModel
+  #spanModelContainer
+  #selectionModel
+  #commander
+  #menuState
+  #spanConfig
+
   constructor(
     editorHTMLElement,
     annotationModel,
@@ -18,132 +26,132 @@ export default class SpanEditor {
     menuState,
     spanConfig
   ) {
-    this._editorHTMLElement = editorHTMLElement
-    this._annotationModel = annotationModel
-    this._spanModelContainer = annotationModel.span
-    this._selectionModel = selectionModel
-    this._commander = commander
-    this._menuState = menuState
-    this._spanConfig = spanConfig
+    this.#editorHTMLElement = editorHTMLElement
+    this.#annotationModel = annotationModel
+    this.#spanModelContainer = annotationModel.span
+    this.#selectionModel = selectionModel
+    this.#commander = commander
+    this.#menuState = menuState
+    this.#spanConfig = spanConfig
   }
 
   editFor(selectionWrapper) {
     if (selectionWrapper.isParentOfAnchorNodeTextBox) {
       if (selectionWrapper.isParentOfFocusNodeTextBox) {
-        this._anchorNodeInTextBoxFocusNodeInTextBox(selectionWrapper)
+        this.#anchorNodeInTextBoxFocusNodeInTextBox(selectionWrapper)
         return
       }
       if (selectionWrapper.isParentOfFocusNodeDenotationSpan) {
-        this._anchorNodeInTextBoxFocusNodeInDenotationSpan(selectionWrapper)
+        this.#anchorNodeInTextBoxFocusNodeInDenotationSpan(selectionWrapper)
         return
       }
       if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-        this._anchorNodeInTextBoxFocusNodeInBlockSpan(selectionWrapper)
+        this.#anchorNodeInTextBoxFocusNodeInBlockSpan(selectionWrapper)
         return
       }
       if (selectionWrapper.isParentOfFocusNodeStyleSpan) {
-        this._anchorNodeInTextBoxFocusNodeInStyleSpan(selectionWrapper)
+        this.#anchorNodeInTextBoxFocusNodeInStyleSpan(selectionWrapper)
         return
       }
     }
     if (selectionWrapper.isParentOfAnchorNodeDenotationSpan) {
       if (selectionWrapper.isParentOfFocusNodeTextBox) {
-        this._anchorNodeInDenotationSpanFocusNodeInTextBox(selectionWrapper)
+        this.#anchorNodeInDenotationSpanFocusNodeInTextBox(selectionWrapper)
         return
       }
       if (selectionWrapper.isParentOfFocusNodeDenotationSpan) {
-        this._anchorNodeInDenotationSpanFocusNodeInDenotationSpan(
+        this.#anchorNodeInDenotationSpanFocusNodeInDenotationSpan(
           selectionWrapper
         )
         return
       }
       if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-        this._anchorNodeInDenotationSpanFocusNodeInBlockSpan(selectionWrapper)
+        this.#anchorNodeInDenotationSpanFocusNodeInBlockSpan(selectionWrapper)
         return
       }
       if (selectionWrapper.isParentOfFocusNodeStyleSpan) {
-        this._anchorNodeInDenotationSpanFocusNodeInStyleSpan(selectionWrapper)
+        this.#anchorNodeInDenotationSpanFocusNodeInStyleSpan(selectionWrapper)
         return
       }
     }
     if (selectionWrapper.isParentOfAnchorNodeBlockSpan) {
       if (selectionWrapper.isParentOfFocusNodeTextBox) {
-        this._anchorNodeInBlockSpanFocusNodeInTextBox(selectionWrapper)
+        this.#anchorNodeInBlockSpanFocusNodeInTextBox(selectionWrapper)
         return
       }
       if (selectionWrapper.isParentOfFocusNodeDenotationSpan) {
-        this._anchorNodeInBlockSpanFocusNodeInDenotationSpan(selectionWrapper)
+        this.#anchorNodeInBlockSpanFocusNodeInDenotationSpan(selectionWrapper)
         return
       }
       if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-        this._anchorNodeInBlockSpanFocusNodeInBlockSpan(selectionWrapper)
+        this.#anchorNodeInBlockSpanFocusNodeInBlockSpan(selectionWrapper)
         return
       }
       if (selectionWrapper.isParentOfFocusNodeStyleSpan) {
-        this._anchorNodeInBlockSpanFocusNodeInStyleSpan(selectionWrapper)
+        this.#anchorNodeInBlockSpanFocusNodeInStyleSpan(selectionWrapper)
         return
       }
     }
     if (selectionWrapper.isParentOfAnchorNodeStyleSpan) {
       if (selectionWrapper.isParentOfFocusNodeTextBox) {
-        this._anchorNodeInStyleSpanFocusNodeInTextBox(selectionWrapper)
+        this.#anchorNodeInStyleSpanFocusNodeInTextBox(selectionWrapper)
         return
       }
       if (selectionWrapper.isParentOfFocusNodeDenotationSpan) {
-        this._anchorNodeInStyleSpanFocusNodeInDenotationSpan(selectionWrapper)
+        this.#anchorNodeInStyleSpanFocusNodeInDenotationSpan(selectionWrapper)
         return
       }
       if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-        this._anchorNodeInStyleSpanFocusNodeInBlockSpan(selectionWrapper)
+        this.#anchorNodeInStyleSpanFocusNodeInBlockSpan(selectionWrapper)
         return
       }
       if (selectionWrapper.isParentOfFocusNodeStyleSpan) {
-        this._anchorNodeInStyleSpanFocusNodeInStyleSpan(selectionWrapper)
+        this.#anchorNodeInStyleSpanFocusNodeInStyleSpan(selectionWrapper)
         return
       }
     }
   }
 
   cerateSpanForTouchDevice() {
-    const selectionWrapper = new SelectionWrapper(this._spanModelContainer)
+    const selectionWrapper = new SelectionWrapper(this.#spanModelContainer)
 
     if (selectionWrapper.isParentOfBothNodesSame) {
-      this._create(selectionWrapper)
+      this.#create(selectionWrapper)
     }
   }
 
   expandForTouchDevice() {
-    const expandedSpan = this._getExpandedSpanForTouchDevice()
+    const expandedSpan = this.#getExpandedSpanForTouchDevice()
     if (expandedSpan) {
       const { spanID, begin, end } = expandedSpan
 
       // The span cross exists spans.
       if (
-        this._spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
+        this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
       ) {
         return
       }
 
       // A span cannot be expanded a span to the same as an existing span.
-      if (this._spanModelContainer.hasDenotationSpan(begin, end)) {
+      if (this.#spanModelContainer.hasDenotationSpan(begin, end)) {
         return
       }
 
-      this._commander.invoke(
-        this._commander.factory.moveDenotationSpanCommand(spanID, begin, end)
+      this.#commander.invoke(
+        this.#commander.factory.moveDenotationSpanCommand(spanID, begin, end)
       )
     }
   }
 
   shrinkForTouchDevice() {
-    const shrinkedSpan = this._getShrinkedSpanForTouchDevice()
+    const shrinkedSpan = this.#getShrinkedSpanForTouchDevice()
     if (shrinkedSpan) {
       const { spanID, begin, end } = shrinkedSpan
-      const nextSpan = getRightSpanElement(this._editorHTMLElement, spanID)
+      const nextSpan = getRightSpanElement(this.#editorHTMLElement, spanID)
 
       // The span cross exists spans.
       if (
-        this._spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
+        this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
       ) {
         alertifyjs.warning(
           'A span cannot be shrinked to make a boundary crossing.'
@@ -151,24 +159,24 @@ export default class SpanEditor {
         return
       }
 
-      const doesExists = this._spanModelContainer.hasDenotationSpan(begin, end)
+      const doesExists = this.#spanModelContainer.hasDenotationSpan(begin, end)
       if (begin < end && !doesExists) {
-        this._commander.invoke(
-          this._commander.factory.moveDenotationSpanCommand(spanID, begin, end)
+        this.#commander.invoke(
+          this.#commander.factory.moveDenotationSpanCommand(spanID, begin, end)
         )
       } else {
-        this._commander.invoke(
-          this._commander.factory.removeSpanCommand(spanID)
+        this.#commander.invoke(
+          this.#commander.factory.removeSpanCommand(spanID)
         )
         if (nextSpan) {
-          this._selectionModel.selectSpan(nextSpan.id)
+          this.#selectionModel.selectSpan(nextSpan.id)
         }
       }
     }
   }
 
-  _getExpandedSpanForTouchDevice() {
-    const selectionWrapper = new SelectionWrapper(this._spanModelContainer)
+  #getExpandedSpanForTouchDevice() {
+    const selectionWrapper = new SelectionWrapper(this.#spanModelContainer)
 
     // When there is no denotation span in ancestors of anchor node and focus node,
     // a span to expand does not exist.
@@ -191,13 +199,13 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this._spanModelContainer
+        ...this.#spanModelContainer
           .get(spanID)
           .getExpandedInAnchorNodeToFocusNodeDirection(
-            this._menuState.spanAdjuster,
+            this.#menuState.spanAdjuster,
             selectionWrapper,
-            this._annotationModel.sourceDoc,
-            this._spanConfig
+            this.#annotationModel.sourceDoc,
+            this.#spanConfig
           )
       }
     }
@@ -213,20 +221,20 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this._spanModelContainer
+        ...this.#spanModelContainer
           .get(spanID)
           .getExpandedInFocusNodeToAnchorNodeDirection(
-            this._menuState.spanAdjuster,
+            this.#menuState.spanAdjuster,
             selectionWrapper,
-            this._annotationModel.sourceDoc,
-            this._spanConfig
+            this.#annotationModel.sourceDoc,
+            this.#spanConfig
           )
       }
     }
   }
 
-  _getShrinkedSpanForTouchDevice() {
-    const selectionWrapper = new SelectionWrapper(this._spanModelContainer)
+  #getShrinkedSpanForTouchDevice() {
+    const selectionWrapper = new SelectionWrapper(this.#spanModelContainer)
 
     // When there is no denotation span in ancestors of anchor node and focus node,
     // a span to shrink does not exist.
@@ -257,13 +265,13 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this._spanModelContainer
+        ...this.#spanModelContainer
           .get(spanID)
           .getShortenInFocusNodeToAnchorNodeDirection(
-            this._menuState.spanAdjuster,
+            this.#menuState.spanAdjuster,
             selectionWrapper,
-            this._annotationModel.sourceDoc,
-            this._spanConfig
+            this.#annotationModel.sourceDoc,
+            this.#spanConfig
           )
       }
     }
@@ -279,69 +287,69 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this._spanModelContainer
+        ...this.#spanModelContainer
           .get(spanID)
           .getShortenInAnchorNodeToFocusNodeDirection(
-            this._menuState.spanAdjuster,
+            this.#menuState.spanAdjuster,
             selectionWrapper,
-            this._annotationModel.sourceDoc,
-            this._spanConfig
+            this.#annotationModel.sourceDoc,
+            this.#spanConfig
           )
       }
     }
   }
 
-  _anchorNodeInTextBoxFocusNodeInTextBox(selectionWrapper) {
+  #anchorNodeInTextBoxFocusNodeInTextBox(selectionWrapper) {
     // The parent of the focusNode is the text.
-    this._create(selectionWrapper)
+    this.#create(selectionWrapper)
   }
 
-  _anchorNodeInTextBoxFocusNodeInDenotationSpan(selectionWrapper) {
-    const targetSpanID = this._getShrinkableSpanID(selectionWrapper)
+  #anchorNodeInTextBoxFocusNodeInDenotationSpan(selectionWrapper) {
+    const targetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (targetSpanID) {
-      this._shrink(selectionWrapper, targetSpanID)
+      this.#shrink(selectionWrapper, targetSpanID)
       return
     }
 
     clearTextSelection()
   }
 
-  _anchorNodeInTextBoxFocusNodeInBlockSpan() {
+  #anchorNodeInTextBoxFocusNodeInBlockSpan() {
     clearTextSelection()
   }
 
-  _anchorNodeInTextBoxFocusNodeInStyleSpan(selectionWrapper) {
+  #anchorNodeInTextBoxFocusNodeInStyleSpan(selectionWrapper) {
     // There is a Span between the StyleSpan and the text.
     // Shrink Span when mousedown on the text or a span and mouseup on the styleSpan.
-    const targetSpanID = this._getShrinkableSpanID(selectionWrapper)
+    const targetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (targetSpanID) {
-      this._shrink(selectionWrapper, targetSpanID)
+      this.#shrink(selectionWrapper, targetSpanID)
       return
     }
 
-    this._create(selectionWrapper)
+    this.#create(selectionWrapper)
   }
 
-  _anchorNodeInDenotationSpanFocusNodeInTextBox(selectionWrapper) {
-    this._expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
+  #anchorNodeInDenotationSpanFocusNodeInTextBox(selectionWrapper) {
+    this.#expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
   }
 
-  _anchorNodeInDenotationSpanFocusNodeInDenotationSpan(selectionWrapper) {
-    const shrinkableEndSpanID = this._getShrinkableEndSpanID(selectionWrapper)
+  #anchorNodeInDenotationSpanFocusNodeInDenotationSpan(selectionWrapper) {
+    const shrinkableEndSpanID = this.#getShrinkableEndSpanID(selectionWrapper)
     if (shrinkableEndSpanID) {
-      this._shrink(selectionWrapper, shrinkableEndSpanID)
+      this.#shrink(selectionWrapper, shrinkableEndSpanID)
       return
     }
 
     // The anchor node and the focus node are in the same span.
     if (selectionWrapper.isParentOfBothNodesSame) {
-      this._create(selectionWrapper)
+      this.#create(selectionWrapper)
       return
     }
 
-    const shrinkTargetSpanID = this._getShrinkableSpanID(selectionWrapper)
+    const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (shrinkTargetSpanID) {
-      this._shrink(selectionWrapper, shrinkTargetSpanID)
+      this.#shrink(selectionWrapper, shrinkTargetSpanID)
       return
     }
 
@@ -351,26 +359,26 @@ export default class SpanEditor {
     // The condition for this is that the ancestor of the anchor node
     // and the ancestor of the focus node are the same.
     // Since this is always true, it will always expand when it is neither create nor shrink.
-    this._expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
+    this.#expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
   }
 
-  _anchorNodeInDenotationSpanFocusNodeInBlockSpan(selectionWrapper) {
+  #anchorNodeInDenotationSpanFocusNodeInBlockSpan(selectionWrapper) {
     if (
       selectionWrapper.parentOfFocusNode.contains(
         selectionWrapper.parentOfAnchorNode
       )
     ) {
-      this._expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
+      this.#expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
       return
     }
 
     clearTextSelection()
   }
 
-  _anchorNodeInDenotationSpanFocusNodeInStyleSpan(selectionWrapper) {
-    const shrinkTargetEndSpanID = this._getShrinkableEndSpanID(selectionWrapper)
+  #anchorNodeInDenotationSpanFocusNodeInStyleSpan(selectionWrapper) {
+    const shrinkTargetEndSpanID = this.#getShrinkableEndSpanID(selectionWrapper)
     if (shrinkTargetEndSpanID) {
-      this._shrink(selectionWrapper, shrinkTargetEndSpanID)
+      this.#shrink(selectionWrapper, shrinkTargetEndSpanID)
       return
     }
 
@@ -378,69 +386,69 @@ export default class SpanEditor {
       selectionWrapper.parentOfAnchorNode ===
       selectionWrapper.ancestorDenotationSpanOfFocusNode
     ) {
-      this._create(selectionWrapper)
+      this.#create(selectionWrapper)
       return
     }
 
-    const expandTargetSpanID = this._getExpandableSpanID(selectionWrapper)
+    const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
     if (expandTargetSpanID) {
-      this._expand(selectionWrapper, expandTargetSpanID)
+      this.#expand(selectionWrapper, expandTargetSpanID)
       return
     }
 
-    const shrinkTargetSpanID = this._getShrinkableSpanID(selectionWrapper)
+    const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (shrinkTargetSpanID) {
-      this._shrink(selectionWrapper, shrinkTargetSpanID)
+      this.#shrink(selectionWrapper, shrinkTargetSpanID)
       return
     }
   }
 
-  _anchorNodeInBlockSpanFocusNodeInTextBox() {
+  #anchorNodeInBlockSpanFocusNodeInTextBox() {
     clearTextSelection()
   }
 
-  _anchorNodeInBlockSpanFocusNodeInDenotationSpan(selectionWrapper) {
-    const shrinkTargetSpanID = this._getShrinkableSpanID(selectionWrapper)
+  #anchorNodeInBlockSpanFocusNodeInDenotationSpan(selectionWrapper) {
+    const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (shrinkTargetSpanID) {
-      this._shrink(selectionWrapper, shrinkTargetSpanID)
-      return
-    }
-
-    clearTextSelection()
-  }
-
-  _anchorNodeInBlockSpanFocusNodeInBlockSpan(selectionWrapper) {
-    this._create(selectionWrapper)
-  }
-
-  _anchorNodeInBlockSpanFocusNodeInStyleSpan(selectionWrapper) {
-    const shrinkTargetSpanID = this._getShrinkableSpanID(selectionWrapper)
-    if (shrinkTargetSpanID) {
-      this._shrink(selectionWrapper, shrinkTargetSpanID)
+      this.#shrink(selectionWrapper, shrinkTargetSpanID)
       return
     }
 
     clearTextSelection()
   }
 
-  _anchorNodeInStyleSpanFocusNodeInTextBox(selectionWrapper) {
+  #anchorNodeInBlockSpanFocusNodeInBlockSpan(selectionWrapper) {
+    this.#create(selectionWrapper)
+  }
+
+  #anchorNodeInBlockSpanFocusNodeInStyleSpan(selectionWrapper) {
+    const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
+    if (shrinkTargetSpanID) {
+      this.#shrink(selectionWrapper, shrinkTargetSpanID)
+      return
+    }
+
+    clearTextSelection()
+  }
+
+  #anchorNodeInStyleSpanFocusNodeInTextBox(selectionWrapper) {
     // If the anchor node is a style span but has a parent span, extend the parent span.
     if (selectionWrapper.ancestorDenotationSpanOfAnchorNode) {
       const spanID = selectionWrapper.ancestorDenotationSpanOfAnchorNode.id
 
       if (spanID) {
-        this._expand(selectionWrapper, spanID)
+        this.#expand(selectionWrapper, spanID)
       }
       return
     }
 
-    this._create(selectionWrapper)
+    this.#create(selectionWrapper)
   }
 
-  _anchorNodeInStyleSpanFocusNodeInDenotationSpan(selectionWrapper) {
-    const shrinkTargetEndSpanID = this._getShrinkableEndSpanID(selectionWrapper)
+  #anchorNodeInStyleSpanFocusNodeInDenotationSpan(selectionWrapper) {
+    const shrinkTargetEndSpanID = this.#getShrinkableEndSpanID(selectionWrapper)
     if (shrinkTargetEndSpanID) {
-      this._shrink(selectionWrapper, shrinkTargetEndSpanID)
+      this.#shrink(selectionWrapper, shrinkTargetEndSpanID)
       return
     }
 
@@ -448,39 +456,39 @@ export default class SpanEditor {
       selectionWrapper.ancestorDenotationSpanOfAnchorNode ===
       selectionWrapper.parentOfFocusNode
     ) {
-      this._create(selectionWrapper)
+      this.#create(selectionWrapper)
       return
     }
 
-    const shrinkTargetSpanID = this._getShrinkableSpanID(selectionWrapper)
+    const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (shrinkTargetSpanID) {
-      this._shrink(selectionWrapper, shrinkTargetSpanID)
+      this.#shrink(selectionWrapper, shrinkTargetSpanID)
       return
     }
 
-    const expandTargetSpanID = this._getExpandableSpanID(selectionWrapper)
+    const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
     if (expandTargetSpanID) {
-      this._expand(selectionWrapper, expandTargetSpanID)
+      this.#expand(selectionWrapper, expandTargetSpanID)
       return
     }
 
     clearTextSelection()
   }
 
-  _anchorNodeInStyleSpanFocusNodeInBlockSpan(selectionWrapper) {
-    const expandTargetSpanID = this._getExpandableSpanID(selectionWrapper)
+  #anchorNodeInStyleSpanFocusNodeInBlockSpan(selectionWrapper) {
+    const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
     if (expandTargetSpanID) {
-      this._expand(selectionWrapper, expandTargetSpanID)
+      this.#expand(selectionWrapper, expandTargetSpanID)
       return
     }
 
-    this._create(selectionWrapper)
+    this.#create(selectionWrapper)
   }
 
-  _anchorNodeInStyleSpanFocusNodeInStyleSpan(selectionWrapper) {
-    const shrinkTargetSpanID = this._getShrinkableEndSpanID(selectionWrapper)
+  #anchorNodeInStyleSpanFocusNodeInStyleSpan(selectionWrapper) {
+    const shrinkTargetSpanID = this.#getShrinkableEndSpanID(selectionWrapper)
     if (shrinkTargetSpanID) {
-      this._shrink(selectionWrapper, shrinkTargetSpanID)
+      this.#shrink(selectionWrapper, shrinkTargetSpanID)
       return
     }
 
@@ -488,24 +496,24 @@ export default class SpanEditor {
       selectionWrapper.isParentOfBothNodesSame ||
       selectionWrapper.isParentsParentOfAnchorNodeAndFocusedNodeSame
     ) {
-      this._create(selectionWrapper)
+      this.#create(selectionWrapper)
       return
     }
 
-    const expandTargetSpanID = this._getExpandableSpanID(selectionWrapper)
+    const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
     if (expandTargetSpanID) {
-      this._expand(selectionWrapper, expandTargetSpanID)
+      this.#expand(selectionWrapper, expandTargetSpanID)
       return
     }
 
     clearTextSelection()
   }
 
-  _getShrinkableEndSpanID(selectionWrapper) {
+  #getShrinkableEndSpanID(selectionWrapper) {
     if (selectionWrapper.ancestorDenotationSpanOfAnchorNode) {
       const { anchor } = selectionWrapper.positionsOnAnnotation
 
-      const { begin, end } = this._spanModelContainer.getDenotationSpan(
+      const { begin, end } = this.#spanModelContainer.getDenotationSpan(
         selectionWrapper.ancestorDenotationSpanOfAnchorNode.id
       )
       if (anchor === begin || anchor === end) {
@@ -531,7 +539,7 @@ export default class SpanEditor {
     }
   }
 
-  _getShrinkableSpanID(selectionWrapper) {
+  #getShrinkableSpanID(selectionWrapper) {
     const targetSpanElement = selectionWrapper.ancestorDenotationSpanOfFocusNode
 
     if (targetSpanElement) {
@@ -552,16 +560,16 @@ export default class SpanEditor {
     if (selectionWrapper.isAnchorNodeParentIsDescendantOfFocusNodeParent) {
       if (
         isPositionBetweenSpan(
-          this._selectionModel.span.single,
+          this.#selectionModel.span.single,
           selectionWrapper.positionsOnAnnotation.focus
         )
       ) {
-        return this._selectionModel.span.single.element.id
+        return this.#selectionModel.span.single.element.id
       }
     }
   }
 
-  _getExpandableSpanID(selectionWrapper) {
+  #getExpandableSpanID(selectionWrapper) {
     const targetSpanElement =
       selectionWrapper.ancestorDenotationSpanOfAnchorNode
 
@@ -583,64 +591,64 @@ export default class SpanEditor {
     }
   }
 
-  _create(selectionWrapper) {
+  #create(selectionWrapper) {
     if (
       hasCharacters(
-        this._annotationModel.sourceDoc,
-        this._spanConfig,
+        this.#annotationModel.sourceDoc,
+        this.#spanConfig,
         selectionWrapper.positionsOnAnnotation
       )
     ) {
-      this._selectionModel.removeAll()
+      this.#selectionModel.removeAll()
       create(
-        this._annotationModel.sourceDoc,
-        this._spanModelContainer,
-        this._commander,
-        this._menuState.spanAdjuster,
-        this._isReplicateAuto,
+        this.#annotationModel.sourceDoc,
+        this.#spanModelContainer,
+        this.#commander,
+        this.#menuState.spanAdjuster,
+        this.#isReplicateAuto,
         selectionWrapper,
-        this._spanConfig,
-        getIsDelimiterFunc(this._menuState, this._spanConfig)
+        this.#spanConfig,
+        getIsDelimiterFunc(this.#menuState, this.#spanConfig)
       )
     }
     clearTextSelection()
   }
 
-  _expand(selectionWrapper, spanID) {
-    this._selectionModel.removeAll()
+  #expand(selectionWrapper, spanID) {
+    this.#selectionModel.removeAll()
 
-    const { begin, end } = this._spanModelContainer
+    const { begin, end } = this.#spanModelContainer
       .get(spanID)
       .getExpandedInAnchorNodeToFocusNodeDirection(
-        this._menuState.spanAdjuster,
+        this.#menuState.spanAdjuster,
         selectionWrapper,
-        this._annotationModel.sourceDoc,
-        this._spanConfig
+        this.#annotationModel.sourceDoc,
+        this.#spanConfig
       )
 
-    if (validateNewDenotationSpan(this._spanModelContainer, begin, end)) {
-      this._commander.invoke(
-        this._commander.factory.moveDenotationSpanCommand(spanID, begin, end)
+    if (validateNewDenotationSpan(this.#spanModelContainer, begin, end)) {
+      this.#commander.invoke(
+        this.#commander.factory.moveDenotationSpanCommand(spanID, begin, end)
       )
     }
 
     clearTextSelection()
   }
 
-  _shrink(selectionWrapper, spanID) {
+  #shrink(selectionWrapper, spanID) {
     shrinkSpan(
-      this._editorHTMLElement,
-      this._spanModelContainer,
-      this._annotationModel.sourceDoc,
-      this._selectionModel,
-      this._commander,
-      this._menuState.spanAdjuster,
+      this.#editorHTMLElement,
+      this.#spanModelContainer,
+      this.#annotationModel.sourceDoc,
+      this.#selectionModel,
+      this.#commander,
+      this.#menuState.spanAdjuster,
       spanID,
       selectionWrapper,
-      this._spanConfig,
+      this.#spanConfig,
       (begin, end) => {
-        this._commander.invoke(
-          this._commander.factory.moveDenotationSpanCommand(spanID, begin, end)
+        this.#commander.invoke(
+          this.#commander.factory.moveDenotationSpanCommand(spanID, begin, end)
         )
       }
     )
@@ -648,7 +656,7 @@ export default class SpanEditor {
     clearTextSelection()
   }
 
-  get _isReplicateAuto() {
-    return this._menuState.isPushed('auto replicate')
+  get #isReplicateAuto() {
+    return this.#menuState.isPushed('auto replicate')
   }
 }
