@@ -8,6 +8,7 @@ import SelectionWrapper from '../../SelectionWrapper'
 import isPositionBetweenSpan from './isPositionBetweenSpan'
 import getRightSpanElement from '../../../../../getRightSpanElement'
 import validateNewDenotationSpan from './validateNewDenotationSpan'
+import PositionsOnAnnotation from '../../SelectionWrapper/PositionsOnAnnotation'
 
 export default class SpanEditor {
   #editorHTMLElement
@@ -561,7 +562,7 @@ export default class SpanEditor {
       if (
         isPositionBetweenSpan(
           this.#selectionModel.span.single,
-          selectionWrapper.positionsOnAnnotation.focus
+          new PositionsOnAnnotation(this.#annotationModel.span).focus
         )
       ) {
         return this.#selectionModel.span.single.element.id
