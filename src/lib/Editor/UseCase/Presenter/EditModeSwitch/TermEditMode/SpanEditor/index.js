@@ -154,7 +154,7 @@ export default class SpanEditor {
         this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
       ) {
         alertifyjs.warning(
-          'A span cannot be shrinked to make a boundary crossing.'
+          'A span cannot be shrunken to make a boundary crossing.'
         )
         return
       }
