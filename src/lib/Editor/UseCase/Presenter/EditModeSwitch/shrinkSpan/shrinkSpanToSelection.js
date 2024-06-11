@@ -25,7 +25,7 @@ export default function (
 
   // The span cross exists spans.
   if (spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)) {
-    alertifyjs.warning('A span cannot be shrinked to make a boundary crossing.')
+    alertifyjs.warning('A span cannot be shrunken to make a boundary crossing.')
     return false
   }
 
