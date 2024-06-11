@@ -14,8 +14,8 @@ export default function (
   const { begin, end } = getNewSpan(
     sourceDoc,
     spanModelContainer,
-    spanAdjuster,
-    spanConfig
+    spanConfig,
+    spanAdjuster
   )
 
   if (validateNewDenotationSpan(spanModelContainer, begin, end)) {

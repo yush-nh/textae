@@ -5,8 +5,9 @@ export default function (annotationModel, commander, spanAdjuster, spanConfig) {
   const { begin, end } = getNewSpan(
     annotationModel.sourceDoc,
     annotationModel.span,
-    spanAdjuster,
-    spanConfig
+
+    spanConfig,
+    spanAdjuster
   )
 
   if (validateNewBlockSpan(annotationModel, begin, end)) {

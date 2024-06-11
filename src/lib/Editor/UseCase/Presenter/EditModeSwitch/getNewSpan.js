@@ -3,8 +3,8 @@ import PositionsOnAnnotation from './SelectionWrapper/PositionsOnAnnotation'
 export default function (
   sourceDoc,
   spanModelContainer,
-  spanAdjuster,
-  spanConfig
+  spanConfig,
+  spanAdjuster
 ) {
   const { begin, end } = new PositionsOnAnnotation(spanModelContainer)
 
