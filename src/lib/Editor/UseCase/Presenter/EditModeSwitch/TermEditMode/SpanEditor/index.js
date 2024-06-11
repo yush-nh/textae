@@ -271,6 +271,7 @@ export default class SpanEditor {
             this.#menuState.spanAdjuster,
             selectionWrapper,
             this.#annotationModel.sourceDoc,
+            this.#annotationModel.span,
             this.#spanConfig
           )
       }

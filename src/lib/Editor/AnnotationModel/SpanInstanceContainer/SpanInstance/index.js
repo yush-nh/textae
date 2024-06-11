@@ -315,9 +315,10 @@ export default class SpanInstance {
     spanAdjuster,
     selectionWrapper,
     sourceDoc,
+    spanModelContainer,
     spanConfig
   ) {
-    const { anchor, focus } = selectionWrapper.positionsOnAnnotation
+    const { anchor, focus } = new PositionsOnAnnotation(spanModelContainer)
 
     if (focus < anchor) {
       // shorten the left boundary
