@@ -41,8 +41,7 @@ export default class TextEditMode extends EditMode {
                 hasCharacters(
                   sourceDoc,
                   this.#annotationModel.span,
-                  this.#spanConfig,
-                  selectionWrapper.positionsOnAnnotation
+                  this.#spanConfig
                 )
               ) {
                 const { begin, end } = getNewSpan(

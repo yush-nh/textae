@@ -1,12 +1,7 @@
 import PositionsOnAnnotation from './SelectionWrapper/PositionsOnAnnotation'
 
 // A span cannot be created include nonEdgeCharacters only.
-export default function (
-  sourceDoc,
-  spanModelContainer,
-  spanConfig,
-  positionsOnAnnotation
-) {
+export default function (sourceDoc, spanModelContainer, spanConfig) {
   const { begin, end } = new PositionsOnAnnotation(spanModelContainer)
   const selectedString = sourceDoc.substring(begin, end)
 
