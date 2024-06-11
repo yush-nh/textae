@@ -104,13 +104,15 @@ export default class TermEditMode extends EditMode {
 
   applyTextSelectionWithTouchDevice() {
     if (isRangeInTextBox(window.getSelection(), this.#textBox)) {
-      const selectionWrapper = new SelectionWrapper(this.#spanModelContainer)
       const { begin, end } = new PositionsOnAnnotation(this.#spanModelContainer)
       const isSelectionTextCrossingAnySpan =
         this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
+      const { isParentOfBothNodesSame } = new SelectionWrapper(
+        this.#spanModelContainer
+      )
       this._updateButtonsToOperateSpanWithTouchDevice(
-        selectionWrapper.isParentOfBothNodesSame,
+        isParentOfBothNodesSame,
         isSelectionTextCrossingAnySpan,
         isSelectionTextCrossingAnySpan
       )
