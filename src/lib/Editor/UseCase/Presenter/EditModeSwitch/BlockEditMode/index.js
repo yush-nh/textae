@@ -108,9 +108,11 @@ export default class BlockEditMode extends EditMode {
       const isSelectionTextCrossingAnySpan =
         this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
-      const selectionWrapper = new SelectionWrapper(this.#spanModelContainer)
+      const { isParentOfBothNodesTextBox } = new SelectionWrapper(
+        this.#spanModelContainer
+      )
       this._updateButtonsToOperateSpanWithTouchDevice(
-        selectionWrapper.isParentOfBothNodesTextBox,
+        isParentOfBothNodesTextBox,
         isSelectionTextCrossingAnySpan,
         isSelectionTextCrossingAnySpan
       )
