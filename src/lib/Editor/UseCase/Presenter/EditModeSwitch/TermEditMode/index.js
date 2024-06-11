@@ -6,6 +6,7 @@ import isRangeInTextBox from '../isRangeInTextBox'
 import SelectionWrapper from '../SelectionWrapper'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
+import PositionsOnAnnotation from '../SelectionWrapper/PositionsOnAnnotation'
 
 export default class TermEditMode extends EditMode {
   #mouseEventHandler
@@ -104,7 +105,7 @@ export default class TermEditMode extends EditMode {
   applyTextSelectionWithTouchDevice() {
     if (isRangeInTextBox(window.getSelection(), this.#textBox)) {
       const selectionWrapper = new SelectionWrapper(this.#spanModelContainer)
-      const { begin, end } = selectionWrapper.positionsOnAnnotation
+      const { begin, end } = new PositionsOnAnnotation(this.#spanModelContainer)
       const isSelectionTextCrossingAnySpan =
         this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
