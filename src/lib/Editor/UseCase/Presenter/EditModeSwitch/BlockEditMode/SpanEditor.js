@@ -224,7 +224,6 @@ export default class SpanEditor {
         this.#annotationModel,
         this.#commander,
         this.#menuState.spanAdjuster,
-        selectionWrapper,
         this.#spanConfig
       )
     }

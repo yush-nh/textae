@@ -1,13 +1,7 @@
 import getNewSpan from '../getNewSpan'
 import validateNewBlockSpan from './validateNewBlockSpan'
 
-export default function (
-  annotationModel,
-  commander,
-  spanAdjuster,
-  selectionWrapper,
-  spanConfig
-) {
+export default function (annotationModel, commander, spanAdjuster, spanConfig) {
   const { begin, end } = getNewSpan(
     annotationModel.sourceDoc,
     annotationModel.span,
