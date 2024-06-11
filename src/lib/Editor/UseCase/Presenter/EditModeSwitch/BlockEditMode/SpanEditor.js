@@ -6,6 +6,7 @@ import create from './create'
 import SelectionWrapper from '../SelectionWrapper'
 import validateNewBlockSpan from './validateNewBlockSpan'
 import getRightSpanElement from '../../../../getRightSpanElement'
+import PositionsOnAnnotation from '../SelectionWrapper/PositionsOnAnnotation'
 
 export default class SpanEditor {
   #editorHTMLElement
@@ -72,7 +73,9 @@ export default class SpanEditor {
       ) {
         if (selectionWrapper.ancestorBlockSpanOfAnchorNode) {
           if (selectionWrapper.doesFitInOneBlockSpan) {
-            const { anchor, focus } = selectionWrapper.positionsOnAnnotation
+            const { anchor, focus } = new PositionsOnAnnotation(
+              this.#annotationModel.span
+            )
             const spanOnAnchor = this.#annotationModel.span.get(
               selectionWrapper.parentOfAnchorNode.id
             )
