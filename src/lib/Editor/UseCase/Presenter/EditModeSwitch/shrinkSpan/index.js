@@ -24,7 +24,6 @@ export default function (
       commander,
       spanAdjuster,
       spanId,
-      selectionWrapper,
       spanConfig,
       moveHandler
     )
