@@ -313,7 +313,6 @@ export default class SpanInstance {
 
   getShortenInFocusNodeToAnchorNodeDirection(
     spanAdjuster,
-    selectionWrapper,
     sourceDoc,
     spanModelContainer,
     spanConfig
