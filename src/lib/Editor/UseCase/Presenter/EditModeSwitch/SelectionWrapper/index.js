@@ -4,8 +4,6 @@ import isNodeStyleSpan from './isNodeStyleSpan'
 import isNodeBlockSpan from './isNodeBlockSpan'
 
 export default class SelectionWrapper {
-  #spanModelContainer
-
   constructor(spanModelContainer) {
     this.selection = window.getSelection()
 
@@ -14,8 +12,6 @@ export default class SelectionWrapper {
         this.parentOfFocusNode.closest('.textae-editor__text-box'),
       'Text selection across editors is disabled'
     )
-
-    this.#spanModelContainer = spanModelContainer
   }
 
   get isParentOfAnchorNodeTextBox() {
