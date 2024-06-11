@@ -1,13 +1,10 @@
-import OrderedPositions from './OrderedPositions'
-
 export default function (
   sourceDoc,
   spanAdjuster,
   selectionWrapper,
   spanConfig
 ) {
-  const { positionsOnAnnotation } = selectionWrapper
-  const orderedPositions = new OrderedPositions(positionsOnAnnotation)
+  const { orderedPositions } = selectionWrapper
 
   return {
     begin: spanAdjuster.backFromBegin(

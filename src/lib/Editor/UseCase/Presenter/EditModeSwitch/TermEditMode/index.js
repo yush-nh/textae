@@ -3,7 +3,6 @@ import SpanEditor from './SpanEditor'
 import EditMode from '../EditMode'
 import TypeValuesPallet from '../../../../../component/TypeValuesPallet'
 import isRangeInTextBox from '../isRangeInTextBox'
-import OrderedPositions from '../OrderedPositions'
 import SelectionWrapper from '../SelectionWrapper'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
@@ -105,9 +104,7 @@ export default class TermEditMode extends EditMode {
   applyTextSelectionWithTouchDevice() {
     if (isRangeInTextBox(window.getSelection(), this.#textBox)) {
       const selectionWrapper = new SelectionWrapper(this.#spanModelContainer)
-      const { begin, end } = new OrderedPositions(
-        selectionWrapper.positionsOnAnnotation
-      )
+      const { begin, end } = selectionWrapper.orderedPositions
       const isSelectionTextCrossingAnySpan =
         this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
