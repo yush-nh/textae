@@ -29,21 +29,19 @@ export default class TextEditMode extends EditMode {
         'click',
         (e) => {
           if (e.target.classList.contains('textae-editor__text-box')) {
+            const textBox = e.target
             const selection = window.getSelection()
 
-            if (isRangeInTextBox(selection, e.target)) {
+            if (isRangeInTextBox(selection, textBox)) {
               const selectionWrapper = new SelectionWrapper(
                 this.#annotationModel.span
               )
+              const { sourceDoc } = this.#annotationModel
               if (
-                hasCharacters(
-                  this.#annotationModel.sourceDoc,
-                  this.#spanConfig,
-                  selectionWrapper
-                )
+                hasCharacters(sourceDoc, this.#spanConfig, selectionWrapper)
               ) {
                 const { begin, end } = getNewSpan(
-                  this.#annotationModel.sourceDoc,
+                  sourceDoc,
                   this.#spanAdjuster,
                   selectionWrapper,
                   this.#spanConfig
