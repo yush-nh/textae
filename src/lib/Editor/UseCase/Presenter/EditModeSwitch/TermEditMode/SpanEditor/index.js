@@ -307,7 +307,7 @@ export default class SpanEditor {
   #anchorNodeInTextBoxFocusNodeInDenotationSpan(selectionWrapper) {
     const targetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (targetSpanID) {
-      this.#shrink(selectionWrapper, targetSpanID)
+      this.#shrink(targetSpanID)
       return
     }
 
@@ -323,7 +323,7 @@ export default class SpanEditor {
     // Shrink Span when mousedown on the text or a span and mouseup on the styleSpan.
     const targetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (targetSpanID) {
-      this.#shrink(selectionWrapper, targetSpanID)
+      this.#shrink(targetSpanID)
       return
     }
 
@@ -337,7 +337,7 @@ export default class SpanEditor {
   #anchorNodeInDenotationSpanFocusNodeInDenotationSpan(selectionWrapper) {
     const shrinkableEndSpanID = this.#getShrinkableEndSpanID(selectionWrapper)
     if (shrinkableEndSpanID) {
-      this.#shrink(selectionWrapper, shrinkableEndSpanID)
+      this.#shrink(shrinkableEndSpanID)
       return
     }
 
@@ -349,7 +349,7 @@ export default class SpanEditor {
 
     const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (shrinkTargetSpanID) {
-      this.#shrink(selectionWrapper, shrinkTargetSpanID)
+      this.#shrink(shrinkTargetSpanID)
       return
     }
 
@@ -378,7 +378,7 @@ export default class SpanEditor {
   #anchorNodeInDenotationSpanFocusNodeInStyleSpan(selectionWrapper) {
     const shrinkTargetEndSpanID = this.#getShrinkableEndSpanID(selectionWrapper)
     if (shrinkTargetEndSpanID) {
-      this.#shrink(selectionWrapper, shrinkTargetEndSpanID)
+      this.#shrink(shrinkTargetEndSpanID)
       return
     }
 
@@ -398,7 +398,7 @@ export default class SpanEditor {
 
     const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (shrinkTargetSpanID) {
-      this.#shrink(selectionWrapper, shrinkTargetSpanID)
+      this.#shrink(shrinkTargetSpanID)
       return
     }
   }
@@ -410,7 +410,7 @@ export default class SpanEditor {
   #anchorNodeInBlockSpanFocusNodeInDenotationSpan(selectionWrapper) {
     const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (shrinkTargetSpanID) {
-      this.#shrink(selectionWrapper, shrinkTargetSpanID)
+      this.#shrink(shrinkTargetSpanID)
       return
     }
 
@@ -424,7 +424,7 @@ export default class SpanEditor {
   #anchorNodeInBlockSpanFocusNodeInStyleSpan(selectionWrapper) {
     const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (shrinkTargetSpanID) {
-      this.#shrink(selectionWrapper, shrinkTargetSpanID)
+      this.#shrink(shrinkTargetSpanID)
       return
     }
 
@@ -448,7 +448,7 @@ export default class SpanEditor {
   #anchorNodeInStyleSpanFocusNodeInDenotationSpan(selectionWrapper) {
     const shrinkTargetEndSpanID = this.#getShrinkableEndSpanID(selectionWrapper)
     if (shrinkTargetEndSpanID) {
-      this.#shrink(selectionWrapper, shrinkTargetEndSpanID)
+      this.#shrink(shrinkTargetEndSpanID)
       return
     }
 
@@ -462,7 +462,7 @@ export default class SpanEditor {
 
     const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
     if (shrinkTargetSpanID) {
-      this.#shrink(selectionWrapper, shrinkTargetSpanID)
+      this.#shrink(shrinkTargetSpanID)
       return
     }
 
@@ -488,7 +488,7 @@ export default class SpanEditor {
   #anchorNodeInStyleSpanFocusNodeInStyleSpan(selectionWrapper) {
     const shrinkTargetSpanID = this.#getShrinkableEndSpanID(selectionWrapper)
     if (shrinkTargetSpanID) {
-      this.#shrink(selectionWrapper, shrinkTargetSpanID)
+      this.#shrink(shrinkTargetSpanID)
       return
     }
 
@@ -635,7 +635,7 @@ export default class SpanEditor {
     clearTextSelection()
   }
 
-  #shrink(selectionWrapper, spanID) {
+  #shrink(spanID) {
     shrinkSpan(
       this.#editorHTMLElement,
       this.#spanModelContainer,
