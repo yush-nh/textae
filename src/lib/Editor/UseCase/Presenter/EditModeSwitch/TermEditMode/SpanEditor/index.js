@@ -116,7 +116,7 @@ export default class SpanEditor {
     const selectionWrapper = new SelectionWrapper(this.#spanModelContainer)
 
     if (selectionWrapper.isParentOfBothNodesSame) {
-      this.#create(selectionWrapper)
+      this.#create()
     }
   }
 
@@ -301,7 +301,7 @@ export default class SpanEditor {
 
   #anchorNodeInTextBoxFocusNodeInTextBox(selectionWrapper) {
     // The parent of the focusNode is the text.
-    this.#create(selectionWrapper)
+    this.#create()
   }
 
   #anchorNodeInTextBoxFocusNodeInDenotationSpan(selectionWrapper) {
@@ -327,7 +327,7 @@ export default class SpanEditor {
       return
     }
 
-    this.#create(selectionWrapper)
+    this.#create()
   }
 
   #anchorNodeInDenotationSpanFocusNodeInTextBox(selectionWrapper) {
@@ -343,7 +343,7 @@ export default class SpanEditor {
 
     // The anchor node and the focus node are in the same span.
     if (selectionWrapper.isParentOfBothNodesSame) {
-      this.#create(selectionWrapper)
+      this.#create()
       return
     }
 
@@ -386,7 +386,7 @@ export default class SpanEditor {
       selectionWrapper.parentOfAnchorNode ===
       selectionWrapper.ancestorDenotationSpanOfFocusNode
     ) {
-      this.#create(selectionWrapper)
+      this.#create()
       return
     }
 
@@ -418,7 +418,7 @@ export default class SpanEditor {
   }
 
   #anchorNodeInBlockSpanFocusNodeInBlockSpan(selectionWrapper) {
-    this.#create(selectionWrapper)
+    this.#create()
   }
 
   #anchorNodeInBlockSpanFocusNodeInStyleSpan(selectionWrapper) {
@@ -442,7 +442,7 @@ export default class SpanEditor {
       return
     }
 
-    this.#create(selectionWrapper)
+    this.#create()
   }
 
   #anchorNodeInStyleSpanFocusNodeInDenotationSpan(selectionWrapper) {
@@ -456,7 +456,7 @@ export default class SpanEditor {
       selectionWrapper.ancestorDenotationSpanOfAnchorNode ===
       selectionWrapper.parentOfFocusNode
     ) {
-      this.#create(selectionWrapper)
+      this.#create()
       return
     }
 
@@ -482,7 +482,7 @@ export default class SpanEditor {
       return
     }
 
-    this.#create(selectionWrapper)
+    this.#create()
   }
 
   #anchorNodeInStyleSpanFocusNodeInStyleSpan(selectionWrapper) {
@@ -496,7 +496,7 @@ export default class SpanEditor {
       selectionWrapper.isParentOfBothNodesSame ||
       selectionWrapper.isParentsParentOfAnchorNodeAndFocusedNodeSame
     ) {
-      this.#create(selectionWrapper)
+      this.#create()
       return
     }
 
@@ -591,7 +591,7 @@ export default class SpanEditor {
     }
   }
 
-  #create(selectionWrapper) {
+  #create() {
     if (
       hasCharacters(
         this.#annotationModel.sourceDoc,
