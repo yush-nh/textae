@@ -595,6 +595,7 @@ export default class SpanEditor {
     if (
       hasCharacters(
         this.#annotationModel.sourceDoc,
+        this.#annotationModel.span,
         this.#spanConfig,
         selectionWrapper.positionsOnAnnotation
       )

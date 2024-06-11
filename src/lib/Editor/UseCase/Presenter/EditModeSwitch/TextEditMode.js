@@ -40,6 +40,7 @@ export default class TextEditMode extends EditMode {
               if (
                 hasCharacters(
                   sourceDoc,
+                  this.#annotationModel.span,
                   this.#spanConfig,
                   selectionWrapper.positionsOnAnnotation
                 )
