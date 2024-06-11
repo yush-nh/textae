@@ -336,7 +336,6 @@ export default class SpanInstance {
 
   getExpandedInAnchorNodeToFocusNodeDirection(
     spanAdjuster,
-    selectionWrapper,
     sourceDoc,
     spanModelContainer,
     spanConfig

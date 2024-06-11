@@ -203,7 +203,6 @@ export default class SpanEditor {
           .get(spanID)
           .getExpandedInAnchorNodeToFocusNodeDirection(
             this.#menuState.spanAdjuster,
-            selectionWrapper,
             this.#annotationModel.sourceDoc,
             this.#annotationModel.span,
             this.#spanConfig
@@ -622,7 +621,6 @@ export default class SpanEditor {
       .get(spanID)
       .getExpandedInAnchorNodeToFocusNodeDirection(
         this.#menuState.spanAdjuster,
-        selectionWrapper,
         this.#annotationModel.sourceDoc,
         this.#annotationModel.span,
         this.#spanConfig
