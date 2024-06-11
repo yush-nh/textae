@@ -136,7 +136,7 @@ export default class SpanEditor {
       // When you shrink a block containing the beginning or end of the text,
       // the anchor node is in the block.
       if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-        const { anchor } = selectionWrapper.positionsOnAnnotation
+        const { anchor } = new PositionsOnAnnotation(this.#annotationModel.span)
         const blockSpanOnFocus = this.#annotationModel.span.get(
           selectionWrapper.parentOfFocusNode.id
         )
