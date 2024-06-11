@@ -5,6 +5,7 @@ import getAnnotationBox from '../../getAnnotationBox'
 import getRightGrid from './getRightGrid'
 import createRangeToSpan from '../createRangeToSpan'
 import round from '../../../round'
+import PositionsOnAnnotation from '../../../UseCase/Presenter/EditModeSwitch/SelectionWrapper/PositionsOnAnnotation'
 
 export default class SpanInstance {
   constructor(editorID, editorHTMLElement, begin, end, spanInstanceContainer) {
@@ -291,9 +292,10 @@ export default class SpanInstance {
     spanAdjuster,
     selectionWrapper,
     sourceDoc,
+    spanModelContainer,
     spanConfig
   ) {
-    const { anchor, focus } = selectionWrapper.positionsOnAnnotation
+    const { anchor, focus } = new PositionsOnAnnotation(spanModelContainer)
 
     if (anchor < focus) {
       // shorten the left boundary

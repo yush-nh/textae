@@ -20,6 +20,7 @@ export default function (
       spanAdjuster,
       selectionWrapper,
       sourceDoc,
+      spanModelContainer,
       spanConfig
     )
 
