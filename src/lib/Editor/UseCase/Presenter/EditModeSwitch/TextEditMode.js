@@ -2,7 +2,6 @@ import delegate from 'delegate'
 import EditMode from './EditMode'
 import isRangeInTextBox from './isRangeInTextBox'
 import hasCharacters from './hasCharacters'
-import SelectionWrapper from './SelectionWrapper'
 import getNewSpan from './getNewSpan'
 
 export default class TextEditMode extends EditMode {
@@ -33,9 +32,6 @@ export default class TextEditMode extends EditMode {
             const selection = window.getSelection()
 
             if (isRangeInTextBox(selection, textBox)) {
-              const selectionWrapper = new SelectionWrapper(
-                this.#annotationModel.span
-              )
               const { sourceDoc } = this.#annotationModel
               if (
                 hasCharacters(
