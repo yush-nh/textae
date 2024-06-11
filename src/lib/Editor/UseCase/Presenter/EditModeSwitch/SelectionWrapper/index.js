@@ -4,7 +4,7 @@ import isNodeStyleSpan from './isNodeStyleSpan'
 import isNodeBlockSpan from './isNodeBlockSpan'
 
 export default class SelectionWrapper {
-  constructor(spanModelContainer) {
+  constructor() {
     this.selection = window.getSelection()
 
     console.assert(

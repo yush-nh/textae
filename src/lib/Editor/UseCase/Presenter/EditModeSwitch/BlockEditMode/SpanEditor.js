@@ -157,7 +157,7 @@ export default class SpanEditor {
   }
 
   cerateSpanForTouchDevice() {
-    const selectionWrapper = new SelectionWrapper(this.#annotationModel.span)
+    const selectionWrapper = new SelectionWrapper()
 
     if (selectionWrapper.isParentOfBothNodesTextBox) {
       this.#create()
@@ -279,7 +279,7 @@ export default class SpanEditor {
   }
 
   #getExpandedSpanForTouchDevice() {
-    const selectionWrapper = new SelectionWrapper(this.#annotationModel.span)
+    const selectionWrapper = new SelectionWrapper()
 
     // When there is no denotation span in ancestors of anchor node and focus node,
     // a span to expand does not exist.
@@ -337,7 +337,7 @@ export default class SpanEditor {
   }
 
   #getShrunkenSpanForTouchDevice() {
-    const selectionWrapper = new SelectionWrapper(this.#annotationModel.span)
+    const selectionWrapper = new SelectionWrapper()
 
     // When there is no denotation span in ancestors of anchor node and focus node,
     // a span to shrink does not exist.

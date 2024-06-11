@@ -108,9 +108,7 @@ export default class TermEditMode extends EditMode {
       const isSelectionTextCrossingAnySpan =
         this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
-      const { isParentOfBothNodesSame } = new SelectionWrapper(
-        this.#spanModelContainer
-      )
+      const { isParentOfBothNodesSame } = new SelectionWrapper()
       this._updateButtonsToOperateSpanWithTouchDevice(
         isParentOfBothNodesSame,
         isSelectionTextCrossingAnySpan,

@@ -151,7 +151,7 @@ export default class MouseEventHandler {
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper())
     } else {
       this.#selectionModel.removeAll()
     }
@@ -180,7 +180,7 @@ export default class MouseEventHandler {
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper())
     }
   }
 
@@ -204,7 +204,7 @@ export default class MouseEventHandler {
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper())
     }
   }
 
@@ -233,7 +233,7 @@ export default class MouseEventHandler {
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this.#spanEditor.editFor(new SelectionWrapper(this.#annotationModel.span))
+      this.#spanEditor.editFor(new SelectionWrapper())
     }
   }
 
