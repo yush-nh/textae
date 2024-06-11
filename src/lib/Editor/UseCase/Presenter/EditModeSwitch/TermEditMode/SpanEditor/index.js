@@ -144,7 +144,7 @@ export default class SpanEditor {
   }
 
   shrinkForTouchDevice() {
-    const shrinkedSpan = this.#getShrinkedSpanForTouchDevice()
+    const shrinkedSpan = this.#getShrunkenSpanForTouchDevice()
     if (shrinkedSpan) {
       const { spanID, begin, end } = shrinkedSpan
       const nextSpan = getRightSpanElement(this.#editorHTMLElement, spanID)
@@ -233,7 +233,7 @@ export default class SpanEditor {
     }
   }
 
-  #getShrinkedSpanForTouchDevice() {
+  #getShrunkenSpanForTouchDevice() {
     const selectionWrapper = new SelectionWrapper(this.#spanModelContainer)
 
     // When there is no denotation span in ancestors of anchor node and focus node,
