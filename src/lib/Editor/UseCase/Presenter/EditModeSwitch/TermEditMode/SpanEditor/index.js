@@ -644,7 +644,6 @@ export default class SpanEditor {
       this.#commander,
       this.#menuState.spanAdjuster,
       spanID,
-      selectionWrapper,
       this.#spanConfig,
       (begin, end) => {
         this.#commander.invoke(
