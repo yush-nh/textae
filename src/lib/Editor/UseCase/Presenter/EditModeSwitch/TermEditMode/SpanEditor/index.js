@@ -144,9 +144,9 @@ export default class SpanEditor {
   }
 
   shrinkForTouchDevice() {
-    const shrinkedSpan = this.#getShrunkenSpanForTouchDevice()
-    if (shrinkedSpan) {
-      const { spanID, begin, end } = shrinkedSpan
+    const shrunkenSpan = this.#getShrunkenSpanForTouchDevice()
+    if (shrunkenSpan) {
+      const { spanID, begin, end } = shrunkenSpan
       const nextSpan = getRightSpanElement(this.#editorHTMLElement, spanID)
 
       // The span cross exists spans.
