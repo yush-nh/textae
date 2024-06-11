@@ -38,7 +38,7 @@ export default class SpanEditor {
   editFor(selectionWrapper) {
     if (selectionWrapper.isParentOfAnchorNodeTextBox) {
       if (selectionWrapper.isParentOfFocusNodeTextBox) {
-        this.#create(selectionWrapper)
+        this.#create()
         return
       }
 
@@ -49,7 +49,7 @@ export default class SpanEditor {
         if (selectionWrapper.ancestorBlockSpanOfFocusNode) {
           this.#shrink(selectionWrapper)
         } else {
-          this.#create(selectionWrapper)
+          this.#create()
         }
 
         return
@@ -100,7 +100,7 @@ export default class SpanEditor {
         } else if (selectionWrapper.ancestorBlockSpanOfFocusNode) {
           this.#shrink(selectionWrapper)
         } else {
-          this.#create(selectionWrapper)
+          this.#create()
         }
 
         return
@@ -157,7 +157,7 @@ export default class SpanEditor {
     const selectionWrapper = new SelectionWrapper(this.#annotationModel.span)
 
     if (selectionWrapper.isParentOfBothNodesTextBox) {
-      this.#create(selectionWrapper)
+      this.#create()
     }
   }
 
@@ -211,7 +211,7 @@ export default class SpanEditor {
     }
   }
 
-  #create(selectionWrapper) {
+  #create() {
     if (
       hasCharacters(
         this.#annotationModel.sourceDoc,
