@@ -606,7 +606,6 @@ export default class SpanEditor {
         this.#commander,
         this.#menuState.spanAdjuster,
         this.#isReplicateAuto,
-        selectionWrapper,
         this.#spanConfig,
         getIsDelimiterFunc(this.#menuState, this.#spanConfig)
       )

@@ -8,7 +8,6 @@ export default function (
   commander,
   spanAdjuster,
   isReplicateAuto,
-  selectionWrapper,
   spanConfig,
   isDelimiterFunc
 ) {
