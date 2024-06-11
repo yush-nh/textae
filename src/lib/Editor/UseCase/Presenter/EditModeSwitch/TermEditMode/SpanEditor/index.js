@@ -331,7 +331,7 @@ export default class SpanEditor {
   }
 
   #anchorNodeInDenotationSpanFocusNodeInTextBox(selectionWrapper) {
-    this.#expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
+    this.#expand(selectionWrapper.parentOfAnchorNode.id)
   }
 
   #anchorNodeInDenotationSpanFocusNodeInDenotationSpan(selectionWrapper) {
@@ -359,7 +359,7 @@ export default class SpanEditor {
     // The condition for this is that the ancestor of the anchor node
     // and the ancestor of the focus node are the same.
     // Since this is always true, it will always expand when it is neither create nor shrink.
-    this.#expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
+    this.#expand(selectionWrapper.parentOfAnchorNode.id)
   }
 
   #anchorNodeInDenotationSpanFocusNodeInBlockSpan(selectionWrapper) {
@@ -368,7 +368,7 @@ export default class SpanEditor {
         selectionWrapper.parentOfAnchorNode
       )
     ) {
-      this.#expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
+      this.#expand(selectionWrapper.parentOfAnchorNode.id)
       return
     }
 
@@ -392,7 +392,7 @@ export default class SpanEditor {
 
     const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
     if (expandTargetSpanID) {
-      this.#expand(selectionWrapper, expandTargetSpanID)
+      this.#expand(expandTargetSpanID)
       return
     }
 
@@ -437,7 +437,7 @@ export default class SpanEditor {
       const spanID = selectionWrapper.ancestorDenotationSpanOfAnchorNode.id
 
       if (spanID) {
-        this.#expand(selectionWrapper, spanID)
+        this.#expand(spanID)
       }
       return
     }
@@ -468,7 +468,7 @@ export default class SpanEditor {
 
     const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
     if (expandTargetSpanID) {
-      this.#expand(selectionWrapper, expandTargetSpanID)
+      this.#expand(expandTargetSpanID)
       return
     }
 
@@ -478,7 +478,7 @@ export default class SpanEditor {
   #anchorNodeInStyleSpanFocusNodeInBlockSpan(selectionWrapper) {
     const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
     if (expandTargetSpanID) {
-      this.#expand(selectionWrapper, expandTargetSpanID)
+      this.#expand(expandTargetSpanID)
       return
     }
 
@@ -502,7 +502,7 @@ export default class SpanEditor {
 
     const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
     if (expandTargetSpanID) {
-      this.#expand(selectionWrapper, expandTargetSpanID)
+      this.#expand(expandTargetSpanID)
       return
     }
 
@@ -614,7 +614,7 @@ export default class SpanEditor {
     clearTextSelection()
   }
 
-  #expand(selectionWrapper, spanID) {
+  #expand(spanID) {
     this.#selectionModel.removeAll()
 
     const { begin, end } = this.#spanModelContainer
