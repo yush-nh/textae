@@ -6,51 +6,57 @@ import {
 import IdIssueContainer from './IdIssueContainer'
 
 export default class EntityInstanceContainer extends IdIssueContainer {
+  #editorID
+  #parent
+  #typeGap
+  #namespace
+  #toolBarHeight
+
   constructor(editorID, eventEmitter, parent, typeGap, namespace) {
     super(eventEmitter, 'entity', (instance) =>
       instance.isDenotation ? 'T' : 'B'
     )
 
-    this._editorID = editorID
+    this.#editorID = editorID
 
     // Since the attribute instance container and the entity instance container are cross-referenced,
     // the entity instance retrieves other containers dynamically.
-    this._parent = parent
+    this.#parent = parent
 
-    this._typeGap = typeGap
-    this._namespace = namespace
+    this.#typeGap = typeGap
+    this.#namespace = namespace
   }
 
-  get _spanInstanceContainer() {
-    return this._parent.span
+  get #spanInstanceContainer() {
+    return this.#parent.span
   }
 
-  get _attributeInstanceContainer() {
-    return this._parent.attribute
+  get #attributeInstanceContainer() {
+    return this.#parent.attribute
   }
 
-  get _relationInstanceContainer() {
-    return this._parent.relation
+  get #relationInstanceContainer() {
+    return this.#parent.relation
   }
 
   /** @param {number} value */
   set toolBarHeight(value) {
-    this._toolBarHeight = value
+    this.#toolBarHeight = value
   }
 
   _toInstance(denotation, type) {
     // Expected an entity like {id: "E21", span: "editor2__S50_54", obj: "Protein"}.
-    const span = this._getSpan(type, denotation)
+    const span = this.#getSpan(type, denotation)
     const newInstance = new EntityInstance(
-      this._editorID,
-      this._attributeInstanceContainer,
-      this._relationInstanceContainer,
-      this._typeGap,
-      this._parent.typeDefinition,
+      this.#editorID,
+      this.#attributeInstanceContainer,
+      this.#relationInstanceContainer,
+      this.#typeGap,
+      this.#parent.typeDefinition,
       span,
       denotation.obj,
-      this._namespace,
-      this._toolBarHeight,
+      this.#namespace,
+      this.#toolBarHeight,
       denotation.id
     )
 
@@ -69,17 +75,17 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       return newValue
     }
 
-    const span = this._spanInstanceContainer.get(newValue.span)
+    const span = this.#spanInstanceContainer.get(newValue.span)
     const newEntity = new EntityInstance(
-      this._editorID,
-      this._attributeInstanceContainer,
-      this._relationInstanceContainer,
-      this._typeGap,
-      this._parent.typeDefinition,
+      this.#editorID,
+      this.#attributeInstanceContainer,
+      this.#relationInstanceContainer,
+      this.#typeGap,
+      this.#parent.typeDefinition,
       span,
       newValue.typeName,
-      this._namespace,
-      this._toolBarHeight
+      this.#namespace,
+      this.#toolBarHeight
     )
 
     console.assert(
@@ -124,7 +130,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       }
     }
 
-    this._emit(`textae-event.annotation-data.entity.move`)
+    super._emit(`textae-event.annotation-data.entity.move`)
   }
 
   get denotations() {
@@ -162,21 +168,21 @@ export default class EntityInstanceContainer extends IdIssueContainer {
     }
   }
 
-  _getSpan(type, denotation) {
-    return this._spanInstanceContainer.get(this._getSpanId(type, denotation))
+  #getSpan(type, denotation) {
+    return this.#spanInstanceContainer.get(this.#getSpanId(type, denotation))
   }
 
-  _getSpanId(type, denotation) {
+  #getSpanId(type, denotation) {
     switch (type) {
       case 'denotation':
         return makeDenotationSpanHTMLElementID(
-          this._editorID,
+          this.#editorID,
           denotation.span.begin,
           denotation.span.end
         )
       case 'block':
         return makeBlockSpanHTMLElementID(
-          this._editorID,
+          this.#editorID,
           denotation.span.begin,
           denotation.span.end
         )

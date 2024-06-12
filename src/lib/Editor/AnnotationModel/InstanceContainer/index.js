@@ -5,6 +5,7 @@ export default class InstanceContainer {
     this._container = new Map()
   }
 
+  // Protected method
   _toInstance(rowDatum) {
     return rowDatum
   }
