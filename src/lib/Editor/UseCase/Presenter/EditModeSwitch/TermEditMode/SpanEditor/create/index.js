@@ -4,7 +4,7 @@ import validateNewDenotationSpan from '../validateNewDenotationSpan'
 
 export default function (
   sourceDoc,
-  spanModelContainer,
+  spanInstanceContainer,
   commander,
   spanAdjuster,
   isReplicateAuto,
@@ -13,12 +13,12 @@ export default function (
 ) {
   const { begin, end } = getNewSpan(
     sourceDoc,
-    spanModelContainer,
+    spanInstanceContainer,
     spanConfig,
     spanAdjuster
   )
 
-  if (validateNewDenotationSpan(spanModelContainer, begin, end)) {
+  if (validateNewDenotationSpan(spanInstanceContainer, begin, end)) {
     const command = createCommand(
       commander,
       { begin, end },

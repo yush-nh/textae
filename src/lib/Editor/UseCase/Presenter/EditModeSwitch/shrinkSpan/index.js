@@ -3,7 +3,7 @@ import shrinkSpanToSelection from './shrinkSpanToSelection'
 
 export default function (
   editorHTMLElement,
-  spanModelContainer,
+  spanInstanceContainer,
   sourceDoc,
   selectionModel,
   commander,
@@ -18,7 +18,7 @@ export default function (
     // Get the next span before removing the old span.
     const nextSpan = getRightSpanElement(editorHTMLElement, spanId)
     const removed = shrinkSpanToSelection(
-      spanModelContainer,
+      spanInstanceContainer,
       sourceDoc,
       commander,
       spanAdjuster,

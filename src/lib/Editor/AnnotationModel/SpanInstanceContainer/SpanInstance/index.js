@@ -290,10 +290,10 @@ export default class SpanInstance {
   getShortenInAnchorNodeToFocusNodeDirection(
     spanAdjuster,
     sourceDoc,
-    spanModelContainer,
+    spanInstanceContainer,
     spanConfig
   ) {
-    const { anchor, focus } = spanModelContainer.textSelection
+    const { anchor, focus } = spanInstanceContainer.textSelection
 
     if (anchor < focus) {
       // shorten the left boundary
@@ -313,10 +313,10 @@ export default class SpanInstance {
   getShortenInFocusNodeToAnchorNodeDirection(
     spanAdjuster,
     sourceDoc,
-    spanModelContainer,
+    spanInstanceContainer,
     spanConfig
   ) {
-    const { anchor, focus } = spanModelContainer.textSelection
+    const { anchor, focus } = spanInstanceContainer.textSelection
 
     if (focus < anchor) {
       // shorten the left boundary
@@ -336,10 +336,10 @@ export default class SpanInstance {
   getExpandedInAnchorNodeToFocusNodeDirection(
     spanAdjuster,
     sourceDoc,
-    spanModelContainer,
+    spanInstanceContainer,
     spanConfig
   ) {
-    const { anchor, focus } = spanModelContainer.textSelection
+    const { anchor, focus } = spanInstanceContainer.textSelection
 
     if (anchor < focus) {
       // expand to the right
@@ -359,10 +359,10 @@ export default class SpanInstance {
   getExpandedInFocusNodeToAnchorNodeDirection(
     spanAdjuster,
     sourceDoc,
-    spanModelContainer,
+    spanInstanceContainer,
     spanConfig
   ) {
-    const { anchor, focus } = spanModelContainer.textSelection
+    const { anchor, focus } = spanInstanceContainer.textSelection
 
     if (focus < anchor) {
       // expand to the right

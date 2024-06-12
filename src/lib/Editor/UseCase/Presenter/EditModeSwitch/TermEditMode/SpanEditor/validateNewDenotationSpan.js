@@ -2,23 +2,23 @@ import alertifyjs from 'alertifyjs'
 
 /**
  *
- * @param {import('../../../../../AnnotationModel/SpanModelContainer').default} spanModelContainer
+ * @param {import('../../../../../AnnotationModel/SpanModelContainer').default} spanInstanceContainer
  * @returns
  */
-export default function (spanModelContainer, begin, end) {
+export default function (spanInstanceContainer, begin, end) {
   // The span cross exists spans.
-  if (spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)) {
+  if (spanInstanceContainer.isBoundaryCrossingWithOtherSpans(begin, end)) {
     alertifyjs.warning('A span cannot be modified to make a boundary crossing.')
     return false
   }
 
   // The span exists already.
-  if (spanModelContainer.hasDenotationSpan(begin, end)) {
+  if (spanInstanceContainer.hasDenotationSpan(begin, end)) {
     return false
   }
 
   // There is a BlockSpan that is a child.
-  if (spanModelContainer.hasBlockSpanBetween(begin, end)) {
+  if (spanInstanceContainer.hasBlockSpanBetween(begin, end)) {
     return false
   }
 

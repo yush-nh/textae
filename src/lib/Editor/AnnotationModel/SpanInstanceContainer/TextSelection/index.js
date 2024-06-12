@@ -3,16 +3,16 @@ import getParentOffset from './getParentOffset'
 
 export default class TextSelection {
   #selection
-  #spanModelContainer
+  #spanInstanceContainer
 
-  constructor(spanModelContainer) {
+  constructor(spanInstanceContainer) {
     this.#selection = window.getSelection()
-    this.#spanModelContainer = spanModelContainer
+    this.#spanInstanceContainer = spanInstanceContainer
   }
 
   get anchor() {
     const position =
-      getParentOffset(this.#spanModelContainer, this.#selection.anchorNode) +
+      getParentOffset(this.#spanInstanceContainer, this.#selection.anchorNode) +
       getOffsetFromParent(this.#selection.anchorNode)
 
     return position + this.#selection.anchorOffset
@@ -20,7 +20,7 @@ export default class TextSelection {
 
   get focus() {
     const position =
-      getParentOffset(this.#spanModelContainer, this.#selection.focusNode) +
+      getParentOffset(this.#spanInstanceContainer, this.#selection.focusNode) +
       getOffsetFromParent(this.#selection.focusNode)
 
     return position + this.#selection.focusOffset

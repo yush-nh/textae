@@ -12,7 +12,7 @@ import validateNewDenotationSpan from './validateNewDenotationSpan'
 export default class SpanEditor {
   #editorHTMLElement
   #annotationModel
-  #spanModelContainer
+  #spanInstanceContainer
   #selectionModel
   #commander
   #menuState
@@ -28,7 +28,7 @@ export default class SpanEditor {
   ) {
     this.#editorHTMLElement = editorHTMLElement
     this.#annotationModel = annotationModel
-    this.#spanModelContainer = annotationModel.span
+    this.#spanInstanceContainer = annotationModel.span
     this.#selectionModel = selectionModel
     this.#commander = commander
     this.#menuState = menuState
@@ -129,13 +129,13 @@ export default class SpanEditor {
 
       // The span cross exists spans.
       if (
-        this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
+        this.#spanInstanceContainer.isBoundaryCrossingWithOtherSpans(begin, end)
       ) {
         return
       }
 
       // A span cannot be expanded a span to the same as an existing span.
-      if (this.#spanModelContainer.hasDenotationSpan(begin, end)) {
+      if (this.#spanInstanceContainer.hasDenotationSpan(begin, end)) {
         return
       }
 
@@ -153,7 +153,7 @@ export default class SpanEditor {
 
       // The span cross exists spans.
       if (
-        this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
+        this.#spanInstanceContainer.isBoundaryCrossingWithOtherSpans(begin, end)
       ) {
         alertifyjs.warning(
           'A span cannot be shrunken to make a boundary crossing.'
@@ -161,7 +161,10 @@ export default class SpanEditor {
         return
       }
 
-      const doesExists = this.#spanModelContainer.hasDenotationSpan(begin, end)
+      const doesExists = this.#spanInstanceContainer.hasDenotationSpan(
+        begin,
+        end
+      )
       if (begin < end && !doesExists) {
         this.#commander.invoke(
           this.#commander.factory.moveDenotationSpanCommand(spanID, begin, end)
@@ -201,7 +204,7 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this.#spanModelContainer
+        ...this.#spanInstanceContainer
           .get(spanID)
           .getExpandedInAnchorNodeToFocusNodeDirection(
             this.#menuState.spanAdjuster,
@@ -223,7 +226,7 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this.#spanModelContainer
+        ...this.#spanInstanceContainer
           .get(spanID)
           .getExpandedInFocusNodeToAnchorNodeDirection(
             this.#menuState.spanAdjuster,
@@ -267,7 +270,7 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this.#spanModelContainer
+        ...this.#spanInstanceContainer
           .get(spanID)
           .getShortenInFocusNodeToAnchorNodeDirection(
             this.#menuState.spanAdjuster,
@@ -289,7 +292,7 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this.#spanModelContainer
+        ...this.#spanInstanceContainer
           .get(spanID)
           .getShortenInAnchorNodeToFocusNodeDirection(
             this.#menuState.spanAdjuster,
@@ -513,9 +516,9 @@ export default class SpanEditor {
 
   #getShrinkableEndSpanID(selectionWrapper) {
     if (selectionWrapper.ancestorDenotationSpanOfAnchorNode) {
-      const { anchor } = this.#spanModelContainer.textSelection
+      const { anchor } = this.#spanInstanceContainer.textSelection
 
-      const { begin, end } = this.#spanModelContainer.getDenotationSpan(
+      const { begin, end } = this.#spanInstanceContainer.getDenotationSpan(
         selectionWrapper.ancestorDenotationSpanOfAnchorNode.id
       )
       if (anchor === begin || anchor === end) {
@@ -598,7 +601,7 @@ export default class SpanEditor {
       this.#selectionModel.removeAll()
       create(
         this.#annotationModel.sourceDoc,
-        this.#spanModelContainer,
+        this.#spanInstanceContainer,
         this.#commander,
         this.#menuState.spanAdjuster,
         this.#isReplicateAuto,
@@ -612,7 +615,7 @@ export default class SpanEditor {
   #expand(spanID) {
     this.#selectionModel.removeAll()
 
-    const { begin, end } = this.#spanModelContainer
+    const { begin, end } = this.#spanInstanceContainer
       .get(spanID)
       .getExpandedInAnchorNodeToFocusNodeDirection(
         this.#menuState.spanAdjuster,
@@ -621,7 +624,7 @@ export default class SpanEditor {
         this.#spanConfig
       )
 
-    if (validateNewDenotationSpan(this.#spanModelContainer, begin, end)) {
+    if (validateNewDenotationSpan(this.#spanInstanceContainer, begin, end)) {
       this.#commander.invoke(
         this.#commander.factory.moveDenotationSpanCommand(spanID, begin, end)
       )
@@ -633,7 +636,7 @@ export default class SpanEditor {
   #shrink(spanID) {
     shrinkSpan(
       this.#editorHTMLElement,
-      this.#spanModelContainer,
+      this.#spanInstanceContainer,
       this.#annotationModel.sourceDoc,
       this.#selectionModel,
       this.#commander,

@@ -11,7 +11,7 @@ export default class TermEditMode extends EditMode {
   #mouseEventHandler
   #spanEditor
   #textBox
-  #spanModelContainer
+  #spanInstanceContainer
 
   constructor(
     editorHTMLElement,
@@ -82,7 +82,7 @@ export default class TermEditMode extends EditMode {
     // For touch device actions
     this.#spanEditor = spanEditor
     this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
-    this.#spanModelContainer = annotationModel.span
+    this.#spanInstanceContainer = annotationModel.span
   }
 
   bindMouseEvents() {
@@ -103,9 +103,9 @@ export default class TermEditMode extends EditMode {
 
   applyTextSelectionWithTouchDevice() {
     if (isRangeInTextBox(window.getSelection(), this.#textBox)) {
-      const { begin, end } = this.#spanModelContainer.textSelection
+      const { begin, end } = this.#spanInstanceContainer.textSelection
       const isSelectionTextCrossingAnySpan =
-        this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
+        this.#spanInstanceContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
       const { isParentOfBothNodesSame } = new SelectionWrapper()
       this._updateButtonsToOperateSpanWithTouchDevice(

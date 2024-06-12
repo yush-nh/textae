@@ -1,10 +1,10 @@
 export default function (
   sourceDoc,
-  spanModelContainer,
+  spanInstanceContainer,
   spanConfig,
   spanAdjuster
 ) {
-  const { begin, end } = spanModelContainer.textSelection
+  const { begin, end } = spanInstanceContainer.textSelection
 
   return {
     begin: spanAdjuster.backFromBegin(sourceDoc, begin, spanConfig),

@@ -2,10 +2,10 @@ import alertifyjs from 'alertifyjs'
 
 /**
  *
- * @param {import('../../../../AnnotationModel/SpanModelContainer').default} spanModelContainer
+ * @param {import('../../../../AnnotationModel/SpanModelContainer').default} spanInstanceContainer
  */
 export default function (
-  spanModelContainer,
+  spanInstanceContainer,
   sourceDoc,
   commander,
   spanAdjuster,
@@ -13,22 +13,22 @@ export default function (
   spanConfig,
   moveHandler
 ) {
-  const { begin, end } = spanModelContainer
+  const { begin, end } = spanInstanceContainer
     .get(spanId)
     .getShortenInAnchorNodeToFocusNodeDirection(
       spanAdjuster,
       sourceDoc,
-      spanModelContainer,
+      spanInstanceContainer,
       spanConfig
     )
 
   // The span cross exists spans.
-  if (spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)) {
+  if (spanInstanceContainer.isBoundaryCrossingWithOtherSpans(begin, end)) {
     alertifyjs.warning('A span cannot be shrunken to make a boundary crossing.')
     return false
   }
 
-  const doesExists = spanModelContainer.hasDenotationSpan(begin, end)
+  const doesExists = spanInstanceContainer.hasDenotationSpan(begin, end)
 
   if (begin < end && !doesExists) {
     moveHandler(begin, end)
