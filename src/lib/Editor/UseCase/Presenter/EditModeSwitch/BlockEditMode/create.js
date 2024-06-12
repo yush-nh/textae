@@ -4,7 +4,7 @@ import validateNewBlockSpan from './validateNewBlockSpan'
 export default function (annotationModel, commander, spanAdjuster, spanConfig) {
   const { begin, end } = getNewSpan(
     annotationModel.sourceDoc,
-    annotationModel.span,
+    annotationModel.spanInstanceContainer,
 
     spanConfig,
     spanAdjuster

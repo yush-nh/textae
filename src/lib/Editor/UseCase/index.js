@@ -147,7 +147,7 @@ export default class UseCase {
 
             if (startUpOptions.isFocusFirstDenotation) {
               const firstDenotation =
-                annotationModel.span.allDenotationSpans.at(0)
+                annotationModel.spanInstanceContainer.allDenotationSpans.at(0)
               if (firstDenotation) {
                 firstDenotation.focus()
               }

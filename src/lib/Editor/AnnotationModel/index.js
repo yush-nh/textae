@@ -194,10 +194,11 @@ export default class AnnotationModel {
     this.#textBox.render(this.sourceDoc)
 
     clearAnnotationModel(this)
-    const { namespace, span, entity, attribute, relation } = this
+    const { namespace, spanInstanceContainer, entity, attribute, relation } =
+      this
     const annotationParser = new AnnotationParser(
       namespace,
-      span,
+      spanInstanceContainer,
       entity,
       attribute,
       relation,
@@ -262,7 +263,7 @@ export default class AnnotationModel {
     return this.#typeDefinition
   }
 
-  get span() {
+  get spanInstanceContainer() {
     return this.#span
   }
 

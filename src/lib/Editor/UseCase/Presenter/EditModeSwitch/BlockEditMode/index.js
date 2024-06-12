@@ -82,7 +82,7 @@ export default class BlockEditMode extends EditMode {
     // For touch device actions
     this.#spanEditor = spanEditor
     this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
-    this.#spanInstanceContainer = annotationModel.span
+    this.#spanInstanceContainer = annotationModel.spanInstanceContainer
   }
 
   bindMouseEvents() {

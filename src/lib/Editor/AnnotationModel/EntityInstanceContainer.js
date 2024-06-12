@@ -28,7 +28,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
   }
 
   get #spanInstanceContainer() {
-    return this.#parent.span
+    return this.#parent.spanInstanceContainer
   }
 
   get #attributeInstanceContainer() {

@@ -28,7 +28,7 @@ export default class SpanEditor {
   ) {
     this.#editorHTMLElement = editorHTMLElement
     this.#annotationModel = annotationModel
-    this.#spanInstanceContainer = annotationModel.span
+    this.#spanInstanceContainer = annotationModel.spanInstanceContainer
     this.#selectionModel = selectionModel
     this.#commander = commander
     this.#menuState = menuState
@@ -209,7 +209,7 @@ export default class SpanEditor {
           .getExpandedInAnchorNodeToFocusNodeDirection(
             this.#menuState.spanAdjuster,
             this.#annotationModel.sourceDoc,
-            this.#annotationModel.span,
+            this.#annotationModel.spanInstanceContainer,
             this.#spanConfig
           )
       }
@@ -231,7 +231,7 @@ export default class SpanEditor {
           .getExpandedInFocusNodeToAnchorNodeDirection(
             this.#menuState.spanAdjuster,
             this.#annotationModel.sourceDoc,
-            this.#annotationModel.span,
+            this.#annotationModel.spanInstanceContainer,
             this.#spanConfig
           )
       }
@@ -275,7 +275,7 @@ export default class SpanEditor {
           .getShortenInFocusNodeToAnchorNodeDirection(
             this.#menuState.spanAdjuster,
             this.#annotationModel.sourceDoc,
-            this.#annotationModel.span,
+            this.#annotationModel.spanInstanceContainer,
             this.#spanConfig
           )
       }
@@ -297,7 +297,7 @@ export default class SpanEditor {
           .getShortenInAnchorNodeToFocusNodeDirection(
             this.#menuState.spanAdjuster,
             this.#annotationModel.sourceDoc,
-            this.#annotationModel.span,
+            this.#annotationModel.spanInstanceContainer,
             this.#spanConfig
           )
       }
@@ -566,7 +566,7 @@ export default class SpanEditor {
       if (
         isPositionBetweenSpan(
           this.#selectionModel.span.single,
-          this.#annotationModel.span.textSelection.focus
+          this.#annotationModel.spanInstanceContainer.textSelection.focus
         )
       ) {
         return this.#selectionModel.span.single.element.id
@@ -620,7 +620,7 @@ export default class SpanEditor {
       .getExpandedInAnchorNodeToFocusNodeDirection(
         this.#menuState.spanAdjuster,
         this.#annotationModel.sourceDoc,
-        this.#annotationModel.span,
+        this.#annotationModel.spanInstanceContainer,
         this.#spanConfig
       )
 

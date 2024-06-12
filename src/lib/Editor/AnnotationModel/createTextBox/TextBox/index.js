@@ -41,7 +41,7 @@ export default class TextBox {
   }
 
   updateLineHeight() {
-    const lineHeight = this.#annotationModel.span.maxHeight
+    const lineHeight = this.#annotationModel.spanInstanceContainer.maxHeight
 
     if (lineHeight) {
       this.lineHeight = lineHeight

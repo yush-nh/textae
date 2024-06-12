@@ -70,14 +70,17 @@ export default class SpanEditor {
       ) {
         if (selectionWrapper.ancestorBlockSpanOfAnchorNode) {
           if (selectionWrapper.doesFitInOneBlockSpan) {
-            const { anchor, focus } = this.#annotationModel.span.textSelection
+            const { anchor, focus } =
+              this.#annotationModel.spanInstanceContainer.textSelection
 
-            const spanOnAnchor = this.#annotationModel.span.get(
-              selectionWrapper.parentOfAnchorNode.id
-            )
-            const blockSpanOnAnchor = this.#annotationModel.span.get(
-              selectionWrapper.ancestorBlockSpanOfAnchorNode.id
-            )
+            const spanOnAnchor =
+              this.#annotationModel.spanInstanceContainer.get(
+                selectionWrapper.parentOfAnchorNode.id
+              )
+            const blockSpanOnAnchor =
+              this.#annotationModel.spanInstanceContainer.get(
+                selectionWrapper.ancestorBlockSpanOfAnchorNode.id
+              )
 
             if (
               anchor < focus &&
@@ -132,10 +135,12 @@ export default class SpanEditor {
       // When you shrink a block containing the beginning or end of the text,
       // the anchor node is in the block.
       if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-        const { anchor } = this.#annotationModel.span.textSelection
-        const blockSpanOnFocus = this.#annotationModel.span.get(
-          selectionWrapper.parentOfFocusNode.id
-        )
+        const { anchor } =
+          this.#annotationModel.spanInstanceContainer.textSelection
+        const blockSpanOnFocus =
+          this.#annotationModel.spanInstanceContainer.get(
+            selectionWrapper.parentOfFocusNode.id
+          )
 
         // Shrink the block span
         // only when the anchor position matches the begin or end position of the block span.
@@ -181,7 +186,10 @@ export default class SpanEditor {
 
       // The span cross exists spans.
       if (
-        this.#annotationModel.span.isBoundaryCrossingWithOtherSpans(begin, end)
+        this.#annotationModel.spanInstanceContainer.isBoundaryCrossingWithOtherSpans(
+          begin,
+          end
+        )
       ) {
         alertifyjs.warning(
           'A span cannot be modified to make a boundary crossing.'
@@ -190,11 +198,18 @@ export default class SpanEditor {
       }
 
       // There is parent span.
-      if (this.#annotationModel.span.hasParentOf(begin, end, spanID)) {
+      if (
+        this.#annotationModel.spanInstanceContainer.hasParentOf(
+          begin,
+          end,
+          spanID
+        )
+      ) {
         return
       }
 
-      const doesExists = this.#annotationModel.span.hasBlockSpan(begin, end)
+      const doesExists =
+        this.#annotationModel.spanInstanceContainer.hasBlockSpan(begin, end)
       if (begin < end && !doesExists) {
         this.#commander.invoke(
           this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
@@ -228,12 +243,12 @@ export default class SpanEditor {
 
     this.#selectionModel.removeAll()
 
-    const { begin, end } = this.#annotationModel.span
+    const { begin, end } = this.#annotationModel.spanInstanceContainer
       .get(spanID)
       .getExpandedInAnchorNodeToFocusNodeDirection(
         this.#menuState.spanAdjuster,
         this.#annotationModel.sourceDoc,
-        this.#annotationModel.span,
+        this.#annotationModel.spanInstanceContainer,
         this.#spanConfig
       )
 
@@ -251,7 +266,7 @@ export default class SpanEditor {
 
     shrinkSpan(
       this.#editorHTMLElement,
-      this.#annotationModel.span,
+      this.#annotationModel.spanInstanceContainer,
       this.#annotationModel.sourceDoc,
       this.#selectionModel,
       this.#commander,
@@ -292,12 +307,12 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this.#annotationModel.span
+        ...this.#annotationModel.spanInstanceContainer
           .get(spanID)
           .getExpandedInAnchorNodeToFocusNodeDirection(
             this.#menuState.spanAdjuster,
             this.#annotationModel.sourceDoc,
-            this.#annotationModel.span,
+            this.#annotationModel.spanInstanceContainer,
             this.#spanConfig
           )
       }
@@ -314,12 +329,12 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this.#annotationModel.span
+        ...this.#annotationModel.spanInstanceContainer
           .get(spanID)
           .getExpandedInFocusNodeToAnchorNodeDirection(
             this.#menuState.spanAdjuster,
             this.#annotationModel.sourceDoc,
-            this.#annotationModel.span,
+            this.#annotationModel.spanInstanceContainer,
             this.#spanConfig
           )
       }
@@ -358,12 +373,12 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this.#annotationModel.span
+        ...this.#annotationModel.spanInstanceContainer
           .get(spanID)
           .getShortenInFocusNodeToAnchorNodeDirection(
             this.#menuState.spanAdjuster,
             this.#annotationModel.sourceDoc,
-            this.#annotationModel.span,
+            this.#annotationModel.spanInstanceContainer,
             this.#spanConfig
           )
       }
@@ -380,12 +395,12 @@ export default class SpanEditor {
 
       return {
         spanID,
-        ...this.#annotationModel.span
+        ...this.#annotationModel.spanInstanceContainer
           .get(spanID)
           .getShortenInAnchorNodeToFocusNodeDirection(
             this.#menuState.spanAdjuster,
             this.#annotationModel.sourceDoc,
-            this.#annotationModel.span,
+            this.#annotationModel.spanInstanceContainer,
             this.#spanConfig
           )
       }

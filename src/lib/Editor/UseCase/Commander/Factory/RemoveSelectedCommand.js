@@ -36,7 +36,7 @@ export default class RemoveSelectedCommand extends CompositeCommand {
     }
 
     // Aggregate spans to lose all entities.
-    for (const span of annotationModel.span.all) {
+    for (const span of annotationModel.spanInstanceContainer.all) {
       if (span.entities.every((e) => selectionModel.entity.all.includes(e))) {
         if (!span.styleOnly) {
           targetSpans.add(span)

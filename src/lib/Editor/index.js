@@ -111,7 +111,8 @@ export default class Editor {
   }
 
   updateDenotationEntitiesWidth() {
-    for (const span of this.#annotationModel.span.allDenotationSpans) {
+    for (const span of this.#annotationModel.spanInstanceContainer
+      .allDenotationSpans) {
       span.updateDenotationEntitiesWidth()
     }
   }

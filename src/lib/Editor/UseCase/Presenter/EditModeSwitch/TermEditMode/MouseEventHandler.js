@@ -254,7 +254,10 @@ export default class MouseEventHandler {
     const selectedSpanID = this.#selectionModel.span.singleId
     const rangeOfSpans =
       event.shiftKey && selectedSpanID
-        ? this.#annotationModel.span.rangeDenotationSpan(selectedSpanID, spanID)
+        ? this.#annotationModel.spanInstanceContainer.rangeDenotationSpan(
+            selectedSpanID,
+            spanID
+          )
         : []
 
     selectSpan(this.#selectionModel, rangeOfSpans, event, spanID)
