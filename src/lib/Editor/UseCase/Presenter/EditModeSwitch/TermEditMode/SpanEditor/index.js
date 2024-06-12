@@ -36,7 +36,9 @@ export default class SpanEditor {
     this.#spanConfig = spanConfig
   }
 
-  editFor(selectionWrapper) {
+  editFor() {
+    const selectionWrapper = new SelectionWrapper()
+
     if (selectionWrapper.isParentOfAnchorNodeTextBox) {
       if (selectionWrapper.isParentOfFocusNodeTextBox) {
         this.#anchorNodeInTextBoxFocusNodeInTextBox(selectionWrapper)
