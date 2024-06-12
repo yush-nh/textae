@@ -10,7 +10,7 @@ import BlockSpanInstance from './BlockSpanInstance'
 import isBoundaryCrossingWithOtherSpans from '../isBoundaryCrossingWithOtherSpans'
 import rangeFrom from './rangeFrom'
 import getCurrentMaxHeight from './getCurrentMaxHeight'
-import PositionsOnAnnotation from '../../UseCase/Presenter/EditModeSwitch/SelectionWrapper/PositionsOnAnnotation'
+import PositionsOnAnnotation from './PositionsOnAnnotation'
 
 export default class SpanInstanceContainer {
   #editorID
