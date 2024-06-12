@@ -1,11 +1,12 @@
 export default class InstanceContainer {
   #emitter
   #name
+  #container
 
   constructor(emitter, name) {
     this.#emitter = emitter
     this.#name = name
-    this._container = new Map()
+    this.#container = new Map()
   }
 
   addSource(source, type) {
@@ -21,11 +22,11 @@ export default class InstanceContainer {
   }
 
   get(id) {
-    return this._container.get(id)
+    return this.#container.get(id)
   }
 
   get all() {
-    return Array.from(this._container.values())
+    return Array.from(this.#container.values())
   }
 
   get selectedItems() {
@@ -41,27 +42,32 @@ export default class InstanceContainer {
    * @readonly
    */
   get some() {
-    return !!this._container.size
+    return !!this.#container.size
   }
 
   changeType(id, newType) {
-    const instance = this._container.get(id)
+    const instance = this.#container.get(id)
     instance.typeName = newType
     this._emit(`textae-event.annotation-data.${this.#name}.change`, instance)
     return instance
   }
 
   remove(id) {
-    const instance = this._container.get(id)
+    const instance = this.#container.get(id)
     if (instance) {
-      this._container.delete(id)
+      this.#container.delete(id)
       this._emit(`textae-event.annotation-data.${this.#name}.remove`, instance)
     }
     return instance
   }
 
   clear() {
-    this._container.clear()
+    this.#container.clear()
+  }
+
+  // Protected properties
+  get _container() {
+    return this.#container
   }
 
   // Protected methods
@@ -70,7 +76,7 @@ export default class InstanceContainer {
   }
 
   _addToContainer(instance) {
-    this._container.set(instance.id, instance)
+    this.#container.set(instance.id, instance)
     return instance
   }
 

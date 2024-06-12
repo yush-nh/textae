@@ -41,7 +41,7 @@ export default class IdIssueContainer extends InstanceContainer {
     const prefix = this._prefixFunc(instance)
 
     const wellFormattedIDs = new Set()
-    for (const id of this._container.keys()) {
+    for (const id of super._container.keys()) {
       // The format of id is a prefix and a number, for example 'T1'.
       if (new RegExp(`^${prefix}\\d+$`).test(id)) {
         wellFormattedIDs.add(id.slice(1))
