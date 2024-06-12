@@ -103,7 +103,7 @@ export default class TermEditMode extends EditMode {
 
   applyTextSelectionWithTouchDevice() {
     if (isRangeInTextBox(window.getSelection(), this.#textBox)) {
-      const { begin, end } = this.#spanModelContainer.positionsOnAnnotation
+      const { begin, end } = this.#spanModelContainer.textSelection
       const isSelectionTextCrossingAnySpan =
         this.#spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 

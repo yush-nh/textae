@@ -359,7 +359,7 @@ export default class SpanInstanceContainer {
     return this.#editorHTMLElement.querySelector(`.textae-editor__text-box`)
   }
 
-  get positionsOnAnnotation() {
+  get textSelection() {
     return new TextSelection(this)
   }
 

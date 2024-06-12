@@ -4,7 +4,7 @@ export default function (
   spanConfig,
   spanAdjuster
 ) {
-  const { begin, end } = spanModelContainer.positionsOnAnnotation
+  const { begin, end } = spanModelContainer.textSelection
 
   return {
     begin: spanAdjuster.backFromBegin(sourceDoc, begin, spanConfig),

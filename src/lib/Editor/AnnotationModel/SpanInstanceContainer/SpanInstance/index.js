@@ -293,7 +293,7 @@ export default class SpanInstance {
     spanModelContainer,
     spanConfig
   ) {
-    const { anchor, focus } = spanModelContainer.positionsOnAnnotation
+    const { anchor, focus } = spanModelContainer.textSelection
 
     if (anchor < focus) {
       // shorten the left boundary
@@ -316,7 +316,7 @@ export default class SpanInstance {
     spanModelContainer,
     spanConfig
   ) {
-    const { anchor, focus } = spanModelContainer.positionsOnAnnotation
+    const { anchor, focus } = spanModelContainer.textSelection
 
     if (focus < anchor) {
       // shorten the left boundary
@@ -339,7 +339,7 @@ export default class SpanInstance {
     spanModelContainer,
     spanConfig
   ) {
-    const { anchor, focus } = spanModelContainer.positionsOnAnnotation
+    const { anchor, focus } = spanModelContainer.textSelection
 
     if (anchor < focus) {
       // expand to the right
@@ -362,7 +362,7 @@ export default class SpanInstance {
     spanModelContainer,
     spanConfig
   ) {
-    const { anchor, focus } = spanModelContainer.positionsOnAnnotation
+    const { anchor, focus } = spanModelContainer.textSelection
 
     if (focus < anchor) {
       // expand to the right
