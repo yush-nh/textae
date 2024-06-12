@@ -1,5 +1,4 @@
 import clearTextSelection from '../clearTextSelection'
-import SelectionWrapper from '../SelectionWrapper'
 import selectSpan from '../selectSpan'
 import isRangeInTextBox from '../isRangeInTextBox'
 import delegate from 'delegate'
@@ -153,7 +152,7 @@ export default class MouseEventHandler {
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this.#spanEditor.editFor(new SelectionWrapper())
+      this.#spanEditor.editFor()
     }
   }
 
@@ -172,7 +171,7 @@ export default class MouseEventHandler {
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this.#spanEditor.editFor(new SelectionWrapper())
+      this.#spanEditor.editFor()
     }
   }
 
@@ -210,7 +209,7 @@ export default class MouseEventHandler {
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this.#spanEditor.editFor(new SelectionWrapper())
+      this.#spanEditor.editFor()
       e.stopPropagation()
     }
   }
@@ -227,7 +226,7 @@ export default class MouseEventHandler {
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
-      this.#spanEditor.editFor(new SelectionWrapper())
+      this.#spanEditor.editFor()
       e.stopPropagation()
     }
   }

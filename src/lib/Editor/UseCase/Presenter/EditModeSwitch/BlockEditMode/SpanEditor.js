@@ -32,11 +32,9 @@ export default class SpanEditor {
     this.#selectionModel = selectionModel
   }
 
-  /**
-   *
-   * @param {SelectionWrapper} selectionWrapper
-   */
-  editFor(selectionWrapper) {
+  editFor() {
+    const selectionWrapper = new SelectionWrapper()
+
     if (selectionWrapper.isParentOfAnchorNodeTextBox) {
       if (selectionWrapper.isParentOfFocusNodeTextBox) {
         this.#create()
