@@ -33,7 +33,7 @@ export default class TextEditMode extends EditMode {
 
             if (isRangeInTextBox(selection, textBox)) {
               const { sourceDoc, span } = this.#annotationModel
-              if (hasCharacters(sourceDoc, span, this.#spanConfig)) {
+              if (hasCharacters(this.#annotationModel, this.#spanConfig)) {
                 const { begin, end } = getNewSpan(
                   sourceDoc,
                   span,

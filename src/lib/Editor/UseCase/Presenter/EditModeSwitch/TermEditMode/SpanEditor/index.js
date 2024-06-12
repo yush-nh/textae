@@ -595,13 +595,7 @@ export default class SpanEditor {
   }
 
   #create() {
-    if (
-      hasCharacters(
-        this.#annotationModel.sourceDoc,
-        this.#annotationModel.span,
-        this.#spanConfig
-      )
-    ) {
+    if (hasCharacters(this.#annotationModel, this.#spanConfig)) {
       this.#selectionModel.removeAll()
       create(
         this.#annotationModel.sourceDoc,
