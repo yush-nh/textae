@@ -22,6 +22,7 @@ export default class AnnotationModel {
   #typeGap
   #textBox
   #lineHeightAuto
+  #span
   #typeDefinition
   #editorHTMLElement
   #eventEmitter
@@ -95,7 +96,7 @@ export default class AnnotationModel {
     }
     this.#textBox = createTextBox(editorHTMLElement, this, additionalPaddingTop)
     this.#lineHeightAuto = new LineHeightAuto(eventEmitter, this.#textBox)
-    this.span = new SpanInstanceContainer(
+    this.#span = new SpanInstanceContainer(
       editorID,
       editorHTMLElement,
       eventEmitter,
@@ -236,7 +237,7 @@ export default class AnnotationModel {
       this.sourceDoc,
       span.begin,
       span.end,
-      this.span,
+      this.#span,
       isDelimiterFunc
     )
   }
@@ -261,15 +262,19 @@ export default class AnnotationModel {
     return this.#typeDefinition
   }
 
+  get span() {
+    return this.#span
+  }
+
   drawGridsInSight() {
     if (this.#isEditorInSight) {
       const { clientHeight, clientWidth } = document.documentElement
 
-      for (const span of this.span.allDenotationSpans) {
+      for (const span of this.#span.allDenotationSpans) {
         span.drawGrid(clientHeight, clientWidth)
       }
 
-      for (const span of this.span.allBlockSpans) {
+      for (const span of this.#span.allBlockSpans) {
         span.drawGrid(clientHeight, clientWidth)
         span.updateBackgroundPosition()
       }
@@ -316,7 +321,7 @@ export default class AnnotationModel {
 
     this.#textBox.updateLineHeight()
 
-    for (const span of this.span.topLevel) {
+    for (const span of this.#span.topLevel) {
       span.render()
     }
 
@@ -325,11 +330,11 @@ export default class AnnotationModel {
 
     const { clientHeight, clientWidth } = document.documentElement
 
-    for (const span of this.span.allDenotationSpans) {
+    for (const span of this.#span.allDenotationSpans) {
       span.drawGrid(clientHeight, clientWidth)
     }
 
-    for (const span of this.span.allBlockSpans) {
+    for (const span of this.#span.allBlockSpans) {
       span.drawGrid(clientHeight, clientWidth)
     }
 
@@ -339,12 +344,12 @@ export default class AnnotationModel {
   }
 
   #rearrangeAllAnnotations() {
-    this.span.arrangeDenotationEntityPosition()
+    this.#span.arrangeDenotationEntityPosition()
 
     // When you undo the deletion of a block span,
     // if you move the background first, the grid will move to a better position.
-    this.span.arrangeBackgroundOfBlockSpanPosition()
-    this.span.arrangeBlockEntityPosition()
+    this.#span.arrangeBackgroundOfBlockSpanPosition()
+    this.#span.arrangeBlockEntityPosition()
 
     for (const relation of this.relation.all) {
       // The Grid disappears while the span is moving.
