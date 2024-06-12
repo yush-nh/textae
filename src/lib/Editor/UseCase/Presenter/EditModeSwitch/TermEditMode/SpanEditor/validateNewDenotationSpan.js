@@ -2,7 +2,7 @@ import alertifyjs from 'alertifyjs'
 
 /**
  *
- * @param {import('../../../../../AnnotationModel/SpanModelContainer').default} spanInstanceContainer
+ * @param {import('../../../../../AnnotationModel/SpanInstanceContainer').default} spanInstanceContainer
  * @returns
  */
 export default function (spanInstanceContainer, begin, end) {
