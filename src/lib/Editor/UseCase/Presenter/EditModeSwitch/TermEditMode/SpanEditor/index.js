@@ -8,7 +8,6 @@ import SelectionWrapper from '../../SelectionWrapper'
 import isPositionBetweenSpan from './isPositionBetweenSpan'
 import getRightSpanElement from '../../../../../getRightSpanElement'
 import validateNewDenotationSpan from './validateNewDenotationSpan'
-import PositionsOnAnnotation from '../../SelectionWrapper/PositionsOnAnnotation'
 
 export default class SpanEditor {
   #editorHTMLElement
@@ -514,7 +513,7 @@ export default class SpanEditor {
 
   #getShrinkableEndSpanID(selectionWrapper) {
     if (selectionWrapper.ancestorDenotationSpanOfAnchorNode) {
-      const { anchor } = new PositionsOnAnnotation(this.#spanModelContainer)
+      const { anchor } = this.#spanModelContainer.positionsOnAnnotation
 
       const { begin, end } = this.#spanModelContainer.getDenotationSpan(
         selectionWrapper.ancestorDenotationSpanOfAnchorNode.id
@@ -564,7 +563,7 @@ export default class SpanEditor {
       if (
         isPositionBetweenSpan(
           this.#selectionModel.span.single,
-          new PositionsOnAnnotation(this.#annotationModel.span).focus
+          this.#annotationModel.span.positionsOnAnnotation.focus
         )
       ) {
         return this.#selectionModel.span.single.element.id

@@ -5,7 +5,6 @@ import getAnnotationBox from '../../getAnnotationBox'
 import getRightGrid from './getRightGrid'
 import createRangeToSpan from '../createRangeToSpan'
 import round from '../../../round'
-import PositionsOnAnnotation from '../../../UseCase/Presenter/EditModeSwitch/SelectionWrapper/PositionsOnAnnotation'
 
 export default class SpanInstance {
   constructor(editorID, editorHTMLElement, begin, end, spanInstanceContainer) {
@@ -294,7 +293,7 @@ export default class SpanInstance {
     spanModelContainer,
     spanConfig
   ) {
-    const { anchor, focus } = new PositionsOnAnnotation(spanModelContainer)
+    const { anchor, focus } = spanModelContainer.positionsOnAnnotation
 
     if (anchor < focus) {
       // shorten the left boundary
@@ -317,7 +316,7 @@ export default class SpanInstance {
     spanModelContainer,
     spanConfig
   ) {
-    const { anchor, focus } = new PositionsOnAnnotation(spanModelContainer)
+    const { anchor, focus } = spanModelContainer.positionsOnAnnotation
 
     if (focus < anchor) {
       // shorten the left boundary
@@ -340,7 +339,7 @@ export default class SpanInstance {
     spanModelContainer,
     spanConfig
   ) {
-    const { anchor, focus } = new PositionsOnAnnotation(spanModelContainer)
+    const { anchor, focus } = spanModelContainer.positionsOnAnnotation
 
     if (anchor < focus) {
       // expand to the right
@@ -363,7 +362,7 @@ export default class SpanInstance {
     spanModelContainer,
     spanConfig
   ) {
-    const { anchor, focus } = new PositionsOnAnnotation(spanModelContainer)
+    const { anchor, focus } = spanModelContainer.positionsOnAnnotation
 
     if (focus < anchor) {
       // expand to the right

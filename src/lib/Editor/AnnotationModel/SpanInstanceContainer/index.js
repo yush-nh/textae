@@ -10,6 +10,7 @@ import BlockSpanInstance from './BlockSpanInstance'
 import isBoundaryCrossingWithOtherSpans from '../isBoundaryCrossingWithOtherSpans'
 import rangeFrom from './rangeFrom'
 import getCurrentMaxHeight from './getCurrentMaxHeight'
+import PositionsOnAnnotation from '../../UseCase/Presenter/EditModeSwitch/SelectionWrapper/PositionsOnAnnotation'
 
 export default class SpanInstanceContainer {
   #editorID
@@ -356,6 +357,10 @@ export default class SpanInstanceContainer {
   // It has a common interface with the span instance so that it can be the parent of the span instance
   get element() {
     return this.#editorHTMLElement.querySelector(`.textae-editor__text-box`)
+  }
+
+  get positionsOnAnnotation() {
+    return new PositionsOnAnnotation(this)
   }
 
   #updateSpanTree() {
