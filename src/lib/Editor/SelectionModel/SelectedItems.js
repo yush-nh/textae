@@ -1,16 +1,20 @@
 export default class SelectedItems {
+  #emitter
+  #annotationType
+  #instanceContainer
+
   constructor(emitter, annotationType, annotationModel) {
-    this._emitter = emitter
-    this._annotationType = annotationType
-    this._instanceContainer = annotationModel[annotationType]
+    this.#emitter = emitter
+    this.#annotationType = annotationType
+    this.#instanceContainer = annotationModel[annotationType]
   }
 
   add(id) {
-    const instance = this._instanceContainer.get(id)
+    const instance = this.#instanceContainer.get(id)
 
     console.assert(
       instance,
-      `${id} is not a instance of ${this._annotationType}.`
+      `${id} is not a instance of ${this.#annotationType}.`
     )
 
     if (instance.isSelected) {
@@ -22,7 +26,7 @@ export default class SelectedItems {
   }
 
   has(id) {
-    const instance = this._instanceContainer.get(id)
+    const instance = this.#instanceContainer.get(id)
 
     if (instance) {
       return instance.isSelected
@@ -32,7 +36,7 @@ export default class SelectedItems {
   }
 
   contains(predicate) {
-    for (const v of this._instanceContainer.selectedItems) {
+    for (const v of this.#instanceContainer.selectedItems) {
       if (predicate(v)) {
         return true
       }
@@ -42,11 +46,11 @@ export default class SelectedItems {
   }
 
   get all() {
-    return this._instanceContainer.selectedItems
+    return this.#instanceContainer.selectedItems
   }
 
   get size() {
-    return this._instanceContainer.selectedItems.length
+    return this.#instanceContainer.selectedItems.length
   }
 
   get some() {
@@ -63,7 +67,7 @@ export default class SelectedItems {
   }
 
   get single() {
-    return this.size === 1 ? this._instanceContainer.selectedItems[0] : null
+    return this.size === 1 ? this.#instanceContainer.selectedItems[0] : null
   }
 
   toggle(id) {
@@ -76,7 +80,7 @@ export default class SelectedItems {
 
   remove(id) {
     if (this.has(id)) {
-      this._instanceContainer.get(id).deselect()
+      this.#instanceContainer.get(id).deselect()
       this.triggerChange()
     }
   }
@@ -96,6 +100,6 @@ export default class SelectedItems {
   }
 
   triggerChange() {
-    this._emitter.emit(`textae-event.selection.${this._annotationType}.change`)
+    this.#emitter.emit(`textae-event.selection.${this.#annotationType}.change`)
   }
 }
