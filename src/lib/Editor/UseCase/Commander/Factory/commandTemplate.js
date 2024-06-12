@@ -16,9 +16,9 @@ class CreateCommand extends AnnotationCommand {
   }
 
   execute() {
-    this._instance = this._annotationModel[this._annotationType].add(
-      this._instance
-    )
+    this._instance = this._annotationModel
+      .getInstanceContainerFor(this._annotationType)
+      .add(this._instance)
 
     if (this._selectionModel) {
       this._selectionModel.add(this._annotationType, [this._instance.id])
@@ -45,7 +45,9 @@ class RemoveCommand extends AnnotationCommand {
   }
 
   execute() {
-    this._annotationModel[this._annotationType].remove(this._instance.id)
+    this._annotationModel
+      .getInstanceContainerFor(this._annotationType)
+      .remove(this._instance.id)
 
     commandLog(this, `${this._annotationType}: ${this._instance.id}`)
   }

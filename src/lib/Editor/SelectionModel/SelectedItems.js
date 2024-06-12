@@ -6,7 +6,8 @@ export default class SelectedItems {
   constructor(emitter, annotationType, annotationModel) {
     this.#emitter = emitter
     this.#annotationType = annotationType
-    this.#instanceContainer = annotationModel[annotationType]
+    this.#instanceContainer =
+      annotationModel.getInstanceContainerFor(annotationType)
   }
 
   add(id) {

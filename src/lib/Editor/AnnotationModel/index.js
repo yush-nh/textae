@@ -266,6 +266,19 @@ export default class AnnotationModel {
     return this.#span
   }
 
+  getInstanceContainerFor(annotationType) {
+    switch (annotationType) {
+      case 'span':
+        return this.#span
+      case 'relation':
+        return this.relation
+      case 'entity':
+        return this.entity
+      case 'attribute':
+        return this.attribute
+    }
+  }
+
   drawGridsInSight() {
     if (this.#isEditorInSight) {
       const { clientHeight, clientWidth } = document.documentElement

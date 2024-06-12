@@ -11,14 +11,14 @@ export default class ChangeAnnotationCommand extends AnnotationCommand {
   }
 
   execute() {
-    this.oldType = this._annotationModel[this._annotationType].get(
-      this._id
-    ).typeName
+    this.oldType = this._annotationModel
+      .getInstanceContainerFor(this._annotationType)
+      .get(this._id).typeName
 
     // Update instance
-    const targetInstance = this._annotationModel[
-      this._annotationType
-    ].changeType(this._id, this._newType)
+    const targetInstance = this._annotationModel
+      .getInstanceContainerFor(this._annotationType)
+      .changeType(this._id, this._newType)
     commandLog(
       this,
       `change type of a ${this._annotationType}. old type:${this.oldType} ${this._annotationType}:`,

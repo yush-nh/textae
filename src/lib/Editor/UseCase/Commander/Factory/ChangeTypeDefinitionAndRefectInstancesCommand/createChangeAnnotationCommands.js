@@ -6,8 +6,9 @@ export default function (
   oldTypeName,
   newTypeName
 ) {
-  return annotationModel[annotationType].all
-    .filter((instance) => instance.typeName === oldTypeName)
+  return annotationModel
+    .getInstanceContainerFor(annotationType)
+    .all.filter((instance) => instance.typeName === oldTypeName)
     .map((instance) => {
       return new ChangeAnnotationCommand(
         annotationModel,

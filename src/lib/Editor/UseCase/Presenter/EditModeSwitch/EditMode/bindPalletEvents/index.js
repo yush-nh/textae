@@ -40,7 +40,8 @@ export default function (
     }
 
     selectionModel.removeAll()
-    const ids = annotationModel[annotationType]
+    const ids = annotationModel
+      .getInstanceContainerFor(annotationType)
       .findByType(e.delegateTarget.dataset.id)
       .map(({ id }) => id)
     selectionModel.add(annotationType, ids)
