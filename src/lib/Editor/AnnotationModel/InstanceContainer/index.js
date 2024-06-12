@@ -8,11 +8,6 @@ export default class InstanceContainer {
     this._container = new Map()
   }
 
-  // Protected method
-  _toInstance(rowDatum) {
-    return rowDatum
-  }
-
   addSource(source, type) {
     for (const instance of source.map((r) => this._toInstance(r, type))) {
       this._addToContainer(instance)
@@ -67,6 +62,11 @@ export default class InstanceContainer {
 
   clear() {
     this._container.clear()
+  }
+
+  // Protected methods
+  _toInstance(rowDatum) {
+    return rowDatum
   }
 
   _addToContainer(instance) {
