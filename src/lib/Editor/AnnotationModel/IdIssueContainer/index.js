@@ -1,10 +1,12 @@
 import InstanceContainer from '../InstanceContainer'
 
 export default class IdIssueContainer extends InstanceContainer {
+  #prefixFunc
+
   constructor(emitter, name, prefixFunc) {
     super(emitter, name)
 
-    this._prefixFunc = prefixFunc
+    this.#prefixFunc = prefixFunc
   }
 
   addSource(source, type) {
@@ -21,24 +23,24 @@ export default class IdIssueContainer extends InstanceContainer {
     })
 
     for (const instance of collection) {
-      super._addToContainer(this._assignID(instance))
+      super._addToContainer(this.#assignID(instance))
     }
   }
 
   add(instance) {
-    return super.add(this._assignID(instance))
+    return super.add(this.#assignID(instance))
   }
 
-  _assignID(instance) {
+  #assignID(instance) {
     if (!instance.id) {
-      instance.id = this._generateNextID(instance)
+      instance.id = this.#generateNextID(instance)
     }
 
     return instance
   }
 
-  _generateNextID(instance) {
-    const prefix = this._prefixFunc(instance)
+  #generateNextID(instance) {
+    const prefix = this.#prefixFunc(instance)
 
     const wellFormattedIDs = new Set()
     for (const id of super._container.keys()) {
