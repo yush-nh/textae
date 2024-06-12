@@ -10,7 +10,7 @@ import BlockSpanInstance from './BlockSpanInstance'
 import isBoundaryCrossingWithOtherSpans from '../isBoundaryCrossingWithOtherSpans'
 import rangeFrom from './rangeFrom'
 import getCurrentMaxHeight from './getCurrentMaxHeight'
-import PositionsOnAnnotation from './PositionsOnAnnotation'
+import TextSelection from './TextSelection'
 
 export default class SpanInstanceContainer {
   #editorID
@@ -360,7 +360,7 @@ export default class SpanInstanceContainer {
   }
 
   get positionsOnAnnotation() {
-    return new PositionsOnAnnotation(this)
+    return new TextSelection(this)
   }
 
   #updateSpanTree() {

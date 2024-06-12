@@ -1,7 +1,7 @@
 import getOffsetFromParent from './getOffsetFromParent'
 import getParentOffset from './getParentOffset'
 
-export default class PositionsOnAnnotation {
+export default class TextSelection {
   #selection
   #spanModelContainer
 
