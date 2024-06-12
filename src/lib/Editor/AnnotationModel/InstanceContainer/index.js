@@ -1,7 +1,10 @@
 export default class InstanceContainer {
+  #emitter
+  #name
+
   constructor(emitter, name) {
-    this._emitter = emitter
-    this._name = name
+    this.#emitter = emitter
+    this.#name = name
     this._container = new Map()
   }
 
@@ -18,7 +21,7 @@ export default class InstanceContainer {
 
   add(instance) {
     const newInstance = this._addToContainer(instance)
-    this._emit(`textae-event.annotation-data.${this._name}.add`, newInstance)
+    this._emit(`textae-event.annotation-data.${this.#name}.add`, newInstance)
     return newInstance
   }
 
@@ -49,7 +52,7 @@ export default class InstanceContainer {
   changeType(id, newType) {
     const instance = this._container.get(id)
     instance.typeName = newType
-    this._emit(`textae-event.annotation-data.${this._name}.change`, instance)
+    this._emit(`textae-event.annotation-data.${this.#name}.change`, instance)
     return instance
   }
 
@@ -57,7 +60,7 @@ export default class InstanceContainer {
     const instance = this._container.get(id)
     if (instance) {
       this._container.delete(id)
-      this._emit(`textae-event.annotation-data.${this._name}.remove`, instance)
+      this._emit(`textae-event.annotation-data.${this.#name}.remove`, instance)
     }
     return instance
   }
@@ -72,6 +75,6 @@ export default class InstanceContainer {
   }
 
   _emit(event, data) {
-    this._emitter.emit(event, data)
+    this.#emitter.emit(event, data)
   }
 }
