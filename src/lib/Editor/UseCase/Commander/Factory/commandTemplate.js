@@ -42,26 +42,30 @@ class CreateCommand extends AnnotationCommand {
 }
 
 class RemoveCommand extends AnnotationCommand {
+  #annotationModel
+  #annotationType
+  #instance
+
   constructor(annotationModel, annotationType, instance) {
     super()
-    this._annotationModel = annotationModel
-    this._annotationType = annotationType
-    this._instance = instance
+    this.#annotationModel = annotationModel
+    this.#annotationType = annotationType
+    this.#instance = instance
   }
 
   execute() {
-    this._annotationModel
-      .getInstanceContainerFor(this._annotationType)
-      .remove(this._instance.id)
+    this.#annotationModel
+      .getInstanceContainerFor(this.#annotationType)
+      .remove(this.#instance.id)
 
-    commandLog(this, `${this._annotationType}: ${this._instance.id}`)
+    commandLog(this, `${this.#annotationType}: ${this.#instance.id}`)
   }
 
   revert() {
     return new CreateCommand(
-      this._annotationModel,
-      this._annotationType,
-      this._instance
+      this.#annotationModel,
+      this.#annotationType,
+      this.#instance
     )
   }
 }
