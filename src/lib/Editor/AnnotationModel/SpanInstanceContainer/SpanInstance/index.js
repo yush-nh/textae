@@ -7,18 +7,19 @@ import createRangeToSpan from '../createRangeToSpan'
 import round from '../../../round'
 
 export default class SpanInstance {
+  #isGridRendered = false
+  #isSelected = false
+  /**
+   * @type {Set<import('../../../EntityInstance').EntityInstance>}
+   */
+  #entities = new Set()
+
   constructor(editorID, editorHTMLElement, begin, end, spanInstanceContainer) {
     this._editorID = editorID
     this._editorHTMLElement = editorHTMLElement
     this._begin = begin
     this._end = end
     this._spanInstanceContainer = spanInstanceContainer
-    this._isGridRendered = false
-    this._isSelected = false
-    /**
-     * @type {Set<import('../../../EntityInstance').EntityInstance>}
-     */
-    this._entities = new Set()
 
     this.severTies()
   }
@@ -43,7 +44,7 @@ export default class SpanInstance {
    * @return {[import('../../../EntityInstance').EntityInstance]}
    */
   get entities() {
-    return [...this._entities]
+    return [...this.#entities]
   }
 
   get relations() {
@@ -74,7 +75,7 @@ export default class SpanInstance {
    * @param {import('../../../EntityInstance').EntityInstance} entity
    */
   add(entity) {
-    this._entities.add(entity)
+    this.#entities.add(entity)
   }
 
   /**
@@ -82,7 +83,7 @@ export default class SpanInstance {
    * @param {import('../../../EntityInstance').EntityInstance} entity
    */
   remove(entity) {
-    this._entities.delete(entity)
+    this.#entities.delete(entity)
   }
 
   severTies() {
@@ -166,19 +167,19 @@ export default class SpanInstance {
   }
 
   get isGridRendered() {
-    return this._isGridRendered
+    return this.#isGridRendered
   }
 
   get isSelected() {
-    return this._isSelected
+    return this.#isSelected
   }
 
   select() {
-    this._isSelected = true
+    this.#isSelected = true
   }
 
   deselect() {
-    this._isSelected = false
+    this.#isSelected = false
   }
 
   focus() {
@@ -205,7 +206,7 @@ export default class SpanInstance {
   }
 
   forceRenderGrid() {
-    if (this._isGridRendered) {
+    if (this.#isGridRendered) {
       return
     }
 
@@ -230,14 +231,14 @@ export default class SpanInstance {
     if (rightGrid) {
       // insert before the right grid.
       rightGrid.insertAdjacentElement('beforebegin', this._createGridElement())
-      this._isGridRendered = true
+      this.#isGridRendered = true
 
       return rightGrid.previousElementSibling
     } else {
       // append to the annotation area.
       const container = getAnnotationBox(this._editorHTMLElement)
       container.insertAdjacentElement('beforeend', this._createGridElement())
-      this._isGridRendered = true
+      this.#isGridRendered = true
 
       return container.lastElementChild
     }
@@ -267,7 +268,7 @@ export default class SpanInstance {
 
   _destroyGridElement() {
     if (this.isGridRendered) {
-      this._isGridRendered = false
+      this.#isGridRendered = false
 
       for (const entity of this.entities) {
         entity.erase()
