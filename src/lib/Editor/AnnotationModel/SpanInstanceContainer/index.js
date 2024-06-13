@@ -60,7 +60,6 @@ export default class SpanInstanceContainer {
         this.#editorHTMLElement,
         newValue.begin,
         newValue.end,
-        this.#entityContainer,
         this,
         this.#textBox
       )
@@ -296,7 +295,6 @@ export default class SpanInstanceContainer {
       this.#editorHTMLElement,
       begin,
       end,
-      this.#entityContainer,
       this,
       this.#textBox
     )
@@ -439,7 +437,6 @@ export default class SpanInstanceContainer {
           this.#editorHTMLElement,
           denotation.span.begin,
           denotation.span.end,
-          this.#entityContainer,
           this,
           this.#textBox
         )

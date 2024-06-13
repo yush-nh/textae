@@ -19,7 +19,6 @@ export default class BlockSpanInstance extends SpanInstance {
     editorHTMLElement,
     begin,
     end,
-    entityInstanceContainer,
     spanInstanceContainer,
     textBox
   ) {
