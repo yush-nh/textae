@@ -6,6 +6,9 @@ import hexToRGBA from '../../hexToRGBA.js'
 import toAnchorElement from '../../toAnchorElement.js'
 
 export default class AttributeInstance {
+  #id
+  #subj
+  #pred
   #obj
   #entityContainer
   #relationContainer
@@ -26,9 +29,9 @@ export default class AttributeInstance {
     definitionContainer,
     mediaDictionary
   ) {
-    this.id = id
-    this.subj = subj
-    this.pred = pred
+    this.#id = id
+    this.#subj = subj
+    this.#pred = pred
     this.#obj = obj
     this.#entityContainer = entityContainer
     this.#relationContainer = relationContainer
@@ -45,6 +48,18 @@ export default class AttributeInstance {
         }
       })
     }
+  }
+
+  get id() {
+    return this.#id
+  }
+
+  get subj() {
+    return this.#subj
+  }
+
+  get pred() {
+    return this.#pred
   }
 
   get obj() {
