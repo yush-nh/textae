@@ -11,6 +11,7 @@ import isBoundaryCrossingWithOtherSpans from '../isBoundaryCrossingWithOtherSpan
 import rangeFrom from './rangeFrom'
 import getCurrentMaxHeight from './getCurrentMaxHeight'
 import TextSelection from './TextSelection'
+import validateNewDenotationSpan from '../../UseCase/Presenter/EditModeSwitch/TermEditMode/SpanEditor/validateNewDenotationSpan'
 
 export default class SpanInstanceContainer {
   #editorID
@@ -95,6 +96,10 @@ export default class SpanInstanceContainer {
   hasDenotationSpan(begin, end) {
     const spanID = makeDenotationSpanHTMLElementID(this.#editorID, begin, end)
     return this.#denotations.has(spanID)
+  }
+
+  validateNewDenotationSpan(begin, end) {
+    return validateNewDenotationSpan(this, begin, end)
   }
 
   hasBlockSpan(begin, end) {
