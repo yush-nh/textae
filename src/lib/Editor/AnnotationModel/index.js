@@ -105,7 +105,6 @@ export default class AnnotationModel {
       editorID,
       editorHTMLElement,
       eventEmitter,
-      this.#entityInstanceContainer,
       this.#textBox
     )
 

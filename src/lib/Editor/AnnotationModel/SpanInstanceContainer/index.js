@@ -17,7 +17,6 @@ export default class SpanInstanceContainer {
   #editorID
   #editorHTMLElement
   #emitter
-  #entityInstanceContainer
   #textBox
   #denotations
   #blocks
@@ -27,17 +26,10 @@ export default class SpanInstanceContainer {
    *
    * @param {import('../createTextBox/TextBox').default} textBox
    */
-  constructor(
-    editorID,
-    editorHTMLElement,
-    emitter,
-    entityInstanceContainer,
-    textBox
-  ) {
+  constructor(editorID, editorHTMLElement, emitter, textBox) {
     this.#editorID = editorID
     this.#editorHTMLElement = editorHTMLElement
     this.#emitter = emitter
-    this.#entityInstanceContainer = entityInstanceContainer
     this.#textBox = textBox
 
     this.#denotations = new Map()
