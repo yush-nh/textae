@@ -14,9 +14,9 @@ export default class EntityInstance {
   #id
   #attributeInstanceContainer
   #relationInstanceContainer
+  #namespaceInstanceContainer
   #typeGap
   #typeDefinition
-  #namespace
   #toolBarHeight
   #isSelected = false
   #isHovered = false
@@ -39,7 +39,7 @@ export default class EntityInstance {
     typeDefinition,
     span,
     typeName,
-    namespace,
+    namespaceInstanceContainer,
     toolBarHeight,
     id = null
   ) {
@@ -49,7 +49,7 @@ export default class EntityInstance {
     this.#relationInstanceContainer = relationInstanceContainer
     this.#typeGap = typeGap
     this.#typeDefinition = typeDefinition
-    this.#namespace = namespace
+    this.#namespaceInstanceContainer = namespaceInstanceContainer
     this.#toolBarHeight = toolBarHeight
 
     // Preprocessing is required, so use the property
@@ -440,7 +440,7 @@ export default class EntityInstance {
 
   get #displayName() {
     return getDisplayName(
-      this.#namespace,
+      this.#namespaceInstanceContainer,
       this.typeName,
       this.#definitionContainer.getLabel(this.typeName)
     )
@@ -448,7 +448,7 @@ export default class EntityInstance {
 
   get #href() {
     return getURI(
-      this.#namespace,
+      this.#namespaceInstanceContainer,
       this.typeName,
       this.#definitionContainer.getURI(this.typeName)
     )
