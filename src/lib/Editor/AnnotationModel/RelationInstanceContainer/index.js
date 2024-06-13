@@ -2,6 +2,13 @@ import RelationInstance from './RelationInstance'
 import IdIssueContainer from '../IdIssueContainer'
 
 export default class RelationInstanceContainer extends IdIssueContainer {
+  #editorHTMLElement
+  #eventEmitter
+  #parentContainer
+  #namespace
+  #definitionContainer
+  #toolBarHeight
+
   constructor(
     editorHTMLElement,
     eventEmitter,
@@ -10,28 +17,28 @@ export default class RelationInstanceContainer extends IdIssueContainer {
     definitionContainer
   ) {
     super(eventEmitter, 'relation', () => 'R')
-    this._editorHTMLElement = editorHTMLElement
-    this._eventEmitter = eventEmitter
-    this._parentContainer = parentContainer
-    this._namespace = namespace
-    this._definitionContainer = definitionContainer
+    this.#editorHTMLElement = editorHTMLElement
+    this.#eventEmitter = eventEmitter
+    this.#parentContainer = parentContainer
+    this.#namespace = namespace
+    this.#definitionContainer = definitionContainer
   }
 
   /** @param {number} value */
   set toolBarHeight(value) {
-    this._toolBarHeight = value
+    this.#toolBarHeight = value
   }
 
   _toInstance(relation) {
     return new RelationInstance(
-      this._editorHTMLElement,
-      this._eventEmitter,
-      this._parentContainer.entity,
-      this._parentContainer.attributeInstanceContainer,
+      this.#editorHTMLElement,
+      this.#eventEmitter,
+      this.#parentContainer.entity,
+      this.#parentContainer.attributeInstanceContainer,
       relation,
-      this._namespace,
-      this._definitionContainer,
-      this._toolBarHeight
+      this.#namespace,
+      this.#definitionContainer,
+      this.#toolBarHeight
     )
   }
 
@@ -41,14 +48,14 @@ export default class RelationInstanceContainer extends IdIssueContainer {
       newValue instanceof RelationInstance
         ? newValue
         : new RelationInstance(
-            this._editorHTMLElement,
-            this._eventEmitter,
-            this._parentContainer.entity,
-            this._parentContainer.attribute,
+            this.#editorHTMLElement,
+            this.#eventEmitter,
+            this.#parentContainer.entity,
+            this.#parentContainer.attribute,
             newValue,
-            this._namespace,
-            this._definitionContainer,
-            this._toolBarHeight
+            this.#namespace,
+            this.#definitionContainer,
+            this.#toolBarHeight
           )
     const newInstance = super.add(newValue)
 
