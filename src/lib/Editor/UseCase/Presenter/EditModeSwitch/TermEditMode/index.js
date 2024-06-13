@@ -28,7 +28,7 @@ export default class TermEditMode extends EditMode {
       editorHTMLElement,
       eventEmitter,
       annotationModel.typeDefinition,
-      annotationModel.attribute,
+      annotationModel.attributeInstanceContainer,
       annotationModel.typeDefinition.denotation,
       selectionModel.entity,
       commander,

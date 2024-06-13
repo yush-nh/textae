@@ -30,7 +30,7 @@ export default class PasteTypesToSelectedSpansCommand extends CompositeCommand {
     for (const attrDef of attrDefs) {
       this._subCommands.push(
         new CreateAttributeDefinitionCommand(
-          annotationModel.attributeDefinitionContainer,
+          annotationModel.attributeInstanceContainerDefinitionContainer,
           { valueType: attrDef['value type'], ...attrDef }
         )
       )
@@ -39,8 +39,10 @@ export default class PasteTypesToSelectedSpansCommand extends CompositeCommand {
     for (const { pred, value } of newSelectionAttributeObjects) {
       this._subCommands.push(
         new AddValueToAttributeDefinitionCommand(
-          annotationModel.attributeDefinitionContainer,
-          annotationModel.attributeDefinitionContainer.get(pred),
+          annotationModel.attributeInstanceContainerDefinitionContainer,
+          annotationModel.attributeInstanceContainerDefinitionContainer.get(
+            pred
+          ),
           value
         )
       )

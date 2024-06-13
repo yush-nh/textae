@@ -29,7 +29,9 @@ export default class ChangeAttributeDefinitionAndRefectInstancesCommand extends 
     // change annotation
     if (changedProperties.has('pred')) {
       const sameDefinitionAttributes =
-        annotationModel.attribute.getSameDefinitionsAttributes(attrDef.pred)
+        annotationModel.attributeInstanceContainer.getSameDefinitionsAttributes(
+          attrDef.pred
+        )
 
       changAnnotationCommands = sameDefinitionAttributes.map((attribute) => {
         return new ChangeAttributeCommand(

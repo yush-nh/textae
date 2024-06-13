@@ -32,7 +32,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
   }
 
   get #attributeInstanceContainer() {
-    return this.#parent.attribute
+    return this.#parent.attributeInstanceContainer
   }
 
   get #relationInstanceContainer() {

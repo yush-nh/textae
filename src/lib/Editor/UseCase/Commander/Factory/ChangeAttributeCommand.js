@@ -13,7 +13,7 @@ export default class ChangeAttributeCommand extends AnnotationCommand {
   }
 
   execute() {
-    this._newInstance = this._annotationModel.attribute.change(
+    this._newInstance = this._annotationModel.attributeInstanceContainer.change(
       this._attribute.id,
       this._newPred,
       this._newObj

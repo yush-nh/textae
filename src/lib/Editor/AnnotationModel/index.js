@@ -23,6 +23,7 @@ export default class AnnotationModel {
   #textBox
   #lineHeightAuto
   #span
+  #attribute
   #typeDefinition
   #editorHTMLElement
   #eventEmitter
@@ -71,9 +72,9 @@ export default class AnnotationModel {
 
     this.attributeDefinitionContainer = new AttributeDefinitionContainer(
       eventEmitter,
-      () => this.attribute.all
+      () => this.#attribute.all
     )
-    this.attribute = new AttributeInstanceContainer(
+    this.#attribute = new AttributeInstanceContainer(
       eventEmitter,
       this.entity,
       this.relation,
@@ -194,13 +195,18 @@ export default class AnnotationModel {
     this.#textBox.render(this.sourceDoc)
 
     clearAnnotationModel(this)
-    const { namespace, spanInstanceContainer, entity, attribute, relation } =
-      this
+    const {
+      namespace,
+      spanInstanceContainer,
+      entity,
+      attributeInstanceContainer,
+      relation
+    } = this
     const annotationParser = new AnnotationParser(
       namespace,
       spanInstanceContainer,
       entity,
-      attribute,
+      attributeInstanceContainer,
       relation,
       rawData
     )
@@ -225,7 +231,7 @@ export default class AnnotationModel {
   get externalFormat() {
     return {
       denotations: toDenotations(this),
-      attributes: this.attribute.all.map(
+      attributes: this.#attribute.all.map(
         ({ externalFormat }) => externalFormat
       ),
       relations: toRelations(this),
@@ -267,6 +273,10 @@ export default class AnnotationModel {
     return this.#span
   }
 
+  get attributeInstanceContainer() {
+    return this.#attribute
+  }
+
   getInstanceContainerFor(annotationType) {
     switch (annotationType) {
       case 'span':
@@ -276,7 +286,7 @@ export default class AnnotationModel {
       case 'entity':
         return this.entity
       case 'attribute':
-        return this.attribute
+        return this.#attribute
     }
   }
 

@@ -28,7 +28,7 @@ export default class BlockEditMode extends EditMode {
       editorHTMLElement,
       eventEmitter,
       annotationModel.typeDefinition,
-      annotationModel.attribute,
+      annotationModel.attributeInstanceContainer,
       annotationModel.typeDefinition.block,
       selectionModel.entity,
       commander,

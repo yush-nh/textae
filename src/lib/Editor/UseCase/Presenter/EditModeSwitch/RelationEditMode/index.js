@@ -21,7 +21,7 @@ export default class RelationEditMode extends EditMode {
       editorHTMLElement,
       eventEmitter,
       annotationModel.typeDefinition,
-      annotationModel.attribute,
+      annotationModel.attributeInstanceContainer,
       annotationModel.typeDefinition.relation,
       selectionModel.relation,
       commander,

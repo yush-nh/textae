@@ -28,10 +28,11 @@ export default class ChangeValueOfAttributeDefinitionAndObjectOfAttributeCommand
       attrDef['value type'] === 'selection' &&
       attrDef.values[index].id !== value.id
     ) {
-      const sameAttributes = annotationModel.attribute.getSameAttributes(
-        attrDef.pred,
-        attrDef.values[index].id
-      )
+      const sameAttributes =
+        annotationModel.attributeInstanceContainer.getSameAttributes(
+          attrDef.pred,
+          attrDef.values[index].id
+        )
       const changeAnnotationCommands = sameAttributes.map(
         (a) => new ChangeAttributeCommand(annotationModel, a, null, value.id)
       )
