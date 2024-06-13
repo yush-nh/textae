@@ -100,7 +100,7 @@ export default class BlockSpanInstance extends SpanInstance {
     // Place the background in the annotation box
     // to shift the background up by half a line from the block span area.
     const annotationBox = getAnnotationBox(this._editorHTMLElement)
-    renderBackground(annotationBox, this._backgroundId)
+    renderBackground(annotationBox, this.#backgroundID)
   }
 
   destroyElement() {
@@ -170,12 +170,12 @@ export default class BlockSpanInstance extends SpanInstance {
     return this._clientTop - this.#textBox.boundingClientRect.top
   }
 
-  get _backgroundId() {
+  get #backgroundID() {
     return `bg_of_${this.id}`
   }
 
   get _backgroundElement() {
-    return document.querySelector(`#${this._backgroundId}`)
+    return document.querySelector(`#${this.#backgroundID}`)
   }
 
   _isGridInViewPort(clientHeight, margin) {
