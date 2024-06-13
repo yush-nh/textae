@@ -17,7 +17,7 @@ export default class SpanInstanceContainer {
   #editorID
   #editorHTMLElement
   #emitter
-  #entityContainer
+  #entityInstanceContainer
   #textBox
   #denotations
   #blocks
@@ -27,11 +27,17 @@ export default class SpanInstanceContainer {
    *
    * @param {import('../createTextBox/TextBox').default} textBox
    */
-  constructor(editorID, editorHTMLElement, emitter, entityContainer, textBox) {
+  constructor(
+    editorID,
+    editorHTMLElement,
+    emitter,
+    entityInstanceContainer,
+    textBox
+  ) {
     this.#editorID = editorID
     this.#editorHTMLElement = editorHTMLElement
     this.#emitter = emitter
-    this.#entityContainer = entityContainer
+    this.#entityInstanceContainer = entityInstanceContainer
     this.#textBox = textBox
 
     this.#denotations = new Map()
@@ -74,7 +80,7 @@ export default class SpanInstanceContainer {
         this.#editorHTMLElement,
         newValue.begin,
         newValue.end,
-        this.#entityContainer,
+        this.#entityInstanceContainer,
         this
       )
       return this.#addDenotation(denotationSpan)
@@ -268,7 +274,7 @@ export default class SpanInstanceContainer {
       this.#editorHTMLElement,
       begin,
       end,
-      this.#entityContainer,
+      this.#entityInstanceContainer,
       this
     )
     this.#addDenotation(newOne, oldSpan)
@@ -422,7 +428,7 @@ export default class SpanInstanceContainer {
           this.#editorHTMLElement,
           denotation.span.begin,
           denotation.span.end,
-          this.#entityContainer,
+          this.#entityInstanceContainer,
           this
         )
 
