@@ -35,7 +35,7 @@ export default class DenotationSpanInstance extends SpanInstance {
     return this._spanInstanceContainer.getStyle(this.id)
   }
 
-  get _offsetLeft() {
+  get #offsetLeft() {
     const spanElement = this.element
 
     // An element.offsetTop and element.offsetLeft does not work in the Firefox,
@@ -100,7 +100,7 @@ export default class DenotationSpanInstance extends SpanInstance {
   }
 
   get heightIncludeDescendantGrids() {
-    return this._gridHeightIncludeDescendantGrids + TEXT_HEIGHT + MARGIN_TOP
+    return this.#gridHeightIncludeDescendantGrids + TEXT_HEIGHT + MARGIN_TOP
   }
 
   get widthOfGrid() {
@@ -123,13 +123,13 @@ export default class DenotationSpanInstance extends SpanInstance {
   }
 
   get offsetCenterOfGrid() {
-    return this._offsetLeft + this.widthOfGrid / 2
+    return this.#offsetLeft + this.widthOfGrid / 2
   }
 
   get clientTopOfGrid() {
     return (
       this.element.getBoundingClientRect().top -
-      this._gridHeightIncludeDescendantGrids
+      this.#gridHeightIncludeDescendantGrids
     )
   }
 
@@ -139,25 +139,25 @@ export default class DenotationSpanInstance extends SpanInstance {
     const offsetTop =
       this.element.getBoundingClientRect().top -
       this.element.offsetParent.offsetParent.getBoundingClientRect().top
-    return offsetTop - this._gridHeightIncludeDescendantGrids
+    return offsetTop - this.#gridHeightIncludeDescendantGrids
   }
 
   get offsetLeftOfGrid() {
-    return this._offsetLeft
+    return this.#offsetLeft
   }
 
   isGridInViewport(clientHeight, clientWidth) {
-    return this._isGridInViewPort(clientHeight, clientWidth, 0)
+    return this.#isGridInViewPort(clientHeight, clientWidth, 0)
   }
 
   isGridInDrawArea(clientHeight, clientWidth) {
-    return this._isGridInViewPort(clientHeight, clientWidth, clientHeight)
+    return this.#isGridInViewPort(clientHeight, clientWidth, clientHeight)
   }
 
-  _isGridInViewPort(clientHeight, clientWidth, margin) {
+  #isGridInViewPort(clientHeight, clientWidth, margin) {
     const { top, left } = this.element.getBoundingClientRect()
     const gridHeightIncludeDescendantGrids =
-      this._gridHeightIncludeDescendantGrids
+      this.#gridHeightIncludeDescendantGrids
     const gridBottom = top - gridHeightIncludeDescendantGrids + this.gridHeight
     const gridTop = top - gridHeightIncludeDescendantGrids
 
@@ -180,7 +180,7 @@ export default class DenotationSpanInstance extends SpanInstance {
     `
   }
 
-  get _gridHeightIncludeDescendantGrids() {
+  get #gridHeightIncludeDescendantGrids() {
     return getGridHeightIncludeDescendantGrids(this)
   }
 }
