@@ -4,42 +4,42 @@ import getAllSpansOf from './getAllSpansOf'
 import validateAnnotation from './validateAnnotation'
 
 export default class AnnotationParser {
-  #namespaceContainer
-  #spanContainer
-  #entityContainer
-  #attributeContainer
-  #relationContainer
+  #namespaceInstanceContainer
+  #spanInstanceContainer
+  #entityInstanceContainer
+  #relationInstanceContainer
+  #attributeInstanceContainer
   #rowData
   #rootReject
   #trackRejects
 
   constructor(
-    namespaceContainer,
-    spanContainer,
-    entityContainer,
-    attributeContainer,
-    relationContainer,
+    namespaceInstanceContainer,
+    spanInstanceContainer,
+    entityInstanceContainer,
+    attributeInstanceContainer,
+    relationInstanceContainer,
     rowData
   ) {
-    this.#namespaceContainer = namespaceContainer
-    this.#spanContainer = spanContainer
-    this.#entityContainer = entityContainer
-    this.#attributeContainer = attributeContainer
-    this.#relationContainer = relationContainer
+    this.#namespaceInstanceContainer = namespaceInstanceContainer
+    this.#spanInstanceContainer = spanInstanceContainer
+    this.#entityInstanceContainer = entityInstanceContainer
+    this.#attributeInstanceContainer = attributeInstanceContainer
+    this.#relationInstanceContainer = relationInstanceContainer
     this.#rowData = rowData
   }
 
   parse() {
     // Read namespaces
     if (this.#rowData.namespaces) {
-      this.#namespaceContainer.addSource(
+      this.#namespaceInstanceContainer.addSource(
         this.#rowData.namespaces.map((n) => ({
           id: n.prefix,
           ...n
         }))
       )
     } else {
-      this.#namespaceContainer.addSource([])
+      this.#namespaceInstanceContainer.addSource([])
     }
 
     // Read the root annotation.
@@ -50,10 +50,10 @@ export default class AnnotationParser {
     )
 
     readAcceptedAnnotationTo(
-      this.#spanContainer,
-      this.#entityContainer,
-      this.#attributeContainer,
-      this.#relationContainer,
+      this.#spanInstanceContainer,
+      this.#entityInstanceContainer,
+      this.#attributeInstanceContainer,
+      this.#relationInstanceContainer,
       accept
     )
 
@@ -63,10 +63,10 @@ export default class AnnotationParser {
     // Read multiple track annotations.
     if (this.hasMultiTracks) {
       this.#trackRejects = parseTracks(
-        this.#spanContainer,
-        this.#entityContainer,
-        this.#attributeContainer,
-        this.#relationContainer,
+        this.#spanInstanceContainer,
+        this.#entityInstanceContainer,
+        this.#attributeInstanceContainer,
+        this.#relationInstanceContainer,
         this.#text,
         this.#spans,
         this.#rowData
