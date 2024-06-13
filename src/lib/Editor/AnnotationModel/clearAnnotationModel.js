@@ -3,5 +3,5 @@ export default function (annotationModel) {
   annotationModel.entityInstanceContainer.clear()
   annotationModel.attributeInstanceContainer.clear()
   annotationModel.relationInstanceContainer.clear()
-  annotationModel.namespace.clear()
+  annotationModel.namespaceInstanceContainer.clear()
 }

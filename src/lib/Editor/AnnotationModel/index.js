@@ -26,6 +26,7 @@ export default class AnnotationModel {
   #entity
   #relation
   #attribute
+  #namespace
   #typeDefinition
   #editorHTMLElement
   #eventEmitter
@@ -41,7 +42,7 @@ export default class AnnotationModel {
     additionalPaddingTop
   ) {
     this.#sourceDoc = ''
-    this.namespace = new InstanceContainer(eventEmitter, 'namespace')
+    this.#namespace = new InstanceContainer(eventEmitter, 'namespace')
     const relationDefinitionContainer = new DefinitionContainer(
       eventEmitter,
       'relation',
@@ -78,7 +79,7 @@ export default class AnnotationModel {
       eventEmitter,
       this.#entity,
       this.#relation,
-      this.namespace,
+      this.#namespace,
       this.attributeDefinitionContainer
     )
 
@@ -196,14 +197,14 @@ export default class AnnotationModel {
 
     clearAnnotationModel(this)
     const {
-      namespace,
+      namespaceInstanceContainer,
       spanInstanceContainer,
       entityInstanceContainer,
       attributeInstanceContainer,
       relationInstanceContainer
     } = this
     const annotationParser = new AnnotationJSONParser(
-      namespace,
+      namespaceInstanceContainer,
       spanInstanceContainer,
       entityInstanceContainer,
       relationInstanceContainer,
@@ -283,6 +284,10 @@ export default class AnnotationModel {
 
   get attributeInstanceContainer() {
     return this.#attribute
+  }
+
+  get namespaceInstanceContainer() {
+    return this.#namespace
   }
 
   getInstanceContainerFor(annotationType) {

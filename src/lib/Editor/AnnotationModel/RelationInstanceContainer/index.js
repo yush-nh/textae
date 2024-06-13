@@ -19,7 +19,8 @@ export default class RelationInstanceContainer extends IdIssueContainer {
     this.#editorHTMLElement = editorHTMLElement
     this.#eventEmitter = eventEmitter
     this.#annotationModel = annotationModel
-    this.#namespaceInstanceContainer = annotationModel.namespace
+    this.#namespaceInstanceContainer =
+      annotationModel.namespaceInstanceContainer
     this.#definitionContainer = definitionContainer
   }
 

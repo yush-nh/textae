@@ -24,7 +24,8 @@ export default class EntityInstanceContainer extends IdIssueContainer {
     this.#annotationModel = annotationModel
 
     this.#typeGap = typeGap
-    this.#namespaceInstanceContainer = annotationModel.namespace
+    this.#namespaceInstanceContainer =
+      annotationModel.namespaceInstanceContainer
   }
 
   get #spanInstanceContainer() {
