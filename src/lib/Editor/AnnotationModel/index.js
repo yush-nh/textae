@@ -22,11 +22,11 @@ export default class AnnotationModel {
   #typeGap
   #textBox
   #lineHeightAuto
-  #span
-  #entity
-  #relation
-  #attribute
-  #namespace
+  #namespaceInstanceContainer
+  #spanInstanceContainer
+  #entityInstanceContainer
+  #relationInstanceContainer
+  #attributeInstanceContainer
   #typeDefinition
   #editorHTMLElement
   #eventEmitter
@@ -42,15 +42,18 @@ export default class AnnotationModel {
     additionalPaddingTop
   ) {
     this.#sourceDoc = ''
-    this.#namespace = new InstanceContainer(eventEmitter, 'namespace')
+    this.#namespaceInstanceContainer = new InstanceContainer(
+      eventEmitter,
+      'namespace'
+    )
     const relationDefinitionContainer = new DefinitionContainer(
       eventEmitter,
       'relation',
-      () => this.#relation.all,
+      () => this.#relationInstanceContainer.all,
       '#00CC66'
     )
 
-    this.#relation = new RelationInstanceContainer(
+    this.#relationInstanceContainer = new RelationInstanceContainer(
       editorHTMLElement,
       eventEmitter,
       this,
@@ -64,7 +67,7 @@ export default class AnnotationModel {
       eventEmitter.emit('textae-event.annotation-data.entity-gap.change')
     })
 
-    this.#entity = new EntityInstanceContainer(
+    this.#entityInstanceContainer = new EntityInstanceContainer(
       editorID,
       eventEmitter,
       this,
@@ -73,13 +76,13 @@ export default class AnnotationModel {
 
     this.attributeDefinitionContainer = new AttributeDefinitionContainer(
       eventEmitter,
-      () => this.#attribute.all
+      () => this.#attributeInstanceContainer.all
     )
-    this.#attribute = new AttributeInstanceContainer(
+    this.#attributeInstanceContainer = new AttributeInstanceContainer(
       eventEmitter,
-      this.#entity,
-      this.#relation,
-      this.#namespace,
+      this.#entityInstanceContainer,
+      this.#relationInstanceContainer,
+      this.#namespaceInstanceContainer,
       this.attributeDefinitionContainer
     )
 
@@ -98,24 +101,24 @@ export default class AnnotationModel {
     }
     this.#textBox = createTextBox(editorHTMLElement, this, additionalPaddingTop)
     this.#lineHeightAuto = new LineHeightAuto(eventEmitter, this.#textBox)
-    this.#span = new SpanInstanceContainer(
+    this.#spanInstanceContainer = new SpanInstanceContainer(
       editorID,
       editorHTMLElement,
       eventEmitter,
-      this.#entity,
+      this.#entityInstanceContainer,
       this.#textBox
     )
 
     this.denotationDefinitionContainer = new DefinitionContainer(
       eventEmitter,
       'entity',
-      () => this.#entity.denotations,
+      () => this.#entityInstanceContainer.denotations,
       '#77DDDD'
     )
     const blockDefinitionContainer = new DefinitionContainer(
       eventEmitter,
       'entity',
-      () => this.#entity.blocks,
+      () => this.#entityInstanceContainer.blocks,
       '#77DDDD'
     )
     this.#typeDefinition = new TypeDefinition(
@@ -154,7 +157,7 @@ export default class AnnotationModel {
     // Bind type-definition events.
     eventEmitter
       .on('textae-event.type-definition.entity.change', (typeName) => {
-        for (const entity of this.#entity.all) {
+        for (const entity of this.#entityInstanceContainer.all) {
           // If the type name ends in a wildcard, look for the DOMs to update with a forward match.
           if (
             entity.typeName === typeName ||
@@ -166,13 +169,13 @@ export default class AnnotationModel {
         }
       })
       .on('textae-event.type-definition.attribute.change', (pred) =>
-        this.#entity.redrawEntitiesWithSpecifiedAttribute(pred)
+        this.#entityInstanceContainer.redrawEntitiesWithSpecifiedAttribute(pred)
       )
       .on('textae-event.type-definition.attribute.move', (pred) =>
-        this.#entity.redrawEntitiesWithSpecifiedAttribute(pred)
+        this.#entityInstanceContainer.redrawEntitiesWithSpecifiedAttribute(pred)
       )
       .on('textae-event.type-definition.relation.change', (typeName) => {
-        for (const relation of this.#relation.all) {
+        for (const relation of this.#relationInstanceContainer.all) {
           // If the type name ends in a wildcard, look for the DOMs to update with a forward match.
           if (
             relation.typeName === typeName ||
@@ -232,7 +235,7 @@ export default class AnnotationModel {
   get externalFormat() {
     return {
       denotations: toDenotations(this),
-      attributes: this.#attribute.all.map(
+      attributes: this.#attributeInstanceContainer.all.map(
         ({ externalFormat }) => externalFormat
       ),
       relations: toRelations(this),
@@ -245,7 +248,7 @@ export default class AnnotationModel {
       this.sourceDoc,
       span.begin,
       span.end,
-      this.#span,
+      this.#spanInstanceContainer,
       isDelimiterFunc
     )
   }
@@ -271,35 +274,35 @@ export default class AnnotationModel {
   }
 
   get spanInstanceContainer() {
-    return this.#span
+    return this.#spanInstanceContainer
   }
 
   get entityInstanceContainer() {
-    return this.#entity
+    return this.#entityInstanceContainer
   }
 
   get relationInstanceContainer() {
-    return this.#relation
+    return this.#relationInstanceContainer
   }
 
   get attributeInstanceContainer() {
-    return this.#attribute
+    return this.#attributeInstanceContainer
   }
 
   get namespaceInstanceContainer() {
-    return this.#namespace
+    return this.#namespaceInstanceContainer
   }
 
   getInstanceContainerFor(annotationType) {
     switch (annotationType) {
       case 'span':
-        return this.#span
+        return this.#spanInstanceContainer
       case 'relation':
-        return this.#relation
+        return this.#relationInstanceContainer
       case 'entity':
-        return this.#entity
+        return this.#entityInstanceContainer
       case 'attribute':
-        return this.#attribute
+        return this.#attributeInstanceContainer
     }
   }
 
@@ -307,16 +310,16 @@ export default class AnnotationModel {
     if (this.#isEditorInSight) {
       const { clientHeight, clientWidth } = document.documentElement
 
-      for (const span of this.#span.allDenotationSpans) {
+      for (const span of this.#spanInstanceContainer.allDenotationSpans) {
         span.drawGrid(clientHeight, clientWidth)
       }
 
-      for (const span of this.#span.allBlockSpans) {
+      for (const span of this.#spanInstanceContainer.allBlockSpans) {
         span.drawGrid(clientHeight, clientWidth)
         span.updateBackgroundPosition()
       }
 
-      for (const relation of this.#relation.all) {
+      for (const relation of this.#relationInstanceContainer.all) {
         relation.render(clientHeight, clientWidth)
       }
     }
@@ -332,8 +335,8 @@ export default class AnnotationModel {
 
   /** @param {number} value */
   set toolBarHeight(value) {
-    this.#entity.toolBarHeight = value
-    this.#relation.toolBarHeight = value
+    this.#entityInstanceContainer.toolBarHeight = value
+    this.#relationInstanceContainer.toolBarHeight = value
   }
 
   get #isEditorInSight() {
@@ -345,11 +348,11 @@ export default class AnnotationModel {
 
   focusDenotation(denotationID) {
     console.assert(
-      this.#entity.hasDenotation(denotationID),
+      this.#entityInstanceContainer.hasDenotation(denotationID),
       'The denotation does not exist.'
     )
 
-    const { span } = this.#entity.get(denotationID)
+    const { span } = this.#entityInstanceContainer.get(denotationID)
     span.focus()
   }
 
@@ -358,7 +361,7 @@ export default class AnnotationModel {
 
     this.#textBox.updateLineHeight()
 
-    for (const span of this.#span.topLevel) {
+    for (const span of this.#spanInstanceContainer.topLevel) {
       span.render()
     }
 
@@ -367,28 +370,28 @@ export default class AnnotationModel {
 
     const { clientHeight, clientWidth } = document.documentElement
 
-    for (const span of this.#span.allDenotationSpans) {
+    for (const span of this.#spanInstanceContainer.allDenotationSpans) {
       span.drawGrid(clientHeight, clientWidth)
     }
 
-    for (const span of this.#span.allBlockSpans) {
+    for (const span of this.#spanInstanceContainer.allBlockSpans) {
       span.drawGrid(clientHeight, clientWidth)
     }
 
-    for (const relation of this.#relation.all) {
+    for (const relation of this.#relationInstanceContainer.all) {
       relation.render(clientHeight, clientWidth)
     }
   }
 
   #rearrangeAllAnnotations() {
-    this.#span.arrangeDenotationEntityPosition()
+    this.#spanInstanceContainer.arrangeDenotationEntityPosition()
 
     // When you undo the deletion of a block span,
     // if you move the background first, the grid will move to a better position.
-    this.#span.arrangeBackgroundOfBlockSpanPosition()
-    this.#span.arrangeBlockEntityPosition()
+    this.#spanInstanceContainer.arrangeBackgroundOfBlockSpanPosition()
+    this.#spanInstanceContainer.arrangeBlockEntityPosition()
 
-    for (const relation of this.#relation.all) {
+    for (const relation of this.#relationInstanceContainer.all) {
       // The Grid disappears while the span is moving.
       if (
         relation.sourceEntity.span.isGridRendered &&
