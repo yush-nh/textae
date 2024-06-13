@@ -8,13 +8,13 @@ import Label from './Label'
 export default class RelationInstance {
   #editorHTMLElement
   #eventEmitter
-  #entityContainer
-  #attributeContainer
+  #entityInstanceContainer
+  #attributeInstanceContainer
   #id
   #typeName
   #subj
   #obj
-  #namespace
+  #namespaceInstanceContainer
   #definitionContainer
   #toolBarHeight
   #isSelected
@@ -25,22 +25,22 @@ export default class RelationInstance {
   constructor(
     editorHTMLElement,
     eventEmitter,
-    entityContainer,
-    attributeContainer,
+    entityInstanceContainer,
+    attributeInstanceContainer,
     { id, pred, subj, obj },
-    namespace,
+    namespaceInstanceContainer,
     definitionContainer,
     toolBarHeight
   ) {
     this.#editorHTMLElement = editorHTMLElement
     this.#eventEmitter = eventEmitter
-    this.#entityContainer = entityContainer
-    this.#attributeContainer = attributeContainer
+    this.#entityInstanceContainer = entityInstanceContainer
+    this.#attributeInstanceContainer = attributeInstanceContainer
     this.#id = id
     this.typeName = pred
     this.#subj = subj
     this.#obj = obj
-    this.#namespace = namespace
+    this.#namespaceInstanceContainer = namespaceInstanceContainer
     this.#definitionContainer = definitionContainer
     this.#toolBarHeight = toolBarHeight
     this.#isSelected = false
@@ -71,7 +71,7 @@ export default class RelationInstance {
   get typeValues() {
     return new TypeValues(
       this.#typeName,
-      this.#attributeContainer.getAttributesFor(this.#id)
+      this.#attributeInstanceContainer.getAttributesFor(this.#id)
     )
   }
 
@@ -84,17 +84,17 @@ export default class RelationInstance {
   }
 
   get attributes() {
-    return this.#attributeContainer.getAttributesFor(this.#id)
+    return this.#attributeInstanceContainer.getAttributesFor(this.#id)
   }
 
   /** @returns {import('../../../EntityInstance').EntityInstance} */
   get sourceEntity() {
-    return this.#entityContainer.get(this.subj)
+    return this.#entityInstanceContainer.get(this.subj)
   }
 
   /** @returns {import('../../../EntityInstance').EntityInstance} */
   get targetEntity() {
-    return this.#entityContainer.get(this.obj)
+    return this.#entityInstanceContainer.get(this.obj)
   }
 
   get sourceColor() {
@@ -327,7 +327,7 @@ export default class RelationInstance {
 
   get #displayName() {
     return getDisplayName(
-      this.#namespace,
+      this.#namespaceInstanceContainer,
       this.typeName,
       this.#definitionContainer.getLabel(this.typeName)
     )
@@ -335,7 +335,7 @@ export default class RelationInstance {
 
   get #href() {
     return getURI(
-      this.#namespace,
+      this.#namespaceInstanceContainer,
       this.typeName,
       this.#definitionContainer.getURI(this.typeName)
     )
