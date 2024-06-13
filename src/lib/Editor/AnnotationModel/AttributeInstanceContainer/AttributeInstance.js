@@ -10,9 +10,9 @@ export default class AttributeInstance {
   #subj
   #pred
   #obj
-  #entityContainer
-  #relationContainer
-  #namespace
+  #entityInstanceContainer
+  #relationInstanceContainer
+  #namespaceInstanceContainer
   #definitionContainer
   #mediaDictionary
 
@@ -23,9 +23,9 @@ export default class AttributeInstance {
    */
   constructor(
     { id, subj, pred, obj },
-    entityContainer,
-    relationContainer,
-    namespace,
+    entityInstanceContainer,
+    relationInstanceContainer,
+    namespaceInstanceContainer,
     definitionContainer,
     mediaDictionary
   ) {
@@ -33,9 +33,9 @@ export default class AttributeInstance {
     this.#subj = subj
     this.#pred = pred
     this.#obj = obj
-    this.#entityContainer = entityContainer
-    this.#relationContainer = relationContainer
-    this.#namespace = namespace
+    this.#entityInstanceContainer = entityInstanceContainer
+    this.#relationInstanceContainer = relationInstanceContainer
+    this.#namespaceInstanceContainer = namespaceInstanceContainer
     this.#definitionContainer = definitionContainer
     this.#mediaDictionary = mediaDictionary
 
@@ -54,12 +54,24 @@ export default class AttributeInstance {
     return this.#id
   }
 
+  set id(value) {
+    this.#id = value
+  }
+
   get subj() {
     return this.#subj
   }
 
+  set subj(value) {
+    this.#subj = value
+  }
+
   get pred() {
     return this.#pred
+  }
+
+  set pred(value) {
+    this.#pred = value
   }
 
   get obj() {
@@ -76,8 +88,8 @@ export default class AttributeInstance {
 
   get subjectInstance() {
     return (
-      this.#entityContainer.get(this.subj) ||
-      this.#relationContainer.get(this.subj)
+      this.#entityInstanceContainer.get(this.subj) ||
+      this.#relationInstanceContainer.get(this.subj)
     )
   }
 
@@ -167,7 +179,7 @@ export default class AttributeInstance {
 
   get #displayName() {
     return getDisplayName(
-      this.#namespace,
+      this.#namespaceInstanceContainer,
       typeof this.#obj === 'string' ? this.#obj : '',
       this.#definitionContainer.getDisplayName(this.pred, this.#obj)
     )
@@ -175,7 +187,7 @@ export default class AttributeInstance {
 
   get #href() {
     return getURI(
-      this.#namespace,
+      this.#namespaceInstanceContainer,
       typeof this.#obj === 'string' ? this.#obj : ''
     )
   }
