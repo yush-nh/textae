@@ -134,7 +134,7 @@ export default class SpanInstance {
     } else {
       this.destroyElement()
     }
-    this._destroyGridElement()
+    this.#destroyGridElement()
   }
 
   renderElement() {
@@ -201,7 +201,7 @@ export default class SpanInstance {
     if (this.isGridInDrawArea(clientHeight, clientWidth)) {
       this.forceRenderGrid()
     } else {
-      this._destroyGridElement()
+      this.#destroyGridElement()
     }
   }
 
@@ -210,7 +210,7 @@ export default class SpanInstance {
       return
     }
 
-    this._renderGridElement()
+    this.#renderAndReturnGridElement()
     for (const entity of this.entities) {
       entity.render()
     }
@@ -222,7 +222,7 @@ export default class SpanInstance {
     )
   }
 
-  _renderGridElement() {
+  #renderAndReturnGridElement() {
     if (this.isGridRendered) {
       return this.gridElement
     }
@@ -266,7 +266,7 @@ export default class SpanInstance {
     }
   }
 
-  _destroyGridElement() {
+  #destroyGridElement() {
     if (this.isGridRendered) {
       this.#isGridRendered = false
 
