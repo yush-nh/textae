@@ -3,6 +3,12 @@ import IdIssueContainer from '../IdIssueContainer'
 import MediaDictionary from './MediaDictionary'
 
 export default class AttributeInstanceContainer extends IdIssueContainer {
+  #entityContainer
+  #relationContainer
+  #namespace
+  #definitionContainer
+  #mediaDictionary
+
   constructor(
     emitter,
     entityContainer,
@@ -12,21 +18,21 @@ export default class AttributeInstanceContainer extends IdIssueContainer {
   ) {
     super(emitter, 'attribute', () => 'A')
 
-    this._entityContainer = entityContainer
-    this._relationContainer = relationContainer
-    this._namespace = namespace
-    this._definitionContainer = definitionContainer
-    this._mediaDictionary = new MediaDictionary()
+    this.#entityContainer = entityContainer
+    this.#relationContainer = relationContainer
+    this.#namespace = namespace
+    this.#definitionContainer = definitionContainer
+    this.#mediaDictionary = new MediaDictionary()
   }
 
   _toInstance(attribute) {
     return new AttributeInstance(
       attribute,
-      this._entityContainer,
-      this._relationContainer,
-      this._namespace,
-      this._definitionContainer,
-      this._mediaDictionary
+      this.#entityContainer,
+      this.#relationContainer,
+      this.#namespace,
+      this.#definitionContainer,
+      this.#mediaDictionary
     )
   }
 
@@ -82,6 +88,6 @@ export default class AttributeInstanceContainer extends IdIssueContainer {
   getAttributesFor(subj) {
     return this.all
       .filter((a) => a.subj === subj)
-      .sort((a, b) => this._definitionContainer.attributeCompareFunction(a, b))
+      .sort((a, b) => this.#definitionContainer.attributeCompareFunction(a, b))
   }
 }
