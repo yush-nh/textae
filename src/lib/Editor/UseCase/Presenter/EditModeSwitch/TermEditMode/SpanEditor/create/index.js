@@ -3,14 +3,14 @@ import getNewSpan from '../../../getNewSpan'
 import validateNewDenotationSpan from '../validateNewDenotationSpan'
 
 export default function (
-  sourceDoc,
-  spanInstanceContainer,
+  annotationModel,
   commander,
   spanAdjuster,
   isReplicateAuto,
   spanConfig,
   isDelimiterFunc
 ) {
+  const { sourceDoc, spanInstanceContainer } = annotationModel
   const { begin, end } = getNewSpan(
     sourceDoc,
     spanInstanceContainer,

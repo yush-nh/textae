@@ -599,8 +599,7 @@ export default class SpanEditor {
     if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
       this.#selectionModel.removeAll()
       create(
-        this.#annotationModel.sourceDoc,
-        this.#spanInstanceContainer,
+        this.#annotationModel,
         this.#commander,
         this.#menuState.spanAdjuster,
         this.#isReplicateAuto,
