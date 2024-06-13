@@ -8,7 +8,6 @@ import getAnnotationBox from '../../getAnnotationBox'
 // Leave a gap between the text and the block border.
 const gapBetweenText = 8
 export default class BlockSpanInstance extends SpanInstance {
-  #entityInstanceContainer
   #textBox
 
   /**
@@ -25,7 +24,6 @@ export default class BlockSpanInstance extends SpanInstance {
     textBox
   ) {
     super(editorID, editorHTMLElement, begin, end, spanInstanceContainer)
-    this.#entityInstanceContainer = entityInstanceContainer
     this.#textBox = textBox
   }
 
