@@ -1,7 +1,6 @@
 import delegate from 'delegate'
 import EditMode from './EditMode'
 import isRangeInTextBox from './isRangeInTextBox'
-import getNewSpan from './getNewSpan'
 
 export default class TextEditMode extends EditMode {
   #editorHTMLElement
@@ -32,8 +31,7 @@ export default class TextEditMode extends EditMode {
 
             if (isRangeInTextBox(selection, textBox)) {
               if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
-                const { begin, end } = getNewSpan(
-                  this.#annotationModel,
+                const { begin, end } = this.#annotationModel.getNewSpan(
                   this.#spanConfig,
                   this.#spanAdjuster
                 )
