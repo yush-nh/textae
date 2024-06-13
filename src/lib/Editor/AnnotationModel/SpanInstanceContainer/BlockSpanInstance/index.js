@@ -26,7 +26,7 @@ export default class BlockSpanInstance extends SpanInstance {
     this._textBox = textBox
   }
 
-  // Utility to distinguish with otehr type spans.
+  // Utility to distinguish with other type spans.
   get isBlock() {
     return true
   }
