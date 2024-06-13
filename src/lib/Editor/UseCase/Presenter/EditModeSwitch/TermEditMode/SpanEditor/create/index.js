@@ -11,9 +11,7 @@ export default function (
 ) {
   const { begin, end } = getNewSpan(annotationModel, spanConfig, spanAdjuster)
 
-  if (
-    annotationModel.spanInstanceContainer.validateNewDenotationSpan(begin, end)
-  ) {
+  if (annotationModel.validateNewDenotationSpan(begin, end)) {
     const command = createCommand(
       commander,
       { begin, end },

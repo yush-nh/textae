@@ -306,6 +306,14 @@ export default class AnnotationModel {
     return spanConfig.removeBlankCharacters(this.#selectedText).length > 0
   }
 
+  validateNewDenotationSpan(begin, end) {
+    return this.#spanInstanceContainer.validateNewDenotationSpan(begin, end)
+  }
+
+  validateNewBlockSpan(begin, end, spanID) {
+    return this.#spanInstanceContainer.validateNewBlockSpan(begin, end, spanID)
+  }
+
   getInstanceContainerFor(annotationType) {
     switch (annotationType) {
       case 'span':

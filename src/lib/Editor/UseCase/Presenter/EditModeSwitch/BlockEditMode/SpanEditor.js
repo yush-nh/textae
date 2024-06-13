@@ -166,13 +166,7 @@ export default class SpanEditor {
     if (expandedSpan) {
       const { spanID, begin, end } = expandedSpan
 
-      if (
-        this.#annotationModel.spanInstanceContainer.validateNewBlockSpan(
-          begin,
-          end,
-          spanID
-        )
-      ) {
+      if (this.#annotationModel.validateNewBlockSpan(begin, end, spanID)) {
         this.#commander.invoke(
           this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
         )
@@ -254,13 +248,7 @@ export default class SpanEditor {
         this.#spanConfig
       )
 
-    if (
-      this.#annotationModel.spanInstanceContainer.validateNewBlockSpan(
-        begin,
-        end,
-        spanID
-      )
-    ) {
+    if (this.#annotationModel.validateNewBlockSpan(begin, end, spanID)) {
       this.#commander.invoke(
         this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
       )
