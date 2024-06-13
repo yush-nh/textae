@@ -293,17 +293,17 @@ export default class AnnotationModel {
     return this.#namespaceInstanceContainer
   }
 
-  get #textSelection() {
+  get textSelection() {
     return this.#spanInstanceContainer.textSelection
   }
 
-  get selectedText() {
-    const { begin, end } = this.#textSelection
+  get #selectedText() {
+    const { begin, end } = this.textSelection
     return this.sourceDoc.substring(begin, end)
   }
 
   hasCharacters(spanConfig) {
-    return spanConfig.removeBlankCharacters(this.selectedText).length > 0
+    return spanConfig.removeBlankCharacters(this.#selectedText).length > 0
   }
 
   getInstanceContainerFor(annotationType) {

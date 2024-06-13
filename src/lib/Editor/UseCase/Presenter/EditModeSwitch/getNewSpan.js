@@ -1,10 +1,6 @@
-export default function (
-  sourceDoc,
-  spanInstanceContainer,
-  spanConfig,
-  spanAdjuster
-) {
-  const { begin, end } = spanInstanceContainer.textSelection
+export default function getNewSpan(annotationModel, spanConfig, spanAdjuster) {
+  const { sourceDoc, textSelection } = annotationModel
+  const { begin, end } = textSelection
 
   return {
     begin: spanAdjuster.backFromBegin(sourceDoc, begin, spanConfig),

@@ -10,15 +10,11 @@ export default function (
   spanConfig,
   isDelimiterFunc
 ) {
-  const { sourceDoc, spanInstanceContainer } = annotationModel
-  const { begin, end } = getNewSpan(
-    sourceDoc,
-    spanInstanceContainer,
-    spanConfig,
-    spanAdjuster
-  )
+  const { begin, end } = getNewSpan(annotationModel, spanConfig, spanAdjuster)
 
-  if (validateNewDenotationSpan(spanInstanceContainer, begin, end)) {
+  if (
+    validateNewDenotationSpan(annotationModel.spanInstanceContainer, begin, end)
+  ) {
     const command = createCommand(
       commander,
       { begin, end },
