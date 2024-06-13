@@ -50,7 +50,7 @@ export default class BlockSpanInstance extends SpanInstance {
     const el = super.element
     el.classList.add(SELECTED)
 
-    this._backgroundElement.classList.add(SELECTED)
+    this.#backgroundElement.classList.add(SELECTED)
 
     // Set focus to the span element in order to scroll the browser to the position of the element.
     el.focus()
@@ -66,14 +66,14 @@ export default class BlockSpanInstance extends SpanInstance {
       el.classList.remove(SELECTED)
     }
 
-    if (this._backgroundElement) {
-      this._backgroundElement.classList.remove(SELECTED)
+    if (this.#backgroundElement) {
+      this.#backgroundElement.classList.remove(SELECTED)
     }
   }
 
   updateBackgroundPosition() {
     if (this.isGridRendered) {
-      const height = this._height
+      const height = this.#height
 
       const clientRect = this.element.getBoundingClientRect()
       const offsetLeft =
@@ -81,8 +81,8 @@ export default class BlockSpanInstance extends SpanInstance {
       const width = clientRect.width + gapBetweenText
 
       setPosition(
-        this._backgroundElement,
-        this._offsetTop,
+        this.#backgroundElement,
+        this.#offsetTop,
         offsetLeft,
         width,
         height
@@ -105,7 +105,7 @@ export default class BlockSpanInstance extends SpanInstance {
 
   destroyElement() {
     super.destroyElement()
-    this._backgroundElement.remove()
+    this.#backgroundElement.remove()
   }
 
   get heightIncludeDescendantGrids() {
@@ -121,15 +121,15 @@ export default class BlockSpanInstance extends SpanInstance {
   }
 
   get offsetTopOfGrid() {
-    return this._offsetTop
+    return this.#offsetTop
   }
 
   get clientBottomOfGrid() {
-    return this._clientTop + this._height
+    return this.#clientTop + this.#height
   }
 
   get offsetBottomOfGrid() {
-    return this._offsetTop + this._height
+    return this.#offsetTop + this.#height
   }
 
   get offsetLeftOfGrid() {
@@ -155,46 +155,46 @@ export default class BlockSpanInstance extends SpanInstance {
   }
 
   isGridInViewport(clientHeight) {
-    return this._isGridInViewPort(clientHeight, 0)
+    return this.#isGridInViewPort(clientHeight, 0)
   }
 
   isGridInDrawArea(clientHeight) {
-    return this._isGridInViewPort(clientHeight, clientHeight)
+    return this.#isGridInViewPort(clientHeight, clientHeight)
   }
 
-  get _height() {
+  get #height() {
     return this.element.getBoundingClientRect().height
   }
 
-  get _offsetTop() {
-    return this._clientTop - this.#textBox.boundingClientRect.top
+  get #offsetTop() {
+    return this.#clientTop - this.#textBox.boundingClientRect.top
   }
 
   get #backgroundID() {
     return `bg_of_${this.id}`
   }
 
-  get _backgroundElement() {
+  get #backgroundElement() {
     return document.querySelector(`#${this.#backgroundID}`)
   }
 
-  _isGridInViewPort(clientHeight, margin) {
+  #isGridInViewPort(clientHeight, margin) {
     return (
-      0 - margin <= this._clientBottom &&
-      this._clientTop <= clientHeight + margin
+      0 - margin <= this.#clientBottom &&
+      this.#clientTop <= clientHeight + margin
     )
   }
 
   // Shifting up half a line from the original block position.
-  get _clientTop() {
-    return this._shiftUpGrid(this.element.getBoundingClientRect().top)
+  get #clientTop() {
+    return this.#shiftUpGrid(this.element.getBoundingClientRect().top)
   }
 
-  get _clientBottom() {
-    return this._shiftUpGrid(this.element.getBoundingClientRect().bottom)
+  get #clientBottom() {
+    return this.#shiftUpGrid(this.element.getBoundingClientRect().bottom)
   }
 
-  _shiftUpGrid(y) {
+  #shiftUpGrid(y) {
     return y - this.#textBox.lineHeight / 2 + 20
   }
 
