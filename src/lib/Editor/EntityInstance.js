@@ -18,10 +18,12 @@ export default class EntityInstance {
   #typeDefinition
   #namespace
   #toolBarHeight
-  #isSelected
-  #isHovered
-  #isLabelClarified
-  #signboard
+  #isSelected = false
+  #isHovered = false
+  // When in view mode, the mouseleave event will not declarify labels.
+  #isLabelClarified = false
+  /** @type {SignboardHTMLElement} */
+  #signboard = null
   #span
   #typeName
 
@@ -53,14 +55,6 @@ export default class EntityInstance {
     // Preprocessing is required, so use the property
     this.span = span
     this.typeName = typeName
-
-    this.#isSelected = false
-    this.#isHovered = false
-    // When in view mode, the mouseleave event will not declarify labels.
-    this.#isLabelClarified = false
-
-    /** @type {SignboardHTMLElement} */
-    this.#signboard = null
   }
 
   get id() {
