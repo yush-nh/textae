@@ -8,16 +8,8 @@ import { makeDenotationSpanHTMLElementID } from '../../../idFactory'
 const TEXT_HEIGHT = 23
 const MARGIN_TOP = 5
 export default class DenotationSpanInstance extends SpanInstance {
-  constructor(
-    editorID,
-    editorHTMLElement,
-    begin,
-    end,
-    entityInstanceContainer,
-    spanInstanceContainer
-  ) {
+  constructor(editorID, editorHTMLElement, begin, end, spanInstanceContainer) {
     super(editorID, editorHTMLElement, begin, end, spanInstanceContainer)
-    this._entityInstanceContainer = entityInstanceContainer
   }
 
   get id() {

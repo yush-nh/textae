@@ -80,7 +80,6 @@ export default class SpanInstanceContainer {
         this.#editorHTMLElement,
         newValue.begin,
         newValue.end,
-        this.#entityInstanceContainer,
         this
       )
       return this.#addDenotation(denotationSpan)
@@ -274,7 +273,6 @@ export default class SpanInstanceContainer {
       this.#editorHTMLElement,
       begin,
       end,
-      this.#entityInstanceContainer,
       this
     )
     this.#addDenotation(newOne, oldSpan)
@@ -428,7 +426,6 @@ export default class SpanInstanceContainer {
           this.#editorHTMLElement,
           denotation.span.begin,
           denotation.span.end,
-          this.#entityInstanceContainer,
           this
         )
 
