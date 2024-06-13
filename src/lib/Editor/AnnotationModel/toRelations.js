@@ -1,5 +1,5 @@
 export default function (annotationModel) {
-  return annotationModel.relation.all.map((r) => {
+  return annotationModel.relationInstanceContainer.all.map((r) => {
     return {
       id: r.id,
       pred: r.typeName,

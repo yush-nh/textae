@@ -24,6 +24,7 @@ export default class AnnotationModel {
   #lineHeightAuto
   #span
   #entity
+  #relation
   #attribute
   #typeDefinition
   #editorHTMLElement
@@ -44,11 +45,11 @@ export default class AnnotationModel {
     const relationDefinitionContainer = new DefinitionContainer(
       eventEmitter,
       'relation',
-      () => this.relation.all,
+      () => this.#relation.all,
       '#00CC66'
     )
 
-    this.relation = new RelationInstanceContainer(
+    this.#relation = new RelationInstanceContainer(
       editorHTMLElement,
       eventEmitter,
       this,
@@ -76,7 +77,7 @@ export default class AnnotationModel {
     this.#attribute = new AttributeInstanceContainer(
       eventEmitter,
       this.#entity,
-      this.relation,
+      this.#relation,
       this.namespace,
       this.attributeDefinitionContainer
     )
@@ -170,7 +171,7 @@ export default class AnnotationModel {
         this.#entity.redrawEntitiesWithSpecifiedAttribute(pred)
       )
       .on('textae-event.type-definition.relation.change', (typeName) => {
-        for (const relation of this.relation.all) {
+        for (const relation of this.#relation.all) {
           // If the type name ends in a wildcard, look for the DOMs to update with a forward match.
           if (
             relation.typeName === typeName ||
@@ -199,14 +200,14 @@ export default class AnnotationModel {
       spanInstanceContainer,
       entityInstanceContainer,
       attributeInstanceContainer,
-      relation
+      relationInstanceContainer
     } = this
     const annotationParser = new AnnotationParser(
       namespace,
       spanInstanceContainer,
       entityInstanceContainer,
       attributeInstanceContainer,
-      relation,
+      relationInstanceContainer,
       rawData
     )
     annotationParser.parse()
@@ -276,6 +277,10 @@ export default class AnnotationModel {
     return this.#entity
   }
 
+  get relationInstanceContainer() {
+    return this.#relation
+  }
+
   get attributeInstanceContainer() {
     return this.#attribute
   }
@@ -285,7 +290,7 @@ export default class AnnotationModel {
       case 'span':
         return this.#span
       case 'relation':
-        return this.relation
+        return this.#relation
       case 'entity':
         return this.#entity
       case 'attribute':
@@ -306,7 +311,7 @@ export default class AnnotationModel {
         span.updateBackgroundPosition()
       }
 
-      for (const relation of this.relation.all) {
+      for (const relation of this.#relation.all) {
         relation.render(clientHeight, clientWidth)
       }
     }
@@ -323,7 +328,7 @@ export default class AnnotationModel {
   /** @param {number} value */
   set toolBarHeight(value) {
     this.#entity.toolBarHeight = value
-    this.relation.toolBarHeight = value
+    this.#relation.toolBarHeight = value
   }
 
   get #isEditorInSight() {
@@ -365,7 +370,7 @@ export default class AnnotationModel {
       span.drawGrid(clientHeight, clientWidth)
     }
 
-    for (const relation of this.relation.all) {
+    for (const relation of this.#relation.all) {
       relation.render(clientHeight, clientWidth)
     }
   }
@@ -378,7 +383,7 @@ export default class AnnotationModel {
     this.#span.arrangeBackgroundOfBlockSpanPosition()
     this.#span.arrangeBlockEntityPosition()
 
-    for (const relation of this.relation.all) {
+    for (const relation of this.#relation.all) {
       // The Grid disappears while the span is moving.
       if (
         relation.sourceEntity.span.isGridRendered &&

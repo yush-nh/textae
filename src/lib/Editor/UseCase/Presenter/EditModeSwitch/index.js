@@ -84,7 +84,7 @@ export default class EditModeSwitch {
     )
 
     this.#state = new State(
-      annotationModel.relation,
+      annotationModel.relationInstanceContainer,
       eventEmitter,
       functionAvailability
     )
@@ -145,12 +145,16 @@ export default class EditModeSwitch {
    */
   reset() {
     if (this.#startUpOptions.isEditTermMode) {
-      this.#state.toTermEditMode(this.#annotationModel.relation.some)
+      this.#state.toTermEditMode(
+        this.#annotationModel.relationInstanceContainer.some
+      )
       return
     }
 
     if (this.#startUpOptions.isEditBlockMode) {
-      this.#state.toBlockEditMode(this.#annotationModel.relation.some)
+      this.#state.toBlockEditMode(
+        this.#annotationModel.relationInstanceContainer.some
+      )
       return
     }
 
@@ -159,7 +163,7 @@ export default class EditModeSwitch {
       return
     }
 
-    this.#state.toViewMode(this.#annotationModel.relation.some)
+    this.#state.toViewMode(this.#annotationModel.relationInstanceContainer.some)
   }
 
   hidePallet() {

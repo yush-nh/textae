@@ -36,7 +36,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
   }
 
   get #relationInstanceContainer() {
-    return this.#annotationModel.relation
+    return this.#annotationModel.relationInstanceContainer
   }
 
   /** @param {number} value */
