@@ -6,6 +6,22 @@ import Arrow from './Arrow'
 import Label from './Label'
 
 export default class RelationInstance {
+  #editorHTMLElement
+  #eventEmitter
+  #entityContainer
+  #attributeContainer
+  #id
+  #typeName
+  #subj
+  #obj
+  #namespace
+  #definitionContainer
+  #toolBarHeight
+  #isSelected
+  #isHovered
+  #arrow
+  #label
+
   constructor(
     editorHTMLElement,
     eventEmitter,
@@ -16,69 +32,69 @@ export default class RelationInstance {
     definitionContainer,
     toolBarHeight
   ) {
-    this._editorHTMLElement = editorHTMLElement
-    this._eventEmitter = eventEmitter
-    this._entityContainer = entityContainer
-    this._attributeContainer = attributeContainer
-    this._id = id
+    this.#editorHTMLElement = editorHTMLElement
+    this.#eventEmitter = eventEmitter
+    this.#entityContainer = entityContainer
+    this.#attributeContainer = attributeContainer
+    this.#id = id
     this.typeName = pred
-    this._subj = subj
-    this._obj = obj
-    this._namespace = namespace
-    this._definitionContainer = definitionContainer
-    this._toolBarHeight = toolBarHeight
-    this._isSelected = false
+    this.#subj = subj
+    this.#obj = obj
+    this.#namespace = namespace
+    this.#definitionContainer = definitionContainer
+    this.#toolBarHeight = toolBarHeight
+    this.#isSelected = false
 
     // When you click on a relation to deselect it, the display of the relation will be in hover.
     // When you click on the body and deselect the relation, the display of the relation becomes non-hover.
     // To make this distinction, the hover state is retained.
-    this._isHovered = false
+    this.#isHovered = false
   }
 
   get id() {
-    return this._id
+    return this.#id
   }
 
   set id(val) {
-    this._id = val
+    this.#id = val
   }
 
   get typeName() {
-    return this._typeName
+    return this.#typeName
   }
 
   set typeName(val) {
     // Replace null to 'null' if type is null and undefined too.
-    this._typeName = String(val)
+    this.#typeName = String(val)
   }
 
   get typeValues() {
     return new TypeValues(
-      this._typeName,
-      this._attributeContainer.getAttributesFor(this._id)
+      this.#typeName,
+      this.#attributeContainer.getAttributesFor(this.#id)
     )
   }
 
   get subj() {
-    return this._subj
+    return this.#subj
   }
 
   get obj() {
-    return this._obj
+    return this.#obj
   }
 
   get attributes() {
-    return this._attributeContainer.getAttributesFor(this._id)
+    return this.#attributeContainer.getAttributesFor(this.#id)
   }
 
   /** @returns {import('../../../EntityInstance').EntityInstance} */
   get sourceEntity() {
-    return this._entityContainer.get(this.subj)
+    return this.#entityContainer.get(this.subj)
   }
 
   /** @returns {import('../../../EntityInstance').EntityInstance} */
   get targetEntity() {
-    return this._entityContainer.get(this.obj)
+    return this.#entityContainer.get(this.obj)
   }
 
   get sourceColor() {
@@ -90,29 +106,29 @@ export default class RelationInstance {
   }
 
   get isSelected() {
-    return this._isSelected
+    return this.#isSelected
   }
 
   get isHovered() {
-    return this._isHovered
+    return this.#isHovered
   }
 
   select() {
-    if (!this._isSelected) {
-      this._isSelected = true
+    if (!this.#isSelected) {
+      this.#isSelected = true
       // When we select a relation,
       // it is hovering and we have already highlighted the line,
       // so we only need to update the label.
-      if (this._label) {
-        this._label.updateHighlighting()
+      if (this.#label) {
+        this.#label.updateHighlighting()
       }
     }
   }
 
   deselect() {
-    if (this._isSelected) {
-      this._isSelected = false
-      if (this._arrow || this._label) {
+    if (this.#isSelected) {
+      this.#isSelected = false
+      if (this.#arrow || this.#label) {
         this.redrawLineConsideringSelection()
       }
     }
@@ -123,13 +139,13 @@ export default class RelationInstance {
       this.sourceEntity.isInViewport(clientHeight, clientWidth) ||
       this.targetEntity.isInViewport(clientHeight, clientWidth)
     ) {
-      if (!this._arrow) {
-        this._arrow = new Arrow(
-          this._editorHTMLElement,
+      if (!this.#arrow) {
+        this.#arrow = new Arrow(
+          this.#editorHTMLElement,
           this,
-          this._toolBarHeight,
+          this.#toolBarHeight,
           (event) => {
-            this._eventEmitter.emit(
+            this.#eventEmitter.emit(
               'textae-event.editor.relation.click',
               event,
               this
@@ -137,23 +153,23 @@ export default class RelationInstance {
             event.stopPropagation()
           },
           (event, entity) => {
-            this._eventEmitter.emit(
+            this.#eventEmitter.emit(
               'textae-event.editor.relation-bollard.click',
               event,
               entity
             )
             event.stopPropagation()
           },
-          () => this._pointUpSelfAndEntities(),
-          () => this._pointDownSelfAndEntities()
+          () => this.#pointUpSelfAndEntities(),
+          () => this.#pointDownSelfAndEntities()
         )
 
-        this._label = new Label(
-          this._editorHTMLElement,
+        this.#label = new Label(
+          this.#editorHTMLElement,
           this,
-          this._arrow,
+          this.#arrow,
           (event, attribute) => {
-            this._eventEmitter.emit(
+            this.#eventEmitter.emit(
               'textae-event.editor.relation.click',
               event,
               this,
@@ -161,11 +177,11 @@ export default class RelationInstance {
             )
             event.stopPropagation()
           },
-          () => this._pointUpSelfAndEntities(),
-          () => this._pointDownSelfAndEntities()
+          () => this.#pointUpSelfAndEntities(),
+          () => this.#pointDownSelfAndEntities()
         )
       } else {
-        this._redrawArrowConsideringSelection()
+        this.#redrawArrowConsideringSelection()
       }
 
       if (
@@ -175,13 +191,13 @@ export default class RelationInstance {
           this.sourceEntity.isInViewport(clientHeight, clientWidth)) ||
         this.sourceEntity.clientTop === this.targetEntity.clientTop
       ) {
-        if (!this._label) {
-          this._label = new Label(
-            this._editorHTMLElement,
+        if (!this.#label) {
+          this.#label = new Label(
+            this.#editorHTMLElement,
             this,
-            this._arrow,
+            this.#arrow,
             (event, attribute) => {
-              this._eventEmitter.emit(
+              this.#eventEmitter.emit(
                 'textae-event.editor.relation.click',
                 event,
                 this,
@@ -189,111 +205,111 @@ export default class RelationInstance {
               )
               event.stopPropagation()
             },
-            () => this._pointUpSelfAndEntities(),
-            () => this._pointDownSelfAndEntities()
+            () => this.#pointUpSelfAndEntities(),
+            () => this.#pointDownSelfAndEntities()
           )
 
           // When scrolling out of a selected relation and then scrolling in again,
           // the selected state will be highlighted.
-          this._label.updateHighlighting()
+          this.#label.updateHighlighting()
         } else {
-          this._redrawLabelConsideringSelection()
+          this.#redrawLabelConsideringSelection()
         }
       } else {
-        if (this._label) {
-          this._label.destructor()
-          this._label = undefined
+        if (this.#label) {
+          this.#label.destructor()
+          this.#label = undefined
         }
       }
     } else {
-      if (this._arrow || this._label) {
+      if (this.#arrow || this.#label) {
         this.erase()
       }
     }
   }
 
   updateElement() {
-    if (this._arrow) {
-      this._arrow.update(this.isSelected, this.isSelected, this.isSelected)
+    if (this.#arrow) {
+      this.#arrow.update(this.isSelected, this.isSelected, this.isSelected)
     }
 
-    if (this._label) {
-      this._label.updateValue()
+    if (this.#label) {
+      this.#label.updateValue()
     }
   }
 
   redrawLineConsideringSelection() {
-    this._redrawArrowConsideringSelection()
-    this._redrawLabelConsideringSelection()
+    this.#redrawArrowConsideringSelection()
+    this.#redrawLabelConsideringSelection()
   }
 
   pointUpPathAndSourceBollards() {
-    if (this._arrow) {
+    if (this.#arrow) {
       if (this.targetEntity.isSelected) {
-        this._arrow.update(true, true, true)
+        this.#arrow.update(true, true, true)
       } else {
-        this._arrow.update(true, true, this.isSelected)
+        this.#arrow.update(true, true, this.isSelected)
       }
     }
 
-    if (this._label) {
-      this._label.updateHighlighting()
+    if (this.#label) {
+      this.#label.updateHighlighting()
     }
   }
 
   pointUpPathAndTargetBollards() {
-    if (this._arrow) {
+    if (this.#arrow) {
       if (this.sourceEntity.isSelected) {
-        this._arrow.update(true, true, true)
+        this.#arrow.update(true, true, true)
       } else {
-        this._arrow.update(true, this.isSelected, true)
+        this.#arrow.update(true, this.isSelected, true)
       }
     }
 
-    if (this._label) {
-      this._label.updateHighlighting()
+    if (this.#label) {
+      this.#label.updateHighlighting()
     }
   }
 
   pointUpSourceBollardsAndTargetBollards() {
-    if (this._arrow) {
-      this._arrow.update(this.isSelected, true, true)
+    if (this.#arrow) {
+      this.#arrow.update(this.isSelected, true, true)
     }
 
-    if (this._label) {
-      this._label.updateHighlighting()
+    if (this.#label) {
+      this.#label.updateHighlighting()
     }
   }
 
   pointUpSourceBollards() {
-    if (this._arrow) {
-      this._arrow.update(this.isSelected, true, this.isSelected)
+    if (this.#arrow) {
+      this.#arrow.update(this.isSelected, true, this.isSelected)
     }
 
-    if (this._label) {
-      this._label.updateHighlighting()
+    if (this.#label) {
+      this.#label.updateHighlighting()
     }
   }
 
   pointUpTargetBollards() {
-    if (this._arrow) {
-      this._arrow.update(this.isSelected, this.isSelected, true)
+    if (this.#arrow) {
+      this.#arrow.update(this.isSelected, this.isSelected, true)
     }
 
-    if (this._label) {
-      this._label.updateHighlighting()
+    if (this.#label) {
+      this.#label.updateHighlighting()
     }
   }
 
   erase() {
-    if (this._arrow) {
-      this._arrow.destructor()
-      this._arrow = undefined
+    if (this.#arrow) {
+      this.#arrow.destructor()
+      this.#arrow = undefined
     }
 
-    if (this._label) {
-      this._label.destructor()
-      this._label = undefined
+    if (this.#label) {
+      this.#label.destructor()
+      this.#label = undefined
     }
   }
 
@@ -302,34 +318,34 @@ export default class RelationInstance {
   }
 
   get color() {
-    return this._definitionContainer.getColor(this.typeName)
+    return this.#definitionContainer.getColor(this.typeName)
   }
 
   get anchorHTML() {
-    return toAnchorElement(this._displayName, this._href)
+    return toAnchorElement(this.#displayName, this.#href)
   }
 
-  get _displayName() {
+  get #displayName() {
     return getDisplayName(
-      this._namespace,
+      this.#namespace,
       this.typeName,
-      this._definitionContainer.getLabel(this.typeName)
+      this.#definitionContainer.getLabel(this.typeName)
     )
   }
 
-  get _href() {
+  get #href() {
     return getURI(
-      this._namespace,
+      this.#namespace,
       this.typeName,
-      this._definitionContainer.getURI(this.typeName)
+      this.#definitionContainer.getURI(this.typeName)
     )
   }
 
-  _pointUpSelfAndEntities() {
-    this._isHovered = true
-    this._arrow.update(true, true, true)
-    if (this._label) {
-      this._label.updateHighlighting()
+  #pointUpSelfAndEntities() {
+    this.#isHovered = true
+    this.#arrow.update(true, true, true)
+    if (this.#label) {
+      this.#label.updateHighlighting()
     }
 
     const bothRelations = new Set()
@@ -397,8 +413,8 @@ export default class RelationInstance {
     }
   }
 
-  _pointDownSelfAndEntities() {
-    this._isHovered = false
+  #pointDownSelfAndEntities() {
+    this.#isHovered = false
 
     const relations = new Set()
 
@@ -415,23 +431,23 @@ export default class RelationInstance {
     }
   }
 
-  _redrawArrowConsideringSelection() {
-    if (this._arrow) {
+  #redrawArrowConsideringSelection() {
+    if (this.#arrow) {
       if (this.sourceEntity.isSelected && this.targetEntity.isSelected) {
-        this._arrow.update(true, true, true)
+        this.#arrow.update(true, true, true)
       } else if (this.sourceEntity.isSelected) {
-        this._arrow.update(true, true, this.isSelected)
+        this.#arrow.update(true, true, this.isSelected)
       } else if (this.targetEntity.isSelected) {
-        this._arrow.update(true, this.isSelected, true)
+        this.#arrow.update(true, this.isSelected, true)
       } else {
-        this._arrow.update(this.isSelected, this.isSelected, this.isSelected)
+        this.#arrow.update(this.isSelected, this.isSelected, this.isSelected)
       }
     }
   }
 
-  _redrawLabelConsideringSelection() {
-    if (this._label) {
-      this._label.updateHighlighting()
+  #redrawLabelConsideringSelection() {
+    if (this.#label) {
+      this.#label.updateHighlighting()
     }
   }
 }
