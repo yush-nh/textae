@@ -12,6 +12,7 @@ import isBoundaryCrossingWithOtherSpans from '../isBoundaryCrossingWithOtherSpan
 import rangeFrom from './rangeFrom'
 import getCurrentMaxHeight from './getCurrentMaxHeight'
 import TextSelection from './TextSelection'
+import validateNewBlockSpan from '../../UseCase/Presenter/EditModeSwitch/BlockEditMode/validateNewBlockSpan'
 
 export default class SpanInstanceContainer {
   #editorID
@@ -138,6 +139,10 @@ export default class SpanInstanceContainer {
     }
 
     return false
+  }
+
+  validateNewBlockSpan(begin, end, spanID = null) {
+    return validateNewBlockSpan(this, begin, end, spanID)
   }
 
   hasParentOf(begin, end, spanID) {

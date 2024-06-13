@@ -3,7 +3,6 @@ import clearTextSelection from '../clearTextSelection'
 import shrinkSpan from '../shrinkSpan'
 import create from './create'
 import SelectionWrapper from '../SelectionWrapper'
-import validateNewBlockSpan from './validateNewBlockSpan'
 import getRightSpanElement from '../../../../getRightSpanElement'
 
 export default class SpanEditor {
@@ -167,7 +166,13 @@ export default class SpanEditor {
     if (expandedSpan) {
       const { spanID, begin, end } = expandedSpan
 
-      if (validateNewBlockSpan(this.#annotationModel, begin, end, spanID)) {
+      if (
+        this.#annotationModel.spanInstanceContainer.validateNewBlockSpan(
+          begin,
+          end,
+          spanID
+        )
+      ) {
         this.#commander.invoke(
           this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
         )
@@ -249,7 +254,13 @@ export default class SpanEditor {
         this.#spanConfig
       )
 
-    if (validateNewBlockSpan(this.#annotationModel, begin, end, spanID)) {
+    if (
+      this.#annotationModel.spanInstanceContainer.validateNewBlockSpan(
+        begin,
+        end,
+        spanID
+      )
+    ) {
       this.#commander.invoke(
         this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
       )

@@ -1,10 +1,9 @@
 import getNewSpan from '../getNewSpan'
-import validateNewBlockSpan from './validateNewBlockSpan'
 
 export default function (annotationModel, commander, spanAdjuster, spanConfig) {
   const { begin, end } = getNewSpan(annotationModel, spanConfig, spanAdjuster)
 
-  if (validateNewBlockSpan(annotationModel, begin, end)) {
+  if (annotationModel.spanInstanceContainer.validateNewBlockSpan(begin, end)) {
     const command = commander.factory.createBlockSpanCommand({
       begin,
       end
