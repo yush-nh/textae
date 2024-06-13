@@ -10,6 +10,21 @@ const DistanceToShift = 8
 const MinimumDistance = DistanceToShift * 3 + 4
 
 export default class EntityInstance {
+  #editorID
+  #id
+  #attributeContainer
+  #relationContainer
+  #typeGap
+  #typeDefinition
+  #namespace
+  #toolBarHeight
+  #isSelected
+  #isHovered
+  #isLabelClarified
+  #signboard
+  #span
+  #typeName
+
   /**
    *
    * @param {import('./AnnotationModel/SpanInstanceContainer/SpanInstance/index.js').SpanInstance} span
@@ -26,36 +41,36 @@ export default class EntityInstance {
     toolBarHeight,
     id = null
   ) {
-    this._editorID = editorID
+    this.#editorID = editorID
     this.span = span
     this.typeName = typeName
-    this._id = id
-    this._attributeContainer = attributeContainer
-    this._relationContainer = relationContainer
-    this._typeGap = typeGap
-    this._typeDefinition = typeDefinition
-    this._namespace = namespace
-    this._toolBarHeight = toolBarHeight
+    this.#id = id
+    this.#attributeContainer = attributeContainer
+    this.#relationContainer = relationContainer
+    this.#typeGap = typeGap
+    this.#typeDefinition = typeDefinition
+    this.#namespace = namespace
+    this.#toolBarHeight = toolBarHeight
 
-    this._isSelected = false
-    this._isHovered = false
+    this.#isSelected = false
+    this.#isHovered = false
     // When in view mode, the mouseleave event will not declarify labels.
-    this._isLabelClarified = false
+    this.#isLabelClarified = false
 
     /** @type {SignboardHTMLElement} */
-    this._signboard = null
+    this.#signboard = null
   }
 
   get id() {
-    return this._id
+    return this.#id
   }
 
   set id(val) {
-    this._id = val
+    this.#id = val
   }
 
   get title() {
-    return `[${this.id}] pred: type, value: ${this._typeName}`
+    return `[${this.id}] pred: type, value: ${this.#typeName}`
   }
 
   get color() {
@@ -67,27 +82,27 @@ export default class EntityInstance {
   }
 
   get span() {
-    return this._span
+    return this.#span
   }
 
   set span(val) {
-    this._span = val
+    this.#span = val
     val.add(this)
   }
 
   get typeName() {
-    return this._typeName
+    return this.#typeName
   }
 
   set typeName(val) {
     // Replace null to 'null' if type is null and undefined too.
-    this._typeName = String(val)
+    this.#typeName = String(val)
   }
 
   get typeValues() {
     return new TypeValues(
-      this._typeName,
-      this._attributeContainer.getAttributesFor(this._id)
+      this.#typeName,
+      this.#attributeContainer.getAttributesFor(this.#id)
     )
   }
 
@@ -101,15 +116,15 @@ export default class EntityInstance {
    * @returns {import('./AnnotationModel/AttributeInstanceContainer/AttributeInstance.js').AttributeInstance[]}
    */
   get attributes() {
-    return this._attributeContainer.getAttributesFor(this._id)
+    return this.#attributeContainer.getAttributesFor(this.#id)
   }
 
   get relationsWhereThisIsSource() {
-    return this._relationContainer.all.filter((r) => r.subj === this.id)
+    return this.#relationContainer.all.filter((r) => r.subj === this.id)
   }
 
   get relationsWhereThisIsTarget() {
-    return this._relationContainer.all.filter((r) => r.obj === this.id)
+    return this.#relationContainer.all.filter((r) => r.obj === this.id)
   }
 
   get hasMultipleEndpoints() {
@@ -150,14 +165,14 @@ export default class EntityInstance {
 
     // Calculates the top without referencing the HTML element of entities.
     if (span.isDenotation) {
-      let top = span.clientTopOfGrid + this._typeGap.height
+      let top = span.clientTopOfGrid + this.#typeGap.height
 
       for (const entity of span.entities) {
         if (entity === this) {
           break
         }
 
-        top += this._typeGap.height + entity.height
+        top += this.#typeGap.height + entity.height
       }
 
       return round(top)
@@ -186,7 +201,7 @@ export default class EntityInstance {
 
   isInViewport(clientHeight) {
     return (
-      this._toolBarHeight <= this.clientBottom && this.clientTop <= clientHeight
+      this.#toolBarHeight <= this.clientBottom && this.clientTop <= clientHeight
     )
   }
 
@@ -201,7 +216,7 @@ export default class EntityInstance {
   }
 
   get heightWithTypeGap() {
-    return this.height + this._typeGap.height
+    return this.height + this.#typeGap.height
   }
 
   get offsetCenter() {
@@ -209,15 +224,15 @@ export default class EntityInstance {
   }
 
   get isDenotation() {
-    return this._span.isDenotation
+    return this.#span.isDenotation
   }
 
   get isBlock() {
-    return this._span.isBlock
+    return this.#span.isBlock
   }
 
   get isSelected() {
-    return this._isSelected
+    return this.#isSelected
   }
 
   getSourceAnchorPosition(alignBollards) {
@@ -262,51 +277,51 @@ export default class EntityInstance {
       // Attempting to focus will result in an error.
       // Force rendering before focusing.
       this.span.forceRenderGrid()
-      this._signboard.focus()
+      this.#signboard.focus()
     } else {
       throw new Error('Unexpected type of entity')
     }
   }
 
   select() {
-    if (!this._isSelected) {
-      this._isSelected = true
+    if (!this.#isSelected) {
+      this.#isSelected = true
       this.#selectElement()
       this.#updateRelationHighlighting()
     }
   }
 
   deselect() {
-    if (this._isSelected) {
-      this._isSelected = false
-      if (this._signboard) {
-        this._signboard.deselect()
+    if (this.#isSelected) {
+      this.#isSelected = false
+      if (this.#signboard) {
+        this.#signboard.deselect()
       }
       this.#updateRelationHighlighting()
     }
   }
 
   startCut() {
-    if (this._signboard) {
-      this._signboard.startCut()
+    if (this.#signboard) {
+      this.#signboard.startCut()
     }
   }
 
   cancelCut() {
-    if (this._signboard) {
-      this._signboard.cancelCut()
+    if (this.#signboard) {
+      this.#signboard.cancelCut()
     }
   }
 
   render() {
-    if (this._signboard) {
+    if (this.#signboard) {
       return
     }
 
     if (this.span.isGridRendered) {
       // Append a new entity to the type
-      this._signboard = this.#createSignboardElement()
-      this.span.addEntityElementToGridElement(this._signboard.element)
+      this.#signboard = this.#createSignboardElement()
+      this.span.addEntityElementToGridElement(this.#signboard.element)
 
       this.reflectTypeGapInTheHeight()
 
@@ -318,20 +333,20 @@ export default class EntityInstance {
 
       // When scrolling out of a selected entity and then scrolling in again,
       // the selected state will be highlighted.
-      if (this._isSelected) {
-        this._signboard.select()
+      if (this.#isSelected) {
+        this.#signboard.select()
       }
     }
   }
 
   updateElement() {
-    if (this._signboard) {
-      this._signboard = this._signboard.replaceWith(
+    if (this.#signboard) {
+      this.#signboard = this.#signboard.replaceWith(
         this.#createSignboardElement()
       )
 
       // Re-select a new entity element.
-      if (this._isSelected) {
+      if (this.#isSelected) {
         this.#selectElement()
       }
 
@@ -347,29 +362,29 @@ export default class EntityInstance {
   }
 
   reflectTypeGapInTheHeight() {
-    if (this.isDenotation && this._signboard) {
-      this._signboard.reflectTypeGapInTheHeight(this._typeGap.height)
+    if (this.isDenotation && this.#signboard) {
+      this.#signboard.reflectTypeGapInTheHeight(this.#typeGap.height)
     }
   }
 
   clarifyLabel() {
-    if (this._signboard) {
-      this._signboard.clarifyLabel()
+    if (this.#signboard) {
+      this.#signboard.clarifyLabel()
     }
-    this._isLabelClarified = true
+    this.#isLabelClarified = true
   }
 
   declarifyLabel() {
-    if (!this._isHovered && this._signboard) {
-      this._signboard.declarifyLabel()
+    if (!this.#isHovered && this.#signboard) {
+      this.#signboard.declarifyLabel()
     }
-    this._isLabelClarified = false
+    this.#isLabelClarified = false
   }
 
   erase() {
-    if (this._signboard) {
-      this._signboard.remove()
-      this._signboard = null
+    if (this.#signboard) {
+      this.#signboard.remove()
+      this.#signboard = null
       this.span.updateSelfAndAncestorsGridPosition()
     }
   }
@@ -378,21 +393,21 @@ export default class EntityInstance {
     const signboard = new SignboardHTMLElement(
       this,
       this.isDenotation ? 'denotation' : 'block',
-      `${this._editorID}__E${this.id.replace(/[:¥.]/g, '')}`
+      `${this.#editorID}__E${this.id.replace(/[:¥.]/g, '')}`
     )
 
     // Highlight relations when related entity is hovered.
     signboard.addEventListener('mouseenter', () => {
       signboard.clarifyLabel()
       this.#pointUpRelations()
-      this._isHovered = true
+      this.#isHovered = true
     })
     signboard.addEventListener('mouseleave', () => {
-      if (!this._isLabelClarified) {
+      if (!this.#isLabelClarified) {
         signboard.declarifyLabel()
       }
       this.#updateRelationHighlighting()
-      this._isHovered = false
+      this.#isHovered = false
     })
 
     return signboard
@@ -401,7 +416,7 @@ export default class EntityInstance {
   #selectElement() {
     // Force rendering to select and focus on entities outside the display area.
     this.span.forceRenderGrid()
-    this._signboard.select()
+    this.#signboard.select()
 
     // The block span renders as a div HTML element.
     // Because the positioning of div HTML elements is slower than that of span HTML elements,
@@ -419,9 +434,9 @@ export default class EntityInstance {
   /** @return {import('./AnnotationModel/DefinitionContainer/index.js').default} */
   get #definitionContainer() {
     if (this.isDenotation) {
-      return this._typeDefinition.denotation
+      return this.#typeDefinition.denotation
     } else if (this.isBlock) {
-      return this._typeDefinition.block
+      return this.#typeDefinition.block
     } else {
       throw 'unknown entity type'
     }
@@ -429,7 +444,7 @@ export default class EntityInstance {
 
   get #displayName() {
     return getDisplayName(
-      this._namespace,
+      this.#namespace,
       this.typeName,
       this.#definitionContainer.getLabel(this.typeName)
     )
@@ -437,7 +452,7 @@ export default class EntityInstance {
 
   get #href() {
     return getURI(
-      this._namespace,
+      this.#namespace,
       this.typeName,
       this.#definitionContainer.getURI(this.typeName)
     )
