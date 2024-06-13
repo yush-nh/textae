@@ -7,12 +7,12 @@ import IdIssueContainer from './IdIssueContainer'
 
 export default class EntityInstanceContainer extends IdIssueContainer {
   #editorID
-  #parent
+  #annotationModel
   #typeGap
   #namespace
   #toolBarHeight
 
-  constructor(editorID, eventEmitter, parent, typeGap, namespace) {
+  constructor(editorID, eventEmitter, annotationModel, typeGap, namespace) {
     super(eventEmitter, 'entity', (instance) =>
       instance.isDenotation ? 'T' : 'B'
     )
@@ -21,22 +21,22 @@ export default class EntityInstanceContainer extends IdIssueContainer {
 
     // Since the attribute instance container and the entity instance container are cross-referenced,
     // the entity instance retrieves other containers dynamically.
-    this.#parent = parent
+    this.#annotationModel = annotationModel
 
     this.#typeGap = typeGap
     this.#namespace = namespace
   }
 
   get #spanInstanceContainer() {
-    return this.#parent.spanInstanceContainer
+    return this.#annotationModel.spanInstanceContainer
   }
 
   get #attributeInstanceContainer() {
-    return this.#parent.attributeInstanceContainer
+    return this.#annotationModel.attributeInstanceContainer
   }
 
   get #relationInstanceContainer() {
-    return this.#parent.relation
+    return this.#annotationModel.relation
   }
 
   /** @param {number} value */
@@ -52,7 +52,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       this.#attributeInstanceContainer,
       this.#relationInstanceContainer,
       this.#typeGap,
-      this.#parent.typeDefinition,
+      this.#annotationModel.typeDefinition,
       span,
       denotation.obj,
       this.#namespace,
@@ -81,7 +81,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       this.#attributeInstanceContainer,
       this.#relationInstanceContainer,
       this.#typeGap,
-      this.#parent.typeDefinition,
+      this.#annotationModel.typeDefinition,
       span,
       newValue.typeName,
       this.#namespace,
