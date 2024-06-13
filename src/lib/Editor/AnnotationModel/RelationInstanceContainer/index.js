@@ -34,8 +34,8 @@ export default class RelationInstanceContainer extends IdIssueContainer {
       this.#eventEmitter,
       this.#annotationModel.entityInstanceContainer,
       this.#annotationModel.attributeInstanceContainer,
-      relation,
       this.#namespaceInstanceContainer,
+      relation,
       this.#definitionContainer,
       this.#toolBarHeight
     )
@@ -51,8 +51,8 @@ export default class RelationInstanceContainer extends IdIssueContainer {
             this.#eventEmitter,
             this.#annotationModel.entityInstanceContainer,
             this.#annotationModel.attribute,
-            newValue,
             this.#namespaceInstanceContainer,
+            newValue,
             this.#definitionContainer,
             this.#toolBarHeight
           )

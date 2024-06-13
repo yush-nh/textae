@@ -27,8 +27,8 @@ export default class RelationInstance {
     eventEmitter,
     entityInstanceContainer,
     attributeInstanceContainer,
-    { id, pred, subj, obj },
     namespaceInstanceContainer,
+    { id, pred, subj, obj },
     definitionContainer,
     toolBarHeight
   ) {
