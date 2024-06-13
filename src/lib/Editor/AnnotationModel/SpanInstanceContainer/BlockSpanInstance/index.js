@@ -8,6 +8,9 @@ import getAnnotationBox from '../../getAnnotationBox'
 // Leave a gap between the text and the block border.
 const gapBetweenText = 8
 export default class BlockSpanInstance extends SpanInstance {
+  #entityInstanceContainer
+  #textBox
+
   /**
    *
    * @param {import('../../createTextBox/TextBox').default} textBox
@@ -22,8 +25,8 @@ export default class BlockSpanInstance extends SpanInstance {
     textBox
   ) {
     super(editorID, editorHTMLElement, begin, end, spanInstanceContainer)
-    this._entityInstanceContainer = entityInstanceContainer
-    this._textBox = textBox
+    this.#entityInstanceContainer = entityInstanceContainer
+    this.#textBox = textBox
   }
 
   // Utility to distinguish with other type spans.
@@ -74,7 +77,7 @@ export default class BlockSpanInstance extends SpanInstance {
 
       const clientRect = this.element.getBoundingClientRect()
       const offsetLeft =
-        clientRect.left - this._textBox.boundingClientRect.left - gapBetweenText
+        clientRect.left - this.#textBox.boundingClientRect.left - gapBetweenText
       const width = clientRect.width + gapBetweenText
 
       setPosition(
@@ -114,7 +117,7 @@ export default class BlockSpanInstance extends SpanInstance {
   }
 
   get offsetCenterOfGrid() {
-    return this._textBox.boundingClientRect.width - 58
+    return this.#textBox.boundingClientRect.width - 58
   }
 
   get offsetTopOfGrid() {
@@ -130,7 +133,7 @@ export default class BlockSpanInstance extends SpanInstance {
   }
 
   get offsetLeftOfGrid() {
-    return this._textBox.boundingClientRect.width - 108
+    return this.#textBox.boundingClientRect.width - 108
   }
 
   updateGridPosition() {
@@ -164,7 +167,7 @@ export default class BlockSpanInstance extends SpanInstance {
   }
 
   get _offsetTop() {
-    return this._clientTop - this._textBox.boundingClientRect.top
+    return this._clientTop - this.#textBox.boundingClientRect.top
   }
 
   get _backgroundId() {
@@ -192,7 +195,7 @@ export default class BlockSpanInstance extends SpanInstance {
   }
 
   _shiftUpGrid(y) {
-    return y - this._textBox.lineHeight / 2 + 20
+    return y - this.#textBox.lineHeight / 2 + 20
   }
 
   get _contentHTML() {
