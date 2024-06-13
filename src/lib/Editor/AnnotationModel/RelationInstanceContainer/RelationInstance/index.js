@@ -214,11 +214,7 @@ export default class RelationInstance {
 
   updateElement() {
     if (this._arrow) {
-      this._arrow.update(
-        this.isSelected || this._relation.isHovered,
-        this.isSelected || this._relation.isHovered,
-        this.isSelected || this._relation.isHovered
-      )
+      this._arrow.update(this.isSelected, this.isSelected, this.isSelected)
     }
 
     if (this._label) {
