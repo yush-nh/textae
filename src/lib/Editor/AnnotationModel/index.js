@@ -206,8 +206,8 @@ export default class AnnotationModel {
       namespace,
       spanInstanceContainer,
       entityInstanceContainer,
-      attributeInstanceContainer,
       relationInstanceContainer,
+      attributeInstanceContainer,
       rawData
     )
     annotationParser.parse()

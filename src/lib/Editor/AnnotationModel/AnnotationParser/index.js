@@ -17,15 +17,15 @@ export default class AnnotationParser {
     namespaceInstanceContainer,
     spanInstanceContainer,
     entityInstanceContainer,
-    attributeInstanceContainer,
     relationInstanceContainer,
+    attributeInstanceContainer,
     rowData
   ) {
     this.#namespaceInstanceContainer = namespaceInstanceContainer
     this.#spanInstanceContainer = spanInstanceContainer
     this.#entityInstanceContainer = entityInstanceContainer
-    this.#attributeInstanceContainer = attributeInstanceContainer
     this.#relationInstanceContainer = relationInstanceContainer
+    this.#attributeInstanceContainer = attributeInstanceContainer
     this.#rowData = rowData
   }
 
