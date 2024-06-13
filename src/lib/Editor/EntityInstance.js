@@ -42,8 +42,6 @@ export default class EntityInstance {
     id = null
   ) {
     this.#editorID = editorID
-    this.span = span
-    this.typeName = typeName
     this.#id = id
     this.#attributeInstanceContainer = attributeInstanceContainer
     this.#relationInstanceContainer = relationInstanceContainer
@@ -51,6 +49,10 @@ export default class EntityInstance {
     this.#typeDefinition = typeDefinition
     this.#namespace = namespace
     this.#toolBarHeight = toolBarHeight
+
+    // Preprocessing is required, so use the property
+    this.span = span
+    this.typeName = typeName
 
     this.#isSelected = false
     this.#isHovered = false
