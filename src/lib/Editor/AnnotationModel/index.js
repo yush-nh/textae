@@ -16,6 +16,7 @@ import DefinitionContainer from './DefinitionContainer'
 import AttributeDefinitionContainer from '../AttributeDefinitionContainer'
 import getAnnotationBox from './getAnnotationBox'
 import LineHeightAuto from './LineHeightAuto'
+import hasCharacters from '../UseCase/Presenter/EditModeSwitch/hasCharacters'
 
 export default class AnnotationModel {
   #sourceDoc
@@ -295,6 +296,10 @@ export default class AnnotationModel {
 
   get textSelection() {
     return this.#spanInstanceContainer.textSelection
+  }
+
+  hasCharacters(spanConfig) {
+    return hasCharacters(this, spanConfig)
   }
 
   getInstanceContainerFor(annotationType) {

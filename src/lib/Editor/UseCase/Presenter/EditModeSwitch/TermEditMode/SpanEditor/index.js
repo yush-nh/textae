@@ -2,7 +2,6 @@ import alertifyjs from 'alertifyjs'
 import clearTextSelection from '../../clearTextSelection'
 import create from './create'
 import shrinkSpan from '../../shrinkSpan'
-import hasCharacters from '../../hasCharacters'
 import getIsDelimiterFunc from '../../../getIsDelimiterFunc'
 import SelectionWrapper from '../../SelectionWrapper'
 import isPositionBetweenSpan from './isPositionBetweenSpan'
@@ -597,7 +596,7 @@ export default class SpanEditor {
   }
 
   #create() {
-    if (hasCharacters(this.#annotationModel, this.#spanConfig)) {
+    if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
       this.#selectionModel.removeAll()
       create(
         this.#annotationModel.sourceDoc,
