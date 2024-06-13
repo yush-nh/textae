@@ -170,15 +170,15 @@ export default class SpanInstance {
   }
 
   get isSelected() {
-    return this._selected
+    return this._isSelected
   }
 
   select() {
-    this._selected = true
+    this._isSelected = true
   }
 
   deselect() {
-    this._selected = false
+    this._isSelected = false
   }
 
   focus() {
