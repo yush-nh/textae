@@ -126,6 +126,6 @@ export default class SelectionModel {
   }
 
   #isDenotation(id) {
-    return this.#annotationModel.entity.hasDenotation(id)
+    return this.#annotationModel.entityInstanceContainer.hasDenotation(id)
   }
 }

@@ -32,7 +32,7 @@ export default class RelationInstanceContainer extends IdIssueContainer {
     return new RelationInstance(
       this.#editorHTMLElement,
       this.#eventEmitter,
-      this.#annotationModel.entity,
+      this.#annotationModel.entityInstanceContainer,
       this.#annotationModel.attributeInstanceContainer,
       relation,
       this.#namespace,
@@ -49,7 +49,7 @@ export default class RelationInstanceContainer extends IdIssueContainer {
         : new RelationInstance(
             this.#editorHTMLElement,
             this.#eventEmitter,
-            this.#annotationModel.entity,
+            this.#annotationModel.entityInstanceContainer,
             this.#annotationModel.attribute,
             newValue,
             this.#namespace,

@@ -9,7 +9,7 @@ export default class CreateAttributeToTheLatestEntityCommand extends CreateComma
   }
 
   execute() {
-    const subj = this._annotationModel.entity.all.pop().id
+    const subj = this._annotationModel.entityInstanceContainer.all.pop().id
     this._instance.subj = subj
     return super.execute()
   }

@@ -241,7 +241,9 @@ export default class MouseEventHandler {
   }
 
   #typeValuesClicked(event, entityID) {
-    if (this.#annotationModel.entity.get(entityID).isDenotation) {
+    if (
+      this.#annotationModel.entityInstanceContainer.get(entityID).isDenotation
+    ) {
       if (event.ctrlKey || event.metaKey) {
         this.#selectionModel.entity.toggle(entityID)
       } else {

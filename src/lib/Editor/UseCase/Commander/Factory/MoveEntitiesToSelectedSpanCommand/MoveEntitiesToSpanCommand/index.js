@@ -30,7 +30,10 @@ export default class MoveEntitiesToSpanCommand extends AnnotationCommand {
       })
       .join(', ')}`
 
-    this._annotationModel.entity.moveEntities(this._span, this._entities)
+    this._annotationModel.entityInstanceContainer.moveEntities(
+      this._span,
+      this._entities
+    )
 
     commandLog(this, message)
   }

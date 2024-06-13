@@ -236,7 +236,7 @@ export default class MouseEventHandler {
   }
 
   #typeValuesClicked(event, entityID) {
-    const entity = this.#annotationModel.entity.get(entityID)
+    const entity = this.#annotationModel.entityInstanceContainer.get(entityID)
 
     if (entity.isBlock) {
       if (event.ctrlKey || event.metaKey) {

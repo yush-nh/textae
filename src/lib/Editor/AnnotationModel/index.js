@@ -23,6 +23,7 @@ export default class AnnotationModel {
   #textBox
   #lineHeightAuto
   #span
+  #entity
   #attribute
   #typeDefinition
   #editorHTMLElement
@@ -54,14 +55,14 @@ export default class AnnotationModel {
       relationDefinitionContainer
     )
     this.#typeGap = new TypeGap(() => {
-      for (const entity of this.entity.denotations) {
+      for (const entity of this.entityInstanceContainer.denotations) {
         entity.reflectTypeGapInTheHeight()
       }
       this.#textBox.updateLineHeight()
       eventEmitter.emit('textae-event.annotation-data.entity-gap.change')
     })
 
-    this.entity = new EntityInstanceContainer(
+    this.#entity = new EntityInstanceContainer(
       editorID,
       eventEmitter,
       this,
@@ -74,7 +75,7 @@ export default class AnnotationModel {
     )
     this.#attribute = new AttributeInstanceContainer(
       eventEmitter,
-      this.entity,
+      this.#entity,
       this.relation,
       this.namespace,
       this.attributeDefinitionContainer
@@ -99,20 +100,20 @@ export default class AnnotationModel {
       editorID,
       editorHTMLElement,
       eventEmitter,
-      this.entity,
+      this.#entity,
       this.#textBox
     )
 
     this.denotationDefinitionContainer = new DefinitionContainer(
       eventEmitter,
       'entity',
-      () => this.entity.denotations,
+      () => this.#entity.denotations,
       '#77DDDD'
     )
     const blockDefinitionContainer = new DefinitionContainer(
       eventEmitter,
       'entity',
-      () => this.entity.blocks,
+      () => this.#entity.blocks,
       '#77DDDD'
     )
     this.#typeDefinition = new TypeDefinition(
@@ -151,7 +152,7 @@ export default class AnnotationModel {
     // Bind type-definition events.
     eventEmitter
       .on('textae-event.type-definition.entity.change', (typeName) => {
-        for (const entity of this.entity.all) {
+        for (const entity of this.#entity.all) {
           // If the type name ends in a wildcard, look for the DOMs to update with a forward match.
           if (
             entity.typeName === typeName ||
@@ -163,10 +164,10 @@ export default class AnnotationModel {
         }
       })
       .on('textae-event.type-definition.attribute.change', (pred) =>
-        this.entity.redrawEntitiesWithSpecifiedAttribute(pred)
+        this.#entity.redrawEntitiesWithSpecifiedAttribute(pred)
       )
       .on('textae-event.type-definition.attribute.move', (pred) =>
-        this.entity.redrawEntitiesWithSpecifiedAttribute(pred)
+        this.#entity.redrawEntitiesWithSpecifiedAttribute(pred)
       )
       .on('textae-event.type-definition.relation.change', (typeName) => {
         for (const relation of this.relation.all) {
@@ -196,14 +197,14 @@ export default class AnnotationModel {
     const {
       namespace,
       spanInstanceContainer,
-      entity,
+      entityInstanceContainer,
       attributeInstanceContainer,
       relation
     } = this
     const annotationParser = new AnnotationParser(
       namespace,
       spanInstanceContainer,
-      entity,
+      entityInstanceContainer,
       attributeInstanceContainer,
       relation,
       rawData
@@ -271,6 +272,10 @@ export default class AnnotationModel {
     return this.#span
   }
 
+  get entityInstanceContainer() {
+    return this.#entity
+  }
+
   get attributeInstanceContainer() {
     return this.#attribute
   }
@@ -282,7 +287,7 @@ export default class AnnotationModel {
       case 'relation':
         return this.relation
       case 'entity':
-        return this.entity
+        return this.#entity
       case 'attribute':
         return this.#attribute
     }
@@ -317,7 +322,7 @@ export default class AnnotationModel {
 
   /** @param {number} value */
   set toolBarHeight(value) {
-    this.entity.toolBarHeight = value
+    this.#entity.toolBarHeight = value
     this.relation.toolBarHeight = value
   }
 
@@ -330,11 +335,11 @@ export default class AnnotationModel {
 
   focusDenotation(denotationID) {
     console.assert(
-      this.entity.hasDenotation(denotationID),
+      this.#entity.hasDenotation(denotationID),
       'The denotation does not exist.'
     )
 
-    const { span } = this.entity.get(denotationID)
+    const { span } = this.#entity.get(denotationID)
     span.focus()
   }
 

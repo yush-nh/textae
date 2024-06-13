@@ -66,10 +66,10 @@ export default class Presenter {
 
         switch (mode) {
           case MODE.VIEW:
-            annotationModel.entity.clarifyLabelOfAll()
+            annotationModel.entityInstanceContainer.clarifyLabelOfAll()
             break
           default:
-            annotationModel.entity.declarifyLabelOfAll()
+            annotationModel.entityInstanceContainer.declarifyLabelOfAll()
         }
       })
 
