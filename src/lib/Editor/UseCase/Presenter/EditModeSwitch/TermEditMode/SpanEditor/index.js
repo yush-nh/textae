@@ -566,7 +566,7 @@ export default class SpanEditor {
       if (
         isPositionBetweenSpan(
           this.#selectionModel.span.single,
-          this.#annotationModel.spanInstanceContainer.textSelection.focus
+          this.#annotationModel.textSelection.focus
         )
       ) {
         return this.#selectionModel.span.single.element.id

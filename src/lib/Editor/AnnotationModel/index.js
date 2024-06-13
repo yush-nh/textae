@@ -293,6 +293,10 @@ export default class AnnotationModel {
     return this.#namespaceInstanceContainer
   }
 
+  get textSelection() {
+    return this.#spanInstanceContainer.textSelection
+  }
+
   getInstanceContainerFor(annotationType) {
     switch (annotationType) {
       case 'span':
