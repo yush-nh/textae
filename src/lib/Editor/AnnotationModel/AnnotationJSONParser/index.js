@@ -3,7 +3,7 @@ import parseTracks from './parseTracks'
 import getAllSpansOf from './getAllSpansOf'
 import validateAnnotation from './validateAnnotation'
 
-export default class AnnotationParser {
+export default class AnnotationJSONParser {
   #namespaceInstanceContainer
   #spanInstanceContainer
   #entityInstanceContainer

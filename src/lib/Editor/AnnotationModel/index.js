@@ -3,7 +3,7 @@ import SpanInstanceContainer from './SpanInstanceContainer'
 import AttributeInstanceContainer from './AttributeInstanceContainer'
 import RelationInstanceContainer from './RelationInstanceContainer'
 import EntityInstanceContainer from './EntityInstanceContainer'
-import AnnotationParser from './AnnotationParser'
+import AnnotationJSONParser from './AnnotationJSONParser'
 import clearAnnotationModel from './clearAnnotationModel'
 import toDenotations from './toDenotations'
 import toRelations from './toRelations'
@@ -202,7 +202,7 @@ export default class AnnotationModel {
       attributeInstanceContainer,
       relationInstanceContainer
     } = this
-    const annotationParser = new AnnotationParser(
+    const annotationParser = new AnnotationJSONParser(
       namespace,
       spanInstanceContainer,
       entityInstanceContainer,
