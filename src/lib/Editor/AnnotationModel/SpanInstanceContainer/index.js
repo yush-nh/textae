@@ -12,7 +12,6 @@ import isBoundaryCrossingWithOtherSpans from '../isBoundaryCrossingWithOtherSpan
 import rangeFrom from './rangeFrom'
 import getCurrentMaxHeight from './getCurrentMaxHeight'
 import TextSelection from './TextSelection'
-import validateNewBlockSpan from '../../UseCase/Presenter/EditModeSwitch/BlockEditMode/validateNewBlockSpan'
 
 export default class SpanInstanceContainer {
   #editorID
@@ -141,8 +140,29 @@ export default class SpanInstanceContainer {
     return false
   }
 
-  validateNewBlockSpan(begin, end, spanID = null) {
-    return validateNewBlockSpan(this, begin, end, spanID)
+  validateNewBlockSpan(begin, end, spanID) {
+    // The span cross exists spans.
+    if (this.isBoundaryCrossingWithOtherSpans(begin, end)) {
+      alertifyjs.warning(
+        'A span cannot be modified to make a boundary crossing.'
+      )
+      return false
+    }
+
+    if (this.doesParentOrSameSpanExist(begin, end)) {
+      return false
+    }
+
+    // There is a BlockSpan that is a child.
+    if (
+      this.hasBlockSpanBetween(begin, end, {
+        excluded: spanID
+      })
+    ) {
+      return false
+    }
+
+    return true
   }
 
   hasParentOf(begin, end, spanID) {
