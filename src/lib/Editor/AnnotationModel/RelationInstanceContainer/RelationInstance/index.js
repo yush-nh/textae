@@ -37,7 +37,6 @@ export default class RelationInstance {
     this.#entityInstanceContainer = entityInstanceContainer
     this.#attributeInstanceContainer = attributeInstanceContainer
     this.#id = id
-    this.typeName = pred
     this.#subj = subj
     this.#obj = obj
     this.#namespaceInstanceContainer = namespaceInstanceContainer
@@ -49,6 +48,9 @@ export default class RelationInstance {
     // When you click on the body and deselect the relation, the display of the relation becomes non-hover.
     // To make this distinction, the hover state is retained.
     this.#isHovered = false
+
+    // Preprocessing is required, so use the property
+    this.typeName = pred
   }
 
   get id() {
