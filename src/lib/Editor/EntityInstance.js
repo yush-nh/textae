@@ -35,11 +35,11 @@ export default class EntityInstance {
     editorID,
     attributeInstanceContainer,
     relationInstanceContainer,
+    namespaceInstanceContainer,
     typeGap,
     typeDefinition,
     span,
     typeName,
-    namespaceInstanceContainer,
     toolBarHeight,
     id = null
   ) {

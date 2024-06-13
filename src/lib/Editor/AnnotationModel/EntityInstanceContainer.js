@@ -51,11 +51,11 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       this.#editorID,
       this.#attributeInstanceContainer,
       this.#relationInstanceContainer,
+      this.#namespace,
       this.#typeGap,
       this.#annotationModel.typeDefinition,
       span,
       denotation.obj,
-      this.#namespace,
       this.#toolBarHeight,
       denotation.id
     )
@@ -80,11 +80,11 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       this.#editorID,
       this.#attributeInstanceContainer,
       this.#relationInstanceContainer,
+      this.#namespace,
       this.#typeGap,
       this.#annotationModel.typeDefinition,
       span,
       newValue.typeName,
-      this.#namespace,
       this.#toolBarHeight
     )
 
