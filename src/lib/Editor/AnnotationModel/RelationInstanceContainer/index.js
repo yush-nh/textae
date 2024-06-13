@@ -4,7 +4,7 @@ import IdIssueContainer from '../IdIssueContainer'
 export default class RelationInstanceContainer extends IdIssueContainer {
   #editorHTMLElement
   #eventEmitter
-  #parentContainer
+  #annotationModel
   #namespace
   #definitionContainer
   #toolBarHeight
@@ -12,14 +12,14 @@ export default class RelationInstanceContainer extends IdIssueContainer {
   constructor(
     editorHTMLElement,
     eventEmitter,
-    parentContainer,
+    annotationModel,
     namespace,
     definitionContainer
   ) {
     super(eventEmitter, 'relation', () => 'R')
     this.#editorHTMLElement = editorHTMLElement
     this.#eventEmitter = eventEmitter
-    this.#parentContainer = parentContainer
+    this.#annotationModel = annotationModel
     this.#namespace = namespace
     this.#definitionContainer = definitionContainer
   }
@@ -33,8 +33,8 @@ export default class RelationInstanceContainer extends IdIssueContainer {
     return new RelationInstance(
       this.#editorHTMLElement,
       this.#eventEmitter,
-      this.#parentContainer.entity,
-      this.#parentContainer.attributeInstanceContainer,
+      this.#annotationModel.entity,
+      this.#annotationModel.attributeInstanceContainer,
       relation,
       this.#namespace,
       this.#definitionContainer,
@@ -50,8 +50,8 @@ export default class RelationInstanceContainer extends IdIssueContainer {
         : new RelationInstance(
             this.#editorHTMLElement,
             this.#eventEmitter,
-            this.#parentContainer.entity,
-            this.#parentContainer.attribute,
+            this.#annotationModel.entity,
+            this.#annotationModel.attribute,
             newValue,
             this.#namespace,
             this.#definitionContainer,
