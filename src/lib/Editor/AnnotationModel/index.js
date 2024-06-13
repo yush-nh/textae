@@ -65,8 +65,7 @@ export default class AnnotationModel {
       editorID,
       eventEmitter,
       this,
-      this.#typeGap,
-      this.namespace
+      this.#typeGap
     )
 
     this.attributeDefinitionContainer = new AttributeDefinitionContainer(
