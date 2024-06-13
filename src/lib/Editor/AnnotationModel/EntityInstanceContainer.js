@@ -9,7 +9,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
   #editorID
   #annotationModel
   #typeGap
-  #namespace
+  #namespaceInstanceContainer
   #toolBarHeight
 
   constructor(editorID, eventEmitter, annotationModel, typeGap) {
@@ -24,7 +24,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
     this.#annotationModel = annotationModel
 
     this.#typeGap = typeGap
-    this.#namespace = annotationModel.namespace
+    this.#namespaceInstanceContainer = annotationModel.namespace
   }
 
   get #spanInstanceContainer() {
@@ -51,7 +51,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       this.#editorID,
       this.#attributeInstanceContainer,
       this.#relationInstanceContainer,
-      this.#namespace,
+      this.#namespaceInstanceContainer,
       this.#typeGap,
       this.#annotationModel.typeDefinition,
       span,
@@ -80,7 +80,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       this.#editorID,
       this.#attributeInstanceContainer,
       this.#relationInstanceContainer,
-      this.#namespace,
+      this.#namespaceInstanceContainer,
       this.#typeGap,
       this.#annotationModel.typeDefinition,
       span,
