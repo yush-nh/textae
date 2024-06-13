@@ -198,21 +198,8 @@ export default class AnnotationModel {
     this.#textBox.render(this.sourceDoc)
 
     clearAnnotationModel(this)
-    const {
-      namespaceInstanceContainer,
-      spanInstanceContainer,
-      entityInstanceContainer,
-      attributeInstanceContainer,
-      relationInstanceContainer
-    } = this
-    const annotationEvaluator = new AnnotationEvaluator(
-      namespaceInstanceContainer,
-      spanInstanceContainer,
-      entityInstanceContainer,
-      relationInstanceContainer,
-      attributeInstanceContainer,
-      rawData
-    )
+
+    const annotationEvaluator = new AnnotationEvaluator(this, rawData)
     annotationEvaluator.eval()
 
     this.#clearAndDrawAllAnnotations()

@@ -13,14 +13,14 @@ export default class AnnotationEvaluator {
   #rootReject
   #trackRejects
 
-  constructor(
-    namespaceInstanceContainer,
-    spanInstanceContainer,
-    entityInstanceContainer,
-    relationInstanceContainer,
-    attributeInstanceContainer,
-    rowData
-  ) {
+  constructor(annotationModel, rowData) {
+    const {
+      namespaceInstanceContainer,
+      spanInstanceContainer,
+      entityInstanceContainer,
+      attributeInstanceContainer,
+      relationInstanceContainer
+    } = annotationModel
     this.#namespaceInstanceContainer = namespaceInstanceContainer
     this.#spanInstanceContainer = spanInstanceContainer
     this.#entityInstanceContainer = entityInstanceContainer
