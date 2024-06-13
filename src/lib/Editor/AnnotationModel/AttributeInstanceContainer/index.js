@@ -3,24 +3,24 @@ import IdIssueContainer from '../IdIssueContainer'
 import MediaDictionary from './MediaDictionary'
 
 export default class AttributeInstanceContainer extends IdIssueContainer {
-  #entityContainer
-  #relationContainer
-  #namespace
+  #entityInstanceContainer
+  #relationInstanceContainer
+  #namespaceInstanceContainer
   #definitionContainer
   #mediaDictionary
 
   constructor(
     emitter,
-    entityContainer,
-    relationContainer,
-    namespace,
+    entityInstanceContainer,
+    relationInstanceContainer,
+    namespaceInstanceContainer,
     definitionContainer
   ) {
     super(emitter, 'attribute', () => 'A')
 
-    this.#entityContainer = entityContainer
-    this.#relationContainer = relationContainer
-    this.#namespace = namespace
+    this.#entityInstanceContainer = entityInstanceContainer
+    this.#relationInstanceContainer = relationInstanceContainer
+    this.#namespaceInstanceContainer = namespaceInstanceContainer
     this.#definitionContainer = definitionContainer
     this.#mediaDictionary = new MediaDictionary()
   }
@@ -28,9 +28,9 @@ export default class AttributeInstanceContainer extends IdIssueContainer {
   _toInstance(attribute) {
     return new AttributeInstance(
       attribute,
-      this.#entityContainer,
-      this.#relationContainer,
-      this.#namespace,
+      this.#entityInstanceContainer,
+      this.#relationInstanceContainer,
+      this.#namespaceInstanceContainer,
       this.#definitionContainer,
       this.#mediaDictionary
     )
