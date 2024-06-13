@@ -12,8 +12,8 @@ const MinimumDistance = DistanceToShift * 3 + 4
 export default class EntityInstance {
   #editorID
   #id
-  #attributeContainer
-  #relationContainer
+  #attributeInstanceContainer
+  #relationInstanceContainer
   #typeGap
   #typeDefinition
   #namespace
@@ -31,8 +31,8 @@ export default class EntityInstance {
    */
   constructor(
     editorID,
-    attributeContainer,
-    relationContainer,
+    attributeInstanceContainer,
+    relationInstanceContainer,
     typeGap,
     typeDefinition,
     span,
@@ -45,8 +45,8 @@ export default class EntityInstance {
     this.span = span
     this.typeName = typeName
     this.#id = id
-    this.#attributeContainer = attributeContainer
-    this.#relationContainer = relationContainer
+    this.#attributeInstanceContainer = attributeInstanceContainer
+    this.#relationInstanceContainer = relationInstanceContainer
     this.#typeGap = typeGap
     this.#typeDefinition = typeDefinition
     this.#namespace = namespace
@@ -102,7 +102,7 @@ export default class EntityInstance {
   get typeValues() {
     return new TypeValues(
       this.#typeName,
-      this.#attributeContainer.getAttributesFor(this.#id)
+      this.#attributeInstanceContainer.getAttributesFor(this.#id)
     )
   }
 
@@ -116,15 +116,15 @@ export default class EntityInstance {
    * @returns {import('./AnnotationModel/AttributeInstanceContainer/AttributeInstance.js').AttributeInstance[]}
    */
   get attributes() {
-    return this.#attributeContainer.getAttributesFor(this.#id)
+    return this.#attributeInstanceContainer.getAttributesFor(this.#id)
   }
 
   get relationsWhereThisIsSource() {
-    return this.#relationContainer.all.filter((r) => r.subj === this.id)
+    return this.#relationInstanceContainer.all.filter((r) => r.subj === this.id)
   }
 
   get relationsWhereThisIsTarget() {
-    return this.#relationContainer.all.filter((r) => r.obj === this.id)
+    return this.#relationInstanceContainer.all.filter((r) => r.obj === this.id)
   }
 
   get hasMultipleEndpoints() {
