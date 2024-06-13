@@ -3,7 +3,7 @@ import parseTracks from './parseTracks'
 import getAllSpansOf from './getAllSpansOf'
 import validateAnnotation from './validateAnnotation'
 
-export default class AnnotationJSONParser {
+export default class AnnotationEvaluator {
   #namespaceInstanceContainer
   #spanInstanceContainer
   #entityInstanceContainer
@@ -29,7 +29,7 @@ export default class AnnotationJSONParser {
     this.#rowData = rowData
   }
 
-  parse() {
+  eval() {
     // Read namespaces
     if (this.#rowData.namespaces) {
       this.#namespaceInstanceContainer.addSource(

@@ -3,7 +3,7 @@ import SpanInstanceContainer from './SpanInstanceContainer'
 import AttributeInstanceContainer from './AttributeInstanceContainer'
 import RelationInstanceContainer from './RelationInstanceContainer'
 import EntityInstanceContainer from './EntityInstanceContainer'
-import AnnotationJSONParser from './AnnotationJSONParser'
+import AnnotationEvaluator from './AnnotationEvaluator'
 import clearAnnotationModel from './clearAnnotationModel'
 import toDenotations from './toDenotations'
 import toRelations from './toRelations'
@@ -205,7 +205,7 @@ export default class AnnotationModel {
       attributeInstanceContainer,
       relationInstanceContainer
     } = this
-    const annotationParser = new AnnotationJSONParser(
+    const annotationEvaluator = new AnnotationEvaluator(
       namespaceInstanceContainer,
       spanInstanceContainer,
       entityInstanceContainer,
@@ -213,15 +213,15 @@ export default class AnnotationModel {
       attributeInstanceContainer,
       rawData
     )
-    annotationParser.parse()
+    annotationEvaluator.eval()
 
     this.#clearAndDrawAllAnnotations()
 
     this.#eventEmitter.emit(
       'textae-event.annotation-data.all.change',
       this,
-      annotationParser.hasMultiTracks,
-      annotationParser.rejects
+      annotationEvaluator.hasMultiTracks,
+      annotationEvaluator.rejects
     )
 
     // When reading some annotation Grid may be drawn out of alignment.
