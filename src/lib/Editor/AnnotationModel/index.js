@@ -51,7 +51,6 @@ export default class AnnotationModel {
       editorHTMLElement,
       eventEmitter,
       this,
-      this.namespace,
       relationDefinitionContainer
     )
     this.#typeGap = new TypeGap(() => {

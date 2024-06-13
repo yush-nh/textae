@@ -13,14 +13,13 @@ export default class RelationInstanceContainer extends IdIssueContainer {
     editorHTMLElement,
     eventEmitter,
     annotationModel,
-    namespace,
     definitionContainer
   ) {
     super(eventEmitter, 'relation', () => 'R')
     this.#editorHTMLElement = editorHTMLElement
     this.#eventEmitter = eventEmitter
     this.#annotationModel = annotationModel
-    this.#namespace = namespace
+    this.#namespace = annotationModel.namespace
     this.#definitionContainer = definitionContainer
   }
 
