@@ -1,3 +1,4 @@
+import alertifyjs from 'alertifyjs'
 import updateSpanTree from './updateSpanTree'
 import spanComparator from './spanComparator'
 import {
@@ -11,7 +12,6 @@ import isBoundaryCrossingWithOtherSpans from '../isBoundaryCrossingWithOtherSpan
 import rangeFrom from './rangeFrom'
 import getCurrentMaxHeight from './getCurrentMaxHeight'
 import TextSelection from './TextSelection'
-import validateNewDenotationSpan from '../../UseCase/Presenter/EditModeSwitch/TermEditMode/SpanEditor/validateNewDenotationSpan'
 
 export default class SpanInstanceContainer {
   #editorID
@@ -99,7 +99,25 @@ export default class SpanInstanceContainer {
   }
 
   validateNewDenotationSpan(begin, end) {
-    return validateNewDenotationSpan(this, begin, end)
+    // The span cross exists spans.
+    if (this.isBoundaryCrossingWithOtherSpans(begin, end)) {
+      alertifyjs.warning(
+        'A span cannot be modified to make a boundary crossing.'
+      )
+      return false
+    }
+
+    // The span exists already.
+    if (this.hasDenotationSpan(begin, end)) {
+      return false
+    }
+
+    // There is a BlockSpan that is a child.
+    if (this.hasBlockSpanBetween(begin, end)) {
+      return false
+    }
+
+    return true
   }
 
   hasBlockSpan(begin, end) {

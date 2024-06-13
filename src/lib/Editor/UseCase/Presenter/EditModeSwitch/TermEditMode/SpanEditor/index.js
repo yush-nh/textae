@@ -6,7 +6,6 @@ import getIsDelimiterFunc from '../../../getIsDelimiterFunc'
 import SelectionWrapper from '../../SelectionWrapper'
 import isPositionBetweenSpan from './isPositionBetweenSpan'
 import getRightSpanElement from '../../../../../getRightSpanElement'
-import validateNewDenotationSpan from './validateNewDenotationSpan'
 
 export default class SpanEditor {
   #editorHTMLElement
@@ -622,7 +621,7 @@ export default class SpanEditor {
         this.#spanConfig
       )
 
-    if (validateNewDenotationSpan(this.#spanInstanceContainer, begin, end)) {
+    if (this.#spanInstanceContainer.validateNewDenotationSpan(begin, end)) {
       this.#commander.invoke(
         this.#commander.factory.moveDenotationSpanCommand(spanID, begin, end)
       )
