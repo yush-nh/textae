@@ -8,7 +8,7 @@ export default class ReplicateSpanCommand extends CompositeCommand {
     annotationModel,
     selectionModel,
     span,
-    typeValeusList,
+    typeValuesList,
     isDelimiterFunc
   ) {
     super()
@@ -24,7 +24,7 @@ export default class ReplicateSpanCommand extends CompositeCommand {
           spanId,
           begin,
           end,
-          typeValeusList
+          typeValuesList
         )
       })
     this._logMessage = `from span: ${makeDenotationSpanHTMLElementID(
