@@ -7,7 +7,7 @@ export default function (
   sourceDoc,
   selectionModel,
   commander,
-  spanAdjuster,
+  textSelectionAdjuster,
   spanId,
   spanConfig,
   moveHandler
@@ -21,7 +21,7 @@ export default function (
       spanInstanceContainer,
       sourceDoc,
       commander,
-      spanAdjuster,
+      textSelectionAdjuster,
       spanId,
       spanConfig,
       moveHandler

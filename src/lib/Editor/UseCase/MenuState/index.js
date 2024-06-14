@@ -63,7 +63,7 @@ export default class MenuState {
     return this.#pushButtons.get(buttonName).toggle()
   }
 
-  get spanAdjuster() {
+  get textSelectionAdjuster() {
     return this.isPushed('boundary detection')
       ? new DelimiterDetectAdjuster()
       : new BlankSkipAdjuster()

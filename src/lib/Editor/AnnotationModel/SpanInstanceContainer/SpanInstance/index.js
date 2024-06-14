@@ -289,7 +289,7 @@ export default class SpanInstance {
    * @param {import('../../../UseCase/Presenter/EditModeSwitch/SelectionWrapper').default} selectionWrapper
    */
   getShortenInAnchorNodeToFocusNodeDirection(
-    spanAdjuster,
+    textSelectionAdjuster,
     sourceDoc,
     spanInstanceContainer,
     spanConfig
@@ -299,20 +299,26 @@ export default class SpanInstance {
     if (anchor < focus) {
       // shorten the left boundary
       return {
-        begin: spanAdjuster.forwardFromBegin(sourceDoc, focus, spanConfig),
+        begin: textSelectionAdjuster.forwardFromBegin(
+          sourceDoc,
+          focus,
+          spanConfig
+        ),
         end: this.end
       }
     } else {
       // shorten the right boundary
       return {
         begin: this.begin,
-        end: spanAdjuster.backFromEnd(sourceDoc, focus - 1, spanConfig) + 1
+        end:
+          textSelectionAdjuster.backFromEnd(sourceDoc, focus - 1, spanConfig) +
+          1
       }
     }
   }
 
   getShortenInFocusNodeToAnchorNodeDirection(
-    spanAdjuster,
+    textSelectionAdjuster,
     sourceDoc,
     spanInstanceContainer,
     spanConfig
@@ -322,20 +328,26 @@ export default class SpanInstance {
     if (focus < anchor) {
       // shorten the left boundary
       return {
-        begin: spanAdjuster.forwardFromBegin(sourceDoc, anchor, spanConfig),
+        begin: textSelectionAdjuster.forwardFromBegin(
+          sourceDoc,
+          anchor,
+          spanConfig
+        ),
         end: this.end
       }
     } else {
       // shorten the right boundary
       return {
         begin: this.begin,
-        end: spanAdjuster.backFromEnd(sourceDoc, anchor - 1, spanConfig) + 1
+        end:
+          textSelectionAdjuster.backFromEnd(sourceDoc, anchor - 1, spanConfig) +
+          1
       }
     }
   }
 
   getExpandedInAnchorNodeToFocusNodeDirection(
-    spanAdjuster,
+    textSelectionAdjuster,
     sourceDoc,
     spanInstanceContainer,
     spanConfig
@@ -346,19 +358,28 @@ export default class SpanInstance {
       // expand to the right
       return {
         begin: this.begin,
-        end: spanAdjuster.forwardFromEnd(sourceDoc, focus - 1, spanConfig) + 1
+        end:
+          textSelectionAdjuster.forwardFromEnd(
+            sourceDoc,
+            focus - 1,
+            spanConfig
+          ) + 1
       }
     } else {
       // expand to the left
       return {
-        begin: spanAdjuster.backFromBegin(sourceDoc, focus, spanConfig),
+        begin: textSelectionAdjuster.backFromBegin(
+          sourceDoc,
+          focus,
+          spanConfig
+        ),
         end: this.end
       }
     }
   }
 
   getExpandedInFocusNodeToAnchorNodeDirection(
-    spanAdjuster,
+    textSelectionAdjuster,
     sourceDoc,
     spanInstanceContainer,
     spanConfig
@@ -369,12 +390,21 @@ export default class SpanInstance {
       // expand to the right
       return {
         begin: this.begin,
-        end: spanAdjuster.forwardFromEnd(sourceDoc, anchor - 1, spanConfig) + 1
+        end:
+          textSelectionAdjuster.forwardFromEnd(
+            sourceDoc,
+            anchor - 1,
+            spanConfig
+          ) + 1
       }
     } else {
       // expand to the left
       return {
-        begin: spanAdjuster.backFromBegin(sourceDoc, anchor, spanConfig),
+        begin: textSelectionAdjuster.backFromBegin(
+          sourceDoc,
+          anchor,
+          spanConfig
+        ),
         end: this.end
       }
     }

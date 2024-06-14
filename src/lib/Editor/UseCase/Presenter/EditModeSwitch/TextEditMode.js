@@ -33,7 +33,7 @@ export default class TextEditMode extends EditMode {
               if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
                 const { begin, end } = this.#annotationModel.getNewSpan(
                   this.#spanConfig,
-                  this.menuState.spanAdjuster
+                  this.menuState.textSelectionAdjuster
                 )
                 const targetText = this.#annotationModel.sourceDoc.substring(
                   begin,

@@ -8,7 +8,7 @@ export default function (
   spanInstanceContainer,
   sourceDoc,
   commander,
-  spanAdjuster,
+  textSelectionAdjuster,
   spanId,
   spanConfig,
   moveHandler
@@ -16,7 +16,7 @@ export default function (
   const { begin, end } = spanInstanceContainer
     .get(spanId)
     .getShortenInAnchorNodeToFocusNodeDirection(
-      spanAdjuster,
+      textSelectionAdjuster,
       sourceDoc,
       spanInstanceContainer,
       spanConfig
