@@ -121,21 +121,6 @@ export default class SpanInstanceContainer {
     return this.#blocks.has(spanID)
   }
 
-  #hasBlockSpanBetween(begin, end, option = {}) {
-    for (const blockSpan of this.#blocks.values()) {
-      if (
-        begin <= blockSpan.begin &&
-        blockSpan.end <= end &&
-        option &&
-        blockSpan.id !== option.excluded
-      ) {
-        return true
-      }
-    }
-
-    return false
-  }
-
   validateNewBlockSpan(begin, end, spanID) {
     // The span cross exists spans.
     if (this.isBoundaryCrossingWithOtherSpans(begin, end)) {
@@ -304,6 +289,105 @@ export default class SpanInstanceContainer {
     }
   }
 
+  isBoundaryCrossingWithOtherSpans(begin, end) {
+    return isBoundaryCrossingWithOtherSpans(this.all, begin, end)
+  }
+
+  get all() {
+    const styleOnlySpans = [...this.#styles.values()].filter(
+      (s) => !this.#denotations.has(s.id)
+    )
+    return [...this.#blocks.values()]
+      .concat([...this.#denotations.values()])
+      .concat(styleOnlySpans)
+  }
+
+  get selectedItems() {
+    return [...this.#blocks.values()]
+      .concat([...this.#denotations.values()])
+      .filter(({ isSelected }) => isSelected)
+  }
+
+  /**
+   * @returns {import('./DenotationSpanInstance').DenotationSpanInstance[]}
+   */
+  get allDenotationSpans() {
+    return [...this.#denotations.values()]
+  }
+
+  get allBlockSpans() {
+    return [...this.#blocks.values()]
+  }
+
+  // It has a common interface with the span instance so that it can be the parent of the span instance.
+  get begin() {
+    return 0
+  }
+
+  // It has a common interface with the span instance so that it can be the parent of the span instance
+  get element() {
+    return this.#editorHTMLElement.querySelector(`.textae-editor__text-box`)
+  }
+
+  get textSelection() {
+    return new TextSelection(this)
+  }
+
+  arrangeDenotationEntityPosition() {
+    for (const span of this.allDenotationSpans) {
+      span.updateGridPosition()
+    }
+  }
+
+  arrangeBlockEntityPosition() {
+    for (const span of this.allBlockSpans) {
+      span.updateGridPosition()
+    }
+  }
+
+  arrangeBackgroundOfBlockSpanPosition() {
+    for (const span of this.allBlockSpans) {
+      span.updateBackgroundPosition()
+    }
+  }
+
+  get maxHeight() {
+    const spans = [...this.#blocks.values()].concat([
+      ...this.#denotations.values()
+    ])
+
+    if (spans.length) {
+      return getCurrentMaxHeight(spans)
+    } else {
+      return null
+    }
+  }
+
+  #hasBlockSpanBetween(begin, end, option = {}) {
+    for (const blockSpan of this.#blocks.values()) {
+      if (
+        begin <= blockSpan.begin &&
+        blockSpan.end <= end &&
+        option &&
+        blockSpan.id !== option.excluded
+      ) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  #doesParentOrSameSpanExist(begin, end) {
+    const isParent = (span) => span.begin <= begin && end <= span.end
+
+    return (
+      [...this.#denotations.values()].some(isParent) ||
+      [...this.#blocks.values()].some(isParent) ||
+      [...this.#styles.values()].some(isParent)
+    )
+  }
+
   #addDenotation(denotationSpan, oldSpan = null) {
     this.#addSpan(this.#denotations, denotationSpan, oldSpan)
     this.#emitter.emit(`textae-event.annotation-data.span.add`, denotationSpan)
@@ -349,60 +433,6 @@ export default class SpanInstanceContainer {
     // When changing the length of a span, the span is erased and rendered again.
     // When the span is erased, the span erase event fires and the position calculations for all annotations are performed.
     // The event is not fired in this function.
-  }
-
-  isBoundaryCrossingWithOtherSpans(begin, end) {
-    return isBoundaryCrossingWithOtherSpans(this.all, begin, end)
-  }
-
-  #doesParentOrSameSpanExist(begin, end) {
-    const isParent = (span) => span.begin <= begin && end <= span.end
-
-    return (
-      [...this.#denotations.values()].some(isParent) ||
-      [...this.#blocks.values()].some(isParent) ||
-      [...this.#styles.values()].some(isParent)
-    )
-  }
-
-  get all() {
-    const styleOnlySpans = [...this.#styles.values()].filter(
-      (s) => !this.#denotations.has(s.id)
-    )
-    return [...this.#blocks.values()]
-      .concat([...this.#denotations.values()])
-      .concat(styleOnlySpans)
-  }
-
-  get selectedItems() {
-    return [...this.#blocks.values()]
-      .concat([...this.#denotations.values()])
-      .filter(({ isSelected }) => isSelected)
-  }
-
-  /**
-   * @returns {import('./DenotationSpanInstance').DenotationSpanInstance[]}
-   */
-  get allDenotationSpans() {
-    return [...this.#denotations.values()]
-  }
-
-  get allBlockSpans() {
-    return [...this.#blocks.values()]
-  }
-
-  // It has a common interface with the span instance so that it can be the parent of the span instance.
-  get begin() {
-    return 0
-  }
-
-  // It has a common interface with the span instance so that it can be the parent of the span instance
-  get element() {
-    return this.#editorHTMLElement.querySelector(`.textae-editor__text-box`)
-  }
-
-  get textSelection() {
-    return new TextSelection(this)
   }
 
   #updateSpanTree() {
@@ -462,36 +492,6 @@ export default class SpanInstanceContainer {
       }
       default:
         throw `${type} is unknown type span!`
-    }
-  }
-
-  arrangeDenotationEntityPosition() {
-    for (const span of this.allDenotationSpans) {
-      span.updateGridPosition()
-    }
-  }
-
-  arrangeBlockEntityPosition() {
-    for (const span of this.allBlockSpans) {
-      span.updateGridPosition()
-    }
-  }
-
-  arrangeBackgroundOfBlockSpanPosition() {
-    for (const span of this.allBlockSpans) {
-      span.updateBackgroundPosition()
-    }
-  }
-
-  get maxHeight() {
-    const spans = [...this.#blocks.values()].concat([
-      ...this.#denotations.values()
-    ])
-
-    if (spans.length) {
-      return getCurrentMaxHeight(spans)
-    } else {
-      return null
     }
   }
 }
