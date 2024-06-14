@@ -39,7 +39,7 @@ export default class TextEditMode extends EditMode {
                   begin,
                   end
                 )
-                console.log('selection', selection, begin, end, targetText)
+                alert(`selection: ${targetText}`)
               }
             }
           }
