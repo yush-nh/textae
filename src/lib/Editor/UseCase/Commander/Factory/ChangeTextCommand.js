@@ -20,7 +20,7 @@ export default class ChangeTextCommand extends AnnotationCommand {
 
   execute() {
     this.#endAfterChange = this.#begin + this.#newText.length
-    this.#textBeforeChange = this.#annotationModel.sourceDoc.substring(
+    this.#textBeforeChange = this.#annotationModel.getTextBetween(
       this.#begin,
       this.#end
     )

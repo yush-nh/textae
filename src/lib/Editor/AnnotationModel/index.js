@@ -283,9 +283,13 @@ export default class AnnotationModel {
     return this.#spanInstanceContainer.textSelection
   }
 
+  getTextBetween(begin, end) {
+    return this.sourceDoc.substring(begin, end)
+  }
+
   get #selectedText() {
     const { begin, end } = this.textSelection
-    return this.sourceDoc.substring(begin, end)
+    return this.getTextBetween(begin, end)
   }
 
   hasCharacters(spanConfig) {

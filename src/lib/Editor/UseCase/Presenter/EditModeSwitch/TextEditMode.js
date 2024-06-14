@@ -35,7 +35,7 @@ export default class TextEditMode extends EditMode {
                   this.#spanConfig,
                   this.menuState.textSelectionAdjuster
                 )
-                const targetText = this.#annotationModel.sourceDoc.substring(
+                const targetText = this.#annotationModel.getTextBetween(
                   begin,
                   end
                 )
