@@ -1,5 +1,3 @@
-import createCommand from './createCommand'
-
 export default function (
   annotationModel,
   commander,
@@ -14,13 +12,11 @@ export default function (
   )
 
   if (annotationModel.validateNewDenotationSpan(begin, end)) {
-    const command = createCommand(
-      commander,
+    const command = commander.factory.createSpanAndAutoReplicateCommand(
       { begin, end },
       isReplicateAuto,
       isDelimiterFunc
     )
-
     commander.invoke(command)
   }
 }
