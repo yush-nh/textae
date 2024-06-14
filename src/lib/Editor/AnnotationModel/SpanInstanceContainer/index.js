@@ -83,7 +83,7 @@ export default class SpanInstanceContainer {
   // The drawing of the instance is performed at a different time.
   addSource(rowData, type) {
     for (const rowDatum of rowData) {
-      this.#addInstanceFromElement(type, rowDatum)
+      this.#addInstanceFromRowDatum(type, rowDatum)
     }
 
     this.#updateSpanTree()
@@ -440,7 +440,7 @@ export default class SpanInstanceContainer {
     updateSpanTree(this, this.all)
   }
 
-  #addInstanceFromElement(spanType, rowDatum) {
+  #addInstanceFromRowDatum(spanType, rowDatum) {
     switch (spanType) {
       case 'denotation': {
         const objectSpan = new DenotationSpanInstance(
