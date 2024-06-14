@@ -81,9 +81,9 @@ export default class SpanInstanceContainer {
   // Does not draw the instance.
   // When loading for the first time, all instances will be loaded at once.
   // The drawing of the instance is performed at a different time.
-  addSource(source, type) {
-    for (const element of source) {
-      this.#addInstanceFromElement(type, element)
+  addSource(rowData, type) {
+    for (const rowDatum of rowData) {
+      this.#addInstanceFromElement(type, rowDatum)
     }
 
     this.#updateSpanTree()
@@ -440,14 +440,14 @@ export default class SpanInstanceContainer {
     updateSpanTree(this, this.all)
   }
 
-  #addInstanceFromElement(type, denotation) {
-    switch (type) {
+  #addInstanceFromElement(spanType, rowDatum) {
+    switch (spanType) {
       case 'denotation': {
         const objectSpan = new DenotationSpanInstance(
           this.#editorID,
           this.#editorHTMLElement,
-          denotation.span.begin,
-          denotation.span.end,
+          rowDatum.span.begin,
+          rowDatum.span.end,
           this
         )
 
@@ -460,8 +460,8 @@ export default class SpanInstanceContainer {
         const blockSpan = new BlockSpanInstance(
           this.#editorID,
           this.#editorHTMLElement,
-          denotation.span.begin,
-          denotation.span.end,
+          rowDatum.span.begin,
+          rowDatum.span.end,
           this,
           this.#textBox
         )
@@ -475,10 +475,10 @@ export default class SpanInstanceContainer {
         const styleSpan = new StyleSpanInstance(
           this.#editorID,
           this.#editorHTMLElement,
-          denotation.span.begin,
-          denotation.span.end,
+          rowDatum.span.begin,
+          rowDatum.span.end,
           this,
-          denotation.style
+          rowDatum.style
         )
 
         // Merge multiple styles for the same range.
@@ -491,7 +491,7 @@ export default class SpanInstanceContainer {
         break
       }
       default:
-        throw `${type} is unknown type span!`
+        throw `${spanType} is unknown type span!`
     }
   }
 }
