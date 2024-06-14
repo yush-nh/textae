@@ -40,7 +40,7 @@ export default class IDConflictResolver {
     }
   }
 
-  // Set Prefx to the ID if ID exists.
+  // Set Prefix to the ID if ID exists.
   // IF the ID does not exist, Set new ID in addSource function.
   _prependToIDOf(src) {
     return src.id ? this._prependTrackNumberTo(src.id) : null
