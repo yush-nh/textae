@@ -1,4 +1,4 @@
-export default class SpanAdjuster {
+export default class TextSelectionAdjuster {
   backFromBegin(str, position, spanConfig) {}
 
   forwardFromEnd(str, position, spanConfig) {}

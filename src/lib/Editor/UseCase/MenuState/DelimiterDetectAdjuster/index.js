@@ -1,12 +1,12 @@
 import skipBlank from '../skipBlank'
-import SpanAdjuster from '../SpanAdjuster'
+import TextSelectionAdjuster from '../SpanAdjuster'
 import backToDelimiter from './backToDelimiter'
 import skipToDelimiter from './skipToDelimiter'
 import isNotWord from './isNotWord'
 import skipToWord from './skipToWord'
 import backToWord from './backToWord'
 
-export default class DelimiterDetectAdjuster extends SpanAdjuster {
+export default class DelimiterDetectAdjuster extends TextSelectionAdjuster {
   backFromBegin(str, beginPosition, spanConfig) {
     const nonEdgePos = skipBlank.forward(str, beginPosition, (char) =>
       spanConfig.isBlankCharacter(char)

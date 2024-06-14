@@ -1,7 +1,7 @@
 import skipBlank from './skipBlank'
-import SpanAdjuster from './SpanAdjuster'
+import TextSelectionAdjuster from './SpanAdjuster'
 
-export default class BlankSkipAdjuster extends SpanAdjuster {
+export default class BlankSkipAdjuster extends TextSelectionAdjuster {
   backFromBegin(str, position, spanConfig) {
     return skipBlank.forward(str, position, (char) =>
       spanConfig.isBlankCharacter(char)
