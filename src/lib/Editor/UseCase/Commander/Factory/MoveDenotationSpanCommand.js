@@ -2,39 +2,47 @@ import commandLog from './commandLog'
 import AnnotationCommand from './AnnotationCommand'
 
 export default class MoveDenotationSpanCommand extends AnnotationCommand {
+  #annotationModel
+  #spanId
+  #begin
+  #end
+  #newId
+  #oldBegin
+  #oldEnd
+
   constructor(annotationModel, spanId, begin, end) {
     super()
-    this._annotationModel = annotationModel
-    this._spanId = spanId
-    this._begin = begin
-    this._end = end
+    this.#annotationModel = annotationModel
+    this.#spanId = spanId
+    this.#begin = begin
+    this.#end = end
   }
 
   execute() {
     // Update instance.
     const { id, begin, end } =
-      this._annotationModel.spanInstanceContainer.moveDenotationSpan(
-        this._spanId,
-        this._begin,
-        this._end
+      this.#annotationModel.spanInstanceContainer.moveDenotationSpan(
+        this.#spanId,
+        this.#begin,
+        this.#end
       )
 
-    this._newId = id
-    this._oldBegin = begin
-    this._oldEnd = end
+    this.#newId = id
+    this.#oldBegin = begin
+    this.#oldEnd = end
 
     commandLog(
       this,
-      `move span: ${this._spanId} to {begin: ${this._begin}, end: ${this._end}}`
+      `move span: ${this.#spanId} to {begin: ${this.#begin}, end: ${this.#end}}`
     )
   }
 
   revert() {
     return new MoveDenotationSpanCommand(
-      this._annotationModel,
-      this._newId,
-      this._oldBegin,
-      this._oldEnd
+      this.#annotationModel,
+      this.#newId,
+      this.#oldBegin,
+      this.#oldEnd
     )
   }
 }

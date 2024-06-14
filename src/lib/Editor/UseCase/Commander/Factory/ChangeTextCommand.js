@@ -25,6 +25,8 @@ export default class ChangeTextCommand extends AnnotationCommand {
       this.#end
     )
 
+    this.#annotationModel.changeText(this.#begin, this.#end, this.#newText)
+
     commandLog(
       this,
       `change text at ${this.#begin}:${this.#end} to ${this.#newText}`
