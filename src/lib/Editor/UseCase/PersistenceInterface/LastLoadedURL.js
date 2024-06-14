@@ -22,9 +22,10 @@ export default class LastLoadedURL {
   }
 
   get annotation() {
-    return this.#annotation
+    return this.#annotation || ''
   }
+
   get configuration() {
-    return this.#configuration
+    return this.#configuration || ''
   }
 }
