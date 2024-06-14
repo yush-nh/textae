@@ -1,5 +1,5 @@
 import skipBlank from '../skipBlank'
-import TextSelectionAdjuster from '../SpanAdjuster'
+import TextSelectionAdjuster from '../TextSelectionAdjuster'
 import backToDelimiter from './backToDelimiter'
 import skipToDelimiter from './skipToDelimiter'
 import isNotWord from './isNotWord'
