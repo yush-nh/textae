@@ -2,10 +2,10 @@ import IDConflictResolver from './IDConflictResolver'
 import convertBeginAndEndOfSpanToInteger from './convertBeginAndEndOfSpanToInteger'
 
 export default function (
-  spanContainer,
-  entityContainer,
-  attributeContainer,
-  relationContainer,
+  spanInstanceContainer,
+  entityInstanceContainer,
+  attributeInstanceContainer,
+  relationInstanceContainer,
   accept,
   trackNumber = ''
 ) {
@@ -19,11 +19,11 @@ export default function (
     trackNumber
   ).addTrackNumberAsIDPrefix(denotation, block, relation, attribute)
 
-  spanContainer.addSource(typeSettings, 'typesetting')
-  spanContainer.addSource(denotations, 'denotation')
-  spanContainer.addSource(blocks, 'block')
-  entityContainer.addSource(denotations, 'denotation')
-  entityContainer.addSource(blocks, 'block')
-  relationContainer.addSource(relations)
-  attributeContainer.addSource(attributes)
+  spanInstanceContainer.addSource(typeSettings, 'typesetting')
+  spanInstanceContainer.addSource(denotations, 'denotation')
+  spanInstanceContainer.addSource(blocks, 'block')
+  entityInstanceContainer.addSource(denotations, 'denotation')
+  entityInstanceContainer.addSource(blocks, 'block')
+  relationInstanceContainer.addSource(relations)
+  attributeInstanceContainer.addSource(attributes)
 }
