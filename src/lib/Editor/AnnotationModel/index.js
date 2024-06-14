@@ -206,7 +206,6 @@ export default class AnnotationModel {
 
     this.#eventEmitter.emit(
       'textae-event.annotation-data.all.change',
-      this,
       annotationEvaluator.hasMultiTracks,
       annotationEvaluator.rejects
     )

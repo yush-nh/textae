@@ -52,7 +52,7 @@ export default class Presenter {
     )
 
     eventEmitter
-      .on('textae-event.annotation-data.all.change', (_, hasMultiTracks) => {
+      .on('textae-event.annotation-data.all.change', (hasMultiTracks) => {
         if (startUpOptions.isEditMode && hasMultiTracks) {
           alertifyjs.success(
             'track annotations have been merged to root annotations.'
