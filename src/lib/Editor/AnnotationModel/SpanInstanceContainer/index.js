@@ -109,7 +109,7 @@ export default class SpanInstanceContainer {
     }
 
     // There is a BlockSpan that is a child.
-    if (this.hasBlockSpanBetween(begin, end)) {
+    if (this.#hasBlockSpanBetween(begin, end)) {
       return false
     }
 
@@ -121,7 +121,7 @@ export default class SpanInstanceContainer {
     return this.#blocks.has(spanID)
   }
 
-  hasBlockSpanBetween(begin, end, option = {}) {
+  #hasBlockSpanBetween(begin, end, option = {}) {
     for (const blockSpan of this.#blocks.values()) {
       if (
         begin <= blockSpan.begin &&
@@ -151,7 +151,7 @@ export default class SpanInstanceContainer {
 
     // There is a BlockSpan that is a child.
     if (
-      this.hasBlockSpanBetween(begin, end, {
+      this.#hasBlockSpanBetween(begin, end, {
         excluded: spanID
       })
     ) {
