@@ -1,12 +1,10 @@
 import forwardMethods from '../../../../forwardMethods'
-import PropertyEditor from './PropertyEditor'
 import bindPalletEvents from './bindPalletEvents'
 
 export default class EditMode {
   #attributeEditor
   #menuState
   #pallet
-  #editProperties
 
   constructor(
     editorHTMLElement,
@@ -23,15 +21,6 @@ export default class EditMode {
   ) {
     this.#attributeEditor = attributeEditor
     this.#menuState = menuState
-    this.#editProperties = new PropertyEditor(
-      editorHTMLElement,
-      commander,
-      pallet,
-      mousePoint,
-      definitionContainer,
-      annotationModel,
-      getAutocompletionWs
-    )
 
     // protected fields referenced by the child classes
     this._selectionModel = selectionModel
@@ -101,16 +90,6 @@ export default class EditMode {
       enableToCreate,
       enableToExpand,
       enableToShrink
-    )
-  }
-
-  // A protected method
-  _editProperties(selectionModel, annotationType, palletName, mousePoint) {
-    this.#editProperties.startEditing(
-      selectionModel,
-      annotationType,
-      palletName,
-      mousePoint
     )
   }
 }
