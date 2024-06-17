@@ -23,7 +23,6 @@ export default class EditMode {
     this.#menuState = menuState
 
     // protected fields referenced by the child classes
-    this._selectionModel = selectionModel
     this._annotationModel = annotationModel
     this._getAutocompletionWs = getAutocompletionWs
     this._definitionContainer = definitionContainer
