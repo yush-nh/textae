@@ -4,7 +4,6 @@ import createStringAttributeOrShowEditStringAttributeDialog from './createString
 
 export default class AttributeEditor {
   #commander
-  #annotationModel
   #selectionModelItems
   #selectionAttributePallet
   #typeDefinition
@@ -20,7 +19,6 @@ export default class AttributeEditor {
     typeValuesPallet
   ) {
     this.#commander = commander
-    this.#annotationModel = annotationModel
     this.#selectionModelItems = selectionModelItems
     this.#selectionAttributePallet = selectionAttributePallet
     this.#typeDefinition = annotationModel.typeDefinition

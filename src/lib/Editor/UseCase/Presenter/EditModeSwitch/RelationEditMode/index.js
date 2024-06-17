@@ -34,7 +34,6 @@ export default class RelationEditMode extends EditMode {
       autocompletionWs || annotationModel.typeDefinition.autocompletionWs
     const attributeEditor = new AttributeEditor(
       commander,
-      annotationModel,
       selectionModel.relation,
       new SelectionAttributePallet(editorHTMLElement, mousePoint),
       () => this.editProperties(),

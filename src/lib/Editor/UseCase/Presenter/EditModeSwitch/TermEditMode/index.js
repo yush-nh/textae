@@ -41,7 +41,6 @@ export default class TermEditMode extends EditMode {
       autocompletionWs || annotationModel.typeDefinition.autocompletionWs
     const attributeEditor = new AttributeEditor(
       commander,
-      annotationModel,
       selectionModel.entity,
       new SelectionAttributePallet(editorHTMLElement, mousePoint),
       () => this.editProperties(),
