@@ -8,37 +8,40 @@ const CSS_CLASS_HOVERED = 'textae-editor__signboard--hovered'
 const CSS_CLASS_CUTTING = 'textae-editor__signboard--cutting'
 
 export default class SignboardHTMLElement {
+  #instance
+  #element
+
   constructor(instance, entityType, HTMLId) {
-    this._instance = instance
-    this._element = dohtml.create(this.#getHtml(HTMLId, entityType))
+    this.#instance = instance
+    this.#element = dohtml.create(this.#getHtml(HTMLId, entityType))
   }
 
   get element() {
-    return this._element
+    return this.#element
   }
 
   addEventListener(event, listener) {
-    this._element.addEventListener(event, listener)
+    this.#element.addEventListener(event, listener)
   }
 
   hover() {
-    this._element.classList.add(CSS_CLASS_HOVERED)
+    this.#element.classList.add(CSS_CLASS_HOVERED)
   }
 
   select() {
-    this._element.classList.add(CSS_CLASS_SELECTED)
+    this.#element.classList.add(CSS_CLASS_SELECTED)
   }
 
   deselect() {
-    this._element.classList.remove(CSS_CLASS_SELECTED)
+    this.#element.classList.remove(CSS_CLASS_SELECTED)
   }
 
   startCut() {
-    this._element.classList.add(CSS_CLASS_CUTTING)
+    this.#element.classList.add(CSS_CLASS_CUTTING)
   }
 
   cancelCut() {
-    this._element.classList.remove(CSS_CLASS_CUTTING)
+    this.#element.classList.remove(CSS_CLASS_CUTTING)
   }
 
   clearCSSClass() {
@@ -50,10 +53,10 @@ export default class SignboardHTMLElement {
     const typeValues = this.element.querySelector(
       '.textae-editor__signboard__type-values'
     )
-    typeValues.style.backgroundColor = hexToRGBA(this._instance.color, 0.4)
+    typeValues.style.backgroundColor = hexToRGBA(this.#instance.color, 0.4)
     typeValues.querySelector(
       '.textae-editor__signboard__type-label'
-    ).innerHTML = anemone`${this._instance.anchorHTML}`
+    ).innerHTML = anemone`${this.#instance.anchorHTML}`
 
     // Re-create all attributes.
     for (const attributeElement of typeValues.querySelectorAll(
@@ -61,7 +64,7 @@ export default class SignboardHTMLElement {
     )) {
       attributeElement.remove()
     }
-    for (const a of this._instance.attributes) {
+    for (const a of this.#instance.attributes) {
       typeValues.insertAdjacentHTML('beforeend', a.contentHTML)
     }
   }
@@ -69,9 +72,9 @@ export default class SignboardHTMLElement {
   clarifyLabel() {
     this.element.querySelector(
       '.textae-editor__signboard__type-label'
-    ).style.backgroundColor = hexToRGBA(this._instance.color, 1)
+    ).style.backgroundColor = hexToRGBA(this.#instance.color, 1)
 
-    for (const a of this._instance.attributes) {
+    for (const a of this.#instance.attributes) {
       a.clarifyLabelIn(this.element)
     }
   }
@@ -81,26 +84,26 @@ export default class SignboardHTMLElement {
       '.textae-editor__signboard__type-label'
     ).style.backgroundColor = getLabelBackgroundColor()
 
-    for (const a of this._instance.attributes) {
+    for (const a of this.#instance.attributes) {
       a.declarifyLabelIn(this.element)
     }
   }
 
   focus() {
-    this._element.querySelector('.textae-editor__signboard__type-label').focus()
+    this.#element.querySelector('.textae-editor__signboard__type-label').focus()
   }
 
   replaceWith(signboardHTMLElement) {
-    this._element.replaceWith(signboardHTMLElement.element)
+    this.#element.replaceWith(signboardHTMLElement.element)
     return signboardHTMLElement
   }
 
   reflectTypeGapInTheHeight(height) {
-    this._element.setAttribute('style', `padding-top: ${height}px;`)
+    this.#element.setAttribute('style', `padding-top: ${height}px;`)
   }
 
   remove() {
-    this._element.remove()
+    this.#element.remove()
   }
 
   // A Type element has an entity_pane element that has a label and will have entities.
@@ -109,22 +112,22 @@ export default class SignboardHTMLElement {
   <div
     class="textae-editor__signboard"
     ${HTMLId ? `id="${HTMLId}"` : ''}
-    title="${this._instance.title}"
+    title="${this.#instance.title}"
     data-entity-type="${entityType}"
-    data-id="${this._instance.id}"
+    data-id="${this.#instance.id}"
     >
     <div
       class="textae-editor__signboard__type-values"
-      style="background-color: ${hexToRGBA(this._instance.color, 0.4)};"
+      style="background-color: ${hexToRGBA(this.#instance.color, 0.4)};"
       >
       <div
         class="textae-editor__signboard__type-label"
         tabindex="0"
         style="background-color: ${getLabelBackgroundColor()};"
         >
-        ${this._instance.anchorHTML}
+        ${this.#instance.anchorHTML}
       </div>
-      ${this._instance.attributes.map((a) => a.contentHTML)}
+      ${this.#instance.attributes.map((a) => a.contentHTML)}
     </div>
   </div>
   `
