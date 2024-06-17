@@ -2,7 +2,7 @@ import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 import forwardMethods from '../../../../forwardMethods'
 import bindPalletEvents from './bindPalletEvents'
 
-class EditProperties {
+class PropertyEditor {
   #editorHTMLElement
   #commander
   #pallet
@@ -29,7 +29,7 @@ class EditProperties {
     this.#getAutocompletionWs = getAutocompletionWs
   }
 
-  editProperties(selectionModel, annotationType, palletName, mousePoint) {
+  startEditing(selectionModel, annotationType, palletName, mousePoint) {
     if (selectionModel.some) {
       this.#createEditPropertiesDialog(
         annotationType,
@@ -90,7 +90,7 @@ export default class EditMode {
   ) {
     this.#attributeEditor = attributeEditor
     this.#menuState = menuState
-    this.#editProperties = new EditProperties(
+    this.#editProperties = new PropertyEditor(
       editorHTMLElement,
       commander,
       pallet,
@@ -173,7 +173,7 @@ export default class EditMode {
 
   // A protected method
   _editProperties(selectionModel, annotationType, palletName, mousePoint) {
-    this.#editProperties.editProperties(
+    this.#editProperties.startEditing(
       selectionModel,
       annotationType,
       palletName,
