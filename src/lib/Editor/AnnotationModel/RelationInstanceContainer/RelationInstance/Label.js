@@ -3,6 +3,13 @@ import SignboardHTMLElement from '../../../SignboardHTMLElement'
 import getAnnotationBox from '../../getAnnotationBox'
 
 export default class Label {
+  #container
+  #relation
+  #arrow
+  #location
+  #signboard
+  #background
+
   /**
    *
    * @param {HTMLElement} editorHTMLElement
@@ -17,64 +24,64 @@ export default class Label {
     onMouseEnter,
     onMouseLeave
   ) {
-    this._container = getAnnotationBox(editorHTMLElement)
-    this._relation = relation
-    this._arrow = arrow
+    this.#container = getAnnotationBox(editorHTMLElement)
+    this.#relation = relation
+    this.#arrow = arrow
 
-    this._location = dohtml.create(
+    this.#location = dohtml.create(
       `<div class="textae-editor__relation__signboard-location"></div>`
     )
-    this._updatePosition()
+    this.#updatePosition()
 
-    this._signboard = new SignboardHTMLElement(relation, 'relation', null)
-    this._location.appendChild(this._signboard.element)
-    this._container.appendChild(this._location)
+    this.#signboard = new SignboardHTMLElement(relation, 'relation', null)
+    this.#location.appendChild(this.#signboard.element)
+    this.#container.appendChild(this.#location)
 
-    this._location.addEventListener('click', onClick)
-    this._location.addEventListener('mouseenter', onMouseEnter)
-    this._location.addEventListener('mouseleave', onMouseLeave)
+    this.#location.addEventListener('click', onClick)
+    this.#location.addEventListener('mouseenter', onMouseEnter)
+    this.#location.addEventListener('mouseleave', onMouseLeave)
   }
 
   updateValue() {
-    this._updatePosition()
-    this._signboard.updateLabel()
+    this.#updatePosition()
+    this.#signboard.updateLabel()
   }
 
   updateHighlighting() {
-    this._updatePosition()
+    this.#updatePosition()
 
-    this._signboard.clearCSSClass()
+    this.#signboard.clearCSSClass()
 
-    if (this._relation.isSelected) {
-      this._signboard.select()
-    } else if (this._relation.isHovered) {
-      this._signboard.hover()
+    if (this.#relation.isSelected) {
+      this.#signboard.select()
+    } else if (this.#relation.isHovered) {
+      this.#signboard.hover()
     }
   }
 
   destructor() {
-    this._container.removeChild(this._location)
+    this.#container.removeChild(this.#location)
   }
 
   get y() {
-    return this._background.getBBox().y
+    return this.#background.getBBox().y
   }
 
   get width() {
-    return this._location.getBBox().width
+    return this.#location.getBBox().width
   }
 
   get height() {
-    return this._location.getBBox().height
+    return this.#location.getBBox().height
   }
 
-  _updatePosition() {
+  #updatePosition() {
     // Set the center of the label to the X coordinate of the highest point of the curve.
-    this._location.style.width = '0px'
-    this._location.style.left = `${this._arrow.highestX}px`
+    this.#location.style.width = '0px'
+    this.#location.style.left = `${this.#arrow.highestX}px`
 
-    this._location.style.top = `${
-      this._arrow.top - 18 - this._relation.attributes.length * 18
+    this.#location.style.top = `${
+      this.#arrow.top - 18 - this.#relation.attributes.length * 18
     }px`
   }
 }
