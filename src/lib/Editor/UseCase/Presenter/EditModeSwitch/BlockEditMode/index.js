@@ -133,10 +133,6 @@ export default class BlockEditMode extends EditMode {
   }
 
   editProperties() {
-    this.#propertyEditor.startEditing(
-      this.#selectionModel.entity,
-      'Block',
-      'Entity'
-    )
+    this.#propertyEditor.startEditing(this.#selectionModel.entity)
   }
 }

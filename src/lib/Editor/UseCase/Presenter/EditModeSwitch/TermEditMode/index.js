@@ -133,10 +133,6 @@ export default class TermEditMode extends EditMode {
   }
 
   editProperties() {
-    this.#propertyEditor.startEditing(
-      this.#selectionModel.entity,
-      'Entity',
-      'Denotation'
-    )
+    this.#propertyEditor.startEditing(this.#selectionModel.entity)
   }
 }

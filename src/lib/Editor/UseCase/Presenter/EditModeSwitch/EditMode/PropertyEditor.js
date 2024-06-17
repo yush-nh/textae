@@ -34,13 +34,9 @@ export default class PropertyEditor {
     this.#getAutocompletionWs = getAutocompletionWs
   }
 
-  startEditing(selectionModel, annotationType, palletName) {
+  startEditing(selectionModel) {
     if (selectionModel.some) {
-      this.#createEditPropertiesDialog(
-        annotationType,
-        palletName,
-        selectionModel.all
-      )
+      this.#createEditPropertiesDialog(selectionModel.all)
         .open()
         .then((values) => this.#typeValuesChanged(values))
     }
@@ -59,11 +55,11 @@ export default class PropertyEditor {
     }
   }
 
-  #createEditPropertiesDialog(annotationType, palletName, selectedItems) {
+  #createEditPropertiesDialog(selectedItems) {
     return new EditPropertiesDialog(
       this.#editorHTMLElement,
-      annotationType,
-      palletName,
+      this.#annotationType,
+      this.#palletName,
       this.#definitionContainer,
       this.#annotationModel.typeDefinition.attribute,
       this.#getAutocompletionWs(),

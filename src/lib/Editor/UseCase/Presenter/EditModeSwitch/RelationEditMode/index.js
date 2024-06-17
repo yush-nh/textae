@@ -83,11 +83,7 @@ export default class RelationEditMode extends EditMode {
   }
 
   editProperties() {
-    this.#propertyEditor.startEditing(
-      this.#selectionModel.relation,
-      'Relation',
-      'Relation'
-    )
+    this.#propertyEditor.startEditing(this.#selectionModel.relation)
   }
 
   relationClicked(event, relation) {
