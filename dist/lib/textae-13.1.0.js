@@ -6526,6 +6526,7 @@
       const codegen_1 = __webpack_require__(9029)
       const types_1 = __webpack_require__(7652)
       const compile_1 = __webpack_require__(3835)
+      const ref_error_1 = __webpack_require__(4551)
       const util_1 = __webpack_require__(4227)
       const error = {
         message: ({ params: { discrError, tagName } }) =>
@@ -6604,13 +6605,20 @@
                 (sch === null || sch === void 0 ? void 0 : sch.$ref) &&
                 !(0, util_1.schemaHasRulesButRef)(sch, it.self.RULES)
               ) {
+                const ref = sch.$ref
                 sch = compile_1.resolveRef.call(
                   it.self,
                   it.schemaEnv.root,
                   it.baseId,
-                  sch === null || sch === void 0 ? void 0 : sch.$ref
+                  ref
                 )
                 if (sch instanceof compile_1.SchemaEnv) sch = sch.schema
+                if (sch === undefined)
+                  throw new ref_error_1.default(
+                    it.opts.uriResolver,
+                    it.baseId,
+                    ref
+                  )
               }
               const propSch =
                 (_a =
@@ -11507,6 +11515,15 @@
         let timestamp
         let result
 
+        function run() {
+          const callContext = storedContext
+          const callArguments = storedArguments
+          storedContext = undefined
+          storedArguments = undefined
+          result = function_.apply(callContext, callArguments)
+          return result
+        }
+
         function later() {
           const last = Date.now() - timestamp
 
@@ -11516,11 +11533,7 @@
             timeoutId = undefined
 
             if (!immediate) {
-              const callContext = storedContext
-              const callArguments = storedArguments
-              storedContext = undefined
-              storedArguments = undefined
-              result = function_.apply(callContext, callArguments)
+              result = run()
             }
           }
         }
@@ -11541,11 +11554,7 @@
           }
 
           if (callNow) {
-            const callContext = storedContext
-            const callArguments = storedArguments
-            storedContext = undefined
-            storedArguments = undefined
-            result = function_.apply(callContext, callArguments)
+            result = run()
           }
 
           return result
@@ -11565,14 +11574,13 @@
             return
           }
 
-          const callContext = storedContext
-          const callArguments = storedArguments
-          storedContext = undefined
-          storedArguments = undefined
-          result = function_.apply(callContext, callArguments)
+          debounced.trigger()
+        }
 
-          clearTimeout(timeoutId)
-          timeoutId = undefined
+        debounced.trigger = () => {
+          result = run()
+
+          debounced.clear()
         }
 
         return debounced
@@ -50321,10 +50329,14 @@
     const tipsDialog = new TipsDialog()
 
     class EditorContainer {
+      #editors
+      #selected
+      #counter
+
       constructor() {
-        this._editors = new Map()
-        this._selected = null
-        this._counter = 0
+        this.#editors = new Map()
+        this.#selected = null
+        this.#counter = 0
 
         delegate_default()(window, '.textae-editor', 'keyup', (event) => {
           // Keyup events occurs without selected editor, When editor is focused before initializing.
@@ -50343,64 +50355,64 @@
           }
         })
 
-        this._observeDocumentEvents()
+        this.#observeDocumentEvents()
       }
 
       set(element, editor) {
-        this._editors.set(element, editor)
-        this._counter++
+        this.#editors.set(element, editor)
+        this.#counter++
       }
 
       remove(element) {
-        this._editors.get(element).dispose()
-        this._editors.delete(element)
+        this.#editors.get(element).dispose()
+        this.#editors.delete(element)
 
         if (this.selected === element) {
-          this._selected = null
+          this.#selected = null
         }
       }
 
       get selected() {
-        return this._selected
+        return this.#selected
       }
 
       set selected(element) {
         if (element === null) {
-          this._selectedEditor.deactivate()
-          this._selected = null
+          this.#selectedEditor.deactivate()
+          this.#selected = null
         } else {
-          this._selected = element
-          this._selectedEditor.activate()
+          this.#selected = element
+          this.#selectedEditor.activate()
         }
       }
 
       drawGridsInSight() {
-        for (const editor of this._editors.values()) {
+        for (const editor of this.#editors.values()) {
           editor.drawGridsInSight()
         }
       }
 
       updateDenotationEntitiesWidth() {
-        for (const editor of this._editors.values()) {
+        for (const editor of this.#editors.values()) {
           editor.updateDenotationEntitiesWidth()
         }
       }
 
       reLayout() {
-        for (const editor of this._editors.values()) {
+        for (const editor of this.#editors.values()) {
           editor.reLayout()
         }
       }
 
       has(element) {
-        return this._editors.has(element)
+        return this.#editors.has(element)
       }
 
       get nextID() {
-        return `editor${this._counter}`
+        return `editor${this.#counter}`
       }
 
-      _observeDocumentEvents() {
+      #observeDocumentEvents() {
         document.addEventListener(
           'scroll',
           throttleit_default()(() => {
@@ -50416,7 +50428,7 @@
           }
 
           if (this.selected) {
-            this._editors.get(this.selected).copyEntitiesToSystemClipboard(e)
+            this.#editors.get(this.selected).copyEntitiesToSystemClipboard(e)
           }
         })
         document.addEventListener('cut', (e) => {
@@ -50425,7 +50437,7 @@
           }
 
           if (this.selected) {
-            this._editors.get(this.selected).cutEntitiesToSystemClipboard(e)
+            this.#editors.get(this.selected).cutEntitiesToSystemClipboard(e)
           }
         })
         document.addEventListener('paste', (e) => {
@@ -50434,7 +50446,7 @@
           }
 
           if (this.selected) {
-            this._editors.get(this.selected).pasteEntitiesFromSystemClipboard(e)
+            this.#editors.get(this.selected).pasteEntitiesFromSystemClipboard(e)
           }
         })
 
@@ -50443,13 +50455,15 @@
           'selectionchange',
           debounce_default()(() => {
             if (this.selected) {
-              this._editors.get(this.selected).applyTextSelection()
+              this.#editors
+                .get(this.selected)
+                .applyTextSelectionWithTouchDevice()
             }
           }, 100)
         )
         document.addEventListener('contextmenu', () => {
           if (this.selected) {
-            this._editors.get(this.selected).applyTextSelection()
+            this.#editors.get(this.selected).applyTextSelectionWithTouchDevice()
           }
         })
 
@@ -50463,14 +50477,14 @@
             return
           }
 
-          for (const api of this._editors.values()) {
+          for (const api of this.#editors.values()) {
             api.hideContextMenu()
           }
         })
 
         document.addEventListener('contextmenu', (contextmenuEvent) => {
           // Close ContextMenu when another editor is clicked.
-          for (const api of this._editors.values()) {
+          for (const api of this.#editors.values()) {
             api.hideContextMenu()
           }
 
@@ -50478,7 +50492,7 @@
           // it will display its own context menu, rather than the browser's context menu.
           const clickedEditor =
             contextmenuEvent.target.closest('.textae-editor')
-          if (clickedEditor === this._selected) {
+          if (clickedEditor === this.#selected) {
             if (
               clickedEditor.classList.contains(
                 'textae-editor__mode--view-with-relation'
@@ -50492,13 +50506,13 @@
 
             // Prevent show browser default context menu
             contextmenuEvent.preventDefault()
-            this._selectedEditor.showContextMenu(contextmenuEvent)
+            this.#selectedEditor.showContextMenu(contextmenuEvent)
           }
         })
       }
 
-      get _selectedEditor() {
-        return this._editors.get(this._selected)
+      get #selectedEditor() {
+        return this.#editors.get(this.#selected)
       }
     } // CONCATENATED MODULE: ./src/lib/textae/Tool/Veil.js
 
@@ -50697,14 +50711,14 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/InstanceContainer/index.js
 
     class InstanceContainer {
-      constructor(emitter, name) {
-        this._emitter = emitter
-        this._name = name
-        this._container = new Map()
-      }
+      #emitter
+      #name
+      #container
 
-      _toInstance(rowDatum) {
-        return rowDatum
+      constructor(emitter, name) {
+        this.#emitter = emitter
+        this.#name = name
+        this.#container = new Map()
       }
 
       addSource(source, type) {
@@ -50716,18 +50730,18 @@
       add(instance) {
         const newInstance = this._addToContainer(instance)
         this._emit(
-          `textae-event.annotation-data.${this._name}.add`,
+          `textae-event.annotation-data.${this.#name}.add`,
           newInstance
         )
         return newInstance
       }
 
       get(id) {
-        return this._container.get(id)
+        return this.#container.get(id)
       }
 
       get all() {
-        return Array.from(this._container.values())
+        return Array.from(this.#container.values())
       }
 
       get selectedItems() {
@@ -50743,25 +50757,25 @@
        * @readonly
        */
       get some() {
-        return !!this._container.size
+        return !!this.#container.size
       }
 
       changeType(id, newType) {
-        const instance = this._container.get(id)
+        const instance = this.#container.get(id)
         instance.typeName = newType
         this._emit(
-          `textae-event.annotation-data.${this._name}.change`,
+          `textae-event.annotation-data.${this.#name}.change`,
           instance
         )
         return instance
       }
 
       remove(id) {
-        const instance = this._container.get(id)
+        const instance = this.#container.get(id)
         if (instance) {
-          this._container.delete(id)
+          this.#container.delete(id)
           this._emit(
-            `textae-event.annotation-data.${this._name}.remove`,
+            `textae-event.annotation-data.${this.#name}.remove`,
             instance
           )
         }
@@ -50769,16 +50783,26 @@
       }
 
       clear() {
-        this._container.clear()
+        this.#container.clear()
+      }
+
+      // Protected properties
+      get _container() {
+        return this.#container
+      }
+
+      // Protected methods
+      _toInstance(rowDatum) {
+        return rowDatum
       }
 
       _addToContainer(instance) {
-        this._container.set(instance.id, instance)
+        this.#container.set(instance.id, instance)
         return instance
       }
 
       _emit(event, data) {
-        this._emitter.emit(event, data)
+        this.#emitter.emit(event, data)
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/updateSpanTree/getParent/isChildOf.js
 
@@ -51075,6 +51099,13 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/index.js
 
     class SpanInstance {
+      #isGridRendered = false
+      #isSelected = false
+      /**
+       * @type {Set<import('../../../EntityInstance').EntityInstance>}
+       */
+      #entities = new Set()
+
       constructor(
         editorID,
         editorHTMLElement,
@@ -51087,12 +51118,6 @@
         this._begin = begin
         this._end = end
         this._spanInstanceContainer = spanInstanceContainer
-        this._isGridRendered = false
-        this._isSelected = false
-        /**
-         * @type {Set<import('../../../EntityInstance').EntityInstance>}
-         */
-        this._entities = new Set()
 
         this.severTies()
       }
@@ -51117,7 +51142,7 @@
        * @return {[import('../../../EntityInstance').EntityInstance]}
        */
       get entities() {
-        return [...this._entities]
+        return [...this.#entities]
       }
 
       get relations() {
@@ -51148,7 +51173,7 @@
        * @param {import('../../../EntityInstance').EntityInstance} entity
        */
       add(entity) {
-        this._entities.add(entity)
+        this.#entities.add(entity)
       }
 
       /**
@@ -51156,7 +51181,7 @@
        * @param {import('../../../EntityInstance').EntityInstance} entity
        */
       remove(entity) {
-        this._entities.delete(entity)
+        this.#entities.delete(entity)
       }
 
       severTies() {
@@ -51207,7 +51232,7 @@
         } else {
           this.destroyElement()
         }
-        this._destroyGridElement()
+        this.#destroyGridElement()
       }
 
       renderElement() {
@@ -51240,19 +51265,19 @@
       }
 
       get isGridRendered() {
-        return this._isGridRendered
+        return this.#isGridRendered
       }
 
       get isSelected() {
-        return this._selected
+        return this.#isSelected
       }
 
       select() {
-        this._selected = true
+        this.#isSelected = true
       }
 
       deselect() {
-        this._selected = false
+        this.#isSelected = false
       }
 
       focus() {
@@ -51274,16 +51299,16 @@
         if (this.isGridInDrawArea(clientHeight, clientWidth)) {
           this.forceRenderGrid()
         } else {
-          this._destroyGridElement()
+          this.#destroyGridElement()
         }
       }
 
       forceRenderGrid() {
-        if (this._isGridRendered) {
+        if (this.#isGridRendered) {
           return
         }
 
-        this._renderGridElement()
+        this.#renderAndReturnGridElement()
         for (const entity of this.entities) {
           entity.render()
         }
@@ -51295,7 +51320,7 @@
         )
       }
 
-      _renderGridElement() {
+      #renderAndReturnGridElement() {
         if (this.isGridRendered) {
           return this.gridElement
         }
@@ -51307,7 +51332,7 @@
             'beforebegin',
             this._createGridElement()
           )
-          this._isGridRendered = true
+          this.#isGridRendered = true
 
           return rightGrid.previousElementSibling
         } else {
@@ -51317,7 +51342,7 @@
             'beforeend',
             this._createGridElement()
           )
-          this._isGridRendered = true
+          this.#isGridRendered = true
 
           return container.lastElementChild
         }
@@ -51345,9 +51370,9 @@
         }
       }
 
-      _destroyGridElement() {
+      #destroyGridElement() {
         if (this.isGridRendered) {
-          this._isGridRendered = false
+          this.#isGridRendered = false
 
           for (const entity of this.entities) {
             entity.erase()
@@ -51365,97 +51390,131 @@
 
       /**
        *
-       * @param {import('../../../UseCase/Presenter/EditMode/SelectionWrapper').default} selectionWrapper
+       * @param {import('../../../UseCase/Presenter/EditModeSwitch/SelectionWrapper').default} selectionWrapper
        */
       getShortenInAnchorNodeToFocusNodeDirection(
-        spanAdjuster,
-        selectionWrapper,
+        textSelectionAdjuster,
         sourceDoc,
+        spanInstanceContainer,
         spanConfig
       ) {
-        const { anchor, focus } = selectionWrapper.positionsOnAnnotation
+        const { anchor, focus } = spanInstanceContainer.textSelection
 
         if (anchor < focus) {
           // shorten the left boundary
           return {
-            begin: spanAdjuster.forwardFromBegin(sourceDoc, focus, spanConfig),
+            begin: textSelectionAdjuster.forwardFromBegin(
+              sourceDoc,
+              focus,
+              spanConfig
+            ),
             end: this.end
           }
         } else {
           // shorten the right boundary
           return {
             begin: this.begin,
-            end: spanAdjuster.backFromEnd(sourceDoc, focus - 1, spanConfig) + 1
+            end:
+              textSelectionAdjuster.backFromEnd(
+                sourceDoc,
+                focus - 1,
+                spanConfig
+              ) + 1
           }
         }
       }
 
       getShortenInFocusNodeToAnchorNodeDirection(
-        spanAdjuster,
-        selectionWrapper,
+        textSelectionAdjuster,
         sourceDoc,
+        spanInstanceContainer,
         spanConfig
       ) {
-        const { anchor, focus } = selectionWrapper.positionsOnAnnotation
+        const { anchor, focus } = spanInstanceContainer.textSelection
 
         if (focus < anchor) {
           // shorten the left boundary
           return {
-            begin: spanAdjuster.forwardFromBegin(sourceDoc, anchor, spanConfig),
+            begin: textSelectionAdjuster.forwardFromBegin(
+              sourceDoc,
+              anchor,
+              spanConfig
+            ),
             end: this.end
           }
         } else {
           // shorten the right boundary
           return {
             begin: this.begin,
-            end: spanAdjuster.backFromEnd(sourceDoc, anchor - 1, spanConfig) + 1
+            end:
+              textSelectionAdjuster.backFromEnd(
+                sourceDoc,
+                anchor - 1,
+                spanConfig
+              ) + 1
           }
         }
       }
 
       getExpandedInAnchorNodeToFocusNodeDirection(
-        spanAdjuster,
-        selectionWrapper,
+        textSelectionAdjuster,
         sourceDoc,
+        spanInstanceContainer,
         spanConfig
       ) {
-        const { anchor, focus } = selectionWrapper.positionsOnAnnotation
+        const { anchor, focus } = spanInstanceContainer.textSelection
 
         if (anchor < focus) {
           // expand to the right
           return {
             begin: this.begin,
             end:
-              spanAdjuster.forwardFromEnd(sourceDoc, focus - 1, spanConfig) + 1
+              textSelectionAdjuster.forwardFromEnd(
+                sourceDoc,
+                focus - 1,
+                spanConfig
+              ) + 1
           }
         } else {
           // expand to the left
           return {
-            begin: spanAdjuster.backFromBegin(sourceDoc, focus, spanConfig),
+            begin: textSelectionAdjuster.backFromBegin(
+              sourceDoc,
+              focus,
+              spanConfig
+            ),
             end: this.end
           }
         }
       }
 
       getExpandedInFocusNodeToAnchorNodeDirection(
-        spanAdjuster,
-        selectionWrapper,
+        textSelectionAdjuster,
         sourceDoc,
+        spanInstanceContainer,
         spanConfig
       ) {
-        const { anchor, focus } = selectionWrapper.positionsOnAnnotation
+        const { anchor, focus } = spanInstanceContainer.textSelection
 
         if (focus < anchor) {
           // expand to the right
           return {
             begin: this.begin,
             end:
-              spanAdjuster.forwardFromEnd(sourceDoc, anchor - 1, spanConfig) + 1
+              textSelectionAdjuster.forwardFromEnd(
+                sourceDoc,
+                anchor - 1,
+                spanConfig
+              ) + 1
           }
         } else {
           // expand to the left
           return {
-            begin: spanAdjuster.backFromBegin(sourceDoc, anchor, spanConfig),
+            begin: textSelectionAdjuster.backFromBegin(
+              sourceDoc,
+              anchor,
+              spanConfig
+            ),
             end: this.end
           }
         }
@@ -51479,11 +51538,9 @@
         editorHTMLElement,
         begin,
         end,
-        entityInstanceContainer,
         spanInstanceContainer
       ) {
         super(editorID, editorHTMLElement, begin, end, spanInstanceContainer)
-        this._entityInstanceContainer = entityInstanceContainer
       }
 
       get id() {
@@ -51509,7 +51566,7 @@
         return this._spanInstanceContainer.getStyle(this.id)
       }
 
-      get _offsetLeft() {
+      get #offsetLeft() {
         const spanElement = this.element
 
         // An element.offsetTop and element.offsetLeft does not work in the Firefox,
@@ -51574,7 +51631,7 @@
       }
 
       get heightIncludeDescendantGrids() {
-        return this._gridHeightIncludeDescendantGrids + TEXT_HEIGHT + MARGIN_TOP
+        return this.#gridHeightIncludeDescendantGrids + TEXT_HEIGHT + MARGIN_TOP
       }
 
       get widthOfGrid() {
@@ -51597,13 +51654,13 @@
       }
 
       get offsetCenterOfGrid() {
-        return this._offsetLeft + this.widthOfGrid / 2
+        return this.#offsetLeft + this.widthOfGrid / 2
       }
 
       get clientTopOfGrid() {
         return (
           this.element.getBoundingClientRect().top -
-          this._gridHeightIncludeDescendantGrids
+          this.#gridHeightIncludeDescendantGrids
         )
       }
 
@@ -51613,25 +51670,25 @@
         const offsetTop =
           this.element.getBoundingClientRect().top -
           this.element.offsetParent.offsetParent.getBoundingClientRect().top
-        return offsetTop - this._gridHeightIncludeDescendantGrids
+        return offsetTop - this.#gridHeightIncludeDescendantGrids
       }
 
       get offsetLeftOfGrid() {
-        return this._offsetLeft
+        return this.#offsetLeft
       }
 
       isGridInViewport(clientHeight, clientWidth) {
-        return this._isGridInViewPort(clientHeight, clientWidth, 0)
+        return this.#isGridInViewPort(clientHeight, clientWidth, 0)
       }
 
       isGridInDrawArea(clientHeight, clientWidth) {
-        return this._isGridInViewPort(clientHeight, clientWidth, clientHeight)
+        return this.#isGridInViewPort(clientHeight, clientWidth, clientHeight)
       }
 
-      _isGridInViewPort(clientHeight, clientWidth, margin) {
+      #isGridInViewPort(clientHeight, clientWidth, margin) {
         const { top, left } = this.element.getBoundingClientRect()
         const gridHeightIncludeDescendantGrids =
-          this._gridHeightIncludeDescendantGrids
+          this.#gridHeightIncludeDescendantGrids
         const gridBottom =
           top - gridHeightIncludeDescendantGrids + this.gridHeight
         const gridTop = top - gridHeightIncludeDescendantGrids
@@ -51655,7 +51712,7 @@
     `
       }
 
-      get _gridHeightIncludeDescendantGrids() {
+      get #gridHeightIncludeDescendantGrids() {
         return getGridHeightIncludeDescendantGrids(this)
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/StyleSpanInstance.js
@@ -51734,6 +51791,8 @@
     // Leave a gap between the text and the block border.
     const gapBetweenText = 8
     class BlockSpanInstance extends SpanInstance {
+      #textBox
+
       /**
        *
        * @param {import('../../createTextBox/TextBox').default} textBox
@@ -51743,16 +51802,14 @@
         editorHTMLElement,
         begin,
         end,
-        entityInstanceContainer,
         spanInstanceContainer,
         textBox
       ) {
         super(editorID, editorHTMLElement, begin, end, spanInstanceContainer)
-        this._entityInstanceContainer = entityInstanceContainer
-        this._textBox = textBox
+        this.#textBox = textBox
       }
 
-      // Utility to distinguish with otehr type spans.
+      // Utility to distinguish with other type spans.
       get isBlock() {
         return true
       }
@@ -51777,7 +51834,7 @@
         const el = super.element
         el.classList.add(SpanInstanceContainer_SELECTED)
 
-        this._backgroundElement.classList.add(SpanInstanceContainer_SELECTED)
+        this.#backgroundElement.classList.add(SpanInstanceContainer_SELECTED)
 
         // Set focus to the span element in order to scroll the browser to the position of the element.
         el.focus()
@@ -51793,8 +51850,8 @@
           el.classList.remove(SpanInstanceContainer_SELECTED)
         }
 
-        if (this._backgroundElement) {
-          this._backgroundElement.classList.remove(
+        if (this.#backgroundElement) {
+          this.#backgroundElement.classList.remove(
             SpanInstanceContainer_SELECTED
           )
         }
@@ -51802,18 +51859,18 @@
 
       updateBackgroundPosition() {
         if (this.isGridRendered) {
-          const height = this._height
+          const height = this.#height
 
           const clientRect = this.element.getBoundingClientRect()
           const offsetLeft =
             clientRect.left -
-            this._textBox.boundingClientRect.left -
+            this.#textBox.boundingClientRect.left -
             gapBetweenText
           const width = clientRect.width + gapBetweenText
 
           setPosition(
-            this._backgroundElement,
-            this._offsetTop,
+            this.#backgroundElement,
+            this.#offsetTop,
             offsetLeft,
             width,
             height
@@ -51831,12 +51888,12 @@
         // Place the background in the annotation box
         // to shift the background up by half a line from the block span area.
         const annotationBox = getAnnotationBox(this._editorHTMLElement)
-        renderBackground(annotationBox, this._backgroundId)
+        renderBackground(annotationBox, this.#backgroundID)
       }
 
       destroyElement() {
         super.destroyElement()
-        this._backgroundElement.remove()
+        this.#backgroundElement.remove()
       }
 
       get heightIncludeDescendantGrids() {
@@ -51848,23 +51905,23 @@
       }
 
       get offsetCenterOfGrid() {
-        return this._textBox.boundingClientRect.width - 58
+        return this.#textBox.boundingClientRect.width - 58
       }
 
       get offsetTopOfGrid() {
-        return this._offsetTop
+        return this.#offsetTop
       }
 
       get clientBottomOfGrid() {
-        return this._clientTop + this._height
+        return this.#clientTop + this.#height
       }
 
       get offsetBottomOfGrid() {
-        return this._offsetTop + this._height
+        return this.#offsetTop + this.#height
       }
 
       get offsetLeftOfGrid() {
-        return this._textBox.boundingClientRect.width - 108
+        return this.#textBox.boundingClientRect.width - 108
       }
 
       updateGridPosition() {
@@ -51886,47 +51943,47 @@
       }
 
       isGridInViewport(clientHeight) {
-        return this._isGridInViewPort(clientHeight, 0)
+        return this.#isGridInViewPort(clientHeight, 0)
       }
 
       isGridInDrawArea(clientHeight) {
-        return this._isGridInViewPort(clientHeight, clientHeight)
+        return this.#isGridInViewPort(clientHeight, clientHeight)
       }
 
-      get _height() {
+      get #height() {
         return this.element.getBoundingClientRect().height
       }
 
-      get _offsetTop() {
-        return this._clientTop - this._textBox.boundingClientRect.top
+      get #offsetTop() {
+        return this.#clientTop - this.#textBox.boundingClientRect.top
       }
 
-      get _backgroundId() {
+      get #backgroundID() {
         return `bg_of_${this.id}`
       }
 
-      get _backgroundElement() {
-        return document.querySelector(`#${this._backgroundId}`)
+      get #backgroundElement() {
+        return document.querySelector(`#${this.#backgroundID}`)
       }
 
-      _isGridInViewPort(clientHeight, margin) {
+      #isGridInViewPort(clientHeight, margin) {
         return (
-          0 - margin <= this._clientBottom &&
-          this._clientTop <= clientHeight + margin
+          0 - margin <= this.#clientBottom &&
+          this.#clientTop <= clientHeight + margin
         )
       }
 
       // Shifting up half a line from the original block position.
-      get _clientTop() {
-        return this._shiftUpGrid(this.element.getBoundingClientRect().top)
+      get #clientTop() {
+        return this.#shiftUpGrid(this.element.getBoundingClientRect().top)
       }
 
-      get _clientBottom() {
-        return this._shiftUpGrid(this.element.getBoundingClientRect().bottom)
+      get #clientBottom() {
+        return this.#shiftUpGrid(this.element.getBoundingClientRect().bottom)
       }
 
-      _shiftUpGrid(y) {
-        return y - this._textBox.lineHeight / 2 + 20
+      #shiftUpGrid(y) {
+        return y - this.#textBox.lineHeight / 2 + 20
       }
 
       get _contentHTML() {
@@ -52000,29 +52057,126 @@
         ...spans.map((span) => span.heightIncludeDescendantGrids)
       )
       return maxHeight
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/TextSelection/getOffsetFromParent.js
+
+    /* harmony default export */ function getOffsetFromParent(node) {
+      let offset = 0
+
+      for (const prevNode of node.parentElement.childNodes) {
+        // until the focus node
+        if (prevNode == node) {
+          break
+        }
+
+        if (prevNode.nodeName === '#text') {
+          offset += prevNode.nodeValue.length
+        } else {
+          offset += prevNode.textContent.length
+        }
+      }
+
+      return offset
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeTextBox.js
+
+    /* harmony default export */ function isNodeTextBox(node) {
+      return node.classList.contains('textae-editor__text-box')
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeDenotationSpan.js
+
+    /* harmony default export */ function isNodeDenotationSpan(node) {
+      return node.classList.contains('textae-editor__span')
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeStyleSpan.js
+
+    /* harmony default export */ function isNodeStyleSpan(node) {
+      return node.classList.contains('textae-editor__style')
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeBlockSpan.js
+
+    /* harmony default export */ function isNodeBlockSpan(node) {
+      return node.classList.contains('textae-editor__block')
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/TextSelection/getParentOffset.js
+
+    /* harmony default export */ function getParentOffset(span, node) {
+      const parent = node.parentElement
+      if (isNodeTextBox(parent)) {
+        return 0
+      }
+      if (
+        isNodeDenotationSpan(parent) ||
+        isNodeBlockSpan(parent) ||
+        isNodeStyleSpan(parent)
+      ) {
+        return span.get(parent.id).begin
+      }
+      throw new Error(`Can not get position of a node : ${node} ${node.data}`)
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/TextSelection/index.js
+
+    class TextSelection {
+      #selection
+      #spanInstanceContainer
+
+      constructor(spanInstanceContainer) {
+        this.#selection = window.getSelection()
+        this.#spanInstanceContainer = spanInstanceContainer
+      }
+
+      get anchor() {
+        const position =
+          getParentOffset(
+            this.#spanInstanceContainer,
+            this.#selection.anchorNode
+          ) + getOffsetFromParent(this.#selection.anchorNode)
+
+        return position + this.#selection.anchorOffset
+      }
+
+      get focus() {
+        const position =
+          getParentOffset(
+            this.#spanInstanceContainer,
+            this.#selection.focusNode
+          ) + getOffsetFromParent(this.#selection.focusNode)
+
+        return position + this.#selection.focusOffset
+      }
+
+      get begin() {
+        if (this.anchor < this.focus) {
+          return this.anchor
+        }
+
+        return this.focus
+      }
+
+      get end() {
+        if (this.anchor < this.focus) {
+          return this.focus
+        }
+
+        return this.anchor
+      }
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/index.js
 
     class SpanInstanceContainer {
+      #editorID
+      #editorHTMLElement
+      #emitter
+      #textBox
+      #denotations
+      #blocks
+      #styles
+
       /**
        *
        * @param {import('../createTextBox/TextBox').default} textBox
        */
-      constructor(
-        editorID,
-        editorHTMLElement,
-        emitter,
-        entityContainer,
-        textBox
-      ) {
-        this._editorID = editorID
-        this._editorHTMLElement = editorHTMLElement
-        this._emitter = emitter
-        this._entityContainer = entityContainer
-        this._textBox = textBox
+      constructor(editorID, editorHTMLElement, emitter, textBox) {
+        this.#editorID = editorID
+        this.#editorHTMLElement = editorHTMLElement
+        this.#emitter = emitter
+        this.#textBox = textBox
 
-        this._denotations = new Map()
-        this._blocks = new Map()
-        this._styles = new Map()
+        this.#denotations = new Map()
+        this.#blocks = new Map()
+        this.#styles = new Map()
       }
 
       // expected span is like { "begin": 19, "end": 49 }
@@ -52032,80 +52186,110 @@
         // When redoing, the newValue is instance of the BlockSpanInstance
         // or the DenotationSpan already.
         if (newValue instanceof BlockSpanInstance) {
-          return this._addBlock(newValue)
+          return this.#addBlock(newValue)
         } else if (newValue instanceof DenotationSpanInstance) {
-          return this._addDenotation(newValue)
+          return this.#addDenotation(newValue)
         } else if (newValue.isBlock) {
           console.assert(
-            !this.doesParentOrSameSpanExist(newValue.begin, newValue.end),
+            !this.#doesParentOrSameSpanExist(newValue.begin, newValue.end),
             `There are some parent spans of {begin: ${newValue.begin}, end: ${newValue.end}}.`
           )
 
           const blockSpan = new BlockSpanInstance(
-            this._editorID,
-            this._editorHTMLElement,
+            this.#editorID,
+            this.#editorHTMLElement,
             newValue.begin,
             newValue.end,
-            this._entityContainer,
             this,
-            this._textBox
+            this.#textBox
           )
-          return this._addBlock(blockSpan)
+          return this.#addBlock(blockSpan)
         } else {
           console.assert(
             !this.hasDenotationSpan(newValue.begin, newValue.end),
             'There is already a span.'
           )
           const denotationSpan = new DenotationSpanInstance(
-            this._editorID,
-            this._editorHTMLElement,
+            this.#editorID,
+            this.#editorHTMLElement,
             newValue.begin,
             newValue.end,
-            this._entityContainer,
             this
           )
-          return this._addDenotation(denotationSpan)
+          return this.#addDenotation(denotationSpan)
         }
       }
 
       // Does not draw the instance.
       // When loading for the first time, all instances will be loaded at once.
       // The drawing of the instance is performed at a different time.
-      addSource(source, type) {
-        for (const element of source) {
-          this._addInstanceFromElement(type, element)
+      addSource(rowData, type) {
+        for (const rowDatum of rowData) {
+          this.#addInstanceFromRowDatum(type, rowDatum)
         }
 
-        this._updateSpanTree()
+        this.#updateSpanTree()
       }
 
       hasDenotationSpan(begin, end) {
         const spanID = makeDenotationSpanHTMLElementID(
-          this._editorID,
+          this.#editorID,
           begin,
           end
         )
-        return this._denotations.has(spanID)
+        return this.#denotations.has(spanID)
+      }
+
+      validateNewDenotationSpan(begin, end) {
+        // The span cross exists spans.
+        if (this.isBoundaryCrossingWithOtherSpans(begin, end)) {
+          alertify_default().warning(
+            'A span cannot be modified to make a boundary crossing.'
+          )
+          return false
+        }
+
+        // The span exists already.
+        if (this.hasDenotationSpan(begin, end)) {
+          return false
+        }
+
+        // There is a BlockSpan that is a child.
+        if (this.#hasBlockSpanBetween(begin, end)) {
+          return false
+        }
+
+        return true
       }
 
       hasBlockSpan(begin, end) {
-        const spanID = makeBlockSpanHTMLElementID(this._editorID, begin, end)
-        return this._blocks.has(spanID)
+        const spanID = makeBlockSpanHTMLElementID(this.#editorID, begin, end)
+        return this.#blocks.has(spanID)
       }
 
-      hasBlockSpanBetween(begin, end, option = {}) {
-        for (const blockSpan of this._blocks.values()) {
-          if (
-            begin <= blockSpan.begin &&
-            blockSpan.end <= end &&
-            option &&
-            blockSpan.id !== option.excluded
-          ) {
-            return true
-          }
+      validateNewBlockSpan(begin, end, spanID) {
+        // The span cross exists spans.
+        if (this.isBoundaryCrossingWithOtherSpans(begin, end)) {
+          alertify_default().warning(
+            'A span cannot be modified to make a boundary crossing.'
+          )
+          return false
         }
 
-        return false
+        if (this.#doesParentOrSameSpanExist(begin, end)) {
+          return false
+        }
+
+        // There is a BlockSpan that is a child.
+        if (
+          this.#hasBlockSpanBetween(begin, end, {
+            excluded: spanID
+          })
+        ) {
+          return false
+        }
+
+        return true
       }
 
       hasParentOf(begin, end, spanID) {
@@ -52127,36 +52311,36 @@
        * @returns {import('./SpanInstance').SpanInstance}
        */
       get(spanID) {
-        if (this._denotations.has(spanID)) {
-          return this._denotations.get(spanID)
-        } else if (this._blocks.has(spanID)) {
-          return this._blocks.get(spanID)
+        if (this.#denotations.has(spanID)) {
+          return this.#denotations.get(spanID)
+        } else if (this.#blocks.has(spanID)) {
+          return this.#blocks.get(spanID)
         } else {
           // Returns a typesetting only.
-          return this._styles.get(spanID)
+          return this.#styles.get(spanID)
         }
       }
 
       getStyle(spanID) {
-        if (this._styles.has(spanID)) {
-          return this._styles.get(spanID).styles
+        if (this.#styles.has(spanID)) {
+          return this.#styles.get(spanID).styles
         } else {
           return new Set()
         }
       }
 
       getDenotationSpan(spanID) {
-        if (this._denotations.has(spanID)) {
-          return this._denotations.get(spanID)
+        if (this.#denotations.has(spanID)) {
+          return this.#denotations.get(spanID)
         }
       }
 
       rangeDenotationSpan(firstID, secondID) {
-        return rangeFrom(this._denotations, firstID, secondID)
+        return rangeFrom(this.#denotations, firstID, secondID)
       }
 
       rangeBlockSpan(firstID, secondID) {
-        return rangeFrom(this._blocks, firstID, secondID)
+        return rangeFrom(this.#blocks, firstID, secondID)
       }
 
       get topLevel() {
@@ -52170,26 +52354,26 @@
       }
 
       clear() {
-        this._denotations.clear()
-        this._blocks.clear()
-        this._styles.clear()
+        this.#denotations.clear()
+        this.#blocks.clear()
+        this.#styles.clear()
       }
 
       remove(id) {
-        const blockSpan = this._blocks.get(id)
+        const blockSpan = this.#blocks.get(id)
         if (blockSpan) {
-          this._removeBlock(blockSpan)
-          this._emitter.emit(
+          this.#removeBlock(blockSpan)
+          this.#emitter.emit(
             `textae-event.annotation-data.span.remove`,
             blockSpan
           )
           return
         }
 
-        const denotationSpan = this._denotations.get(id)
+        const denotationSpan = this.#denotations.get(id)
         if (denotationSpan) {
-          this._removeDenotation(denotationSpan)
-          this._emitter.emit(
+          this.#removeDenotation(denotationSpan)
+          this.#emitter.emit(
             `textae-event.annotation-data.span.remove`,
             denotationSpan
           )
@@ -52203,25 +52387,24 @@
       // we will delete and add the instance as well.
       moveDenotationSpan(id, begin, end) {
         console.assert(
-          id !== makeDenotationSpanHTMLElementID(this._editorID, begin, end),
+          id !== makeDenotationSpanHTMLElementID(this.#editorID, begin, end),
           `Do not need move span:  ${id} ${begin} ${end}`
         )
 
-        const oldSpan = this._denotations.get(id)
+        const oldSpan = this.#denotations.get(id)
         console.assert(oldSpan, `There is no target for move for ${id}!`)
 
-        this._removeDenotation(oldSpan)
+        this.#removeDenotation(oldSpan)
 
         const newOne = new DenotationSpanInstance(
-          this._editorID,
-          this._editorHTMLElement,
+          this.#editorID,
+          this.#editorHTMLElement,
           begin,
           end,
-          this._entityContainer,
           this
         )
-        this._addDenotation(newOne, oldSpan)
-        this._emitter.emit('textae-event.annotation-data.span.move')
+        this.#addDenotation(newOne, oldSpan)
+        this.#emitter.emit('textae-event.annotation-data.span.move')
 
         return {
           begin: oldSpan.begin,
@@ -52232,24 +52415,23 @@
 
       moveBlockSpan(id, begin, end) {
         console.assert(
-          id !== makeBlockSpanHTMLElementID(this._editorID, begin, end),
+          id !== makeBlockSpanHTMLElementID(this.#editorID, begin, end),
           `Do not need move span:  ${id} ${begin} ${end}`
         )
 
-        const oldSpan = this._blocks.get(id)
-        this._removeBlock(oldSpan)
+        const oldSpan = this.#blocks.get(id)
+        this.#removeBlock(oldSpan)
 
         const newOne = new BlockSpanInstance(
-          this._editorID,
-          this._editorHTMLElement,
+          this.#editorID,
+          this.#editorHTMLElement,
           begin,
           end,
-          this._entityContainer,
           this,
-          this._textBox
+          this.#textBox
         )
-        this._addBlock(newOne, oldSpan)
-        this._emitter.emit('textae-event.annotation-data.span.move')
+        this.#addBlock(newOne, oldSpan)
+        this.#emitter.emit('textae-event.annotation-data.span.move')
 
         return {
           begin: oldSpan.begin,
@@ -52258,82 +52440,22 @@
         }
       }
 
-      _addDenotation(denotationSpan, oldSpan = null) {
-        this._addSpan(this._denotations, denotationSpan, oldSpan)
-        this._emitter.emit(
-          `textae-event.annotation-data.span.add`,
-          denotationSpan
-        )
-
-        return denotationSpan
-      }
-
-      _addBlock(blockSpan, oldSpan = null) {
-        this._addSpan(this._blocks, blockSpan, oldSpan)
-        this._emitter.emit(`textae-event.annotation-data.span.add`, blockSpan)
-
-        return blockSpan
-      }
-
-      _addSpan(container, span, oldSpan = null) {
-        container.set(span.id, span)
-        this._updateSpanTree()
-
-        if (oldSpan) {
-          // Span.entities depends on the property of the entity.
-          // Span DOM element is rendered by 'span.add' event.
-          // We need to update the span ID of the entity before 'span.add' event.
-          oldSpan.passesAllEntitiesTo(span)
-        }
-
-        span.render()
-
-        const { clientHeight, clientWidth } = document.documentElement
-        span.drawGrid(clientHeight, clientWidth)
-      }
-
-      _removeDenotation(span) {
-        this._denotations.delete(span.id)
-        span.erase()
-        // When changing the length of a span, the span is erased and rendered again.
-        // When the span is erased, the span erase event fires and the position calculations for all annotations are performed.
-        // The event is not fired in this function.
-      }
-
-      _removeBlock(span) {
-        this._blocks.delete(span.id)
-        span.erase()
-        // When changing the length of a span, the span is erased and rendered again.
-        // When the span is erased, the span erase event fires and the position calculations for all annotations are performed.
-        // The event is not fired in this function.
-      }
-
       isBoundaryCrossingWithOtherSpans(begin, end) {
         return isBoundaryCrossingWithOtherSpans(this.all, begin, end)
       }
 
-      doesParentOrSameSpanExist(begin, end) {
-        const isParent = (span) => span.begin <= begin && end <= span.end
-
-        return (
-          [...this._denotations.values()].some(isParent) ||
-          [...this._blocks.values()].some(isParent) ||
-          [...this._styles.values()].some(isParent)
-        )
-      }
-
       get all() {
-        const styleOnlySpans = [...this._styles.values()].filter(
-          (s) => !this._denotations.has(s.id)
+        const styleOnlySpans = [...this.#styles.values()].filter(
+          (s) => !this.#denotations.has(s.id)
         )
-        return [...this._blocks.values()]
-          .concat([...this._denotations.values()])
+        return [...this.#blocks.values()]
+          .concat([...this.#denotations.values()])
           .concat(styleOnlySpans)
       }
 
       get selectedItems() {
-        return [...this._blocks.values()]
-          .concat([...this._denotations.values()])
+        return [...this.#blocks.values()]
+          .concat([...this.#denotations.values()])
           .filter(({ isSelected }) => isSelected)
       }
 
@@ -52341,11 +52463,11 @@
        * @returns {import('./DenotationSpanInstance').DenotationSpanInstance[]}
        */
       get allDenotationSpans() {
-        return [...this._denotations.values()]
+        return [...this.#denotations.values()]
       }
 
       get allBlockSpans() {
-        return [...this._blocks.values()]
+        return [...this.#blocks.values()]
       }
 
       // It has a common interface with the span instance so that it can be the parent of the span instance.
@@ -52355,69 +52477,11 @@
 
       // It has a common interface with the span instance so that it can be the parent of the span instance
       get element() {
-        return this._editorHTMLElement.querySelector(`.textae-editor__text-box`)
+        return this.#editorHTMLElement.querySelector(`.textae-editor__text-box`)
       }
 
-      _updateSpanTree() {
-        // Register a typesetting in the span tree to put it in the span rendering flow.
-        updateSpanTree(this, this.all)
-      }
-
-      _addInstanceFromElement(type, denotation) {
-        switch (type) {
-          case 'denotation': {
-            const objectSpan = new DenotationSpanInstance(
-              this._editorID,
-              this._editorHTMLElement,
-              denotation.span.begin,
-              denotation.span.end,
-              this._entityContainer,
-              this
-            )
-
-            if (!this._denotations.has(objectSpan.id)) {
-              this._denotations.set(objectSpan.id, objectSpan)
-            }
-            break
-          }
-          case 'block': {
-            const blockSpan = new BlockSpanInstance(
-              this._editorID,
-              this._editorHTMLElement,
-              denotation.span.begin,
-              denotation.span.end,
-              this._entityContainer,
-              this,
-              this._textBox
-            )
-
-            if (!this._blocks.has(blockSpan.id)) {
-              this._blocks.set(blockSpan.id, blockSpan)
-            }
-            break
-          }
-          case 'typesetting': {
-            const styleSpan = new StyleSpanInstance(
-              this._editorID,
-              this._editorHTMLElement,
-              denotation.span.begin,
-              denotation.span.end,
-              this,
-              denotation.style
-            )
-
-            // Merge multiple styles for the same range.
-            if (this._styles.has(styleSpan.id)) {
-              this._styles.get(styleSpan.id).appendStyles(styleSpan.styles)
-            } else {
-              this._styles.set(styleSpan.id, styleSpan)
-            }
-
-            break
-          }
-          default:
-            throw `${type} is unknown type span!`
-        }
+      get textSelection() {
+        return new TextSelection(this)
       }
 
       arrangeDenotationEntityPosition() {
@@ -52439,14 +52503,149 @@
       }
 
       get maxHeight() {
-        const spans = [...this._blocks.values()].concat([
-          ...this._denotations.values()
+        const spans = [...this.#blocks.values()].concat([
+          ...this.#denotations.values()
         ])
 
         if (spans.length) {
           return getCurrentMaxHeight(spans)
         } else {
           return null
+        }
+      }
+
+      #hasBlockSpanBetween(begin, end, option = {}) {
+        for (const blockSpan of this.#blocks.values()) {
+          if (
+            begin <= blockSpan.begin &&
+            blockSpan.end <= end &&
+            option &&
+            blockSpan.id !== option.excluded
+          ) {
+            return true
+          }
+        }
+
+        return false
+      }
+
+      #doesParentOrSameSpanExist(begin, end) {
+        const isParent = (span) => span.begin <= begin && end <= span.end
+
+        return (
+          [...this.#denotations.values()].some(isParent) ||
+          [...this.#blocks.values()].some(isParent) ||
+          [...this.#styles.values()].some(isParent)
+        )
+      }
+
+      #addDenotation(denotationSpan, oldSpan = null) {
+        this.#addSpan(this.#denotations, denotationSpan, oldSpan)
+        this.#emitter.emit(
+          `textae-event.annotation-data.span.add`,
+          denotationSpan
+        )
+
+        return denotationSpan
+      }
+
+      #addBlock(blockSpan, oldSpan = null) {
+        this.#addSpan(this.#blocks, blockSpan, oldSpan)
+        this.#emitter.emit(`textae-event.annotation-data.span.add`, blockSpan)
+
+        return blockSpan
+      }
+
+      #addSpan(container, span, oldSpan = null) {
+        container.set(span.id, span)
+        this.#updateSpanTree()
+
+        if (oldSpan) {
+          // Span.entities depends on the property of the entity.
+          // Span DOM element is rendered by 'span.add' event.
+          // We need to update the span ID of the entity before 'span.add' event.
+          oldSpan.passesAllEntitiesTo(span)
+        }
+
+        span.render()
+
+        const { clientHeight, clientWidth } = document.documentElement
+        span.drawGrid(clientHeight, clientWidth)
+      }
+
+      #removeDenotation(span) {
+        this.#denotations.delete(span.id)
+        span.erase()
+        // When changing the length of a span, the span is erased and rendered again.
+        // When the span is erased, the span erase event fires and the position calculations for all annotations are performed.
+        // The event is not fired in this function.
+      }
+
+      #removeBlock(span) {
+        this.#blocks.delete(span.id)
+        span.erase()
+        // When changing the length of a span, the span is erased and rendered again.
+        // When the span is erased, the span erase event fires and the position calculations for all annotations are performed.
+        // The event is not fired in this function.
+      }
+
+      #updateSpanTree() {
+        // Register a typesetting in the span tree to put it in the span rendering flow.
+        updateSpanTree(this, this.all)
+      }
+
+      #addInstanceFromRowDatum(spanType, rowDatum) {
+        switch (spanType) {
+          case 'denotation': {
+            const objectSpan = new DenotationSpanInstance(
+              this.#editorID,
+              this.#editorHTMLElement,
+              rowDatum.span.begin,
+              rowDatum.span.end,
+              this
+            )
+
+            if (!this.#denotations.has(objectSpan.id)) {
+              this.#denotations.set(objectSpan.id, objectSpan)
+            }
+            break
+          }
+          case 'block': {
+            const blockSpan = new BlockSpanInstance(
+              this.#editorID,
+              this.#editorHTMLElement,
+              rowDatum.span.begin,
+              rowDatum.span.end,
+              this,
+              this.#textBox
+            )
+
+            if (!this.#blocks.has(blockSpan.id)) {
+              this.#blocks.set(blockSpan.id, blockSpan)
+            }
+            break
+          }
+          case 'typesetting': {
+            const styleSpan = new StyleSpanInstance(
+              this.#editorID,
+              this.#editorHTMLElement,
+              rowDatum.span.begin,
+              rowDatum.span.end,
+              this,
+              rowDatum.style
+            )
+
+            // Merge multiple styles for the same range.
+            if (this.#styles.has(styleSpan.id)) {
+              this.#styles.get(styleSpan.id).appendStyles(styleSpan.styles)
+            } else {
+              this.#styles.set(styleSpan.id, styleSpan)
+            }
+
+            break
+          }
+          default:
+            throw `${spanType} is unknown type span!`
         }
       }
     }
@@ -52618,6 +52817,16 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AttributeInstanceContainer/AttributeInstance.js
 
     class AttributeInstance {
+      #id
+      #subj
+      #pred
+      #obj
+      #entityInstanceContainer
+      #relationInstanceContainer
+      #namespaceInstanceContainer
+      #definitionContainer
+      #mediaDictionary
+
       // Expected an attribute like {id: "A1", subj: "T1", pred: "example_predicate_1", obj: "attr1"}.
       /**
        *
@@ -52625,26 +52834,26 @@
        */
       constructor(
         { id, subj, pred, obj },
-        entityContainer,
-        relationContainer,
-        namespace,
+        entityInstanceContainer,
+        relationInstanceContainer,
+        namespaceInstanceContainer,
         definitionContainer,
         mediaDictionary
       ) {
-        this.id = id
-        this.subj = subj
-        this.pred = pred
-        this._obj = obj
-        this._entityContainer = entityContainer
-        this._relationContainer = relationContainer
-        this._namespace = namespace
-        this._definitionContainer = definitionContainer
-        this._mediaDictionary = mediaDictionary
+        this.#id = id
+        this.#subj = subj
+        this.#pred = pred
+        this.#obj = obj
+        this.#entityInstanceContainer = entityInstanceContainer
+        this.#relationInstanceContainer = relationInstanceContainer
+        this.#namespaceInstanceContainer = namespaceInstanceContainer
+        this.#definitionContainer = definitionContainer
+        this.#mediaDictionary = mediaDictionary
 
         // If the extension cannot be used to determine whether the image is an image or not,
         // the Content-Type header is acquired to determine whether the image is an image or not.
         if (this.#valueType === 'string' && !this.#hasImageExtension) {
-          this._mediaDictionary
+          this.#mediaDictionary
             .acquireContentTypeOf(this.#href)
             .then((isImage) => {
               if (isImage) {
@@ -52654,22 +52863,46 @@
         }
       }
 
+      get id() {
+        return this.#id
+      }
+
+      set id(value) {
+        this.#id = value
+      }
+
+      get subj() {
+        return this.#subj
+      }
+
+      set subj(value) {
+        this.#subj = value
+      }
+
+      get pred() {
+        return this.#pred
+      }
+
+      set pred(value) {
+        this.#pred = value
+      }
+
       get obj() {
-        return this._obj
+        return this.#obj
       }
 
       set obj(value) {
         if (this.#valueType === 'numeric') {
-          this._obj = parseFloat(value)
+          this.#obj = parseFloat(value)
         } else {
-          this._obj = value
+          this.#obj = value
         }
       }
 
       get subjectInstance() {
         return (
-          this._entityContainer.get(this.subj) ||
-          this._relationContainer.get(this.subj)
+          this.#entityInstanceContainer.get(this.subj) ||
+          this.#relationInstanceContainer.get(this.subj)
         )
       }
 
@@ -52678,7 +52911,7 @@
           id: this.id,
           subj: this.subj,
           pred: this.pred,
-          obj: this._obj
+          obj: this.#obj
         }
       }
 
@@ -52686,7 +52919,7 @@
         // If the attribute is a numeric type,
         // then the type of obj is numeric.
         // Cast obj to a string to compare.
-        return this.pred === pred && String(this._obj) === obj
+        return this.pred === pred && String(this.#obj) === obj
       }
 
       updateElement() {
@@ -52726,15 +52959,15 @@
       }
 
       get height() {
-        if (this._definitionContainer.get(this.pred).mediaHeight) {
-          return this._definitionContainer.get(this.pred).mediaHeight
+        if (this.#definitionContainer.get(this.pred).mediaHeight) {
+          return this.#definitionContainer.get(this.pred).mediaHeight
         } else {
           return 18
         }
       }
 
       get #title() {
-        return `[${this.id}] pred: ${this.pred}, value: ${this._obj}`
+        return `[${this.id}] pred: ${this.pred}, value: ${this.#obj}`
       }
 
       get #labelOrMedia() {
@@ -52749,7 +52982,7 @@
         return (
           this.#valueType === 'string' &&
           (this.#hasImageExtension ||
-            this._mediaDictionary.hasImageContentTypeOf(this.#href))
+            this.#mediaDictionary.hasImageContentTypeOf(this.#href))
         )
       }
 
@@ -52759,36 +52992,38 @@
 
       get #displayName() {
         return getDisplayName(
-          this._namespace,
-          typeof this._obj === 'string' ? this._obj : '',
-          this._definitionContainer.getDisplayName(this.pred, this._obj)
+          this.#namespaceInstanceContainer,
+          typeof this.#obj === 'string' ? this.#obj : '',
+          this.#definitionContainer.getDisplayName(this.pred, this.#obj)
         )
       }
 
       get #href() {
         return getURI(
-          this._namespace,
-          typeof this._obj === 'string' ? this._obj : ''
+          this.#namespaceInstanceContainer,
+          typeof this.#obj === 'string' ? this.#obj : ''
         )
       }
 
       get #color() {
         return (
-          this._definitionContainer.getColor(this.pred, this._obj) ||
+          this.#definitionContainer.getColor(this.pred, this.#obj) ||
           this.subjectInstance.color
         )
       }
 
       get #valueType() {
-        return this._definitionContainer.get(this.pred).valueType
+        return this.#definitionContainer.get(this.pred).valueType
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/IdIssueContainer/index.js
 
     class IdIssueContainer extends InstanceContainer {
+      #prefixFunc
+
       constructor(emitter, name, prefixFunc) {
         super(emitter, name)
 
-        this._prefixFunc = prefixFunc
+        this.#prefixFunc = prefixFunc
       }
 
       addSource(source, type) {
@@ -52805,27 +53040,27 @@
         })
 
         for (const instance of collection) {
-          super._addToContainer(this._assignID(instance))
+          super._addToContainer(this.#assignID(instance))
         }
       }
 
       add(instance) {
-        return super.add(this._assignID(instance))
+        return super.add(this.#assignID(instance))
       }
 
-      _assignID(instance) {
+      #assignID(instance) {
         if (!instance.id) {
-          instance.id = this._generateNextID(instance)
+          instance.id = this.#generateNextID(instance)
         }
 
         return instance
       }
 
-      _generateNextID(instance) {
-        const prefix = this._prefixFunc(instance)
+      #generateNextID(instance) {
+        const prefix = this.#prefixFunc(instance)
 
         const wellFormattedIDs = new Set()
-        for (const id of this._container.keys()) {
+        for (const id of super._container.keys()) {
           // The format of id is a prefix and a number, for example 'T1'.
           if (new RegExp(`^${prefix}\\d+$`).test(id)) {
             wellFormattedIDs.add(id.slice(1))
@@ -52904,30 +53139,36 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AttributeInstanceContainer/index.js
 
     class AttributeInstanceContainer extends IdIssueContainer {
+      #entityInstanceContainer
+      #relationInstanceContainer
+      #namespaceInstanceContainer
+      #definitionContainer
+      #mediaDictionary
+
       constructor(
         emitter,
-        entityContainer,
-        relationContainer,
-        namespace,
+        entityInstanceContainer,
+        relationInstanceContainer,
+        namespaceInstanceContainer,
         definitionContainer
       ) {
         super(emitter, 'attribute', () => 'A')
 
-        this._entityContainer = entityContainer
-        this._relationContainer = relationContainer
-        this._namespace = namespace
-        this._definitionContainer = definitionContainer
-        this._mediaDictionary = new MediaDictionary()
+        this.#entityInstanceContainer = entityInstanceContainer
+        this.#relationInstanceContainer = relationInstanceContainer
+        this.#namespaceInstanceContainer = namespaceInstanceContainer
+        this.#definitionContainer = definitionContainer
+        this.#mediaDictionary = new MediaDictionary()
       }
 
       _toInstance(attribute) {
         return new AttributeInstance(
           attribute,
-          this._entityContainer,
-          this._relationContainer,
-          this._namespace,
-          this._definitionContainer,
-          this._mediaDictionary
+          this.#entityInstanceContainer,
+          this.#relationInstanceContainer,
+          this.#namespaceInstanceContainer,
+          this.#definitionContainer,
+          this.#mediaDictionary
         )
       }
 
@@ -52984,7 +53225,7 @@
         return this.all
           .filter((a) => a.subj === subj)
           .sort((a, b) =>
-            this._definitionContainer.attributeCompareFunction(a, b)
+            this.#definitionContainer.attributeCompareFunction(a, b)
           )
       }
     } // CONCATENATED MODULE: ./src/lib/TypeValues.js
@@ -53135,7 +53376,7 @@
         startAndEnd,
         alignSourceBollards,
         alignTargetBollards,
-        controlBarHeight,
+        toolBarHeight,
         clientTopOfContainer
       ) {
         this._controlY =
@@ -53144,7 +53385,7 @@
           20 +
           (alignSourceBollards && alignTargetBollards ? 3 : 0)
         this._startAndEnd = startAndEnd
-        this._controlBarHeight = controlBarHeight
+        this._toolBarHeight = toolBarHeight
         this._clientTopOfContainer = clientTopOfContainer
 
         this._virtualEntityWidth = 100
@@ -53356,7 +53597,7 @@
       }
 
       get sourceY() {
-        return this._controlBarHeight - this._clientTopOfContainer
+        return this._toolBarHeight - this._clientTopOfContainer
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/PointingUpCurveAlgorithm.js
 
@@ -53393,7 +53634,7 @@
       }
 
       get targetY() {
-        return this._controlBarHeight - this._clientTopOfContainer
+        return this._toolBarHeight - this._clientTopOfContainer
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/ArchedCurveAlgorithm.js
 
@@ -53711,7 +53952,7 @@
         alignSourceBollards,
         alignTargetBollards,
         clientTopOfContainer,
-        controlBarHeight
+        toolBarHeight
       ) {
         const startAndEnd = new StartAndEnd_startAndEnd(
           relation,
@@ -53722,27 +53963,27 @@
         const { sourceEntity, targetEntity } = relation
 
         if (
-          targetEntity.clientBottom < controlBarHeight &&
+          targetEntity.clientBottom < toolBarHeight &&
           targetEntity.clientTop < sourceEntity.clientTop
         ) {
           return new PointingUpCurveAlgorithm(
             startAndEnd,
             alignSourceBollards,
             alignTargetBollards,
-            controlBarHeight,
+            toolBarHeight,
             clientTopOfContainer
           )
         }
 
         if (
-          sourceEntity.clientBottom < controlBarHeight &&
+          sourceEntity.clientBottom < toolBarHeight &&
           sourceEntity.clientTop < targetEntity.clientTop
         ) {
           return new PointingDownCurveAlgorithm(
             startAndEnd,
             alignSourceBollards,
             alignTargetBollards,
-            controlBarHeight,
+            toolBarHeight,
             clientTopOfContainer
           )
         }
@@ -53758,7 +53999,7 @@
               startAndEnd,
               alignSourceBollards,
               alignTargetBollards,
-              controlBarHeight,
+              toolBarHeight,
               clientTopOfContainer
             )
           }
@@ -53768,7 +54009,7 @@
               startAndEnd,
               alignSourceBollards,
               alignTargetBollards,
-              controlBarHeight,
+              toolBarHeight,
               clientTopOfContainer
             )
           }
@@ -53777,7 +54018,7 @@
             startAndEnd,
             alignSourceBollards,
             alignTargetBollards,
-            controlBarHeight,
+            toolBarHeight,
             clientTopOfContainer
           )
         }
@@ -53788,7 +54029,7 @@
               startAndEnd,
               alignSourceBollards,
               alignTargetBollards,
-              controlBarHeight,
+              toolBarHeight,
               clientTopOfContainer
             )
           }
@@ -53798,7 +54039,7 @@
               startAndEnd,
               alignSourceBollards,
               alignTargetBollards,
-              controlBarHeight,
+              toolBarHeight,
               clientTopOfContainer
             )
           }
@@ -53807,7 +54048,7 @@
             startAndEnd,
             alignSourceBollards,
             alignTargetBollards,
-            controlBarHeight,
+            toolBarHeight,
             clientTopOfContainer
           )
         } else {
@@ -53816,7 +54057,7 @@
               startAndEnd,
               alignSourceBollards,
               alignTargetBollards,
-              controlBarHeight,
+              toolBarHeight,
               clientTopOfContainer
             )
           }
@@ -53826,7 +54067,7 @@
               startAndEnd,
               alignSourceBollards,
               alignTargetBollards,
-              controlBarHeight,
+              toolBarHeight,
               clientTopOfContainer
             )
           }
@@ -53835,7 +54076,7 @@
             startAndEnd,
             alignSourceBollards,
             alignTargetBollards,
-            controlBarHeight,
+            toolBarHeight,
             clientTopOfContainer
           )
         }
@@ -53845,7 +54086,7 @@
     class Arrow {
       #container
       #relation
-      #controlBarHeight
+      #toolBarHeight
       #sourceBollard
       #targetBollard
       #path
@@ -53859,7 +54100,7 @@
       constructor(
         editorHTMLElement,
         relation,
-        controlBarHeight,
+        toolBarHeight,
         onAuraClick,
         onBollardClick,
         onMouseEnter,
@@ -53869,7 +54110,7 @@
           '.textae-editor__relation-box'
         )
         this.#relation = relation
-        this.#controlBarHeight = controlBarHeight
+        this.#toolBarHeight = toolBarHeight
 
         const sourceBollard = createSourceBollard()
         this.#container.appendChild(sourceBollard)
@@ -53923,7 +54164,7 @@
           pointUpSourceBollards,
           pointUpTargetBollards,
           this.#container.getBoundingClientRect().top,
-          this.#controlBarHeight
+          this.#toolBarHeight
         )
         updatePath(
           this.#path,
@@ -54278,79 +54519,97 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/index.js
 
     class RelationInstance {
+      #editorHTMLElement
+      #eventEmitter
+      #entityInstanceContainer
+      #attributeInstanceContainer
+      #id
+      #typeName
+      #subj
+      #obj
+      #namespaceInstanceContainer
+      #definitionContainer
+      #toolBarHeight
+      #isSelected
+      #isHovered
+      #arrow
+      #label
+
       constructor(
         editorHTMLElement,
         eventEmitter,
-        entityContainer,
-        attributeContainer,
+        entityInstanceContainer,
+        attributeInstanceContainer,
+        namespaceInstanceContainer,
         { id, pred, subj, obj },
-        namespace,
         definitionContainer,
-        controlBarHeight
+        toolBarHeight
       ) {
-        this._editorHTMLElement = editorHTMLElement
-        this._eventEmitter = eventEmitter
-        this._entityContainer = entityContainer
-        this._attributeContainer = attributeContainer
-        this._id = id
-        this.typeName = pred
-        this._subj = subj
-        this._obj = obj
-        this._namespace = namespace
-        this._definitionContainer = definitionContainer
-        this._controlBarHeight = controlBarHeight
-        this._isSelected = false
+        this.#editorHTMLElement = editorHTMLElement
+        this.#eventEmitter = eventEmitter
+        this.#entityInstanceContainer = entityInstanceContainer
+        this.#attributeInstanceContainer = attributeInstanceContainer
+        this.#id = id
+        this.#subj = subj
+        this.#obj = obj
+        this.#namespaceInstanceContainer = namespaceInstanceContainer
+        this.#definitionContainer = definitionContainer
+        this.#toolBarHeight = toolBarHeight
+        this.#isSelected = false
 
         // When you click on a relation to deselect it, the display of the relation will be in hover.
         // When you click on the body and deselect the relation, the display of the relation becomes non-hover.
         // To make this distinction, the hover state is retained.
-        this._isHovered = false
+        this.#isHovered = false
+
+        // Preprocessing is required, so use the property
+        this.typeName = pred
       }
 
       get id() {
-        return this._id
+        return this.#id
       }
 
       set id(val) {
-        this._id = val
+        this.#id = val
       }
 
       get typeName() {
-        return this._typeName
+        return this.#typeName
       }
 
       set typeName(val) {
         // Replace null to 'null' if type is null and undefined too.
-        this._typeName = String(val)
+        this.#typeName = String(val)
       }
 
       get typeValues() {
         return new TypeValues(
-          this._typeName,
-          this._attributeContainer.getAttributesFor(this._id)
+          this.#typeName,
+          this.#attributeInstanceContainer.getAttributesFor(this.#id)
         )
       }
 
       get subj() {
-        return this._subj
+        return this.#subj
       }
 
       get obj() {
-        return this._obj
+        return this.#obj
       }
 
       get attributes() {
-        return this._attributeContainer.getAttributesFor(this._id)
+        return this.#attributeInstanceContainer.getAttributesFor(this.#id)
       }
 
       /** @returns {import('../../../EntityInstance').EntityInstance} */
       get sourceEntity() {
-        return this._entityContainer.get(this.subj)
+        return this.#entityInstanceContainer.get(this.subj)
       }
 
       /** @returns {import('../../../EntityInstance').EntityInstance} */
       get targetEntity() {
-        return this._entityContainer.get(this.obj)
+        return this.#entityInstanceContainer.get(this.obj)
       }
 
       get sourceColor() {
@@ -54362,29 +54621,29 @@
       }
 
       get isSelected() {
-        return this._isSelected
+        return this.#isSelected
       }
 
       get isHovered() {
-        return this._isHovered
+        return this.#isHovered
       }
 
       select() {
-        if (!this._isSelected) {
-          this._isSelected = true
+        if (!this.#isSelected) {
+          this.#isSelected = true
           // When we select a relation,
           // it is hovering and we have already highlighted the line,
           // so we only need to update the label.
-          if (this._label) {
-            this._label.updateHighlighting()
+          if (this.#label) {
+            this.#label.updateHighlighting()
           }
         }
       }
 
       deselect() {
-        if (this._isSelected) {
-          this._isSelected = false
-          if (this._arrow || this._label) {
+        if (this.#isSelected) {
+          this.#isSelected = false
+          if (this.#arrow || this.#label) {
             this.redrawLineConsideringSelection()
           }
         }
@@ -54395,13 +54654,13 @@
           this.sourceEntity.isInViewport(clientHeight, clientWidth) ||
           this.targetEntity.isInViewport(clientHeight, clientWidth)
         ) {
-          if (!this._arrow) {
-            this._arrow = new Arrow(
-              this._editorHTMLElement,
+          if (!this.#arrow) {
+            this.#arrow = new Arrow(
+              this.#editorHTMLElement,
               this,
-              this._controlBarHeight,
+              this.#toolBarHeight,
               (event) => {
-                this._eventEmitter.emit(
+                this.#eventEmitter.emit(
                   'textae-event.editor.relation.click',
                   event,
                   this
@@ -54409,23 +54668,23 @@
                 event.stopPropagation()
               },
               (event, entity) => {
-                this._eventEmitter.emit(
+                this.#eventEmitter.emit(
                   'textae-event.editor.relation-bollard.click',
                   event,
                   entity
                 )
                 event.stopPropagation()
               },
-              () => this._pointUpSelfAndEntities(),
-              () => this._pointDownSelfAndEntities()
+              () => this.#pointUpSelfAndEntities(),
+              () => this.#pointDownSelfAndEntities()
             )
 
-            this._label = new Label(
-              this._editorHTMLElement,
+            this.#label = new Label(
+              this.#editorHTMLElement,
               this,
-              this._arrow,
+              this.#arrow,
               (event, attribute) => {
-                this._eventEmitter.emit(
+                this.#eventEmitter.emit(
                   'textae-event.editor.relation.click',
                   event,
                   this,
@@ -54433,11 +54692,11 @@
                 )
                 event.stopPropagation()
               },
-              () => this._pointUpSelfAndEntities(),
-              () => this._pointDownSelfAndEntities()
+              () => this.#pointUpSelfAndEntities(),
+              () => this.#pointDownSelfAndEntities()
             )
           } else {
-            this._redrawArrowConsideringSelection()
+            this.#redrawArrowConsideringSelection()
           }
 
           if (
@@ -54447,13 +54706,13 @@
               this.sourceEntity.isInViewport(clientHeight, clientWidth)) ||
             this.sourceEntity.clientTop === this.targetEntity.clientTop
           ) {
-            if (!this._label) {
-              this._label = new Label(
-                this._editorHTMLElement,
+            if (!this.#label) {
+              this.#label = new Label(
+                this.#editorHTMLElement,
                 this,
-                this._arrow,
+                this.#arrow,
                 (event, attribute) => {
-                  this._eventEmitter.emit(
+                  this.#eventEmitter.emit(
                     'textae-event.editor.relation.click',
                     event,
                     this,
@@ -54461,115 +54720,111 @@
                   )
                   event.stopPropagation()
                 },
-                () => this._pointUpSelfAndEntities(),
-                () => this._pointDownSelfAndEntities()
+                () => this.#pointUpSelfAndEntities(),
+                () => this.#pointDownSelfAndEntities()
               )
 
               // When scrolling out of a selected relation and then scrolling in again,
               // the selected state will be highlighted.
-              this._label.updateHighlighting()
+              this.#label.updateHighlighting()
             } else {
-              this._redrawLabelConsideringSelection()
+              this.#redrawLabelConsideringSelection()
             }
           } else {
-            if (this._label) {
-              this._label.destructor()
-              this._label = undefined
+            if (this.#label) {
+              this.#label.destructor()
+              this.#label = undefined
             }
           }
         } else {
-          if (this._arrow || this._label) {
+          if (this.#arrow || this.#label) {
             this.erase()
           }
         }
       }
 
       updateElement() {
-        if (this._arrow) {
-          this._arrow.update(
-            this.isSelected || this._relation.isHovered,
-            this.isSelected || this._relation.isHovered,
-            this.isSelected || this._relation.isHovered
-          )
+        if (this.#arrow) {
+          this.#arrow.update(this.isSelected, this.isSelected, this.isSelected)
         }
 
-        if (this._label) {
-          this._label.updateValue()
+        if (this.#label) {
+          this.#label.updateValue()
         }
       }
 
       redrawLineConsideringSelection() {
-        this._redrawArrowConsideringSelection()
-        this._redrawLabelConsideringSelection()
+        this.#redrawArrowConsideringSelection()
+        this.#redrawLabelConsideringSelection()
       }
 
       pointUpPathAndSourceBollards() {
-        if (this._arrow) {
+        if (this.#arrow) {
           if (this.targetEntity.isSelected) {
-            this._arrow.update(true, true, true)
+            this.#arrow.update(true, true, true)
           } else {
-            this._arrow.update(true, true, this.isSelected)
+            this.#arrow.update(true, true, this.isSelected)
           }
         }
 
-        if (this._label) {
-          this._label.updateHighlighting()
+        if (this.#label) {
+          this.#label.updateHighlighting()
         }
       }
 
       pointUpPathAndTargetBollards() {
-        if (this._arrow) {
+        if (this.#arrow) {
           if (this.sourceEntity.isSelected) {
-            this._arrow.update(true, true, true)
+            this.#arrow.update(true, true, true)
           } else {
-            this._arrow.update(true, this.isSelected, true)
+            this.#arrow.update(true, this.isSelected, true)
           }
         }
 
-        if (this._label) {
-          this._label.updateHighlighting()
+        if (this.#label) {
+          this.#label.updateHighlighting()
         }
       }
 
       pointUpSourceBollardsAndTargetBollards() {
-        if (this._arrow) {
-          this._arrow.update(this.isSelected, true, true)
+        if (this.#arrow) {
+          this.#arrow.update(this.isSelected, true, true)
         }
 
-        if (this._label) {
-          this._label.updateHighlighting()
+        if (this.#label) {
+          this.#label.updateHighlighting()
         }
       }
 
       pointUpSourceBollards() {
-        if (this._arrow) {
-          this._arrow.update(this.isSelected, true, this.isSelected)
+        if (this.#arrow) {
+          this.#arrow.update(this.isSelected, true, this.isSelected)
         }
 
-        if (this._label) {
-          this._label.updateHighlighting()
+        if (this.#label) {
+          this.#label.updateHighlighting()
         }
       }
 
       pointUpTargetBollards() {
-        if (this._arrow) {
-          this._arrow.update(this.isSelected, this.isSelected, true)
+        if (this.#arrow) {
+          this.#arrow.update(this.isSelected, this.isSelected, true)
         }
 
-        if (this._label) {
-          this._label.updateHighlighting()
+        if (this.#label) {
+          this.#label.updateHighlighting()
         }
       }
 
       erase() {
-        if (this._arrow) {
-          this._arrow.destructor()
-          this._arrow = undefined
+        if (this.#arrow) {
+          this.#arrow.destructor()
+          this.#arrow = undefined
         }
 
-        if (this._label) {
-          this._label.destructor()
-          this._label = undefined
+        if (this.#label) {
+          this.#label.destructor()
+          this.#label = undefined
         }
       }
 
@@ -54578,34 +54833,34 @@
       }
 
       get color() {
-        return this._definitionContainer.getColor(this.typeName)
+        return this.#definitionContainer.getColor(this.typeName)
       }
 
       get anchorHTML() {
-        return toAnchorElement(this._displayName, this._href)
+        return toAnchorElement(this.#displayName, this.#href)
       }
 
-      get _displayName() {
+      get #displayName() {
         return getDisplayName(
-          this._namespace,
+          this.#namespaceInstanceContainer,
           this.typeName,
-          this._definitionContainer.getLabel(this.typeName)
+          this.#definitionContainer.getLabel(this.typeName)
         )
       }
 
-      get _href() {
+      get #href() {
         return getURI(
-          this._namespace,
+          this.#namespaceInstanceContainer,
           this.typeName,
-          this._definitionContainer.getURI(this.typeName)
+          this.#definitionContainer.getURI(this.typeName)
         )
       }
 
-      _pointUpSelfAndEntities() {
-        this._isHovered = true
-        this._arrow.update(true, true, true)
-        if (this._label) {
-          this._label.updateHighlighting()
+      #pointUpSelfAndEntities() {
+        this.#isHovered = true
+        this.#arrow.update(true, true, true)
+        if (this.#label) {
+          this.#label.updateHighlighting()
         }
 
         const bothRelations = new Set()
@@ -54673,8 +54928,8 @@
         }
       }
 
-      _pointDownSelfAndEntities() {
-        this._isHovered = false
+      #pointDownSelfAndEntities() {
+        this.#isHovered = false
 
         const relations = new Set()
 
@@ -54691,16 +54946,16 @@
         }
       }
 
-      _redrawArrowConsideringSelection() {
-        if (this._arrow) {
+      #redrawArrowConsideringSelection() {
+        if (this.#arrow) {
           if (this.sourceEntity.isSelected && this.targetEntity.isSelected) {
-            this._arrow.update(true, true, true)
+            this.#arrow.update(true, true, true)
           } else if (this.sourceEntity.isSelected) {
-            this._arrow.update(true, true, this.isSelected)
+            this.#arrow.update(true, true, this.isSelected)
           } else if (this.targetEntity.isSelected) {
-            this._arrow.update(true, this.isSelected, true)
+            this.#arrow.update(true, this.isSelected, true)
           } else {
-            this._arrow.update(
+            this.#arrow.update(
               this.isSelected,
               this.isSelected,
               this.isSelected
@@ -54709,44 +54964,51 @@
         }
       }
 
-      _redrawLabelConsideringSelection() {
-        if (this._label) {
-          this._label.updateHighlighting()
+      #redrawLabelConsideringSelection() {
+        if (this.#label) {
+          this.#label.updateHighlighting()
         }
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/index.js
 
     class RelationInstanceContainer extends IdIssueContainer {
+      #editorHTMLElement
+      #eventEmitter
+      #annotationModel
+      #namespaceInstanceContainer
+      #definitionContainer
+      #toolBarHeight
+
       constructor(
         editorHTMLElement,
         eventEmitter,
-        parentContainer,
-        namespace,
+        annotationModel,
         definitionContainer
       ) {
         super(eventEmitter, 'relation', () => 'R')
-        this._editorHTMLElement = editorHTMLElement
-        this._eventEmitter = eventEmitter
-        this._parentContainer = parentContainer
-        this._namespace = namespace
-        this._definitionContainer = definitionContainer
+        this.#editorHTMLElement = editorHTMLElement
+        this.#eventEmitter = eventEmitter
+        this.#annotationModel = annotationModel
+        this.#namespaceInstanceContainer =
+          annotationModel.namespaceInstanceContainer
+        this.#definitionContainer = definitionContainer
       }
 
       /** @param {number} value */
-      set controlBarHeight(value) {
-        this._controlBarHeight = value
+      set toolBarHeight(value) {
+        this.#toolBarHeight = value
       }
 
       _toInstance(relation) {
         return new RelationInstance(
-          this._editorHTMLElement,
-          this._eventEmitter,
-          this._parentContainer.entity,
-          this._parentContainer.attribute,
+          this.#editorHTMLElement,
+          this.#eventEmitter,
+          this.#annotationModel.entityInstanceContainer,
+          this.#annotationModel.attributeInstanceContainer,
+          this.#namespaceInstanceContainer,
           relation,
-          this._namespace,
-          this._definitionContainer,
-          this._controlBarHeight
+          this.#definitionContainer,
+          this.#toolBarHeight
         )
       }
 
@@ -54756,14 +55018,14 @@
           newValue instanceof RelationInstance
             ? newValue
             : new RelationInstance(
-                this._editorHTMLElement,
-                this._eventEmitter,
-                this._parentContainer.entity,
-                this._parentContainer.attribute,
+                this.#editorHTMLElement,
+                this.#eventEmitter,
+                this.#annotationModel.entityInstanceContainer,
+                this.#annotationModel.attributeInstanceContainer,
+                this.#namespaceInstanceContainer,
                 newValue,
-                this._namespace,
-                this._definitionContainer,
-                this._controlBarHeight
+                this.#definitionContainer,
+                this.#toolBarHeight
               )
         const newInstance = super.add(newValue)
 
@@ -54798,52 +55060,63 @@
     const MinimumDistance = DistanceToShift * 3 + 4
 
     class EntityInstance {
+      #editorID
+      #id
+      #attributeInstanceContainer
+      #relationInstanceContainer
+      #namespaceInstanceContainer
+      #typeGap
+      #typeDefinition
+      #toolBarHeight
+      #isSelected = false
+      #isHovered = false
+      // When in view mode, the mouseleave event will not declarify labels.
+      #isLabelClarified = false
+      /** @type {SignboardHTMLElement} */
+      #signboard = null
+      #span
+      #typeName
+
       /**
        *
        * @param {import('./AnnotationModel/SpanInstanceContainer/SpanInstance/index.js').SpanInstance} span
        */
       constructor(
         editorID,
-        attributeContainer,
-        relationContainer,
+        attributeInstanceContainer,
+        relationInstanceContainer,
+        namespaceInstanceContainer,
         typeGap,
         typeDefinition,
         span,
         typeName,
-        namespace,
-        controlBarHeight,
+        toolBarHeight,
         id = null
       ) {
-        this._editorID = editorID
+        this.#editorID = editorID
+        this.#id = id
+        this.#attributeInstanceContainer = attributeInstanceContainer
+        this.#relationInstanceContainer = relationInstanceContainer
+        this.#typeGap = typeGap
+        this.#typeDefinition = typeDefinition
+        this.#namespaceInstanceContainer = namespaceInstanceContainer
+        this.#toolBarHeight = toolBarHeight
+
+        // Preprocessing is required, so use the property
         this.span = span
         this.typeName = typeName
-        this._id = id
-        this._attributeContainer = attributeContainer
-        this._relationContainer = relationContainer
-        this._typeGap = typeGap
-        this._typeDefinition = typeDefinition
-        this._namespace = namespace
-        this._controlBarHeight = controlBarHeight
-
-        this._isSelected = false
-        this._isHovered = false
-        // When in view mode, the mouseleave event will not declarify labels.
-        this._isLabelClarified = false
-
-        /** @type {SignboardHTMLElement} */
-        this._signboard = null
       }
 
       get id() {
-        return this._id
+        return this.#id
       }
 
       set id(val) {
-        this._id = val
+        this.#id = val
       }
 
       get title() {
-        return `[${this.id}] pred: type, value: ${this._typeName}`
+        return `[${this.id}] pred: type, value: ${this.#typeName}`
       }
 
       get color() {
@@ -54855,27 +55128,27 @@
       }
 
       get span() {
-        return this._span
+        return this.#span
       }
 
       set span(val) {
-        this._span = val
+        this.#span = val
         val.add(this)
       }
 
       get typeName() {
-        return this._typeName
+        return this.#typeName
       }
 
       set typeName(val) {
         // Replace null to 'null' if type is null and undefined too.
-        this._typeName = String(val)
+        this.#typeName = String(val)
       }
 
       get typeValues() {
         return new TypeValues(
-          this._typeName,
-          this._attributeContainer.getAttributesFor(this._id)
+          this.#typeName,
+          this.#attributeInstanceContainer.getAttributesFor(this.#id)
         )
       }
 
@@ -54889,15 +55162,19 @@
        * @returns {import('./AnnotationModel/AttributeInstanceContainer/AttributeInstance.js').AttributeInstance[]}
        */
       get attributes() {
-        return this._attributeContainer.getAttributesFor(this._id)
+        return this.#attributeInstanceContainer.getAttributesFor(this.#id)
       }
 
       get relationsWhereThisIsSource() {
-        return this._relationContainer.all.filter((r) => r.subj === this.id)
+        return this.#relationInstanceContainer.all.filter(
+          (r) => r.subj === this.id
+        )
       }
 
       get relationsWhereThisIsTarget() {
-        return this._relationContainer.all.filter((r) => r.obj === this.id)
+        return this.#relationInstanceContainer.all.filter(
+          (r) => r.obj === this.id
+        )
       }
 
       get hasMultipleEndpoints() {
@@ -54938,14 +55215,14 @@
 
         // Calculates the top without referencing the HTML element of entities.
         if (span.isDenotation) {
-          let top = span.clientTopOfGrid + this._typeGap.height
+          let top = span.clientTopOfGrid + this.#typeGap.height
 
           for (const entity of span.entities) {
             if (entity === this) {
               break
             }
 
-            top += this._typeGap.height + entity.height
+            top += this.#typeGap.height + entity.height
           }
 
           return round(top)
@@ -54977,7 +55254,7 @@
 
       isInViewport(clientHeight) {
         return (
-          this._controlBarHeight <= this.clientBottom &&
+          this.#toolBarHeight <= this.clientBottom &&
           this.clientTop <= clientHeight
         )
       }
@@ -54993,7 +55270,7 @@
       }
 
       get heightWithTypeGap() {
-        return this.height + this._typeGap.height
+        return this.height + this.#typeGap.height
       }
 
       get offsetCenter() {
@@ -55001,15 +55278,15 @@
       }
 
       get isDenotation() {
-        return this._span.isDenotation
+        return this.#span.isDenotation
       }
 
       get isBlock() {
-        return this._span.isBlock
+        return this.#span.isBlock
       }
 
       get isSelected() {
-        return this._isSelected
+        return this.#isSelected
       }
 
       getSourceAnchorPosition(alignBollards) {
@@ -55054,51 +55331,51 @@
           // Attempting to focus will result in an error.
           // Force rendering before focusing.
           this.span.forceRenderGrid()
-          this._signboard.focus()
+          this.#signboard.focus()
         } else {
           throw new Error('Unexpected type of entity')
         }
       }
 
       select() {
-        if (!this._isSelected) {
-          this._isSelected = true
+        if (!this.#isSelected) {
+          this.#isSelected = true
           this.#selectElement()
           this.#updateRelationHighlighting()
         }
       }
 
       deselect() {
-        if (this._isSelected) {
-          this._isSelected = false
-          if (this._signboard) {
-            this._signboard.deselect()
+        if (this.#isSelected) {
+          this.#isSelected = false
+          if (this.#signboard) {
+            this.#signboard.deselect()
           }
           this.#updateRelationHighlighting()
         }
       }
 
       startCut() {
-        if (this._signboard) {
-          this._signboard.startCut()
+        if (this.#signboard) {
+          this.#signboard.startCut()
         }
       }
 
       cancelCut() {
-        if (this._signboard) {
-          this._signboard.cancelCut()
+        if (this.#signboard) {
+          this.#signboard.cancelCut()
         }
       }
 
       render() {
-        if (this._signboard) {
+        if (this.#signboard) {
           return
         }
 
         if (this.span.isGridRendered) {
           // Append a new entity to the type
-          this._signboard = this.#createSignboardElement()
-          this.span.addEntityElementToGridElement(this._signboard.element)
+          this.#signboard = this.#createSignboardElement()
+          this.span.addEntityElementToGridElement(this.#signboard.element)
 
           this.reflectTypeGapInTheHeight()
 
@@ -55110,20 +55387,20 @@
 
           // When scrolling out of a selected entity and then scrolling in again,
           // the selected state will be highlighted.
-          if (this._isSelected) {
-            this._signboard.select()
+          if (this.#isSelected) {
+            this.#signboard.select()
           }
         }
       }
 
       updateElement() {
-        if (this._signboard) {
-          this._signboard = this._signboard.replaceWith(
+        if (this.#signboard) {
+          this.#signboard = this.#signboard.replaceWith(
             this.#createSignboardElement()
           )
 
           // Re-select a new entity element.
-          if (this._isSelected) {
+          if (this.#isSelected) {
             this.#selectElement()
           }
 
@@ -55139,29 +55416,29 @@
       }
 
       reflectTypeGapInTheHeight() {
-        if (this.isDenotation && this._signboard) {
-          this._signboard.reflectTypeGapInTheHeight(this._typeGap.height)
+        if (this.isDenotation && this.#signboard) {
+          this.#signboard.reflectTypeGapInTheHeight(this.#typeGap.height)
         }
       }
 
       clarifyLabel() {
-        if (this._signboard) {
-          this._signboard.clarifyLabel()
+        if (this.#signboard) {
+          this.#signboard.clarifyLabel()
         }
-        this._isLabelClarified = true
+        this.#isLabelClarified = true
       }
 
       declarifyLabel() {
-        if (!this._isHovered && this._signboard) {
-          this._signboard.declarifyLabel()
+        if (!this.#isHovered && this.#signboard) {
+          this.#signboard.declarifyLabel()
         }
-        this._isLabelClarified = false
+        this.#isLabelClarified = false
       }
 
       erase() {
-        if (this._signboard) {
-          this._signboard.remove()
-          this._signboard = null
+        if (this.#signboard) {
+          this.#signboard.remove()
+          this.#signboard = null
           this.span.updateSelfAndAncestorsGridPosition()
         }
       }
@@ -55170,21 +55447,21 @@
         const signboard = new SignboardHTMLElement(
           this,
           this.isDenotation ? 'denotation' : 'block',
-          `${this._editorID}__E${this.id.replace(/[:¥.]/g, '')}`
+          `${this.#editorID}__E${this.id.replace(/[:¥.]/g, '')}`
         )
 
         // Highlight relations when related entity is hovered.
         signboard.addEventListener('mouseenter', () => {
           signboard.clarifyLabel()
           this.#pointUpRelations()
-          this._isHovered = true
+          this.#isHovered = true
         })
         signboard.addEventListener('mouseleave', () => {
-          if (!this._isLabelClarified) {
+          if (!this.#isLabelClarified) {
             signboard.declarifyLabel()
           }
           this.#updateRelationHighlighting()
-          this._isHovered = false
+          this.#isHovered = false
         })
 
         return signboard
@@ -55193,7 +55470,7 @@
       #selectElement() {
         // Force rendering to select and focus on entities outside the display area.
         this.span.forceRenderGrid()
-        this._signboard.select()
+        this.#signboard.select()
 
         // The block span renders as a div HTML element.
         // Because the positioning of div HTML elements is slower than that of span HTML elements,
@@ -55211,9 +55488,9 @@
       /** @return {import('./AnnotationModel/DefinitionContainer/index.js').default} */
       get #definitionContainer() {
         if (this.isDenotation) {
-          return this._typeDefinition.denotation
+          return this.#typeDefinition.denotation
         } else if (this.isBlock) {
-          return this._typeDefinition.block
+          return this.#typeDefinition.block
         } else {
           throw 'unknown entity type'
         }
@@ -55221,7 +55498,7 @@
 
       get #displayName() {
         return getDisplayName(
-          this._namespace,
+          this.#namespaceInstanceContainer,
           this.typeName,
           this.#definitionContainer.getLabel(this.typeName)
         )
@@ -55229,7 +55506,7 @@
 
       get #href() {
         return getURI(
-          this._namespace,
+          this.#namespaceInstanceContainer,
           this.typeName,
           this.#definitionContainer.getURI(this.typeName)
         )
@@ -55258,51 +55535,58 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/EntityInstanceContainer.js
 
     class EntityInstanceContainer extends IdIssueContainer {
-      constructor(editorID, eventEmitter, parent, typeGap, namespace) {
+      #editorID
+      #annotationModel
+      #typeGap
+      #namespaceInstanceContainer
+      #toolBarHeight
+
+      constructor(editorID, eventEmitter, annotationModel, typeGap) {
         super(eventEmitter, 'entity', (instance) =>
           instance.isDenotation ? 'T' : 'B'
         )
 
-        this._editorID = editorID
+        this.#editorID = editorID
 
         // Since the attribute instance container and the entity instance container are cross-referenced,
         // the entity instance retrieves other containers dynamically.
-        this._parent = parent
+        this.#annotationModel = annotationModel
 
-        this._typeGap = typeGap
-        this._namespace = namespace
+        this.#typeGap = typeGap
+        this.#namespaceInstanceContainer =
+          annotationModel.namespaceInstanceContainer
       }
 
-      get _spanInstanceContainer() {
-        return this._parent.span
+      get #spanInstanceContainer() {
+        return this.#annotationModel.spanInstanceContainer
       }
 
-      get _attributeInstanceContainer() {
-        return this._parent.attribute
+      get #attributeInstanceContainer() {
+        return this.#annotationModel.attributeInstanceContainer
       }
 
-      get _relationInstanceContainer() {
-        return this._parent.relation
+      get #relationInstanceContainer() {
+        return this.#annotationModel.relationInstanceContainer
       }
 
       /** @param {number} value */
-      set controlBarHeight(value) {
-        this._controlBarHeight = value
+      set toolBarHeight(value) {
+        this.#toolBarHeight = value
       }
 
       _toInstance(denotation, type) {
         // Expected an entity like {id: "E21", span: "editor2__S50_54", obj: "Protein"}.
-        const span = this._getSpan(type, denotation)
+        const span = this.#getSpan(type, denotation)
         const newInstance = new EntityInstance(
-          this._editorID,
-          this._attributeInstanceContainer,
-          this._relationInstanceContainer,
-          this._typeGap,
-          this._parent.typeDefinition,
+          this.#editorID,
+          this.#attributeInstanceContainer,
+          this.#relationInstanceContainer,
+          this.#namespaceInstanceContainer,
+          this.#typeGap,
+          this.#annotationModel.typeDefinition,
           span,
           denotation.obj,
-          this._namespace,
-          this._controlBarHeight,
+          this.#toolBarHeight,
           denotation.id
         )
 
@@ -55321,21 +55605,21 @@
           return newValue
         }
 
-        const span = this._spanInstanceContainer.get(newValue.span)
+        const span = this.#spanInstanceContainer.get(newValue.span)
         const newEntity = new EntityInstance(
-          this._editorID,
-          this._attributeInstanceContainer,
-          this._relationInstanceContainer,
-          this._typeGap,
-          this._parent.typeDefinition,
+          this.#editorID,
+          this.#attributeInstanceContainer,
+          this.#relationInstanceContainer,
+          this.#namespaceInstanceContainer,
+          this.#typeGap,
+          this.#annotationModel.typeDefinition,
           span,
           newValue.typeName,
-          this._namespace,
-          this._controlBarHeight
+          this.#toolBarHeight
         )
 
         console.assert(
-          newEntity.span.isDenotation || newEntity.span.entities.length === 0,
+          newEntity.span.isDenotation || newEntity.span.entities.length > 0,
           'A block span cannot have more than one entity.'
         )
 
@@ -55376,7 +55660,7 @@
           }
         }
 
-        this._emit(`textae-event.annotation-data.entity.move`)
+        super._emit(`textae-event.annotation-data.entity.move`)
       }
 
       get denotations() {
@@ -55414,23 +55698,23 @@
         }
       }
 
-      _getSpan(type, denotation) {
-        return this._spanInstanceContainer.get(
-          this._getSpanId(type, denotation)
+      #getSpan(type, denotation) {
+        return this.#spanInstanceContainer.get(
+          this.#getSpanId(type, denotation)
         )
       }
 
-      _getSpanId(type, denotation) {
+      #getSpanId(type, denotation) {
         switch (type) {
           case 'denotation':
             return makeDenotationSpanHTMLElementID(
-              this._editorID,
+              this.#editorID,
               denotation.span.begin,
               denotation.span.end
             )
           case 'block':
             return makeBlockSpanHTMLElementID(
-              this._editorID,
+              this.#editorID,
               denotation.span.begin,
               denotation.span.end
             )
@@ -55444,7 +55728,7 @@
           (denotation) => denotation.id === denotationID
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/readAcceptedAnnotationTo/IDConflictResolver.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/readAcceptedAnnotationTo/IDConflictResolver.js
 
     // To avoid ID collisions when reading multi-track annotations,
     // add the track number before the ID.
@@ -55488,7 +55772,7 @@
         }
       }
 
-      // Set Prefx to the ID if ID exists.
+      // Set Prefix to the ID if ID exists.
       // IF the ID does not exist, Set new ID in addSource function.
       _prependToIDOf(src) {
         return src.id ? this._prependTrackNumberTo(src.id) : null
@@ -55497,7 +55781,7 @@
       _prependTrackNumberTo(val) {
         return this._trackNumber + val
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/readAcceptedAnnotationTo/convertBeginAndEndOfSpanToInteger.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/readAcceptedAnnotationTo/convertBeginAndEndOfSpanToInteger.js
 
     // If the begin or end value is a string,
     // the comparison with other numbers cannot be done correctly.
@@ -55526,13 +55810,13 @@
       // You cannot generate a valid value for the ID of HTML element of span
       // from a begin or end that contains a decimal point.
       return { ...span, begin: parseInt(span.begin), end: parseInt(span.end) }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/readAcceptedAnnotationTo/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/readAcceptedAnnotationTo/index.js
 
     /* harmony default export */ function readAcceptedAnnotationTo(
-      spanContainer,
-      entityContainer,
-      attributeContainer,
-      relationContainer,
+      spanInstanceContainer,
+      entityInstanceContainer,
+      attributeInstanceContainer,
+      relationInstanceContainer,
       accept,
       trackNumber = ''
     ) {
@@ -55551,27 +55835,27 @@
           attribute
         )
 
-      spanContainer.addSource(typeSettings, 'typesetting')
-      spanContainer.addSource(denotations, 'denotation')
-      spanContainer.addSource(blocks, 'block')
-      entityContainer.addSource(denotations, 'denotation')
-      entityContainer.addSource(blocks, 'block')
-      relationContainer.addSource(relations)
-      attributeContainer.addSource(attributes)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/getSpanValidation/isBeginAndEndIn/isInText.js
+      spanInstanceContainer.addSource(typeSettings, 'typesetting')
+      spanInstanceContainer.addSource(denotations, 'denotation')
+      spanInstanceContainer.addSource(blocks, 'block')
+      entityInstanceContainer.addSource(denotations, 'denotation')
+      entityInstanceContainer.addSource(blocks, 'block')
+      relationInstanceContainer.addSource(relations)
+      attributeInstanceContainer.addSource(attributes)
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/getSpanValidation/isBeginAndEndIn/isInText.js
 
     /* harmony default export */ function isInText(boundary, text) {
       return 0 <= boundary && boundary <= text.length
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/getSpanValidation/isBeginAndEndIn/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/getSpanValidation/isBeginAndEndIn/index.js
 
     /* harmony default export */ function isBeginAndEndIn(text, span) {
       return isInText(span.begin, text) && isInText(span.end, text)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/ChainValidation/setSourceProperty.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/ChainValidation/setSourceProperty.js
 
     /* harmony default export */ function setSourceProperty(n, name) {
       n.sourceProperty = name
       return n
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/ErrorMap.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/ErrorMap.js
 
     class ErrorMap {
       constructor() {
@@ -55600,7 +55884,7 @@
         (acc, errorMap) => acc.concat(errorMap.getErrors(name)),
         []
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/ChainValidation/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/ChainValidation/index.js
 
     class ChainValidation {
       constructor(
@@ -55696,7 +55980,7 @@
 
         return result
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/getSpanValidation/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/getSpanValidation/index.js
 
     /* harmony default export */ function getSpanValidation(
       targetSpans,
@@ -55715,7 +55999,7 @@
           )
           return [bondaryCrossingSpans.length === 0, bondaryCrossingSpans]
         })
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/validateTypeSettings.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateTypeSettings.js
 
     /* harmony default export */ function validateTypeSettings(
       text,
@@ -55728,14 +56012,14 @@
         allSpans,
         'typesettings'
       ).validateAll()
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/isContains.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/isContains.js
 
     /* harmony default export */ function isContains(
       dictionary,
       referedEntityId
     ) {
       return dictionary.some((entry) => entry.id === referedEntityId)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/validateAttribute/isUniqueIn.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateAttribute/isUniqueIn.js
 
     /* harmony default export */ function isUniqueIn(attributes, node) {
       return (
@@ -55744,7 +56028,7 @@
             a.subj === node.subj && a.pred === node.pred && a.obj === node.obj
         ).length === 1
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/validateAttribute/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateAttribute/index.js
 
     /* harmony default export */ function validateAttribute(
       subjects,
@@ -55754,7 +56038,7 @@
         .and('subject', (a) => isContains(subjects, a.subj))
         .and('unique', (node) => isUniqueIn(attributes, node))
         .validateAll()
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/validateRelation.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateRelation.js
 
     /* harmony default export */ function validateRelation(
       denotations,
@@ -55764,7 +56048,7 @@
         .and('object', (r) => isContains(denotations, r.obj))
         .and('subject', (r) => isContains(denotations, r.subj))
         .validateAll()
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/transformToReferencedEntitiesError.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/transformToReferencedEntitiesError.js
 
     /* harmony default export */ function transformToReferencedEntitiesError(
       attributeSubj,
@@ -55793,7 +56077,7 @@
             return relation
           })
         )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/isIDUnique.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/isIDUnique.js
 
     /* harmony default export */ function isIDUnique(spans, node) {
       // Span without ID is acceptable.
@@ -55801,7 +56085,7 @@
         node.id === undefined ||
         spans.filter((d) => node.id && node.id === d.id).length === 1
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/validateDenotation.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateDenotation.js
 
     /* harmony default export */ function validateDenotation(
       text,
@@ -55817,7 +56101,7 @@
       )
         .and('uniqueID', (n) => isIDUnique(spansInTrack, n))
         .validateAll()
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/validateBlock.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateBlock.js
 
     /* harmony default export */ function validateBlock(
       text,
@@ -55836,7 +56120,7 @@
             ).length === 1
         )
         .validateAll()
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/debugLogCrossing.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/debugLogCrossing.js
 
     /* harmony default export */ function debugLogCrossing(name, errors) {
       for (const [key, values] of errors.getInhibitors('isNotCrossing')) {
@@ -55848,12 +56132,12 @@
             .join(', ')}`
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/getAllSpansIn.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/getAllSpansIn.js
 
     /* harmony default export */ function getAllSpansIn(track) {
       const { typesettings, denotations, blocks } = track
       return (typesettings || []).concat(denotations || []).concat(blocks || [])
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/validateAnnotation/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/index.js
 
     /* harmony default export */ function validateAnnotation(
       text,
@@ -55935,7 +56219,7 @@
             errorTypeSettings.size
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/parseTracks.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/parseTracks.js
 
     /* harmony default export */ function parseTracks(
       spanContainer,
@@ -55966,7 +56250,7 @@
         reject.name = `Track ${number} annotations.`
         return reject
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/getAllSpansOf.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/getAllSpansOf.js
 
     // The boundaries of elements in the typesetings and
     // the denotations and blocks cannot cross each other.
@@ -55982,45 +56266,45 @@
       }
 
       return spans
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationParser/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/index.js
 
-    class AnnotationParser {
-      #namespaceContainer
-      #spanContainer
-      #entityContainer
-      #attributeContainer
-      #relationContainer
+    class AnnotationEvaluator {
+      #namespaceInstanceContainer
+      #spanInstanceContainer
+      #entityInstanceContainer
+      #relationInstanceContainer
+      #attributeInstanceContainer
       #rowData
       #rootReject
       #trackRejects
 
-      constructor(
-        namespaceContainer,
-        spanContainer,
-        entityContainer,
-        attributeContainer,
-        relationContainer,
-        rowData
-      ) {
-        this.#namespaceContainer = namespaceContainer
-        this.#spanContainer = spanContainer
-        this.#entityContainer = entityContainer
-        this.#attributeContainer = attributeContainer
-        this.#relationContainer = relationContainer
+      constructor(annotationModel, rowData) {
+        const {
+          namespaceInstanceContainer,
+          spanInstanceContainer,
+          entityInstanceContainer,
+          attributeInstanceContainer,
+          relationInstanceContainer
+        } = annotationModel
+        this.#namespaceInstanceContainer = namespaceInstanceContainer
+        this.#spanInstanceContainer = spanInstanceContainer
+        this.#entityInstanceContainer = entityInstanceContainer
+        this.#relationInstanceContainer = relationInstanceContainer
+        this.#attributeInstanceContainer = attributeInstanceContainer
         this.#rowData = rowData
       }
 
-      parse() {
+      eval() {
         // Read namespaces
         if (this.#rowData.namespaces) {
-          this.#namespaceContainer.addSource(
+          this.#namespaceInstanceContainer.addSource(
             this.#rowData.namespaces.map((n) => ({
               id: n.prefix,
               ...n
             }))
           )
         } else {
-          this.#namespaceContainer.addSource([])
+          this.#namespaceInstanceContainer.addSource([])
         }
 
         // Read the root annotation.
@@ -56031,10 +56315,10 @@
         )
 
         readAcceptedAnnotationTo(
-          this.#spanContainer,
-          this.#entityContainer,
-          this.#attributeContainer,
-          this.#relationContainer,
+          this.#spanInstanceContainer,
+          this.#entityInstanceContainer,
+          this.#attributeInstanceContainer,
+          this.#relationInstanceContainer,
           accept
         )
 
@@ -56044,10 +56328,10 @@
         // Read multiple track annotations.
         if (this.hasMultiTracks) {
           this.#trackRejects = parseTracks(
-            this.#spanContainer,
-            this.#entityContainer,
-            this.#attributeContainer,
-            this.#relationContainer,
+            this.#spanInstanceContainer,
+            this.#entityInstanceContainer,
+            this.#attributeInstanceContainer,
+            this.#relationInstanceContainer,
             this.#text,
             this.#spans,
             this.#rowData
@@ -56079,26 +56363,28 @@
     /* harmony default export */ function clearAnnotationModel(
       annotationModel
     ) {
-      annotationModel.span.clear()
-      annotationModel.entity.clear()
-      annotationModel.attribute.clear()
-      annotationModel.relation.clear()
-      annotationModel.namespace.clear()
+      annotationModel.spanInstanceContainer.clear()
+      annotationModel.entityInstanceContainer.clear()
+      annotationModel.attributeInstanceContainer.clear()
+      annotationModel.relationInstanceContainer.clear()
+      annotationModel.namespaceInstanceContainer.clear()
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/toDenotations.js
 
     /* harmony default export */ function toDenotations(annotationModel) {
-      return annotationModel.entity.denotations.map((entity) => ({
-        id: entity.id,
-        span: {
-          begin: entity.span.begin,
-          end: entity.span.end
-        },
-        obj: entity.typeName
-      }))
+      return annotationModel.entityInstanceContainer.denotations.map(
+        (entity) => ({
+          id: entity.id,
+          span: {
+            begin: entity.span.begin,
+            end: entity.span.end
+          },
+          obj: entity.typeName
+        })
+      )
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/toRelations.js
 
     /* harmony default export */ function toRelations(annotationModel) {
-      return annotationModel.relation.all.map((r) => {
+      return annotationModel.relationInstanceContainer.all.map((r) => {
         return {
           id: r.id,
           pred: r.typeName,
@@ -56109,7 +56395,7 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/toBlocks.js
 
     /* harmony default export */ function toBlocks(annotationModel) {
-      return annotationModel.entity.blocks.map((entity) => ({
+      return annotationModel.entityInstanceContainer.blocks.map((entity) => ({
         id: entity.id,
         span: {
           begin: entity.span.begin,
@@ -56146,7 +56432,7 @@
       return findRanges
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/getReplicationRanges/isWord.js
 
-    // The preceding charactor and the following of a word charactor are delimiter.
+    // The preceding character and the following of a word character are delimiter.
     // For example, 't' ,a part of 'that', is not same with an origin span when it is 't'.
     /* harmony default export */ function isWord(
       sourceDoc,
@@ -56334,7 +56620,7 @@
       }
 
       updateLineHeight() {
-        const lineHeight = this.#annotationModel.span.maxHeight
+        const lineHeight = this.#annotationModel.spanInstanceContainer.maxHeight
 
         if (lineHeight) {
           this.lineHeight = lineHeight
@@ -57403,6 +57689,11 @@
       #typeGap
       #textBox
       #lineHeightAuto
+      #namespaceInstanceContainer
+      #spanInstanceContainer
+      #entityInstanceContainer
+      #relationInstanceContainer
+      #attributeInstanceContainer
       #typeDefinition
       #editorHTMLElement
       #eventEmitter
@@ -57418,46 +57709,47 @@
         additionalPaddingTop
       ) {
         this.#sourceDoc = ''
-        this.namespace = new InstanceContainer(eventEmitter, 'namespace')
+        this.#namespaceInstanceContainer = new InstanceContainer(
+          eventEmitter,
+          'namespace'
+        )
         const relationDefinitionContainer = new DefinitionContainer(
           eventEmitter,
           'relation',
-          () => this.relation.all,
+          () => this.#relationInstanceContainer.all,
           '#00CC66'
         )
 
-        this.relation = new RelationInstanceContainer(
+        this.#relationInstanceContainer = new RelationInstanceContainer(
           editorHTMLElement,
           eventEmitter,
           this,
-          this.namespace,
           relationDefinitionContainer
         )
         this.#typeGap = new TypeGap(() => {
-          for (const entity of this.entity.denotations) {
+          for (const entity of this.entityInstanceContainer.denotations) {
             entity.reflectTypeGapInTheHeight()
           }
           this.#textBox.updateLineHeight()
           eventEmitter.emit('textae-event.annotation-data.entity-gap.change')
         })
 
-        this.entity = new EntityInstanceContainer(
+        this.#entityInstanceContainer = new EntityInstanceContainer(
           editorID,
           eventEmitter,
           this,
-          this.#typeGap,
-          this.namespace
+          this.#typeGap
         )
 
         this.attributeDefinitionContainer = new AttributeDefinitionContainer(
           eventEmitter,
-          () => this.attribute.all
+          () => this.#attributeInstanceContainer.all
         )
-        this.attribute = new AttributeInstanceContainer(
+        this.#attributeInstanceContainer = new AttributeInstanceContainer(
           eventEmitter,
-          this.entity,
-          this.relation,
-          this.namespace,
+          this.#entityInstanceContainer,
+          this.#relationInstanceContainer,
+          this.#namespaceInstanceContainer,
           this.attributeDefinitionContainer
         )
 
@@ -57480,24 +57772,23 @@
           additionalPaddingTop
         )
         this.#lineHeightAuto = new LineHeightAuto(eventEmitter, this.#textBox)
-        this.span = new SpanInstanceContainer(
+        this.#spanInstanceContainer = new SpanInstanceContainer(
           editorID,
           editorHTMLElement,
           eventEmitter,
-          this.entity,
           this.#textBox
         )
 
         this.denotationDefinitionContainer = new DefinitionContainer(
           eventEmitter,
           'entity',
-          () => this.entity.denotations,
+          () => this.#entityInstanceContainer.denotations,
           '#77DDDD'
         )
         const blockDefinitionContainer = new DefinitionContainer(
           eventEmitter,
           'entity',
-          () => this.entity.blocks,
+          () => this.#entityInstanceContainer.blocks,
           '#77DDDD'
         )
         this.#typeDefinition = new TypeDefinition(
@@ -57536,7 +57827,7 @@
         // Bind type-definition events.
         eventEmitter
           .on('textae-event.type-definition.entity.change', (typeName) => {
-            for (const entity of this.entity.all) {
+            for (const entity of this.#entityInstanceContainer.all) {
               // If the type name ends in a wildcard, look for the DOMs to update with a forward match.
               if (
                 entity.typeName === typeName ||
@@ -57548,13 +57839,17 @@
             }
           })
           .on('textae-event.type-definition.attribute.change', (pred) =>
-            this.entity.redrawEntitiesWithSpecifiedAttribute(pred)
+            this.#entityInstanceContainer.redrawEntitiesWithSpecifiedAttribute(
+              pred
+            )
           )
           .on('textae-event.type-definition.attribute.move', (pred) =>
-            this.entity.redrawEntitiesWithSpecifiedAttribute(pred)
+            this.#entityInstanceContainer.redrawEntitiesWithSpecifiedAttribute(
+              pred
+            )
           )
           .on('textae-event.type-definition.relation.change', (typeName) => {
-            for (const relation of this.relation.all) {
+            for (const relation of this.#relationInstanceContainer.all) {
               // If the type name ends in a wildcard, look for the DOMs to update with a forward match.
               if (
                 relation.typeName === typeName ||
@@ -57578,24 +57873,16 @@
         this.#textBox.render(this.sourceDoc)
 
         clearAnnotationModel(this)
-        const { namespace, span, entity, attribute, relation } = this
-        const annotationParser = new AnnotationParser(
-          namespace,
-          span,
-          entity,
-          attribute,
-          relation,
-          rawData
-        )
-        annotationParser.parse()
+
+        const annotationEvaluator = new AnnotationEvaluator(this, rawData)
+        annotationEvaluator.eval()
 
         this.#clearAndDrawAllAnnotations()
 
         this.#eventEmitter.emit(
           'textae-event.annotation-data.all.change',
-          this,
-          annotationParser.hasMultiTracks,
-          annotationParser.rejects
+          annotationEvaluator.hasMultiTracks,
+          annotationEvaluator.rejects
         )
 
         // When reading some annotation Grid may be drawn out of alignment.
@@ -57608,7 +57895,7 @@
       get externalFormat() {
         return {
           denotations: toDenotations(this),
-          attributes: this.attribute.all.map(
+          attributes: this.#attributeInstanceContainer.all.map(
             ({ externalFormat }) => externalFormat
           ),
           relations: toRelations(this),
@@ -57621,7 +57908,7 @@
           this.sourceDoc,
           span.begin,
           span.end,
-          this.span,
+          this.#spanInstanceContainer,
           isDelimiterFunc
         )
       }
@@ -57646,20 +57933,107 @@
         return this.#typeDefinition
       }
 
+      get spanInstanceContainer() {
+        return this.#spanInstanceContainer
+      }
+
+      get entityInstanceContainer() {
+        return this.#entityInstanceContainer
+      }
+
+      get relationInstanceContainer() {
+        return this.#relationInstanceContainer
+      }
+
+      get attributeInstanceContainer() {
+        return this.#attributeInstanceContainer
+      }
+
+      get namespaceInstanceContainer() {
+        return this.#namespaceInstanceContainer
+      }
+
+      get textSelection() {
+        return this.#spanInstanceContainer.textSelection
+      }
+
+      getTextBetween(begin, end) {
+        return this.sourceDoc.substring(begin, end)
+      }
+
+      changeTextBetween(begin, end, newText) {
+        this.#sourceDoc = `${this.#sourceDoc.slice(0, begin)}${newText}${this.#sourceDoc.slice(end)}`
+
+        this.#textBox.render(this.sourceDoc)
+        this.#eventEmitter.emit('textae-event.annotation-data.all.change')
+      }
+
+      get #selectedText() {
+        const { begin, end } = this.textSelection
+        return this.getTextBetween(begin, end)
+      }
+
+      hasCharacters(spanConfig) {
+        return spanConfig.removeBlankCharacters(this.#selectedText).length > 0
+      }
+
+      getNewSpan(spanConfig, textSelectionAdjuster) {
+        const { begin, end } = this.textSelection
+
+        return {
+          begin: textSelectionAdjuster.backFromBegin(
+            this.sourceDoc,
+            begin,
+            spanConfig
+          ),
+          end:
+            textSelectionAdjuster.forwardFromEnd(
+              this.sourceDoc,
+              end - 1,
+              spanConfig
+            ) + 1
+        }
+      }
+
+      validateNewDenotationSpan(begin, end) {
+        return this.#spanInstanceContainer.validateNewDenotationSpan(begin, end)
+      }
+
+      validateNewBlockSpan(begin, end, spanID) {
+        return this.#spanInstanceContainer.validateNewBlockSpan(
+          begin,
+          end,
+          spanID
+        )
+      }
+
+      getInstanceContainerFor(annotationType) {
+        switch (annotationType) {
+          case 'span':
+            return this.#spanInstanceContainer
+          case 'relation':
+            return this.#relationInstanceContainer
+          case 'entity':
+            return this.#entityInstanceContainer
+          case 'attribute':
+            return this.#attributeInstanceContainer
+        }
+      }
+
       drawGridsInSight() {
         if (this.#isEditorInSight) {
           const { clientHeight, clientWidth } = document.documentElement
 
-          for (const span of this.span.allDenotationSpans) {
+          for (const span of this.#spanInstanceContainer.allDenotationSpans) {
             span.drawGrid(clientHeight, clientWidth)
           }
 
-          for (const span of this.span.allBlockSpans) {
+          for (const span of this.#spanInstanceContainer.allBlockSpans) {
             span.drawGrid(clientHeight, clientWidth)
             span.updateBackgroundPosition()
           }
 
-          for (const relation of this.relation.all) {
+          for (const relation of this.#relationInstanceContainer.all) {
             relation.render(clientHeight, clientWidth)
           }
         }
@@ -57674,9 +58048,9 @@
       }
 
       /** @param {number} value */
-      set controlBarHeight(value) {
-        this.entity.controlBarHeight = value
-        this.relation.controlBarHeight = value
+      set toolBarHeight(value) {
+        this.#entityInstanceContainer.toolBarHeight = value
+        this.#relationInstanceContainer.toolBarHeight = value
       }
 
       get #isEditorInSight() {
@@ -57688,11 +58062,11 @@
 
       focusDenotation(denotationID) {
         console.assert(
-          this.entity.hasDenotation(denotationID),
+          this.#entityInstanceContainer.hasDenotation(denotationID),
           'The denotation does not exist.'
         )
 
-        const { span } = this.entity.get(denotationID)
+        const { span } = this.#entityInstanceContainer.get(denotationID)
         span.focus()
       }
 
@@ -57701,7 +58075,7 @@
 
         this.#textBox.updateLineHeight()
 
-        for (const span of this.span.topLevel) {
+        for (const span of this.#spanInstanceContainer.topLevel) {
           span.render()
         }
 
@@ -57710,28 +58084,28 @@
 
         const { clientHeight, clientWidth } = document.documentElement
 
-        for (const span of this.span.allDenotationSpans) {
+        for (const span of this.#spanInstanceContainer.allDenotationSpans) {
           span.drawGrid(clientHeight, clientWidth)
         }
 
-        for (const span of this.span.allBlockSpans) {
+        for (const span of this.#spanInstanceContainer.allBlockSpans) {
           span.drawGrid(clientHeight, clientWidth)
         }
 
-        for (const relation of this.relation.all) {
+        for (const relation of this.#relationInstanceContainer.all) {
           relation.render(clientHeight, clientWidth)
         }
       }
 
       #rearrangeAllAnnotations() {
-        this.span.arrangeDenotationEntityPosition()
+        this.#spanInstanceContainer.arrangeDenotationEntityPosition()
 
         // When you undo the deletion of a block span,
         // if you move the background first, the grid will move to a better position.
-        this.span.arrangeBackgroundOfBlockSpanPosition()
-        this.span.arrangeBlockEntityPosition()
+        this.#spanInstanceContainer.arrangeBackgroundOfBlockSpanPosition()
+        this.#spanInstanceContainer.arrangeBlockEntityPosition()
 
-        for (const relation of this.relation.all) {
+        for (const relation of this.#relationInstanceContainer.all) {
           // The Grid disappears while the span is moving.
           if (
             relation.sourceEntity.span.isGridRendered &&
@@ -57798,7 +58172,7 @@
         return this._blankCharacters.indexOf(char) >= 0
       }
 
-      removeBlankChractors(str) {
+      removeBlankCharacters(str) {
         for (const char of this._blankCharacters) {
           str = str.replaceAll(char, '')
         }
@@ -57908,6 +58282,11 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/commandTemplate.js
 
     class CreateCommand extends AnnotationCommand {
+      #annotationModel
+      #annotationType
+      #instance
+      #selectionModel
+
       constructor(
         annotationModel,
         annotationType,
@@ -57915,52 +58294,58 @@
         selectionModel = null
       ) {
         super()
-        this._annotationModel = annotationModel
-        this._annotationType = annotationType
-        this._instance = instance
-        this._selectionModel = selectionModel
+        this.#annotationModel = annotationModel
+        this.#annotationType = annotationType
+        this.#instance = instance
+        this.#selectionModel = selectionModel
       }
 
       execute() {
-        this._instance = this._annotationModel[this._annotationType].add(
-          this._instance
-        )
+        this.#instance = this.#annotationModel
+          .getInstanceContainerFor(this.#annotationType)
+          .add(this.#instance)
 
-        if (this._selectionModel) {
-          this._selectionModel.add(this._annotationType, [this._instance.id])
+        if (this.#selectionModel) {
+          this.#selectionModel.add(this.#annotationType, [this.#instance.id])
         }
 
-        commandLog(this, `${this._annotationType}: ${this._instance.id}`)
+        commandLog(this, `${this.#annotationType}: ${this.#instance.id}`)
       }
 
       revert() {
         return new RemoveCommand(
-          this._annotationModel,
-          this._annotationType,
-          this._instance
+          this.#annotationModel,
+          this.#annotationType,
+          this.#instance
         )
       }
     }
 
     class RemoveCommand extends AnnotationCommand {
+      #annotationModel
+      #annotationType
+      #instance
+
       constructor(annotationModel, annotationType, instance) {
         super()
-        this._annotationModel = annotationModel
-        this._annotationType = annotationType
-        this._instance = instance
+        this.#annotationModel = annotationModel
+        this.#annotationType = annotationType
+        this.#instance = instance
       }
 
       execute() {
-        this._annotationModel[this._annotationType].remove(this._instance.id)
+        this.#annotationModel
+          .getInstanceContainerFor(this.#annotationType)
+          .remove(this.#instance.id)
 
-        commandLog(this, `${this._annotationType}: ${this._instance.id}`)
+        commandLog(this, `${this.#annotationType}: ${this.#instance.id}`)
       }
 
       revert() {
         return new CreateCommand(
-          this._annotationModel,
-          this._annotationType,
-          this._instance
+          this.#annotationModel,
+          this.#annotationType,
+          this.#instance
         )
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ConfigurationCommand.js
@@ -58231,35 +58616,44 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeCommand.js
 
     class ChangeAttributeCommand extends AnnotationCommand {
+      #annotationModel
+      #attribute
+      #oldPred
+      #oldObj
+      #newPred
+      #newObj
+      #newInstance
+
       constructor(annotationModel, attribute, newPred, newObj) {
         super()
-        this._annotationModel = annotationModel
-        this._attribute = attribute
-        this._oldPred = attribute.pred
-        this._oldObj = attribute.obj
-        this._newPred = newPred
-        this._newObj = newObj
+        this.#annotationModel = annotationModel
+        this.#attribute = attribute
+        this.#oldPred = attribute.pred
+        this.#oldObj = attribute.obj
+        this.#newPred = newPred
+        this.#newObj = newObj
       }
 
       execute() {
-        this._newInstance = this._annotationModel.attribute.change(
-          this._attribute.id,
-          this._newPred,
-          this._newObj
-        )
+        this.#newInstance =
+          this.#annotationModel.attributeInstanceContainer.change(
+            this.#attribute.id,
+            this.#newPred,
+            this.#newObj
+          )
 
         commandLog(
           this,
-          `attribute: ${this._attribute.id} changed from ${this._oldPred}:${this._oldObj} to ${this._newInstance.pred}:${this._newInstance.obj}.`
+          `attribute: ${this.#attribute.id} changed from ${this.#oldPred}:${this.#oldObj} to ${this.#newInstance.pred}:${this.#newInstance.obj}.`
         )
       }
 
       revert() {
         return new ChangeAttributeCommand(
-          this._annotationModel,
-          this._newInstance,
-          this._oldPred,
-          this._oldObj
+          this.#annotationModel,
+          this.#newInstance,
+          this.#oldPred,
+          this.#oldObj
         )
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndRefectInstancesCommand/index.js
@@ -58291,7 +58685,9 @@
         // change annotation
         if (changedProperties.has('pred')) {
           const sameDefinitionAttributes =
-            annotationModel.attribute.getSameDefinitionsAttributes(attrDef.pred)
+            annotationModel.attributeInstanceContainer.getSameDefinitionsAttributes(
+              attrDef.pred
+            )
 
           changAnnotationCommands = sameDefinitionAttributes.map(
             (attribute) => {
@@ -58432,35 +58828,40 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAnnotationCommand.js
 
     class ChangeAnnotationCommand extends AnnotationCommand {
+      #annotationDataModel
+      #annotationType
+      #id
+      #newType
+
       constructor(annotationModel, annotationType, id, newType) {
         super()
-        this._annotationModel = annotationModel
-        this._annotationType = annotationType
-        this._id = id
-        this._newType = newType
+        this.#annotationDataModel = annotationModel
+        this.#annotationType = annotationType
+        this.#id = id
+        this.#newType = newType
       }
 
       execute() {
-        this.oldType = this._annotationModel[this._annotationType].get(
-          this._id
-        ).typeName
+        this.oldType = this.#annotationDataModel
+          .getInstanceContainerFor(this.#annotationType)
+          .get(this.#id).typeName
 
         // Update instance
-        const targetInstance = this._annotationModel[
-          this._annotationType
-        ].changeType(this._id, this._newType)
+        const targetInstance = this.#annotationDataModel
+          .getInstanceContainerFor(this.#annotationType)
+          .changeType(this.#id, this.#newType)
         commandLog(
           this,
-          `change type of a ${this._annotationType}. old type:${this.oldType} ${this._annotationType}:`,
+          `change type of a ${this.#annotationType}. old type:${this.oldType} ${this.#annotationType}:`,
           targetInstance
         )
       }
 
       revert() {
         return new ChangeAnnotationCommand(
-          this._annotationModel,
-          this._annotationType,
-          this._id,
+          this.#annotationDataModel,
+          this.#annotationType,
+          this.#id,
           this.oldType
         )
       }
@@ -58797,8 +59198,9 @@
       oldTypeName,
       newTypeName
     ) {
-      return annotationModel[annotationType].all
-        .filter((instance) => instance.typeName === oldTypeName)
+      return annotationModel
+        .getInstanceContainerFor(annotationType)
+        .all.filter((instance) => instance.typeName === oldTypeName)
         .map((instance) => {
           return new ChangeAnnotationCommand(
             annotationModel,
@@ -58985,10 +59387,11 @@
           attrDef['value type'] === 'selection' &&
           attrDef.values[index].id !== value.id
         ) {
-          const sameAttributes = annotationModel.attribute.getSameAttributes(
-            attrDef.pred,
-            attrDef.values[index].id
-          )
+          const sameAttributes =
+            annotationModel.attributeInstanceContainer.getSameAttributes(
+              attrDef.pred,
+              attrDef.values[index].id
+            )
           const changeAnnotationCommands = sameAttributes.map(
             (a) =>
               new ChangeAttributeCommand(annotationModel, a, null, value.id)
@@ -59124,7 +59527,7 @@
       }
 
       execute() {
-        const subj = this._annotationModel.entity.all.pop().id
+        const subj = this._annotationModel.entityInstanceContainer.all.pop().id
         this._instance.subj = subj
         return super.execute()
       }
@@ -59268,7 +59671,7 @@
         annotationModel,
         selectionModel,
         span,
-        typeValeusList,
+        typeValuesList,
         isDelimiterFunc
       ) {
         super()
@@ -59284,7 +59687,7 @@
               spanId,
               begin,
               end,
-              typeValeusList
+              typeValuesList
             )
           })
         this._logMessage = `from span: ${makeDenotationSpanHTMLElementID(
@@ -59375,76 +59778,93 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveBlockSpanCommand.js
 
     class MoveBlockSpanCommand extends AnnotationCommand {
-      constructor(annotationModel, spanId, begin, end) {
+      #annotationModel
+      #spanID
+      #begin
+      #end
+      #newID
+      #beginBeforeMove
+      #endBeforeMove
+
+      constructor(annotationModel, spanID, begin, end) {
         super()
-        this._annotationModel = annotationModel
-        this._spanId = spanId
-        this._begin = begin
-        this._end = end
-      }
-
-      execute() {
-        // Update instance.
-        const { id, begin, end } = this._annotationModel.span.moveBlockSpan(
-          this._spanId,
-          this._begin,
-          this._end
-        )
-
-        this._newId = id
-        this._oldBegin = begin
-        this._oldEnd = end
-
-        commandLog(
-          this,
-          `move span: ${this._spanId} to {begin: ${this._begin}, end: ${this._end}}`
-        )
-      }
-
-      revert() {
-        return new MoveBlockSpanCommand(
-          this._annotationModel,
-          this._newId,
-          this._oldBegin,
-          this._oldEnd
-        )
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveDenotationSpanCommand.js
-
-    class MoveDenotationSpanCommand extends AnnotationCommand {
-      constructor(annotationModel, spanId, begin, end) {
-        super()
-        this._annotationModel = annotationModel
-        this._spanId = spanId
-        this._begin = begin
-        this._end = end
+        this.#annotationModel = annotationModel
+        this.#spanID = spanID
+        this.#begin = begin
+        this.#end = end
       }
 
       execute() {
         // Update instance.
         const { id, begin, end } =
-          this._annotationModel.span.moveDenotationSpan(
-            this._spanId,
-            this._begin,
-            this._end
+          this.#annotationModel.spanInstanceContainer.moveBlockSpan(
+            this.#spanID,
+            this.#begin,
+            this.#end
           )
 
-        this._newId = id
-        this._oldBegin = begin
-        this._oldEnd = end
+        this.#newID = id
+        this.#beginBeforeMove = begin
+        this.#endBeforeMove = end
 
         commandLog(
           this,
-          `move span: ${this._spanId} to {begin: ${this._begin}, end: ${this._end}}`
+          `move span: ${this.#spanID} to {begin: ${this.#begin}, end: ${this.#end}}`
+        )
+      }
+
+      revert() {
+        return new MoveBlockSpanCommand(
+          this.#annotationModel,
+          this.#newID,
+          this.#beginBeforeMove,
+          this.#endBeforeMove
+        )
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveDenotationSpanCommand.js
+
+    class MoveDenotationSpanCommand extends AnnotationCommand {
+      #annotationModel
+      #spanID
+      #begin
+      #end
+      #newID
+      #beginBeforeMove
+      #endBeforeMove
+
+      constructor(annotationModel, spanID, begin, end) {
+        super()
+        this.#annotationModel = annotationModel
+        this.#spanID = spanID
+        this.#begin = begin
+        this.#end = end
+      }
+
+      execute() {
+        // Update instance.
+        const { id, begin, end } =
+          this.#annotationModel.spanInstanceContainer.moveDenotationSpan(
+            this.#spanID,
+            this.#begin,
+            this.#end
+          )
+
+        this.#newID = id
+        this.#beginBeforeMove = begin
+        this.#endBeforeMove = end
+
+        commandLog(
+          this,
+          `move span: ${this.#spanID} to {begin: ${this.#begin}, end: ${this.#end}}`
         )
       }
 
       revert() {
         return new MoveDenotationSpanCommand(
-          this._annotationModel,
-          this._newId,
-          this._oldBegin,
-          this._oldEnd
+          this.#annotationModel,
+          this.#newID,
+          this.#beginBeforeMove,
+          this.#endBeforeMove
         )
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/areAllEntiesOfSpan.js
@@ -59499,7 +59919,10 @@
           })
           .join(', ')}`
 
-        this._annotationModel.entity.moveEntities(this._span, this._entities)
+        this._annotationModel.entityInstanceContainer.moveEntities(
+          this._span,
+          this._entities
+        )
 
         commandLog(this, message)
       }
@@ -59575,7 +59998,7 @@
         for (const attrDef of attrDefs) {
           this._subCommands.push(
             new CreateAttributeDefinitionCommand(
-              annotationModel.attributeDefinitionContainer,
+              annotationModel.attributeInstanceContainerDefinitionContainer,
               { valueType: attrDef['value type'], ...attrDef }
             )
           )
@@ -59584,8 +60007,10 @@
         for (const { pred, value } of newSelectionAttributeObjects) {
           this._subCommands.push(
             new AddValueToAttributeDefinitionCommand(
-              annotationModel.attributeDefinitionContainer,
-              annotationModel.attributeDefinitionContainer.get(pred),
+              annotationModel.attributeInstanceContainerDefinitionContainer,
+              annotationModel.attributeInstanceContainerDefinitionContainer.get(
+                pred
+              ),
               value
             )
           )
@@ -59704,7 +60129,7 @@
         }
 
         // Aggregate spans to lose all entities.
-        for (const span of annotationModel.span.all) {
+        for (const span of annotationModel.spanInstanceContainer.all) {
           if (
             span.entities.every((e) => selectionModel.entity.all.includes(e))
           ) {
@@ -59793,7 +60218,7 @@
       constructor(annotationModel, id) {
         super()
 
-        const span = annotationModel.span.get(id)
+        const span = annotationModel.spanInstanceContainer.get(id)
         const removeEntities = span.entities.map(
           (entity) =>
             new RemoveEntityAndAssociatesCommand(annotationModel, entity)
@@ -60079,7 +60504,7 @@
         return new RemoveSpanCommand(this._annotationModel, id)
       }
 
-      removeSelectedComand() {
+      removeSelectedCommand() {
         return new RemoveSelectedCommand(
           this._annotationModel,
           this._selectionModel
@@ -60180,10 +60605,17 @@
       VIEW: 'View',
       EDIT_DENOTATION: 'Term',
       EDIT_BLOCK: 'Block',
-      EDIT_RELATION: 'Relation'
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/State.js
+      EDIT_RELATION: 'Relation',
+      EDIT_TEXT: 'Text'
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/State.js
 
     class State {
+      #currentShowRelation
+      #currentState
+      #relationContainer
+      #eventEmitter
+      #functionAvailability
+
       /**
        *
        * @param {import('../../../AnnotationModel/RelationInstanceContainer').RelationInstanceContainer} relationContainer
@@ -60191,52 +60623,61 @@
        * @param {import('../../FunctionAvailability').default} functionAvailability
        */
       constructor(relationContainer, eventEmitter, functionAvailability) {
-        this._currentShowRelation = false
-        this._currentState = MODE.INIT
+        this.#currentShowRelation = false
+        this.#currentState = MODE.INIT
 
-        this._relationContainer = relationContainer
-        this._eventEmitter = eventEmitter
-        this._functionAvailability = functionAvailability
+        this.#relationContainer = relationContainer
+        this.#eventEmitter = eventEmitter
+        this.#functionAvailability = functionAvailability
       }
 
       get currentState() {
-        return this._currentState
+        return this.#currentState
       }
 
       toViewMode(showRelation) {
-        this._currentShowRelation = showRelation
-        this._currentState = MODE.VIEW
-        this._emit()
+        this.#currentShowRelation = showRelation
+        this.#currentState = MODE.VIEW
+        this.#emit()
       }
 
-      toTermMode(showRelation) {
-        this._currentShowRelation = showRelation
-        this._currentState = MODE.EDIT_DENOTATION
-        this._emit()
+      toTermEditMode(showRelation) {
+        this.#currentShowRelation = showRelation
+        this.#currentState = MODE.EDIT_DENOTATION
+        this.#emit()
       }
 
-      toBlockMode(showRelation) {
-        this._currentShowRelation = showRelation
-        this._currentState = MODE.EDIT_BLOCK
-        this._emit()
+      toBlockEditMode(showRelation) {
+        this.#currentShowRelation = showRelation
+        this.#currentState = MODE.EDIT_BLOCK
+        this.#emit()
       }
 
-      toRelationMode() {
-        this._currentShowRelation = true
-        this._currentState = MODE.EDIT_RELATION
-        this._emit()
+      toRelationEditMode() {
+        this.#currentShowRelation = true
+        this.#currentState = MODE.EDIT_RELATION
+        this.#emit()
+      }
+
+      toTextEditMode(showRelation) {
+        this.#currentShowRelation = showRelation
+        this.#currentState = MODE.EDIT_TEXT
+        this.#emit()
       }
 
       toggleSimpleMode() {
         switch (this.currentState) {
           case MODE.EDIT_DENOTATION:
-            this.toTermMode(!this._currentShowRelation)
+            this.toTermEditMode(!this.#currentShowRelation)
             break
           case MODE.EDIT_BLOCK:
-            this.toBlockMode(!this._currentShowRelation)
+            this.toBlockEditMode(!this.#currentShowRelation)
+            break
+          case MODE.EDIT_TEXT:
+            this.toTextEditMode(!this.#currentShowRelation)
             break
           case MODE.VIEW:
-            this.toViewMode(!this._currentShowRelation)
+            this.toViewMode(!this.#currentShowRelation)
             break
           default:
             throw new Error(`Invalid state: ${this.currentState}`)
@@ -60244,7 +60685,7 @@
       }
 
       changeModeByShortcut() {
-        const modes = this._availableModes
+        const modes = this.#modesCanBeTransitionedByShortcutKey
 
         // No mode to change.
         if (modes.length <= 1) {
@@ -60265,23 +60706,23 @@
       }
 
       get nextShowRelation() {
-        if (this._currentState === MODE.EDIT_RELATION) {
-          return this._relationContainer.some
+        if (this.#currentState === MODE.EDIT_RELATION) {
+          return this.#relationContainer.some
         } else {
-          return this._currentShowRelation
+          return this.#currentShowRelation
         }
       }
 
-      _emit() {
-        this._eventEmitter.emit(
+      #emit() {
+        this.#eventEmitter.emit(
           'textae-event.edit-mode.transition',
-          this._currentState,
-          this._currentShowRelation
+          this.#currentState,
+          this.#currentShowRelation
         )
       }
 
-      // Look at Function Availability and return the possible transition modes.
-      get _availableModes() {
+      get #modesCanBeTransitionedByShortcutKey() {
+        // Shortcut keys do not transition to text edit mode.
         const all = [
           {
             name: MODE.VIEW,
@@ -60291,107 +60732,445 @@
           {
             name: MODE.EDIT_DENOTATION,
             availabilityName: 'term edit mode',
-            funcName: 'toTermMode'
+            funcName: 'toTermEditMode'
           },
           {
             name: MODE.EDIT_BLOCK,
             availabilityName: 'block edit mode',
-            funcName: 'toBlockMode'
+            funcName: 'toBlockEditMode'
           },
           {
             name: MODE.EDIT_RELATION,
             availabilityName: 'relation edit mode',
-            funcName: 'toRelationMode'
+            funcName: 'toRelationEditMode'
           }
         ]
 
+        // Look at Function Availability and return the possible transition modes.
         return all.filter((mode) =>
-          this._functionAvailability.get(mode.availabilityName)
+          this.#functionAvailability.isAvailable(mode.availabilityName)
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/clearTextSelection.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/clearTextSelection.js
 
     /* harmony default export */ function clearTextSelection() {
       window.getSelection().removeAllRanges()
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/SelectionWrapper/isNodeDenotationSpan.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/selectSpan.js
 
-    /* harmony default export */ function isNodeDenotationSpan(node) {
-      return node.classList.contains('textae-editor__span')
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/SelectionWrapper/isNodeTextBox.js
-
-    /* harmony default export */ function isNodeTextBox(node) {
-      return node.classList.contains('textae-editor__text-box')
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/SelectionWrapper/isNodeStyleSpan.js
-
-    /* harmony default export */ function isNodeStyleSpan(node) {
-      return node.classList.contains('textae-editor__style')
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/SelectionWrapper/isNodeBlockSpan.js
-
-    /* harmony default export */ function isNodeBlockSpan(node) {
-      return node.classList.contains('textae-editor__block')
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/SelectionWrapper/PositionsOnAnnotation/getOffsetFromParent.js
-
-    /* harmony default export */ function getOffsetFromParent(node) {
-      let offset = 0
-
-      for (const prevNode of node.parentElement.childNodes) {
-        // until the focus node
-        if (prevNode == node) {
-          break
-        }
-
-        if (prevNode.nodeName === '#text') {
-          offset += prevNode.nodeValue.length
-        } else {
-          offset += prevNode.textContent.length
-        }
+    /* harmony default export */ function selectSpan(
+      selectionModel,
+      rangeOfSpans,
+      event,
+      spanID
+    ) {
+      if (rangeOfSpans.length) {
+        selectionModel.selectSpanRange(rangeOfSpans)
+        return
       }
 
-      return offset
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/SelectionWrapper/PositionsOnAnnotation/getParentOffset.js
-
-    /* harmony default export */ function getParentOffset(span, node) {
-      const parent = node.parentElement
-      if (isNodeTextBox(parent)) {
-        return 0
+      if (event.ctrlKey || event.metaKey) {
+        selectionModel.span.toggle(spanID)
+        return
       }
-      if (
-        isNodeDenotationSpan(parent) ||
-        isNodeBlockSpan(parent) ||
-        isNodeStyleSpan(parent)
+
+      selectionModel.selectSpan(spanID)
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/isRangeInTextBox.js
+
+    /* harmony default export */ function isRangeInTextBox(
+      selection,
+      textBoxHTMLElement
+    ) {
+      return (
+        selection.type === 'Range' &&
+        textBoxHTMLElement.contains(selection.anchorNode) &&
+        textBoxHTMLElement.contains(selection.focusNode)
+      )
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/getEntityHTMLelementFromChild.js
+
+    /* harmony default export */ function getEntityHTMLelementFromChild(
+      elementInEntityHtmlelement
+    ) {
+      return elementInEntityHtmlelement.closest('.textae-editor__signboard')
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/MouseEventHandler.js
+
+    class MouseEventHandler {
+      #editorHTMLElement
+      #annotationModel
+      #selectionModel
+      #spanEditor
+      #pallet
+
+      constructor(
+        editorHTMLElement,
+        annotationModel,
+        selectionModel,
+        pallet,
+        spanEditor
       ) {
-        return span.get(parent.id).begin
-      }
-      throw new Error(`Can not get position of a node : ${node} ${node.data}`)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/SelectionWrapper/PositionsOnAnnotation/index.js
-
-    class PositionsOnAnnotation {
-      constructor(spanModelContainer, selectionWrapper) {
-        this._spanModelContainer = spanModelContainer
-        this._selection = selectionWrapper.selection
+        this.#editorHTMLElement = editorHTMLElement
+        this.#annotationModel = annotationModel
+        this.#selectionModel = selectionModel
+        this.#spanEditor = spanEditor
+        this.#pallet = pallet
       }
 
-      get anchor() {
-        const position =
-          getParentOffset(
-            this._spanModelContainer,
-            this._selection.anchorNode
-          ) + getOffsetFromParent(this._selection.anchorNode)
+      bind() {
+        const listeners = []
 
-        return position + this._selection.anchorOffset
+        // In Friefox, the text box click event fires when you shrink and erase a span.
+        // To do this, the span mouse-up event selects the span to the right of the erased span,
+        // and then the text box click event deselects it.
+        // To prevent this, we set a flag to indicate that it is immediately after the span's mouse-up event.
+        let afterSpanMouseUpEventFlag = false
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__text-box',
+            'click',
+            (e) => {
+              if (
+                e.target.classList.contains('textae-editor__text-box') &&
+                !afterSpanMouseUpEventFlag
+              ) {
+                this.#textBoxClicked()
+              }
+            }
+          )
+        )
+
+        // When extending span, the behavior depends on whether span is selected or not;
+        // you must not deselect span before editing it.
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor',
+            'click',
+            (e) => {
+              // The delegate also fires events for child elements of the selector.
+              // Ignores events that occur in child elements.
+              // Otherwise, you cannot select child elements.
+              if (e.target.classList.contains('textae-editor')) {
+                this.#bodyClicked()
+              }
+            }
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__signboard',
+            'mousedown',
+            () => this.#signboardClicked()
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__signboard__type-values',
+            'click',
+            (event) => {
+              const entityID = getEntityHTMLelementFromChild(event.target)
+                .dataset.id
+              this.#typeValuesClicked(event, entityID)
+            }
+          )
+        )
+
+        // To shrink a span listen the mouseup event.
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__span',
+            'mouseup',
+            (e) => {
+              if (e.target.classList.contains('textae-editor__span')) {
+                this.#denotationSpanClicked(e)
+                afterSpanMouseUpEventFlag = true
+
+                // In Chrome, the text box click event does not fire when you shrink the span and erase it.
+                // Instead of beating the flag on the text box click event,
+                // it uses a timer to beat the flag instantly, faster than any user action.
+                setTimeout(() => (afterSpanMouseUpEventFlag = false), 0)
+              }
+            }
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__block',
+            'mouseup',
+            (e) => {
+              if (e.target.classList.contains('textae-editor__block')) {
+                this.#blockSpanClicked(e)
+              }
+            }
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__style',
+            'mouseup',
+            (e) => {
+              if (e.target.classList.contains('textae-editor__style')) {
+                this.#styleSpanClicked(e)
+              }
+            }
+          )
+        )
+
+        return listeners
       }
 
-      get focus() {
-        const position =
-          getParentOffset(this._spanModelContainer, this._selection.focusNode) +
-          getOffsetFromParent(this._selection.focusNode)
-
-        return position + this._selection.focusOffset
+      #bodyClicked() {
+        this.#pallet.hide()
+        this.#selectionModel.removeAll()
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/SelectionWrapper/index.js
+
+      #textBoxClicked() {
+        this.#pallet.hide()
+
+        const selection = window.getSelection()
+
+        if (
+          isRangeInTextBox(
+            selection,
+            this.#editorHTMLElement.querySelector('.textae-editor__text-box')
+          )
+        ) {
+          this.#spanEditor.editFor()
+        } else {
+          this.#selectionModel.removeAll()
+        }
+      }
+
+      #denotationSpanClicked(event) {
+        // When you click on the text, the browser will automatically select the word.
+        // Therefore, the editor shrinks spans instead of selecting spans.
+        // Deselect the text.
+        if (event.button === 2) {
+          clearTextSelection()
+        }
+
+        const selection = window.getSelection()
+
+        // When you create a denotation span and
+        // click on another denotation span while holding down the Shift key,
+        // the Selection type will be 'None'.
+        if (selection.type === 'Caret' || selection.type === 'None') {
+          this.#selectSpan(event, event.target.id)
+        }
+
+        if (
+          isRangeInTextBox(
+            selection,
+            this.#editorHTMLElement.querySelector('.textae-editor__text-box')
+          )
+        ) {
+          this.#spanEditor.editFor()
+        }
+      }
+
+      #blockSpanClicked(e) {
+        // When you click on the text, the browser will automatically select the word.
+        // Therefore, the editor shrinks spans instead of selecting spans.
+        // Deselect the text.
+        if (e.button === 2) {
+          clearTextSelection()
+        }
+
+        const selection = window.getSelection()
+
+        if (selection.type === 'Caret') {
+          this.#selectionModel.removeAll()
+        }
+
+        if (
+          isRangeInTextBox(
+            selection,
+            this.#editorHTMLElement.querySelector('.textae-editor__text-box')
+          )
+        ) {
+          this.#spanEditor.editFor()
+        }
+      }
+
+      #styleSpanClicked(e) {
+        // When you click on the text, the browser will automatically select the word.
+        // Therefore, the editor shrinks spans instead of selecting spans.
+        // Deselect the text.
+        if (e.button === 2) {
+          clearTextSelection()
+        }
+
+        const selection = window.getSelection()
+
+        if (selection.type === 'Caret') {
+          const span = e.target.closest('.textae-editor__span')
+          if (span) {
+            this.#selectSpan(e, span.id)
+          } else {
+            this.#selectionModel.removeAll()
+          }
+        }
+
+        if (
+          isRangeInTextBox(
+            selection,
+            this.#editorHTMLElement.querySelector('.textae-editor__text-box')
+          )
+        ) {
+          this.#spanEditor.editFor()
+        }
+      }
+
+      #signboardClicked() {
+        this.#editorHTMLElement.focus()
+      }
+
+      #typeValuesClicked(event, entityID) {
+        if (
+          this.#annotationModel.entityInstanceContainer.get(entityID)
+            .isDenotation
+        ) {
+          if (event.ctrlKey || event.metaKey) {
+            this.#selectionModel.entity.toggle(entityID)
+          } else {
+            this.#selectionModel.selectEntity(entityID)
+          }
+        }
+      }
+
+      #selectSpan(event, spanID) {
+        const selectedSpanID = this.#selectionModel.span.singleId
+        const rangeOfSpans =
+          event.shiftKey && selectedSpanID
+            ? this.#annotationModel.spanInstanceContainer.rangeDenotationSpan(
+                selectedSpanID,
+                spanID
+              )
+            : []
+
+        selectSpan(this.#selectionModel, rangeOfSpans, event, spanID)
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/SpanEditor/create.js
+
+    function create(
+      annotationModel,
+      commander,
+      textSelectionAdjuster,
+      isReplicateAuto,
+      spanConfig,
+      isDelimiterFunc
+    ) {
+      const { begin, end } = annotationModel.getNewSpan(
+        spanConfig,
+        textSelectionAdjuster
+      )
+
+      if (annotationModel.validateNewDenotationSpan(begin, end)) {
+        const command = commander.factory.createSpanAndAutoReplicateCommand(
+          { begin, end },
+          isReplicateAuto,
+          isDelimiterFunc
+        )
+        commander.invoke(command)
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/shrinkSpan/shrinkSpanToSelection.js
+
+    /**
+     *
+     * @param {import('../../../../AnnotationModel/SpanInstanceContainer').default} spanInstanceContainer
+     */
+    /* harmony default export */ function shrinkSpanToSelection(
+      spanInstanceContainer,
+      sourceDoc,
+      commander,
+      textSelectionAdjuster,
+      spanId,
+      spanConfig,
+      moveHandler
+    ) {
+      const { begin, end } = spanInstanceContainer
+        .get(spanId)
+        .getShortenInAnchorNodeToFocusNodeDirection(
+          textSelectionAdjuster,
+          sourceDoc,
+          spanInstanceContainer,
+          spanConfig
+        )
+
+      // The span cross exists spans.
+      if (spanInstanceContainer.isBoundaryCrossingWithOtherSpans(begin, end)) {
+        alertify_default().warning(
+          'A span cannot be shrunken to make a boundary crossing.'
+        )
+        return false
+      }
+
+      const doesExists = spanInstanceContainer.hasDenotationSpan(begin, end)
+
+      if (begin < end && !doesExists) {
+        moveHandler(begin, end)
+      } else {
+        commander.invoke(commander.factory.removeSpanCommand(spanId))
+        return true
+      }
+
+      return false
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/shrinkSpan/index.js
+
+    /* harmony default export */ function shrinkSpan(
+      editorHTMLElement,
+      spanInstanceContainer,
+      sourceDoc,
+      selectionModel,
+      commander,
+      textSelectionAdjuster,
+      spanId,
+      spanConfig,
+      moveHandler
+    ) {
+      if (spanId) {
+        selectionModel.removeAll()
+
+        // Get the next span before removing the old span.
+        const nextSpan = getRightSpanElement(editorHTMLElement, spanId)
+        const removed = shrinkSpanToSelection(
+          spanInstanceContainer,
+          sourceDoc,
+          commander,
+          textSelectionAdjuster,
+          spanId,
+          spanConfig,
+          moveHandler
+        )
+
+        if (removed && nextSpan) {
+          selectionModel.selectSpan(nextSpan.id)
+        }
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/getIsDelimiterFunc.js
+
+    /* harmony default export */ function getIsDelimiterFunc(
+      menuState,
+      spanConfig
+    ) {
+      if (menuState.isPushed('boundary detection')) {
+        return (char) => spanConfig.isDelimiter(char)
+      } else {
+        return () => true
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/index.js
 
     class SelectionWrapper {
-      constructor(spanModelContainer) {
+      constructor() {
         this.selection = window.getSelection()
 
         console.assert(
@@ -60399,8 +61178,6 @@
             this.parentOfFocusNode.closest('.textae-editor__text-box'),
           'Text selection across editors is disabled'
         )
-
-        this._spanModelContainer = spanModelContainer
       }
 
       get isParentOfAnchorNodeTextBox() {
@@ -60486,422 +61263,7 @@
       get parentOfFocusNode() {
         return this.selection.focusNode.parentElement
       }
-
-      get positionsOnAnnotation() {
-        return new PositionsOnAnnotation(this._spanModelContainer, this)
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/selectSpan.js
-
-    /* harmony default export */ function selectSpan(
-      selectionModel,
-      rangeOfSpans,
-      event,
-      spanID
-    ) {
-      if (rangeOfSpans.length) {
-        selectionModel.selectSpanRange(rangeOfSpans)
-        return
-      }
-
-      if (event.ctrlKey || event.metaKey) {
-        selectionModel.span.toggle(spanID)
-        return
-      }
-
-      selectionModel.selectSpan(spanID)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/isRangeInTextBox.js
-
-    /* harmony default export */ function isRangeInTextBox(
-      selection,
-      textBoxHTMLElement
-    ) {
-      return (
-        selection.type === 'Range' &&
-        textBoxHTMLElement.contains(selection.anchorNode) &&
-        textBoxHTMLElement.contains(selection.focusNode)
-      )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditDenotation/MouseEventHandler.js
-
-    class MouseEventHandler {
-      constructor(
-        editorHTMLElement,
-        annotationModel,
-        selectionModel,
-        pallet,
-        spanEditor
-      ) {
-        this._annotationModel = annotationModel
-        this._selectionModel = selectionModel
-        this._spanEditor = spanEditor
-        this._editorHTMLElement = editorHTMLElement
-        this._pallet = pallet
-      }
-
-      bodyClicked() {
-        this._pallet.hide()
-        this._selectionModel.removeAll()
-      }
-
-      textBoxClicked() {
-        this._pallet.hide()
-
-        const selection = window.getSelection()
-
-        if (
-          isRangeInTextBox(
-            selection,
-            this._editorHTMLElement.querySelector('.textae-editor__text-box')
-          )
-        ) {
-          this._spanEditor.editFor(
-            new SelectionWrapper(this._annotationModel.span)
-          )
-        } else {
-          this._selectionModel.removeAll()
-        }
-      }
-
-      denotationSpanClicked(event) {
-        // When you click on the text, the browser will automatically select the word.
-        // Therefore, the editor shrinks spans instead of selecting spans.
-        // Deselect the text.
-        if (event.button === 2) {
-          clearTextSelection()
-        }
-
-        const selection = window.getSelection()
-
-        // When you create a denotation span and
-        // click on another denotation span while holding down the Shift key,
-        // the Selection type will be 'None'.
-        if (selection.type === 'Caret' || selection.type === 'None') {
-          this._selectSpan(event, event.target.id)
-        }
-
-        if (
-          isRangeInTextBox(
-            selection,
-            this._editorHTMLElement.querySelector('.textae-editor__text-box')
-          )
-        ) {
-          this._spanEditor.editFor(
-            new SelectionWrapper(this._annotationModel.span)
-          )
-        }
-      }
-
-      blockSpanClicked(e) {
-        // When you click on the text, the browser will automatically select the word.
-        // Therefore, the editor shrinks spans instead of selecting spans.
-        // Deselect the text.
-        if (e.button === 2) {
-          clearTextSelection()
-        }
-
-        const selection = window.getSelection()
-
-        if (selection.type === 'Caret') {
-          this._selectionModel.removeAll()
-        }
-
-        if (
-          isRangeInTextBox(
-            selection,
-            this._editorHTMLElement.querySelector('.textae-editor__text-box')
-          )
-        ) {
-          this._spanEditor.editFor(
-            new SelectionWrapper(this._annotationModel.span)
-          )
-        }
-      }
-
-      styleSpanClicked(e) {
-        // When you click on the text, the browser will automatically select the word.
-        // Therefore, the editor shrinks spans instead of selecting spans.
-        // Deselect the text.
-        if (e.button === 2) {
-          clearTextSelection()
-        }
-
-        const selection = window.getSelection()
-
-        if (selection.type === 'Caret') {
-          const span = e.target.closest('.textae-editor__span')
-          if (span) {
-            this._selectSpan(e, span.id)
-          } else {
-            this._selectionModel.removeAll()
-          }
-        }
-
-        if (
-          isRangeInTextBox(
-            selection,
-            this._editorHTMLElement.querySelector('.textae-editor__text-box')
-          )
-        ) {
-          this._spanEditor.editFor(
-            new SelectionWrapper(this._annotationModel.span)
-          )
-        }
-      }
-
-      signboardClicked() {
-        this._editorHTMLElement.focus()
-      }
-
-      typeValuesClicked(event, entityID) {
-        if (this._annotationModel.entity.get(entityID).isDenotation) {
-          if (event.ctrlKey || event.metaKey) {
-            this._selectionModel.entity.toggle(entityID)
-          } else {
-            this._selectionModel.selectEntity(entityID)
-          }
-        }
-      }
-
-      _selectSpan(event, spanID) {
-        const selectedSpanID = this._selectionModel.span.singleId
-        const rangeOfSpans =
-          event.shiftKey && selectedSpanID
-            ? this._annotationModel.span.rangeDenotationSpan(
-                selectedSpanID,
-                spanID
-              )
-            : []
-
-        selectSpan(this._selectionModel, rangeOfSpans, event, spanID)
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditDenotation/SpanEditor/create/createCommand.js
-
-    /* harmony default export */ function createCommand(
-      commander,
-      newSpan,
-      isReplicateAuto,
-      isDelimiterFunc
-    ) {
-      return commander.factory.createSpanAndAutoReplicateCommand(
-        {
-          begin: newSpan.begin,
-          end: newSpan.end
-        },
-        isReplicateAuto,
-        isDelimiterFunc
-      )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/OrderedPositions.js
-
-    class OrderedPositions {
-      constructor(positions) {
-        this._positions = positions
-      }
-
-      // switch the position when the selection is made from right to left
-      get begin() {
-        if (this._positions.anchor < this._positions.focus) {
-          return this._positions.anchor
-        }
-
-        return this._positions.focus
-      }
-
-      // switch the position when the selection is made from right to left
-      get end() {
-        if (this._positions.anchor < this._positions.focus) {
-          return this._positions.focus
-        }
-
-        return this._positions.anchor
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/getNewSpan.js
-
-    /* harmony default export */ function getNewSpan(
-      sourceDoc,
-      spanAdjuster,
-      selectionWrapper,
-      spanConfig
-    ) {
-      const { positionsOnAnnotation } = selectionWrapper
-      const orderedPositions = new OrderedPositions(positionsOnAnnotation)
-
-      return {
-        begin: spanAdjuster.backFromBegin(
-          sourceDoc,
-          orderedPositions.begin,
-          spanConfig
-        ),
-        end:
-          spanAdjuster.forwardFromEnd(
-            sourceDoc,
-            orderedPositions.end - 1,
-            spanConfig
-          ) + 1
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditDenotation/SpanEditor/validateNewDenotationSpan.js
-
-    /**
-     *
-     * @param {import('../../../../../AnnotationModel/SpanModelContainer').default} spanModelContainer
-     * @returns
-     */
-    /* harmony default export */ function validateNewDenotationSpan(
-      spanModelContainer,
-      begin,
-      end
-    ) {
-      // The span cross exists spans.
-      if (spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)) {
-        alertify_default().warning(
-          'A span cannot be modified to make a boundary crossing.'
-        )
-        return false
-      }
-
-      // The span exists already.
-      if (spanModelContainer.hasDenotationSpan(begin, end)) {
-        return false
-      }
-
-      // There is a BlockSpan that is a child.
-      if (spanModelContainer.hasBlockSpanBetween(begin, end)) {
-        return false
-      }
-
-      return true
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditDenotation/SpanEditor/create/index.js
-
-    /* harmony default export */ function create(
-      sourceDoc,
-      spanModelContainer,
-      commander,
-      spanAdjuster,
-      isReplicateAuto,
-      selectionWrapper,
-      spanConfig,
-      isDelimiterFunc
-    ) {
-      const { begin, end } = getNewSpan(
-        sourceDoc,
-        spanAdjuster,
-        selectionWrapper,
-        spanConfig
-      )
-
-      if (validateNewDenotationSpan(spanModelContainer, begin, end)) {
-        const command = createCommand(
-          commander,
-          { begin, end },
-          isReplicateAuto,
-          isDelimiterFunc
-        )
-
-        commander.invoke(command)
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/shrinkSpan/shrinkSpanToSelection.js
-
-    /**
-     *
-     * @param {import('../../../../AnnotationModel/SpanModelContainer').default} spanModelContainer
-     */
-    /* harmony default export */ function shrinkSpanToSelection(
-      spanModelContainer,
-      sourceDoc,
-      commander,
-      spanAdjuster,
-      spanId,
-      selectionWrapper,
-      spanConfig,
-      moveHandler
-    ) {
-      const { begin, end } = spanModelContainer
-        .get(spanId)
-        .getShortenInAnchorNodeToFocusNodeDirection(
-          spanAdjuster,
-          selectionWrapper,
-          sourceDoc,
-          spanConfig
-        )
-
-      // The span cross exists spans.
-      if (spanModelContainer.isBoundaryCrossingWithOtherSpans(begin, end)) {
-        alertify_default().warning(
-          'A span cannot be shrinked to make a boundary crossing.'
-        )
-        return false
-      }
-
-      const doesExists = spanModelContainer.hasDenotationSpan(begin, end)
-
-      if (begin < end && !doesExists) {
-        moveHandler(begin, end)
-      } else {
-        commander.invoke(commander.factory.removeSpanCommand(spanId))
-        return true
-      }
-
-      return false
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/shrinkSpan/index.js
-
-    /* harmony default export */ function shrinkSpan(
-      editorHTMLElement,
-      spanModelContainer,
-      sourceDoc,
-      selectionModel,
-      commander,
-      spanAdjuster,
-      spanId,
-      selectionWrapper,
-      spanConfig,
-      moveHandler
-    ) {
-      if (spanId) {
-        selectionModel.removeAll()
-
-        // Get the next span before removing the old span.
-        const nextSpan = getRightSpanElement(editorHTMLElement, spanId)
-        const removed = shrinkSpanToSelection(
-          spanModelContainer,
-          sourceDoc,
-          commander,
-          spanAdjuster,
-          spanId,
-          selectionWrapper,
-          spanConfig,
-          moveHandler
-        )
-
-        if (removed && nextSpan) {
-          selectionModel.selectSpan(nextSpan.id)
-        }
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/hasCharacters.js
-
-    // A span cannot be created include nonEdgeCharacters only.
-    /* harmony default export */ function hasCharacters(
-      sourceDoc,
-      spanConfig,
-      selectionWrapper
-    ) {
-      const { positionsOnAnnotation } = selectionWrapper
-      const orderedPositions = new OrderedPositions(positionsOnAnnotation)
-      const selectedString = sourceDoc.substring(
-        orderedPositions.begin,
-        orderedPositions.end
-      )
-
-      return spanConfig.removeBlankChractors(selectedString).length > 0
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/getIsDelimiterFunc.js
-
-    /* harmony default export */ function getIsDelimiterFunc(
-      controlViewModel,
-      spanConfig
-    ) {
-      if (controlViewModel.isPushed('boundary detection')) {
-        return (char) => spanConfig.isDelimiter(char)
-      } else {
-        return () => true
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditDenotation/SpanEditor/isPositionBetweenSpan.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/SpanEditor/isPositionBetweenSpan.js
 
     /* harmony default export */ function isPositionBetweenSpan(
       span,
@@ -60912,64 +61274,74 @@
       }
 
       return span.begin < position && position < span.end
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditDenotation/SpanEditor/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/SpanEditor/index.js
 
     class SpanEditor {
+      #editorHTMLElement
+      #annotationModel
+      #spanInstanceContainer
+      #selectionModel
+      #commander
+      #menuState
+      #spanConfig
+
       constructor(
         editorHTMLElement,
         annotationModel,
         selectionModel,
         commander,
-        controlViewModel,
+        menuState,
         spanConfig
       ) {
-        this._editorHTMLElement = editorHTMLElement
-        this._annotationModel = annotationModel
-        this._spanModelContainer = annotationModel.span
-        this._selectionModel = selectionModel
-        this._commander = commander
-        this._controlViewModel = controlViewModel
-        this._spanConfig = spanConfig
+        this.#editorHTMLElement = editorHTMLElement
+        this.#annotationModel = annotationModel
+        this.#spanInstanceContainer = annotationModel.spanInstanceContainer
+        this.#selectionModel = selectionModel
+        this.#commander = commander
+        this.#menuState = menuState
+        this.#spanConfig = spanConfig
       }
 
-      editFor(selectionWrapper) {
+      editFor() {
+        const selectionWrapper = new SelectionWrapper()
+
         if (selectionWrapper.isParentOfAnchorNodeTextBox) {
           if (selectionWrapper.isParentOfFocusNodeTextBox) {
-            this._anchorNodeInTextBoxFocusNodeInTextBox(selectionWrapper)
+            this.#anchorNodeInTextBoxFocusNodeInTextBox(selectionWrapper)
             return
           }
           if (selectionWrapper.isParentOfFocusNodeDenotationSpan) {
-            this._anchorNodeInTextBoxFocusNodeInDenotationSpan(selectionWrapper)
+            this.#anchorNodeInTextBoxFocusNodeInDenotationSpan(selectionWrapper)
             return
           }
           if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-            this._anchorNodeInTextBoxFocusNodeInBlockSpan(selectionWrapper)
+            this.#anchorNodeInTextBoxFocusNodeInBlockSpan(selectionWrapper)
             return
           }
           if (selectionWrapper.isParentOfFocusNodeStyleSpan) {
-            this._anchorNodeInTextBoxFocusNodeInStyleSpan(selectionWrapper)
+            this.#anchorNodeInTextBoxFocusNodeInStyleSpan(selectionWrapper)
             return
           }
         }
         if (selectionWrapper.isParentOfAnchorNodeDenotationSpan) {
           if (selectionWrapper.isParentOfFocusNodeTextBox) {
-            this._anchorNodeInDenotationSpanFocusNodeInTextBox(selectionWrapper)
+            this.#anchorNodeInDenotationSpanFocusNodeInTextBox(selectionWrapper)
             return
           }
           if (selectionWrapper.isParentOfFocusNodeDenotationSpan) {
-            this._anchorNodeInDenotationSpanFocusNodeInDenotationSpan(
+            this.#anchorNodeInDenotationSpanFocusNodeInDenotationSpan(
               selectionWrapper
             )
             return
           }
           if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-            this._anchorNodeInDenotationSpanFocusNodeInBlockSpan(
+            this.#anchorNodeInDenotationSpanFocusNodeInBlockSpan(
               selectionWrapper
             )
             return
           }
           if (selectionWrapper.isParentOfFocusNodeStyleSpan) {
-            this._anchorNodeInDenotationSpanFocusNodeInStyleSpan(
+            this.#anchorNodeInDenotationSpanFocusNodeInStyleSpan(
               selectionWrapper
             )
             return
@@ -60977,62 +61349,62 @@
         }
         if (selectionWrapper.isParentOfAnchorNodeBlockSpan) {
           if (selectionWrapper.isParentOfFocusNodeTextBox) {
-            this._anchorNodeInBlockSpanFocusNodeInTextBox(selectionWrapper)
+            this.#anchorNodeInBlockSpanFocusNodeInTextBox(selectionWrapper)
             return
           }
           if (selectionWrapper.isParentOfFocusNodeDenotationSpan) {
-            this._anchorNodeInBlockSpanFocusNodeInDenotationSpan(
+            this.#anchorNodeInBlockSpanFocusNodeInDenotationSpan(
               selectionWrapper
             )
             return
           }
           if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-            this._anchorNodeInBlockSpanFocusNodeInBlockSpan(selectionWrapper)
+            this.#anchorNodeInBlockSpanFocusNodeInBlockSpan(selectionWrapper)
             return
           }
           if (selectionWrapper.isParentOfFocusNodeStyleSpan) {
-            this._anchorNodeInBlockSpanFocusNodeInStyleSpan(selectionWrapper)
+            this.#anchorNodeInBlockSpanFocusNodeInStyleSpan(selectionWrapper)
             return
           }
         }
         if (selectionWrapper.isParentOfAnchorNodeStyleSpan) {
           if (selectionWrapper.isParentOfFocusNodeTextBox) {
-            this._anchorNodeInStyleSpanFocusNodeInTextBox(selectionWrapper)
+            this.#anchorNodeInStyleSpanFocusNodeInTextBox(selectionWrapper)
             return
           }
           if (selectionWrapper.isParentOfFocusNodeDenotationSpan) {
-            this._anchorNodeInStyleSpanFocusNodeInDenotationSpan(
+            this.#anchorNodeInStyleSpanFocusNodeInDenotationSpan(
               selectionWrapper
             )
             return
           }
           if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-            this._anchorNodeInStyleSpanFocusNodeInBlockSpan(selectionWrapper)
+            this.#anchorNodeInStyleSpanFocusNodeInBlockSpan(selectionWrapper)
             return
           }
           if (selectionWrapper.isParentOfFocusNodeStyleSpan) {
-            this._anchorNodeInStyleSpanFocusNodeInStyleSpan(selectionWrapper)
+            this.#anchorNodeInStyleSpanFocusNodeInStyleSpan(selectionWrapper)
             return
           }
         }
       }
 
       cerateSpanForTouchDevice() {
-        const selectionWrapper = new SelectionWrapper(this._spanModelContainer)
+        const selectionWrapper = new SelectionWrapper()
 
         if (selectionWrapper.isParentOfBothNodesSame) {
-          this._create(selectionWrapper)
+          this.#create()
         }
       }
 
       expandForTouchDevice() {
-        const expandedSpan = this._getExpandedSpanForTouchDevice()
+        const expandedSpan = this.#getExpandedSpanForTouchDevice()
         if (expandedSpan) {
           const { spanID, begin, end } = expandedSpan
 
           // The span cross exists spans.
           if (
-            this._spanModelContainer.isBoundaryCrossingWithOtherSpans(
+            this.#spanInstanceContainer.isBoundaryCrossingWithOtherSpans(
               begin,
               end
             )
@@ -61041,12 +61413,12 @@
           }
 
           // A span cannot be expanded a span to the same as an existing span.
-          if (this._spanModelContainer.hasDenotationSpan(begin, end)) {
+          if (this.#spanInstanceContainer.hasDenotationSpan(begin, end)) {
             return
           }
 
-          this._commander.invoke(
-            this._commander.factory.moveDenotationSpanCommand(
+          this.#commander.invoke(
+            this.#commander.factory.moveDenotationSpanCommand(
               spanID,
               begin,
               end
@@ -61056,49 +61428,49 @@
       }
 
       shrinkForTouchDevice() {
-        const shrinkedSpan = this._getShrinkedSpanForTouchDevice()
-        if (shrinkedSpan) {
-          const { spanID, begin, end } = shrinkedSpan
-          const nextSpan = getRightSpanElement(this._editorHTMLElement, spanID)
+        const shrunkenSpan = this.#getShrunkenSpanForTouchDevice()
+        if (shrunkenSpan) {
+          const { spanID, begin, end } = shrunkenSpan
+          const nextSpan = getRightSpanElement(this.#editorHTMLElement, spanID)
 
           // The span cross exists spans.
           if (
-            this._spanModelContainer.isBoundaryCrossingWithOtherSpans(
+            this.#spanInstanceContainer.isBoundaryCrossingWithOtherSpans(
               begin,
               end
             )
           ) {
             alertify_default().warning(
-              'A span cannot be shrinked to make a boundary crossing.'
+              'A span cannot be shrunken to make a boundary crossing.'
             )
             return
           }
 
-          const doesExists = this._spanModelContainer.hasDenotationSpan(
+          const doesExists = this.#spanInstanceContainer.hasDenotationSpan(
             begin,
             end
           )
           if (begin < end && !doesExists) {
-            this._commander.invoke(
-              this._commander.factory.moveDenotationSpanCommand(
+            this.#commander.invoke(
+              this.#commander.factory.moveDenotationSpanCommand(
                 spanID,
                 begin,
                 end
               )
             )
           } else {
-            this._commander.invoke(
-              this._commander.factory.removeSpanCommand(spanID)
+            this.#commander.invoke(
+              this.#commander.factory.removeSpanCommand(spanID)
             )
             if (nextSpan) {
-              this._selectionModel.selectSpan(nextSpan.id)
+              this.#selectionModel.selectSpan(nextSpan.id)
             }
           }
         }
       }
 
-      _getExpandedSpanForTouchDevice() {
-        const selectionWrapper = new SelectionWrapper(this._spanModelContainer)
+      #getExpandedSpanForTouchDevice() {
+        const selectionWrapper = new SelectionWrapper()
 
         // When there is no denotation span in ancestors of anchor node and focus node,
         // a span to expand does not exist.
@@ -61121,13 +61493,13 @@
 
           return {
             spanID,
-            ...this._spanModelContainer
+            ...this.#spanInstanceContainer
               .get(spanID)
               .getExpandedInAnchorNodeToFocusNodeDirection(
-                this._controlViewModel.spanAdjuster,
-                selectionWrapper,
-                this._annotationModel.sourceDoc,
-                this._spanConfig
+                this.#menuState.textSelectionAdjuster,
+                this.#annotationModel.sourceDoc,
+                this.#annotationModel.spanInstanceContainer,
+                this.#spanConfig
               )
           }
         }
@@ -61143,20 +61515,20 @@
 
           return {
             spanID,
-            ...this._spanModelContainer
+            ...this.#spanInstanceContainer
               .get(spanID)
               .getExpandedInFocusNodeToAnchorNodeDirection(
-                this._controlViewModel.spanAdjuster,
-                selectionWrapper,
-                this._annotationModel.sourceDoc,
-                this._spanConfig
+                this.#menuState.textSelectionAdjuster,
+                this.#annotationModel.sourceDoc,
+                this.#annotationModel.spanInstanceContainer,
+                this.#spanConfig
               )
           }
         }
       }
 
-      _getShrinkedSpanForTouchDevice() {
-        const selectionWrapper = new SelectionWrapper(this._spanModelContainer)
+      #getShrunkenSpanForTouchDevice() {
+        const selectionWrapper = new SelectionWrapper()
 
         // When there is no denotation span in ancestors of anchor node and focus node,
         // a span to shrink does not exist.
@@ -61188,13 +61560,13 @@
 
           return {
             spanID,
-            ...this._spanModelContainer
+            ...this.#spanInstanceContainer
               .get(spanID)
               .getShortenInFocusNodeToAnchorNodeDirection(
-                this._controlViewModel.spanAdjuster,
-                selectionWrapper,
-                this._annotationModel.sourceDoc,
-                this._spanConfig
+                this.#menuState.textSelectionAdjuster,
+                this.#annotationModel.sourceDoc,
+                this.#annotationModel.spanInstanceContainer,
+                this.#spanConfig
               )
           }
         }
@@ -61210,70 +61582,70 @@
 
           return {
             spanID,
-            ...this._spanModelContainer
+            ...this.#spanInstanceContainer
               .get(spanID)
               .getShortenInAnchorNodeToFocusNodeDirection(
-                this._controlViewModel.spanAdjuster,
-                selectionWrapper,
-                this._annotationModel.sourceDoc,
-                this._spanConfig
+                this.#menuState.textSelectionAdjuster,
+                this.#annotationModel.sourceDoc,
+                this.#annotationModel.spanInstanceContainer,
+                this.#spanConfig
               )
           }
         }
       }
 
-      _anchorNodeInTextBoxFocusNodeInTextBox(selectionWrapper) {
+      #anchorNodeInTextBoxFocusNodeInTextBox(selectionWrapper) {
         // The parent of the focusNode is the text.
-        this._create(selectionWrapper)
+        this.#create()
       }
 
-      _anchorNodeInTextBoxFocusNodeInDenotationSpan(selectionWrapper) {
-        const targetSpanID = this._getShrinkableSpanID(selectionWrapper)
+      #anchorNodeInTextBoxFocusNodeInDenotationSpan(selectionWrapper) {
+        const targetSpanID = this.#getShrinkableSpanID(selectionWrapper)
         if (targetSpanID) {
-          this._shrink(selectionWrapper, targetSpanID)
+          this.#shrink(targetSpanID)
           return
         }
 
         clearTextSelection()
       }
 
-      _anchorNodeInTextBoxFocusNodeInBlockSpan() {
+      #anchorNodeInTextBoxFocusNodeInBlockSpan() {
         clearTextSelection()
       }
 
-      _anchorNodeInTextBoxFocusNodeInStyleSpan(selectionWrapper) {
+      #anchorNodeInTextBoxFocusNodeInStyleSpan(selectionWrapper) {
         // There is a Span between the StyleSpan and the text.
         // Shrink Span when mousedown on the text or a span and mouseup on the styleSpan.
-        const targetSpanID = this._getShrinkableSpanID(selectionWrapper)
+        const targetSpanID = this.#getShrinkableSpanID(selectionWrapper)
         if (targetSpanID) {
-          this._shrink(selectionWrapper, targetSpanID)
+          this.#shrink(targetSpanID)
           return
         }
 
-        this._create(selectionWrapper)
+        this.#create()
       }
 
-      _anchorNodeInDenotationSpanFocusNodeInTextBox(selectionWrapper) {
-        this._expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
+      #anchorNodeInDenotationSpanFocusNodeInTextBox(selectionWrapper) {
+        this.#expand(selectionWrapper.parentOfAnchorNode.id)
       }
 
-      _anchorNodeInDenotationSpanFocusNodeInDenotationSpan(selectionWrapper) {
+      #anchorNodeInDenotationSpanFocusNodeInDenotationSpan(selectionWrapper) {
         const shrinkableEndSpanID =
-          this._getShrinkableEndSpanID(selectionWrapper)
+          this.#getShrinkableEndSpanID(selectionWrapper)
         if (shrinkableEndSpanID) {
-          this._shrink(selectionWrapper, shrinkableEndSpanID)
+          this.#shrink(shrinkableEndSpanID)
           return
         }
 
         // The anchor node and the focus node are in the same span.
         if (selectionWrapper.isParentOfBothNodesSame) {
-          this._create(selectionWrapper)
+          this.#create()
           return
         }
 
-        const shrinkTargetSpanID = this._getShrinkableSpanID(selectionWrapper)
+        const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
         if (shrinkTargetSpanID) {
-          this._shrink(selectionWrapper, shrinkTargetSpanID)
+          this.#shrink(shrinkTargetSpanID)
           return
         }
 
@@ -61283,27 +61655,27 @@
         // The condition for this is that the ancestor of the anchor node
         // and the ancestor of the focus node are the same.
         // Since this is always true, it will always expand when it is neither create nor shrink.
-        this._expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
+        this.#expand(selectionWrapper.parentOfAnchorNode.id)
       }
 
-      _anchorNodeInDenotationSpanFocusNodeInBlockSpan(selectionWrapper) {
+      #anchorNodeInDenotationSpanFocusNodeInBlockSpan(selectionWrapper) {
         if (
           selectionWrapper.parentOfFocusNode.contains(
             selectionWrapper.parentOfAnchorNode
           )
         ) {
-          this._expand(selectionWrapper, selectionWrapper.parentOfAnchorNode.id)
+          this.#expand(selectionWrapper.parentOfAnchorNode.id)
           return
         }
 
         clearTextSelection()
       }
 
-      _anchorNodeInDenotationSpanFocusNodeInStyleSpan(selectionWrapper) {
+      #anchorNodeInDenotationSpanFocusNodeInStyleSpan(selectionWrapper) {
         const shrinkTargetEndSpanID =
-          this._getShrinkableEndSpanID(selectionWrapper)
+          this.#getShrinkableEndSpanID(selectionWrapper)
         if (shrinkTargetEndSpanID) {
-          this._shrink(selectionWrapper, shrinkTargetEndSpanID)
+          this.#shrink(shrinkTargetEndSpanID)
           return
         }
 
@@ -61311,70 +61683,70 @@
           selectionWrapper.parentOfAnchorNode ===
           selectionWrapper.ancestorDenotationSpanOfFocusNode
         ) {
-          this._create(selectionWrapper)
+          this.#create()
           return
         }
 
-        const expandTargetSpanID = this._getExpandableSpanID(selectionWrapper)
+        const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
         if (expandTargetSpanID) {
-          this._expand(selectionWrapper, expandTargetSpanID)
+          this.#expand(expandTargetSpanID)
           return
         }
 
-        const shrinkTargetSpanID = this._getShrinkableSpanID(selectionWrapper)
+        const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
         if (shrinkTargetSpanID) {
-          this._shrink(selectionWrapper, shrinkTargetSpanID)
+          this.#shrink(shrinkTargetSpanID)
           return
         }
       }
 
-      _anchorNodeInBlockSpanFocusNodeInTextBox() {
+      #anchorNodeInBlockSpanFocusNodeInTextBox() {
         clearTextSelection()
       }
 
-      _anchorNodeInBlockSpanFocusNodeInDenotationSpan(selectionWrapper) {
-        const shrinkTargetSpanID = this._getShrinkableSpanID(selectionWrapper)
+      #anchorNodeInBlockSpanFocusNodeInDenotationSpan(selectionWrapper) {
+        const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
         if (shrinkTargetSpanID) {
-          this._shrink(selectionWrapper, shrinkTargetSpanID)
-          return
-        }
-
-        clearTextSelection()
-      }
-
-      _anchorNodeInBlockSpanFocusNodeInBlockSpan(selectionWrapper) {
-        this._create(selectionWrapper)
-      }
-
-      _anchorNodeInBlockSpanFocusNodeInStyleSpan(selectionWrapper) {
-        const shrinkTargetSpanID = this._getShrinkableSpanID(selectionWrapper)
-        if (shrinkTargetSpanID) {
-          this._shrink(selectionWrapper, shrinkTargetSpanID)
+          this.#shrink(shrinkTargetSpanID)
           return
         }
 
         clearTextSelection()
       }
 
-      _anchorNodeInStyleSpanFocusNodeInTextBox(selectionWrapper) {
+      #anchorNodeInBlockSpanFocusNodeInBlockSpan(selectionWrapper) {
+        this.#create()
+      }
+
+      #anchorNodeInBlockSpanFocusNodeInStyleSpan(selectionWrapper) {
+        const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
+        if (shrinkTargetSpanID) {
+          this.#shrink(shrinkTargetSpanID)
+          return
+        }
+
+        clearTextSelection()
+      }
+
+      #anchorNodeInStyleSpanFocusNodeInTextBox(selectionWrapper) {
         // If the anchor node is a style span but has a parent span, extend the parent span.
         if (selectionWrapper.ancestorDenotationSpanOfAnchorNode) {
           const spanID = selectionWrapper.ancestorDenotationSpanOfAnchorNode.id
 
           if (spanID) {
-            this._expand(selectionWrapper, spanID)
+            this.#expand(spanID)
           }
           return
         }
 
-        this._create(selectionWrapper)
+        this.#create()
       }
 
-      _anchorNodeInStyleSpanFocusNodeInDenotationSpan(selectionWrapper) {
+      #anchorNodeInStyleSpanFocusNodeInDenotationSpan(selectionWrapper) {
         const shrinkTargetEndSpanID =
-          this._getShrinkableEndSpanID(selectionWrapper)
+          this.#getShrinkableEndSpanID(selectionWrapper)
         if (shrinkTargetEndSpanID) {
-          this._shrink(selectionWrapper, shrinkTargetEndSpanID)
+          this.#shrink(shrinkTargetEndSpanID)
           return
         }
 
@@ -61382,40 +61754,40 @@
           selectionWrapper.ancestorDenotationSpanOfAnchorNode ===
           selectionWrapper.parentOfFocusNode
         ) {
-          this._create(selectionWrapper)
+          this.#create()
           return
         }
 
-        const shrinkTargetSpanID = this._getShrinkableSpanID(selectionWrapper)
+        const shrinkTargetSpanID = this.#getShrinkableSpanID(selectionWrapper)
         if (shrinkTargetSpanID) {
-          this._shrink(selectionWrapper, shrinkTargetSpanID)
+          this.#shrink(shrinkTargetSpanID)
           return
         }
 
-        const expandTargetSpanID = this._getExpandableSpanID(selectionWrapper)
+        const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
         if (expandTargetSpanID) {
-          this._expand(selectionWrapper, expandTargetSpanID)
+          this.#expand(expandTargetSpanID)
           return
         }
 
         clearTextSelection()
       }
 
-      _anchorNodeInStyleSpanFocusNodeInBlockSpan(selectionWrapper) {
-        const expandTargetSpanID = this._getExpandableSpanID(selectionWrapper)
+      #anchorNodeInStyleSpanFocusNodeInBlockSpan(selectionWrapper) {
+        const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
         if (expandTargetSpanID) {
-          this._expand(selectionWrapper, expandTargetSpanID)
+          this.#expand(expandTargetSpanID)
           return
         }
 
-        this._create(selectionWrapper)
+        this.#create()
       }
 
-      _anchorNodeInStyleSpanFocusNodeInStyleSpan(selectionWrapper) {
+      #anchorNodeInStyleSpanFocusNodeInStyleSpan(selectionWrapper) {
         const shrinkTargetSpanID =
-          this._getShrinkableEndSpanID(selectionWrapper)
+          this.#getShrinkableEndSpanID(selectionWrapper)
         if (shrinkTargetSpanID) {
-          this._shrink(selectionWrapper, shrinkTargetSpanID)
+          this.#shrink(shrinkTargetSpanID)
           return
         }
 
@@ -61423,24 +61795,24 @@
           selectionWrapper.isParentOfBothNodesSame ||
           selectionWrapper.isParentsParentOfAnchorNodeAndFocusedNodeSame
         ) {
-          this._create(selectionWrapper)
+          this.#create()
           return
         }
 
-        const expandTargetSpanID = this._getExpandableSpanID(selectionWrapper)
+        const expandTargetSpanID = this.#getExpandableSpanID(selectionWrapper)
         if (expandTargetSpanID) {
-          this._expand(selectionWrapper, expandTargetSpanID)
+          this.#expand(expandTargetSpanID)
           return
         }
 
         clearTextSelection()
       }
 
-      _getShrinkableEndSpanID(selectionWrapper) {
+      #getShrinkableEndSpanID(selectionWrapper) {
         if (selectionWrapper.ancestorDenotationSpanOfAnchorNode) {
-          const { anchor } = selectionWrapper.positionsOnAnnotation
+          const { anchor } = this.#spanInstanceContainer.textSelection
 
-          const { begin, end } = this._spanModelContainer.getDenotationSpan(
+          const { begin, end } = this.#spanInstanceContainer.getDenotationSpan(
             selectionWrapper.ancestorDenotationSpanOfAnchorNode.id
           )
           if (anchor === begin || anchor === end) {
@@ -61466,7 +61838,7 @@
         }
       }
 
-      _getShrinkableSpanID(selectionWrapper) {
+      #getShrinkableSpanID(selectionWrapper) {
         const targetSpanElement =
           selectionWrapper.ancestorDenotationSpanOfFocusNode
 
@@ -61488,16 +61860,16 @@
         if (selectionWrapper.isAnchorNodeParentIsDescendantOfFocusNodeParent) {
           if (
             isPositionBetweenSpan(
-              this._selectionModel.span.single,
-              selectionWrapper.positionsOnAnnotation.focus
+              this.#selectionModel.span.single,
+              this.#annotationModel.textSelection.focus
             )
           ) {
-            return this._selectionModel.span.single.element.id
+            return this.#selectionModel.span.single.element.id
           }
         }
       }
 
-      _getExpandableSpanID(selectionWrapper) {
+      #getExpandableSpanID(selectionWrapper) {
         const targetSpanElement =
           selectionWrapper.ancestorDenotationSpanOfAnchorNode
 
@@ -61519,44 +61891,36 @@
         }
       }
 
-      _create(selectionWrapper) {
-        if (
-          hasCharacters(
-            this._annotationModel.sourceDoc,
-            this._spanConfig,
-            selectionWrapper
-          )
-        ) {
-          this._selectionModel.removeAll()
+      #create() {
+        if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
+          this.#selectionModel.removeAll()
           create(
-            this._annotationModel.sourceDoc,
-            this._spanModelContainer,
-            this._commander,
-            this._controlViewModel.spanAdjuster,
-            this._isReplicateAuto,
-            selectionWrapper,
-            this._spanConfig,
-            getIsDelimiterFunc(this._controlViewModel, this._spanConfig)
+            this.#annotationModel,
+            this.#commander,
+            this.#menuState.textSelectionAdjuster,
+            this.#isReplicateAuto,
+            this.#spanConfig,
+            getIsDelimiterFunc(this.#menuState, this.#spanConfig)
           )
         }
         clearTextSelection()
       }
 
-      _expand(selectionWrapper, spanID) {
-        this._selectionModel.removeAll()
+      #expand(spanID) {
+        this.#selectionModel.removeAll()
 
-        const { begin, end } = this._spanModelContainer
+        const { begin, end } = this.#spanInstanceContainer
           .get(spanID)
           .getExpandedInAnchorNodeToFocusNodeDirection(
-            this._controlViewModel.spanAdjuster,
-            selectionWrapper,
-            this._annotationModel.sourceDoc,
-            this._spanConfig
+            this.#menuState.textSelectionAdjuster,
+            this.#annotationModel.sourceDoc,
+            this.#annotationModel.spanInstanceContainer,
+            this.#spanConfig
           )
 
-        if (validateNewDenotationSpan(this._spanModelContainer, begin, end)) {
-          this._commander.invoke(
-            this._commander.factory.moveDenotationSpanCommand(
+        if (this.#spanInstanceContainer.validateNewDenotationSpan(begin, end)) {
+          this.#commander.invoke(
+            this.#commander.factory.moveDenotationSpanCommand(
               spanID,
               begin,
               end
@@ -61567,20 +61931,19 @@
         clearTextSelection()
       }
 
-      _shrink(selectionWrapper, spanID) {
+      #shrink(spanID) {
         shrinkSpan(
-          this._editorHTMLElement,
-          this._spanModelContainer,
-          this._annotationModel.sourceDoc,
-          this._selectionModel,
-          this._commander,
-          this._controlViewModel.spanAdjuster,
+          this.#editorHTMLElement,
+          this.#spanInstanceContainer,
+          this.#annotationModel.sourceDoc,
+          this.#selectionModel,
+          this.#commander,
+          this.#menuState.textSelectionAdjuster,
           spanID,
-          selectionWrapper,
-          this._spanConfig,
+          this.#spanConfig,
           (begin, end) => {
-            this._commander.invoke(
-              this._commander.factory.moveDenotationSpanCommand(
+            this.#commander.invoke(
+              this.#commander.factory.moveDenotationSpanCommand(
                 spanID,
                 begin,
                 end
@@ -61592,8 +61955,8 @@
         clearTextSelection()
       }
 
-      get _isReplicateAuto() {
-        return this._controlViewModel.isPushed('auto replicate')
+      get #isReplicateAuto() {
+        return this.#menuState.isPushed('auto replicate')
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/forwardMethods.js
 
@@ -61924,13 +62287,13 @@
           convertToReseltsFunc
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/Edit/bindPalletEvents/checkButtonEnable.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/bindPalletEvents/checkButtonEnable.js
 
     /* harmony default export */ function checkButtonEnable(targetNode) {
       return !targetNode.classList.contains(
         'textae-editor__pallet__table-button--disabled'
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/Edit/bindPalletEvents/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/bindPalletEvents/index.js
 
     /* harmony default export */ function bindPalletEvents(
       pallet,
@@ -61985,7 +62348,8 @@
           }
 
           selectionModel.removeAll()
-          const ids = annotationModel[annotationType]
+          const ids = annotationModel
+            .getInstanceContainerFor(annotationType)
             .findByType(e.delegateTarget.dataset.id)
             .map(({ id }) => id)
           selectionModel.add(annotationType, ids)
@@ -62048,204 +62412,65 @@
           )
         }
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/Edit/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/index.js
 
-    class Edit {
+    class EditMode {
+      #pallet
+
       constructor(
         editorHTMLElement,
-        selectionModel,
         annotationModel,
-        pallet,
+        selectionModel,
         commander,
         getAutocompletionWs,
         definitionContainer,
-        annotationType
+        annotationType,
+        pallet = null
       ) {
-        this._editorHTMLElement = editorHTMLElement
-        this._selectionModel = selectionModel
-        this._annotationModel = annotationModel
-        this._getAutocompletionWs = getAutocompletionWs
-        this._definitionContainer = definitionContainer
-        this._commander = commander
+        if (pallet) {
+          this.#pallet = pallet
 
-        this._pallet = pallet
+          bindPalletEvents(
+            pallet,
+            commander,
+            getAutocompletionWs,
+            definitionContainer,
+            annotationType,
+            selectionModel,
+            annotationModel
+          )
 
-        bindPalletEvents(
-          pallet,
-          commander,
-          getAutocompletionWs,
-          definitionContainer,
-          annotationType,
-          selectionModel,
-          annotationModel
-        )
+          editorHTMLElement.appendChild(pallet.el)
 
-        editorHTMLElement.appendChild(pallet.el)
-
-        forwardMethods(this, () => pallet, [
-          'showPallet',
-          'selectLeftAttributeTab',
-          'selectRightAttributeTab'
-        ])
+          forwardMethods(this, () => pallet, [
+            'showPallet',
+            'selectLeftAttributeTab',
+            'selectRightAttributeTab'
+          ])
+        }
       }
 
-      get pallet() {
-        return this._pallet
+      hidePallet() {
+        if (!this.#pallet) return
+
+        this.#pallet.hide()
+      }
+
+      get isPalletShown() {
+        if (!this.#pallet) return false
+
+        return this.#pallet.visibility
       }
 
       // Dummy functions
-      createSpan() {}
-      expandSpan() {}
-      shrinkSpan() {}
+      createSpanWithTouchDevice() {}
+      expandSpanWithTouchDevice() {}
+      shrinkSpanWithTouchDevice() {}
+      editProperties() {}
       relationClicked() {}
       relationBollardClicked() {}
-
-      manipulateAttribute(number, shiftKey) {
-        if (shiftKey) {
-          this._attributeEditor.deleteAt(number)
-        } else {
-          this._attributeEditor.addOrEditAt(number)
-        }
-      }
-
-      _typeValuesChanged({ typeName, label, attributes = [] }) {
-        const commands = this._commander.factory.changeTypeValuesCommand(
-          label,
-          typeName,
-          this._definitionContainer,
-          attributes
-        )
-
-        if (typeName) {
-          this._commander.invoke(commands)
-        }
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/getEntityHTMLelementFromChild.js
-
-    /* harmony default export */ function getEntityHTMLelementFromChild(
-      elementInEntityHtmlelement
-    ) {
-      return elementInEntityHtmlelement.closest('.textae-editor__signboard')
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditDenotation/bindMouseEvents.js
-
-    // For support context menu.
-    // Mouse up event occurs when either left or right button is clicked.
-    // Change mouse events to monitor from mouseup to click since v5.0.0.
-    /* harmony default export */ function bindMouseEvents(
-      editorHTMLElement,
-      mouseEventHandler
-    ) {
-      const listeners = []
-
-      // In Friefox, the text box click event fires when you shrink and erase a span.
-      // To do this, the span mouse-up event selects the span to the right of the erased span,
-      // and then the text box click event deselects it.
-      // To prevent this, we set a flag to indicate that it is immediately after the span's mouse-up event.
-      let afterSpanMouseUpEventFlag = false
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__text-box',
-          'click',
-          (e) => {
-            if (
-              e.target.classList.contains('textae-editor__text-box') &&
-              !afterSpanMouseUpEventFlag
-            ) {
-              mouseEventHandler.textBoxClicked()
-            }
-          }
-        )
-      )
-
-      // When extending span, the behavior depends on whether span is selected or not;
-      // you must not deselect span before editing it.
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor',
-          'click',
-          (e) => {
-            // The delegate also fires events for child elements of the selector.
-            // Ignores events that occur in child elements.
-            // Otherwise, you cannot select child elements.
-            if (e.target.classList.contains('textae-editor')) {
-              mouseEventHandler.bodyClicked()
-            }
-          }
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__signboard',
-          'mousedown',
-          () => mouseEventHandler.signboardClicked()
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__signboard__type-values',
-          'click',
-          (event) => {
-            const entityID = getEntityHTMLelementFromChild(event.target).dataset
-              .id
-            mouseEventHandler.typeValuesClicked(event, entityID)
-          }
-        )
-      )
-
-      // To shrink a span listen the mouseup event.
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__span',
-          'mouseup',
-          (e) => {
-            if (e.target.classList.contains('textae-editor__span')) {
-              mouseEventHandler.denotationSpanClicked(e)
-              afterSpanMouseUpEventFlag = true
-
-              // In Chrome, the text box click event does not fire when you shrink the span and erase it.
-              // Instead of beating the flag on the text box click event,
-              // it uses a timer to beat the flag instantly, faster than any user action.
-              setTimeout(() => (afterSpanMouseUpEventFlag = false), 0)
-            }
-          }
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__block',
-          'mouseup',
-          (e) => {
-            if (e.target.classList.contains('textae-editor__block')) {
-              mouseEventHandler.blockSpanClicked(e)
-            }
-          }
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__style',
-          'mouseup',
-          (e) => {
-            if (e.target.classList.contains('textae-editor__style')) {
-              mouseEventHandler.styleSpanClicked(e)
-            }
-          }
-        )
-      )
-
-      return listeners
+      applyTextSelectionWithTouchDevice() {}
+      manipulateAttribute() {}
     }
 
     // EXTERNAL MODULE: ./node_modules/jquery-ui/ui/widgets/draggable.js
@@ -63527,7 +63752,7 @@
             selectionModelEntity.selectedWithAttributeOf(pallet.attrDef.pred)
           ) {
             if (
-              selectionModelEntity.isDupulicatedPredAttrributeSelected(
+              selectionModelEntity.isDuplicatedPredAttributeSelected(
                 pallet.attrDef.pred
               )
             ) {
@@ -64400,7 +64625,7 @@
         selectionModelEntity,
         commander,
         title,
-        controlViewModel,
+        menuState,
         mousePoint
       ) {
         super(editorHTMLElement, title, mousePoint)
@@ -64410,7 +64635,7 @@
         this._attributeInstanceContainer = attributeInstanceContainer
         this._definitionContainer = definitionContainer
         this._selectionModelItems = selectionModelEntity
-        this._controlViewModel = controlViewModel
+        this._menuState = menuState
 
         delegate_default()(
           this._el,
@@ -64458,7 +64683,7 @@
 
         eventEmitter
           .on('textae-event.editor.unselect', () => this.hide()) // Close pallet when selecting other editor.
-          .on('textae-event.original-data.configuration.reset', () =>
+          .on('textae-event.resource.configuration.save', () =>
             this.updateDisplay()
           )
           .on(`textae-event.type-definition.lock`, () => this.updateDisplay())
@@ -64546,7 +64771,7 @@
       get _content() {
         return createContentHtml(
           this._definitionContainer.pallet,
-          this._controlViewModel.diffOfConfiguration,
+          this._menuState.diffOfConfiguration,
           this._selectedPred,
           this._selectionModelItems,
           this._typeDefinition.attribute,
@@ -64562,7 +64787,7 @@
       get _attributeDefinitions() {
         return this._typeDefinition.attribute.attributes
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/AttributeEditor/createNumericAttributeOrShowEditNumericAttributeDialog.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/createNumericAttributeOrShowEditNumericAttributeDialog.js
 
     /* harmony default export */ function createNumericAttributeOrShowEditNumericAttributeDialog(
       selectionModelItems,
@@ -64599,7 +64824,7 @@
         )
         commander.invoke(command)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/AttributeEditor/createStringAttributeOrShowEditStringAttributeDialog.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/createStringAttributeOrShowEditStringAttributeDialog.js
 
     /* harmony default export */ function createStringAttributeOrShowEditStringAttributeDialog(
       selectionModelItems,
@@ -64636,30 +64861,66 @@
         )
         commander.invoke(command)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/AttributeEditor/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/index.js
 
     class AttributeEditor {
+      #commander
+      #selectionModelItems
+      #selectionAttributePallet
+      #typeDefinition
+      #editProperties
+      #typeValuesPallet
+
       constructor(
         commander,
-        annotationModel,
+        typeDefinition,
         selectionModelItems,
         selectionAttributePallet,
         editProperties,
         typeValuesPallet
       ) {
-        this._commander = commander
-        this._annotationModel = annotationModel
-        this._selectionModelItems = selectionModelItems
-        this._selectionAttributePallet = selectionAttributePallet
-        this._typeDefinition = annotationModel.typeDefinition
-        this._editProperties = editProperties
-        this._typeValuesPallet = typeValuesPallet
+        this.#commander = commander
+        this.#selectionModelItems = selectionModelItems
+        this.#selectionAttributePallet = selectionAttributePallet
+        this.#typeDefinition = typeDefinition
+        this.#editProperties = editProperties
+        this.#typeValuesPallet = typeValuesPallet
       }
 
-      addOrEditAt(number) {
-        this._selectionAttributePallet.hide()
+      manipulateAttribute(number, shiftKey) {
+        if (shiftKey) {
+          this.#deleteAt(number)
+        } else {
+          this.#addOrEditAt(number)
+        }
+      }
 
-        const attrDef = this._typeDefinition.attribute.getAttributeAt(number)
+      #deleteAt(number) {
+        const attrDef = this.#typeDefinition.attribute.getAttributeAt(number)
+
+        if (!attrDef) {
+          alertify_default().warning(`Attribute No.${number} is not defined`)
+          return
+        }
+
+        if (this.#selectionModelItems.selectedWithAttributeOf(attrDef.pred)) {
+          const command =
+            this.#commander.factory.removeAttributesFromItemsByPredCommand(
+              this.#selectionModelItems.all,
+              attrDef
+            )
+          this.#commander.invoke(command)
+        } else {
+          alertify_default().warning(
+            'None of the selected items has this attribute.'
+          )
+        }
+      }
+
+      #addOrEditAt(number) {
+        this.#selectionAttributePallet.hide()
+
+        const attrDef = this.#typeDefinition.attribute.getAttributeAt(number)
 
         if (!attrDef) {
           alertify_default().warning(`Attribute No.${number} is not defined`)
@@ -64668,30 +64929,30 @@
 
         switch (attrDef.valueType) {
           case 'flag':
-            this._commander.invoke(
-              this._commander.factory.toggleFlagAttributeToItemsCommand(
-                this._selectionModelItems.all,
+            this.#commander.invoke(
+              this.#commander.factory.toggleFlagAttributeToItemsCommand(
+                this.#selectionModelItems.all,
                 attrDef
               )
             )
             break
           case 'numeric':
             createNumericAttributeOrShowEditNumericAttributeDialog(
-              this._selectionModelItems,
+              this.#selectionModelItems,
               attrDef,
-              this._commander,
-              this._editProperties,
-              this._typeValuesPallet
+              this.#commander,
+              this.#editProperties,
+              this.#typeValuesPallet
             )
             break
           case 'selection':
             {
               if (
-                this._selectionModelItems.selectedWithAttributeOf(attrDef.pred)
+                this.#selectionModelItems.selectedWithAttributeOf(attrDef.pred)
               ) {
-                this._selectionAttributePallet.show(attrDef).then((newObj) => {
+                this.#selectionAttributePallet.show(attrDef).then((newObj) => {
                   if (
-                    this._selectionModelItems.isDupulicatedPredAttrributeSelected(
+                    this.#selectionModelItems.isDuplicatedPredAttributeSelected(
                       attrDef.pred
                     )
                   ) {
@@ -64700,57 +64961,35 @@
                     )
                   } else {
                     const command =
-                      this._commander.factory.changeAttributeObjOfItemsCommand(
-                        this._selectionModelItems.all,
+                      this.#commander.factory.changeAttributeObjOfItemsCommand(
+                        this.#selectionModelItems.all,
                         attrDef,
                         newObj
                       )
-                    this._commander.invoke(command)
+                    this.#commander.invoke(command)
                   }
                 })
               } else {
                 const command =
-                  this._commander.factory.createAttributeToItemsCommand(
-                    this._selectionModelItems.all,
+                  this.#commander.factory.createAttributeToItemsCommand(
+                    this.#selectionModelItems.all,
                     attrDef
                   )
-                this._commander.invoke(command)
+                this.#commander.invoke(command)
               }
             }
             break
           case 'string':
             createStringAttributeOrShowEditStringAttributeDialog(
-              this._selectionModelItems,
+              this.#selectionModelItems,
               attrDef,
-              this._commander,
-              this._editProperties,
-              this._typeValuesPallet
+              this.#commander,
+              this.#editProperties,
+              this.#typeValuesPallet
             )
             break
           default:
             throw `${attrDef.valueType} is unknown attribute`
-        }
-      }
-
-      deleteAt(number) {
-        const attrDef = this._typeDefinition.attribute.getAttributeAt(number)
-
-        if (!attrDef) {
-          alertify_default().warning(`Attribute No.${number} is not defined`)
-          return
-        }
-
-        if (this._selectionModelItems.selectedWithAttributeOf(attrDef.pred)) {
-          const command =
-            this._commander.factory.removeAttributesFromItemsByPredCommand(
-              this._selectionModelItems.all,
-              attrDef
-            )
-          this._commander.invoke(command)
-        } else {
-          alertify_default().warning(
-            'None of the selected items has this attribute.'
-          )
         }
       }
     } // CONCATENATED MODULE: ./src/lib/component/SelectionAttributePallet/toBodyRow.js
@@ -65299,16 +65538,94 @@
         )
         super.el.closest('.ui-dialog-content').innerHTML = contentHtml
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditDenotation/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/PropertyEditor.js
 
-    class EditDenotation extends Edit {
+    class PropertyEditor {
+      #editorHTMLElement
+      #commander
+      #pallet
+      #palletName
+      #mousePoint
+      #definitionContainer
+      #annotationModel
+      #annotationType
+      #getAutocompletionWs
+
+      constructor(
+        editorHTMLElement,
+        commander,
+        pallet,
+        palletName,
+        mousePoint,
+        definitionContainer,
+        annotationModel,
+        annotationType,
+
+        getAutocompletionWs
+      ) {
+        this.#editorHTMLElement = editorHTMLElement
+        this.#commander = commander
+        this.#pallet = pallet
+        this.#palletName = palletName
+        this.#mousePoint = mousePoint
+        this.#definitionContainer = definitionContainer
+        this.#annotationModel = annotationModel
+        this.#annotationType = annotationType
+        this.#getAutocompletionWs = getAutocompletionWs
+      }
+
+      startEditing(selectionModel) {
+        if (selectionModel.some) {
+          this.#createEditPropertiesDialog(selectionModel.all)
+            .open()
+            .then((values) => this.#typeValuesChanged(values))
+        }
+      }
+
+      #typeValuesChanged({ typeName, label, attributes = [] }) {
+        const commands = this.#commander.factory.changeTypeValuesCommand(
+          label,
+          typeName,
+          this.#definitionContainer,
+          attributes
+        )
+
+        if (typeName) {
+          this.#commander.invoke(commands)
+        }
+      }
+
+      #createEditPropertiesDialog(selectedItems) {
+        return new EditPropertiesDialog(
+          this.#editorHTMLElement,
+          this.#annotationType,
+          this.#palletName,
+          this.#definitionContainer,
+          this.#annotationModel.typeDefinition.attribute,
+          this.#getAutocompletionWs(),
+          selectedItems,
+          this.#pallet,
+          this.#mousePoint
+        )
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/index.js
+
+    class TermEditMode extends EditMode {
+      #mouseEventHandler
+      #spanEditor
+      #textBox
+      #spanInstanceContainer
+      #propertyEditor
+      #selectionModel
+      #menuState
+
       constructor(
         editorHTMLElement,
         eventEmitter,
         annotationModel,
         selectionModel,
         commander,
-        controlViewModel,
+        menuState,
         spanConfig,
         autocompletionWs,
         mousePoint
@@ -65317,22 +65634,13 @@
           editorHTMLElement,
           eventEmitter,
           annotationModel.typeDefinition,
-          annotationModel.attribute,
+          annotationModel.attributeInstanceContainer,
           annotationModel.typeDefinition.denotation,
           selectionModel.entity,
           commander,
           'Term configuration',
-          controlViewModel,
+          menuState,
           mousePoint
-        )
-
-        const spanEditor = new SpanEditor(
-          editorHTMLElement,
-          annotationModel,
-          selectionModel,
-          commander,
-          controlViewModel,
-          spanConfig
         )
 
         const getAutocompletionWs = () =>
@@ -65340,77 +65648,97 @@
 
         super(
           editorHTMLElement,
-          selectionModel,
           annotationModel,
-          denotationPallet,
+          selectionModel,
           commander,
           getAutocompletionWs,
           annotationModel.typeDefinition.denotation,
-          'entity'
+          'entity',
+          denotationPallet
         )
 
-        this._mouseEventHandler = new MouseEventHandler(
+        const spanEditor = new SpanEditor(
+          editorHTMLElement,
+          annotationModel,
+          selectionModel,
+          commander,
+          menuState,
+          spanConfig
+        )
+
+        this.#mouseEventHandler = new MouseEventHandler(
           editorHTMLElement,
           annotationModel,
           selectionModel,
           denotationPallet,
           spanEditor
         )
-        this._spanEditor = spanEditor
-        this._controlViewModel = controlViewModel
-        this._textBox = editorHTMLElement.querySelector(
+
+        this.#propertyEditor = new PropertyEditor(
+          editorHTMLElement,
+          commander,
+          denotationPallet,
+          'Entity',
+          mousePoint,
+          annotationModel.typeDefinition.denotation,
+          annotationModel,
+          'Denotation',
+          getAutocompletionWs
+        )
+        this.#selectionModel = selectionModel
+
+        // For touch device actions
+        this.#spanEditor = spanEditor
+        this.#textBox = editorHTMLElement.querySelector(
           '.textae-editor__text-box'
         )
-        this._spanModelContainer = annotationModel.span
+        this.#spanInstanceContainer = annotationModel.spanInstanceContainer
+        this.#menuState = menuState
 
-        this._attributeEditor = new AttributeEditor(
+        const attributeEditor = new AttributeEditor(
           commander,
-          annotationModel,
+          annotationModel.typeDefinition,
           selectionModel.entity,
           new SelectionAttributePallet(editorHTMLElement, mousePoint),
           () => this.editProperties(),
           denotationPallet
         )
-        this._mousePoint = mousePoint
+        forwardMethods(this, () => attributeEditor, ['manipulateAttribute'])
       }
 
       bindMouseEvents() {
-        return bindMouseEvents(this._editorHTMLElement, this._mouseEventHandler)
+        return this.#mouseEventHandler.bind()
       }
 
-      createSpan() {
-        this._spanEditor.cerateSpanForTouchDevice()
+      createSpanWithTouchDevice() {
+        this.#spanEditor.cerateSpanForTouchDevice()
       }
 
-      expandSpan() {
-        this._spanEditor.expandForTouchDevice()
+      expandSpanWithTouchDevice() {
+        this.#spanEditor.expandForTouchDevice()
       }
 
-      shrinkSpan() {
-        this._spanEditor.shrinkForTouchDevice()
+      shrinkSpanWithTouchDevice() {
+        this.#spanEditor.shrinkForTouchDevice()
       }
 
-      applyTextSelection() {
-        if (isRangeInTextBox(window.getSelection(), this._textBox)) {
-          const selectionWrapper = new SelectionWrapper(
-            this._spanModelContainer
-          )
-          const { begin, end } = new OrderedPositions(
-            selectionWrapper.positionsOnAnnotation
-          )
+      applyTextSelectionWithTouchDevice() {
+        if (isRangeInTextBox(window.getSelection(), this.#textBox)) {
+          const { begin, end } = this.#spanInstanceContainer.textSelection
           const isSelectionTextCrossingAnySpan =
-            this._spanModelContainer.isBoundaryCrossingWithOtherSpans(
+            this.#spanInstanceContainer.isBoundaryCrossingWithOtherSpans(
               begin,
               end
             )
 
-          this._controlViewModel.updateManipulateSpanButtons(
-            selectionWrapper.isParentOfBothNodesSame,
+          const { isParentOfBothNodesSame } = new SelectionWrapper()
+          this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+            isParentOfBothNodesSame,
             isSelectionTextCrossingAnySpan,
             isSelectionTextCrossingAnySpan
           )
         } else {
-          this._controlViewModel.updateManipulateSpanButtons(
+          this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
             false,
             false,
             false
@@ -65419,69 +65747,22 @@
       }
 
       editProperties() {
-        if (this._selectionModel.entity.some) {
-          new EditPropertiesDialog(
-            this._editorHTMLElement,
-            'Entity',
-            'Entity',
-            this._definitionContainer,
-            this._annotationModel.typeDefinition.attribute,
-            this._getAutocompletionWs(),
-            this._selectionModel.entity.all,
-            this.pallet,
-            this._mousePoint
-          )
-            .open()
-            .then((values) => this._typeValuesChanged(values))
-        }
+        this.#propertyEditor.startEditing(this.#selectionModel.entity)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditBlock/validateNewBlockSpan.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/create.js
 
-    /* harmony default export */ function validateNewBlockSpan(
-      annotationModel,
-      begin,
-      end,
-      spanID
-    ) {
-      // The span cross exists spans.
-      if (annotationModel.span.isBoundaryCrossingWithOtherSpans(begin, end)) {
-        alertify_default().warning(
-          'A span cannot be modifyed to make a boundary crossing.'
-        )
-        return false
-      }
-
-      if (annotationModel.span.doesParentOrSameSpanExist(begin, end)) {
-        return false
-      }
-
-      // There is a BlockSpan that is a child.
-      if (
-        annotationModel.span.hasBlockSpanBetween(begin, end, {
-          excluded: spanID
-        })
-      ) {
-        return false
-      }
-
-      return true
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditBlock/create.js
-
-    /* harmony default export */ function EditBlock_create(
+    /* harmony default export */ function BlockEditMode_create(
       annotationModel,
       commander,
-      spanAdjuster,
-      selectionWrapper,
+      textSelectionAdjuster,
       spanConfig
     ) {
-      const { begin, end } = getNewSpan(
-        annotationModel.sourceDoc,
-        spanAdjuster,
-        selectionWrapper,
-        spanConfig
+      const { begin, end } = annotationModel.getNewSpan(
+        spanConfig,
+        textSelectionAdjuster
       )
 
-      if (validateNewBlockSpan(annotationModel, begin, end)) {
+      if (annotationModel.validateNewBlockSpan(begin, end)) {
         const command = commander.factory.createBlockSpanCommand({
           begin,
           end
@@ -65489,33 +65770,38 @@
 
         commander.invoke(command)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditBlock/SpanEditor.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/SpanEditor.js
 
     class SpanEditor_SpanEditor {
+      #editorHTMLElement
+      #annotationModel
+      #spanConfig
+      #commander
+      #menuState
+      #selectionModel
+
       constructor(
         editorHTMLElement,
         annotationModel,
         spanConfig,
         commander,
-        controlViewModel,
+        menuState,
         selectionModel
       ) {
-        this._editorHTMLElement = editorHTMLElement
-        this._annotationModel = annotationModel
-        this._spanConfig = spanConfig
-        this._commander = commander
-        this._controlViewModel = controlViewModel
-        this._selectionModel = selectionModel
+        this.#editorHTMLElement = editorHTMLElement
+        this.#annotationModel = annotationModel
+        this.#spanConfig = spanConfig
+        this.#commander = commander
+        this.#menuState = menuState
+        this.#selectionModel = selectionModel
       }
 
-      /**
-       *
-       * @param {SelectionWrapper} selectionWrapper
-       */
-      editFor(selectionWrapper) {
+      editFor() {
+        const selectionWrapper = new SelectionWrapper()
+
         if (selectionWrapper.isParentOfAnchorNodeTextBox) {
           if (selectionWrapper.isParentOfFocusNodeTextBox) {
-            this._create(selectionWrapper)
+            this.#create()
             return
           }
 
@@ -65524,16 +65810,16 @@
             selectionWrapper.isParentOfFocusNodeStyleSpan
           ) {
             if (selectionWrapper.ancestorBlockSpanOfFocusNode) {
-              this._shrink(selectionWrapper)
+              this.#shrink(selectionWrapper)
             } else {
-              this._create(selectionWrapper)
+              this.#create()
             }
 
             return
           }
 
           if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-            this._shrink(selectionWrapper)
+            this.#shrink(selectionWrapper)
             return
           }
         }
@@ -65549,35 +65835,38 @@
           ) {
             if (selectionWrapper.ancestorBlockSpanOfAnchorNode) {
               if (selectionWrapper.doesFitInOneBlockSpan) {
-                const { anchor, focus } = selectionWrapper.positionsOnAnnotation
-                const spanOnAnchor = this._annotationModel.span.get(
-                  selectionWrapper.parentOfAnchorNode.id
-                )
-                const blockSpanOnAnchor = this._annotationModel.span.get(
-                  selectionWrapper.ancestorBlockSpanOfAnchorNode.id
-                )
+                const { anchor, focus } = this.#annotationModel.textSelection
+
+                const spanOnAnchor =
+                  this.#annotationModel.spanInstanceContainer.get(
+                    selectionWrapper.parentOfAnchorNode.id
+                  )
+                const blockSpanOnAnchor =
+                  this.#annotationModel.spanInstanceContainer.get(
+                    selectionWrapper.ancestorBlockSpanOfAnchorNode.id
+                  )
 
                 if (
                   anchor < focus &&
                   spanOnAnchor.begin === blockSpanOnAnchor.begin
                 ) {
-                  this._shrink(selectionWrapper)
+                  this.#shrink(selectionWrapper)
                 } else if (
                   focus < anchor &&
                   spanOnAnchor.end === blockSpanOnAnchor.end
                 ) {
-                  this._shrink(selectionWrapper)
+                  this.#shrink(selectionWrapper)
                 } else {
                   clearTextSelection()
                 }
               } else {
                 // Expand when the selection exceeds a single block span.
-                this._expand(selectionWrapper)
+                this.#expand(selectionWrapper)
               }
             } else if (selectionWrapper.ancestorBlockSpanOfFocusNode) {
-              this._shrink(selectionWrapper)
+              this.#shrink(selectionWrapper)
             } else {
-              this._create(selectionWrapper)
+              this.#create()
             }
 
             return
@@ -65587,7 +65876,7 @@
           // and also when the beginning or end of the text is a denotation or style span,
           // the anchor node is within the denotation or style span.
           if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-            this._shrink(selectionWrapper)
+            this.#shrink(selectionWrapper)
             return
           }
         }
@@ -65599,9 +65888,9 @@
             selectionWrapper.isParentOfFocusNodeStyleSpan
           ) {
             if (selectionWrapper.ancestorBlockSpanOfFocusNode) {
-              this._shrink(selectionWrapper)
+              this.#shrink(selectionWrapper)
             } else {
-              this._expand(selectionWrapper)
+              this.#expand(selectionWrapper)
             }
 
             return
@@ -65610,10 +65899,11 @@
           // When you shrink a block containing the beginning or end of the text,
           // the anchor node is in the block.
           if (selectionWrapper.isParentOfFocusNodeBlockSpan) {
-            const { anchor } = selectionWrapper.positionsOnAnnotation
-            const blockSpanOnFocus = this._annotationModel.span.get(
-              selectionWrapper.parentOfFocusNode.id
-            )
+            const { anchor } = this.#annotationModel.textSelection
+            const blockSpanOnFocus =
+              this.#annotationModel.spanInstanceContainer.get(
+                selectionWrapper.parentOfFocusNode.id
+              )
 
             // Shrink the block span
             // only when the anchor position matches the begin or end position of the block span.
@@ -65621,7 +65911,7 @@
               anchor === blockSpanOnFocus.begin ||
               anchor === blockSpanOnFocus.end
             ) {
-              this._shrink(selectionWrapper)
+              this.#shrink(selectionWrapper)
               return
             }
           }
@@ -65631,127 +65921,124 @@
       }
 
       cerateSpanForTouchDevice() {
-        const selectionWrapper = new SelectionWrapper(
-          this._annotationModel.span
-        )
+        const selectionWrapper = new SelectionWrapper()
 
         if (selectionWrapper.isParentOfBothNodesTextBox) {
-          this._create(selectionWrapper)
+          this.#create()
         }
       }
 
       expandForTouchDevice() {
-        const expandedSpan = this._getExpandedSpanForTouchDevice()
+        const expandedSpan = this.#getExpandedSpanForTouchDevice()
         if (expandedSpan) {
           const { spanID, begin, end } = expandedSpan
 
-          if (validateNewBlockSpan(this._annotationModel, begin, end, spanID)) {
-            this._commander.invoke(
-              this._commander.factory.moveBlockSpanCommand(spanID, begin, end)
+          if (this.#annotationModel.validateNewBlockSpan(begin, end, spanID)) {
+            this.#commander.invoke(
+              this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
             )
           }
         }
       }
 
       shrinkForTouchDevice() {
-        const shrinkedSpan = this._getShrinkedSpanForTouchDevice()
-        if (shrinkedSpan) {
-          const { spanID, begin, end } = shrinkedSpan
-          const nextSpan = getRightSpanElement(this._editorHTMLElement, spanID)
+        const shrunkenSpan = this.#getShrunkenSpanForTouchDevice()
+        if (shrunkenSpan) {
+          const { spanID, begin, end } = shrunkenSpan
+          const nextSpan = getRightSpanElement(this.#editorHTMLElement, spanID)
 
           // The span cross exists spans.
           if (
-            this._annotationModel.span.isBoundaryCrossingWithOtherSpans(
+            this.#annotationModel.spanInstanceContainer.isBoundaryCrossingWithOtherSpans(
               begin,
               end
             )
           ) {
             alertify_default().warning(
-              'A span cannot be modifyed to make a boundary crossing.'
+              'A span cannot be modified to make a boundary crossing.'
             )
             return
           }
 
-          // There is parant span.
-          if (this._annotationModel.span.hasParentOf(begin, end, spanID)) {
+          // There is parent span.
+          if (
+            this.#annotationModel.spanInstanceContainer.hasParentOf(
+              begin,
+              end,
+              spanID
+            )
+          ) {
             return
           }
 
-          const doesExists = this._annotationModel.span.hasBlockSpan(begin, end)
+          const doesExists =
+            this.#annotationModel.spanInstanceContainer.hasBlockSpan(begin, end)
           if (begin < end && !doesExists) {
-            this._commander.invoke(
-              this._commander.factory.moveBlockSpanCommand(spanID, begin, end)
+            this.#commander.invoke(
+              this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
             )
           } else {
-            this._commander.invoke(
-              this._commander.factory.removeSpanCommand(spanID)
+            this.#commander.invoke(
+              this.#commander.factory.removeSpanCommand(spanID)
             )
             if (nextSpan) {
-              this._selectionModel.selectSpan(nextSpan.id)
+              this.#selectionModel.selectSpan(nextSpan.id)
             }
           }
         }
       }
 
-      _create(selectionWrapper) {
-        if (
-          hasCharacters(
-            this._annotationModel.sourceDoc,
-            this._spanConfig,
-            selectionWrapper
-          )
-        ) {
-          this._selectionModel.removeAll()
-          EditBlock_create(
-            this._annotationModel,
-            this._commander,
-            this._controlViewModel.spanAdjuster,
-            selectionWrapper,
-            this._spanConfig
+      #create() {
+        if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
+          this.#selectionModel.removeAll()
+          BlockEditMode_create(
+            this.#annotationModel,
+            this.#commander,
+            this.#menuState.textSelectionAdjuster,
+            this.#spanConfig
           )
         }
         clearTextSelection()
       }
 
-      _expand(selectionWrapper) {
+      #expand(selectionWrapper) {
         const spanID = selectionWrapper.ancestorBlockSpanOfAnchorNode.id
 
-        this._selectionModel.removeAll()
+        this.#selectionModel.removeAll()
 
-        const { begin, end } = this._annotationModel.span
+        const { begin, end } = this.#annotationModel.spanInstanceContainer
           .get(spanID)
           .getExpandedInAnchorNodeToFocusNodeDirection(
-            this._controlViewModel.spanAdjuster,
-            selectionWrapper,
-            this._annotationModel.sourceDoc,
-            this._spanConfig
+            this.#menuState.textSelectionAdjuster,
+            this.#annotationModel.sourceDoc,
+            this.#annotationModel.spanInstanceContainer,
+            this.#spanConfig
           )
 
-        if (validateNewBlockSpan(this._annotationModel, begin, end, spanID)) {
-          this._commander.invoke(
-            this._commander.factory.moveBlockSpanCommand(spanID, begin, end)
+        if (this.#annotationModel.validateNewBlockSpan(begin, end, spanID)) {
+          this.#commander.invoke(
+            this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
           )
         }
 
         clearTextSelection()
       }
 
-      _shrink(selectionWrapper) {
+      #shrink(selectionWrapper) {
         const spanID = selectionWrapper.ancestorBlockSpanOfFocusNode.id
 
         shrinkSpan(
-          this._editorHTMLElement,
-          this._annotationModel.span,
-          this._annotationModel.sourceDoc,
-          this._selectionModel,
-          this._commander,
-          this._controlViewModel.spanAdjuster,
+          this.#editorHTMLElement,
+          this.#annotationModel.spanInstanceContainer,
+          this.#annotationModel.sourceDoc,
+          this.#selectionModel,
+          this.#commander,
+          this.#menuState.textSelectionAdjuster,
           spanID,
-          selectionWrapper,
-          this._spanConfig,
+          this.#spanConfig,
           (begin, end) => {
-            this._commander.invoke(
-              this._commander.factory.moveBlockSpanCommand(spanID, begin, end)
+            this.#commander.invoke(
+              this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
             )
           }
         )
@@ -65759,10 +66046,8 @@
         clearTextSelection()
       }
 
-      _getExpandedSpanForTouchDevice() {
-        const selectionWrapper = new SelectionWrapper(
-          this._annotationModel.span
-        )
+      #getExpandedSpanForTouchDevice() {
+        const selectionWrapper = new SelectionWrapper()
 
         // When there is no denotation span in ancestors of anchor node and focus node,
         // a span to expand does not exist.
@@ -65785,13 +66070,13 @@
 
           return {
             spanID,
-            ...this._annotationModel.span
+            ...this.#annotationModel.spanInstanceContainer
               .get(spanID)
               .getExpandedInAnchorNodeToFocusNodeDirection(
-                this._controlViewModel.spanAdjuster,
-                selectionWrapper,
-                this._annotationModel.sourceDoc,
-                this._spanConfig
+                this.#menuState.textSelectionAdjuster,
+                this.#annotationModel.sourceDoc,
+                this.#annotationModel.spanInstanceContainer,
+                this.#spanConfig
               )
           }
         }
@@ -65807,22 +66092,20 @@
 
           return {
             spanID,
-            ...this._annotationModel.span
+            ...this.#annotationModel.spanInstanceContainer
               .get(spanID)
               .getExpandedInFocusNodeToAnchorNodeDirection(
-                this._controlViewModel.spanAdjuster,
-                selectionWrapper,
-                this._annotationModel.sourceDoc,
-                this._spanConfig
+                this.#menuState.textSelectionAdjuster,
+                this.#annotationModel.sourceDoc,
+                this.#annotationModel.spanInstanceContainer,
+                this.#spanConfig
               )
           }
         }
       }
 
-      _getShrinkedSpanForTouchDevice() {
-        const selectionWrapper = new SelectionWrapper(
-          this._annotationModel.span
-        )
+      #getShrunkenSpanForTouchDevice() {
+        const selectionWrapper = new SelectionWrapper()
 
         // When there is no denotation span in ancestors of anchor node and focus node,
         // a span to shrink does not exist.
@@ -65854,13 +66137,13 @@
 
           return {
             spanID,
-            ...this._annotationModel.span
+            ...this.#annotationModel.spanInstanceContainer
               .get(spanID)
               .getShortenInFocusNodeToAnchorNodeDirection(
-                this._controlViewModel.spanAdjuster,
-                selectionWrapper,
-                this._annotationModel.sourceDoc,
-                this._spanConfig
+                this.#menuState.textSelectionAdjuster,
+                this.#annotationModel.sourceDoc,
+                this.#annotationModel.spanInstanceContainer,
+                this.#spanConfig
               )
           }
         }
@@ -65876,132 +66159,26 @@
 
           return {
             spanID,
-            ...this._annotationModel.span
+            ...this.#annotationModel.spanInstanceContainer
               .get(spanID)
               .getShortenInAnchorNodeToFocusNodeDirection(
-                this._controlViewModel.spanAdjuster,
-                selectionWrapper,
-                this._annotationModel.sourceDoc,
-                this._spanConfig
+                this.#menuState.textSelectionAdjuster,
+                this.#annotationModel.sourceDoc,
+                this.#annotationModel.spanInstanceContainer,
+                this.#spanConfig
               )
           }
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditBlock/bindMouseEvents.js
-
-    /* harmony default export */ function EditBlock_bindMouseEvents(
-      editorHTMLElement,
-      mouseEventHandler
-    ) {
-      const listeners = []
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__text-box',
-          'click',
-          (e) => {
-            if (e.target.classList.contains('textae-editor__text-box')) {
-              mouseEventHandler.textBoxClicked()
-            }
-          }
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor',
-          'click',
-          (e) => {
-            // The delegate also fires events for child elements of the selector.
-            // Ignores events that occur in child elements.
-            // Otherwise, you cannot select child elements.
-            if (e.target.classList.contains('textae-editor')) {
-              mouseEventHandler.bodyClicked()
-            }
-          }
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__signboard',
-          'mousedown',
-          () => mouseEventHandler.signboardClicked()
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__signboard__type-values',
-          'click',
-          (event) => {
-            const entityID = getEntityHTMLelementFromChild(event.target).dataset
-              .id
-            mouseEventHandler.typeValuesClicked(event, entityID)
-          }
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__block',
-          'mouseup',
-          (e) => {
-            if (e.target.classList.contains('textae-editor__block')) {
-              mouseEventHandler.blockSpanClicked()
-            }
-          }
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__block-hit-area',
-          'mouseup',
-          (e) => {
-            if (e.target.classList.contains('textae-editor__block-hit-area')) {
-              mouseEventHandler.blockHitAreaClicked(e)
-            }
-          }
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__style',
-          'mouseup',
-          (e) => {
-            if (e.target.classList.contains('textae-editor__style')) {
-              mouseEventHandler.styleSpanClicked(e)
-            }
-          }
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__span',
-          'mouseup',
-          (e) => {
-            if (e.target.classList.contains('textae-editor__span')) {
-              mouseEventHandler.denotationSpanClicked(e)
-            }
-          }
-        )
-      )
-
-      return listeners
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditBlock/MouseEventHandler.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/MouseEventHandler.js
 
     class MouseEventHandler_MouseEventHandler {
+      #editorHTMLElement
+      #annotationModel
+      #selectionModel
+      #spanEditor
+      #pallet
+
       /**
        *
        * @param {import('./SpanEditor').default} spanEditor
@@ -66013,62 +66190,169 @@
         spanEditor,
         pallet
       ) {
-        this._editorHTMLElement = editorHTMLElement
-        this._annotationModel = annotationModel
-        this._selectionModel = selectionModel
-        this._spanEditor = spanEditor
-        this._pallet = pallet
+        this.#editorHTMLElement = editorHTMLElement
+        this.#annotationModel = annotationModel
+        this.#selectionModel = selectionModel
+        this.#spanEditor = spanEditor
+        this.#pallet = pallet
       }
 
-      bodyClicked() {
-        this._pallet.hide()
-        this._selectionModel.removeAll()
+      bind() {
+        const listeners = []
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__text-box',
+            'click',
+            (e) => {
+              if (e.target.classList.contains('textae-editor__text-box')) {
+                this.#textBoxClicked()
+              }
+            }
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor',
+            'click',
+            (e) => {
+              // The delegate also fires events for child elements of the selector.
+              // Ignores events that occur in child elements.
+              // Otherwise, you cannot select child elements.
+              if (e.target.classList.contains('textae-editor')) {
+                this.#bodyClicked()
+              }
+            }
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__signboard',
+            'mousedown',
+            () => this.#signboardClicked()
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__signboard__type-values',
+            'click',
+            (event) => {
+              const entityID = getEntityHTMLelementFromChild(event.target)
+                .dataset.id
+              this.#typeValuesClicked(event, entityID)
+            }
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__block',
+            'mouseup',
+            (e) => {
+              if (e.target.classList.contains('textae-editor__block')) {
+                this.#blockSpanClicked()
+              }
+            }
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__block-hit-area',
+            'mouseup',
+            (e) => {
+              if (
+                e.target.classList.contains('textae-editor__block-hit-area')
+              ) {
+                this.#blockHitAreaClicked(e)
+              }
+            }
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__style',
+            'mouseup',
+            (e) => {
+              if (e.target.classList.contains('textae-editor__style')) {
+                this.#styleSpanClicked(e)
+              }
+            }
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__span',
+            'mouseup',
+            (e) => {
+              if (e.target.classList.contains('textae-editor__span')) {
+                this.#denotationSpanClicked(e)
+              }
+            }
+          )
+        )
+
+        return listeners
       }
 
-      textBoxClicked() {
+      #bodyClicked() {
+        this.#pallet.hide()
+        this.#selectionModel.removeAll()
+      }
+
+      #textBoxClicked() {
         const selection = window.getSelection()
 
         if (selection.type === 'Caret') {
-          this._pallet.hide()
-          this._selectionModel.removeAll()
+          this.#pallet.hide()
+          this.#selectionModel.removeAll()
         }
 
         if (
           isRangeInTextBox(
             selection,
-            this._editorHTMLElement.querySelector('.textae-editor__text-box')
+            this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
-          this._spanEditor.editFor(
-            new SelectionWrapper(this._annotationModel.span)
-          )
+          this.#spanEditor.editFor()
         }
       }
 
-      blockSpanClicked() {
+      #blockSpanClicked() {
         const selection = window.getSelection()
 
         if (selection.type === 'Caret') {
-          this._pallet.hide()
+          this.#pallet.hide()
           clearTextSelection()
-          this._selectionModel.removeAll()
+          this.#selectionModel.removeAll()
         }
 
         if (
           isRangeInTextBox(
             selection,
-            this._editorHTMLElement.querySelector('.textae-editor__text-box')
+            this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
-          this._spanEditor.editFor(
-            new SelectionWrapper(this._annotationModel.span)
-          )
+          this.#spanEditor.editFor()
         }
       }
 
       // Mouse events to the block span are handled by the hit area instead,
       // to show the block span shifted up half a line.
-      blockHitAreaClicked(e) {
+      #blockHitAreaClicked(e) {
         // When you click on the text, the browser will automatically select the word.
         // Therefore, the editor shrinks spans instead of selecting spans.
         // Deselect the text.
@@ -66084,90 +66368,99 @@
         if (selection.type === 'Caret' || selection.type === 'None') {
           const spanId = e.target.dataset.id
 
-          this._selectSpanAndEntity(e, spanId)
+          this.#selectSpanAndEntity(e, spanId)
         }
       }
 
-      styleSpanClicked(e) {
+      #styleSpanClicked(e) {
         const selection = window.getSelection()
         if (selection.type === 'Caret') {
-          this._selectionModel.removeAll()
+          this.#selectionModel.removeAll()
         }
 
         if (
           isRangeInTextBox(
             selection,
-            this._editorHTMLElement.querySelector('.textae-editor__text-box')
+            this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
-          this._spanEditor.editFor(
-            new SelectionWrapper(this._annotationModel.span)
-          )
+          this.#spanEditor.editFor()
           e.stopPropagation()
         }
       }
 
-      denotationSpanClicked(e) {
+      #denotationSpanClicked(e) {
         const selection = window.getSelection()
         if (selection.type === 'Caret') {
-          this._selectionModel.removeAll()
+          this.#selectionModel.removeAll()
         }
 
         if (
           isRangeInTextBox(
             selection,
-            this._editorHTMLElement.querySelector('.textae-editor__text-box')
+            this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
-          this._spanEditor.editFor(
-            new SelectionWrapper(this._annotationModel.span)
-          )
+          this.#spanEditor.editFor()
           e.stopPropagation()
         }
       }
 
-      signboardClicked() {
-        this._editorHTMLElement.focus()
+      #signboardClicked() {
+        this.#editorHTMLElement.focus()
       }
 
-      typeValuesClicked(event, entityID) {
-        const entity = this._annotationModel.entity.get(entityID)
+      #typeValuesClicked(event, entityID) {
+        const entity =
+          this.#annotationModel.entityInstanceContainer.get(entityID)
 
         if (entity.isBlock) {
           if (event.ctrlKey || event.metaKey) {
-            this._selectionModel.entity.toggle(entityID)
+            this.#selectionModel.entity.toggle(entityID)
           } else {
-            this._selectionModel.selectEntity(entityID)
+            this.#selectionModel.selectEntity(entityID)
           }
 
           // Select span of the selected entity.
-          const spans = this._selectionModel.entity.all
+          const spans = this.#selectionModel.entity.all
             .map((entity) => entity.span)
             .map((span) => span.id)
-          this._selectionModel.add('span', spans)
+          this.#selectionModel.add('span', spans)
         }
       }
 
-      _selectSpanAndEntity(event, spanID) {
-        const selectedSpanID = this._selectionModel.span.singleId
+      #selectSpanAndEntity(event, spanID) {
+        const selectedSpanID = this.#selectionModel.span.singleId
         const rangeOfSpans =
           event.shiftKey && selectedSpanID
-            ? this._annotationModel.span.rangeBlockSpan(selectedSpanID, spanID)
+            ? this.#annotationModel.spanInstanceContainer.rangeBlockSpan(
+                selectedSpanID,
+                spanID
+              )
             : []
 
-        selectSpan(this._selectionModel, rangeOfSpans, event, spanID)
+        selectSpan(this.#selectionModel, rangeOfSpans, event, spanID)
 
         // Select entities of the selected span.
         // Block is a first entity of the span.
-        const entities = this._selectionModel.span.all
+        const entities = this.#selectionModel.span.all
           .map((span) => span.entities.at(0))
           .map((entity) => entity.id)
 
-        this._selectionModel.add('entity', entities)
+        this.#selectionModel.add('entity', entities)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditBlock/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/index.js
 
-    class EditBlock extends Edit {
+    class BlockEditMode extends EditMode {
+      #mouseEventHandler
+      #spanEditor
+      #textBox
+      #spanInstanceContainer
+      #propertyEditor
+      #selectionModel
+      #menuState
+      #attributeEditor
+
       constructor(
         editorHTMLElement,
         eventEmitter,
@@ -66175,29 +66468,20 @@
         selectionModel,
         spanConfig,
         commander,
-        controlViewModel,
+        menuState,
         autocompletionWs,
         mousePoint
       ) {
-        const spanEditor = new SpanEditor_SpanEditor(
-          editorHTMLElement,
-          annotationModel,
-          spanConfig,
-          commander,
-          controlViewModel,
-          selectionModel
-        )
-
         const blockPallet = new TypeValuesPallet(
           editorHTMLElement,
           eventEmitter,
           annotationModel.typeDefinition,
-          annotationModel.attribute,
+          annotationModel.attributeInstanceContainer,
           annotationModel.typeDefinition.block,
           selectionModel.entity,
           commander,
           'Block configuration',
-          controlViewModel,
+          menuState,
           mousePoint
         )
 
@@ -66206,80 +66490,97 @@
 
         super(
           editorHTMLElement,
-          selectionModel,
           annotationModel,
-          blockPallet,
+          selectionModel,
           commander,
           getAutocompletionWs,
           annotationModel.typeDefinition.block,
-          'entity'
+          'entity',
+          blockPallet
         )
 
-        this._mouseEventHandler = new MouseEventHandler_MouseEventHandler(
+        const spanEditor = new SpanEditor_SpanEditor(
+          editorHTMLElement,
+          annotationModel,
+          spanConfig,
+          commander,
+          menuState,
+          selectionModel
+        )
+
+        this.#mouseEventHandler = new MouseEventHandler_MouseEventHandler(
           editorHTMLElement,
           annotationModel,
           selectionModel,
           spanEditor,
           blockPallet
         )
-        this._spanEditor = spanEditor
-        this._controlViewModel = controlViewModel
-        this._textBox = editorHTMLElement.querySelector(
+
+        this.#propertyEditor = new PropertyEditor(
+          editorHTMLElement,
+          commander,
+          blockPallet,
+          'Block',
+          mousePoint,
+          annotationModel.typeDefinition.block,
+          annotationModel,
+          'Entity',
+          getAutocompletionWs
+        )
+        this.#selectionModel = selectionModel
+
+        // For touch device actions
+        this.#spanEditor = spanEditor
+        this.#textBox = editorHTMLElement.querySelector(
           '.textae-editor__text-box'
         )
-        this._spanModelContainer = annotationModel.span
+        this.#spanInstanceContainer = annotationModel.spanInstanceContainer
+        this.#menuState = menuState
 
-        this._attributeEditor = new AttributeEditor(
+        const attributeEditor = new AttributeEditor(
           commander,
-          annotationModel,
+          annotationModel.typeDefinition,
           selectionModel.entity,
           new SelectionAttributePallet(editorHTMLElement, mousePoint),
           () => this.editProperties(),
           blockPallet
         )
-        this._mousePoint = mousePoint
+        forwardMethods(this, () => attributeEditor, ['manipulateAttribute'])
       }
 
       bindMouseEvents() {
-        return EditBlock_bindMouseEvents(
-          this._editorHTMLElement,
-          this._mouseEventHandler
-        )
+        return this.#mouseEventHandler.bind()
       }
 
-      createSpan() {
-        this._spanEditor.cerateSpanForTouchDevice()
+      createSpanWithTouchDevice() {
+        this.#spanEditor.cerateSpanForTouchDevice()
       }
 
-      expandSpan() {
-        this._spanEditor.expandForTouchDevice()
+      expandSpanWithTouchDevice() {
+        this.#spanEditor.expandForTouchDevice()
       }
 
-      shrinkSpan() {
-        this._spanEditor.shrinkForTouchDevice()
+      shrinkSpanWithTouchDevice() {
+        this.#spanEditor.shrinkForTouchDevice()
       }
 
-      applyTextSelection() {
-        if (isRangeInTextBox(window.getSelection(), this._textBox)) {
-          const selectionWrapper = new SelectionWrapper(
-            this._spanModelContainer
-          )
-          const { begin, end } = new OrderedPositions(
-            selectionWrapper.positionsOnAnnotation
-          )
+      applyTextSelectionWithTouchDevice() {
+        if (isRangeInTextBox(window.getSelection(), this.#textBox)) {
+          const { begin, end } = this.#spanInstanceContainer.textSelection
           const isSelectionTextCrossingAnySpan =
-            this._spanModelContainer.isBoundaryCrossingWithOtherSpans(
+            this.#spanInstanceContainer.isBoundaryCrossingWithOtherSpans(
               begin,
               end
             )
 
-          this._controlViewModel.updateManipulateSpanButtons(
-            selectionWrapper.isParentOfBothNodesTextBox,
+          const { isParentOfBothNodesTextBox } = new SelectionWrapper()
+          this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+            isParentOfBothNodesTextBox,
             isSelectionTextCrossingAnySpan,
             isSelectionTextCrossingAnySpan
           )
         } else {
-          this._controlViewModel.updateManipulateSpanButtons(
+          this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
             false,
             false,
             false
@@ -66288,86 +66589,9 @@
       }
 
       editProperties() {
-        if (this._selectionModel.entity.some) {
-          new EditPropertiesDialog(
-            this._editorHTMLElement,
-            'Block',
-            'Entity',
-            this._definitionContainer,
-            this._annotationModel.typeDefinition.attribute,
-            this._getAutocompletionWs(),
-            this._selectionModel.entity.all,
-            this.pallet,
-            this._mousePoint
-          )
-            .open()
-            .then((values) => this._typeValuesChanged(values))
-        }
+        this.#propertyEditor.startEditing(this.#selectionModel.entity)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditRelation/bindMouseEvents.js
-
-    // Manipulate only entities and relations on the Edit Relation mode.
-    // For support context menu.
-    // Mouse up event occurs when either left or right button is clicked.
-    // Change mouse events to monitor from mouseup to click since v5.0.0.
-    /* harmony default export */ function EditRelation_bindMouseEvents(
-      editorHTMLElement,
-      mouseEventHandler
-    ) {
-      const listeners = []
-
-      // In relation mode does not manipulate the child elements in the text box.
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__text-box',
-          'click',
-          () => mouseEventHandler.bodyClicked()
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor',
-          'click',
-          (e) => {
-            // The delegate also fires events for child elements of the selector.
-            // Ignores events that occur in child elements.
-            // Otherwise, you cannot select child elements.
-            if (e.target.classList.contains('textae-editor')) {
-              mouseEventHandler.bodyClicked()
-            }
-          }
-        )
-      )
-
-      listeners.push(
-        // When a relation is selected, the HTML element of the relation is recreated,
-        // so the click event is not fired on the parent element.
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__signboard',
-          'mousedown',
-          () => mouseEventHandler.signboardClicked()
-        )
-      )
-
-      listeners.push(
-        delegate_default()(
-          editorHTMLElement,
-          '.textae-editor__signboard__type-values',
-          'click',
-          (event) => {
-            const entityID = getEntityHTMLelementFromChild(event.target).dataset
-              .id
-            mouseEventHandler.typeValuesClicked(event, entityID)
-          }
-        )
-      )
-
-      return listeners
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditRelation/MouseEventHandler/typeValuesClicked/updateSelectionOfEntity.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/MouseEventHandler/typeValuesClicked/updateSelectionOfEntity.js
 
     /* harmony default export */ function updateSelectionOfEntity(
       event,
@@ -66385,7 +66609,7 @@
         selectionModel.remove('entity', subjectEntityId)
         selectionModel.remove('entity', objectEntityId)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditRelation/MouseEventHandler/typeValuesClicked/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/MouseEventHandler/typeValuesClicked/index.js
 
     /* harmony default export */ function typeValuesClicked(
       selectionModel,
@@ -66420,9 +66644,15 @@
           )
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditRelation/MouseEventHandler/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/MouseEventHandler/index.js
 
-    class EditRelation_MouseEventHandler_MouseEventHandler {
+    class RelationEditMode_MouseEventHandler_MouseEventHandler {
+      #editorHTMLElement
+      #selectionModel
+      #commander
+      #typeDefinition
+      #pallet
+
       constructor(
         editorHTMLElement,
         selectionModel,
@@ -66430,34 +66660,94 @@
         typeDefinition,
         pallet
       ) {
-        this._editorHTMLElement = editorHTMLElement
-        this._selectionModel = selectionModel
-        this._commander = commander
-        this._typeDefinition = typeDefinition
-        this._pallet = pallet
+        this.#editorHTMLElement = editorHTMLElement
+        this.#selectionModel = selectionModel
+        this.#commander = commander
+        this.#typeDefinition = typeDefinition
+        this.#pallet = pallet
       }
 
-      bodyClicked() {
-        this._pallet.hide()
-        this._selectionModel.removeAll()
+      bind() {
+        const listeners = []
+
+        // In relation mode does not manipulate the child elements in the text box.
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__text-box',
+            'click',
+            () => this.#bodyClicked()
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor',
+            'click',
+            (e) => {
+              // The delegate also fires events for child elements of the selector.
+              // Ignores events that occur in child elements.
+              // Otherwise, you cannot select child elements.
+              if (e.target.classList.contains('textae-editor')) {
+                this.#bodyClicked()
+              }
+            }
+          )
+        )
+
+        listeners.push(
+          // When a relation is selected, the HTML element of the relation is recreated,
+          // so the click event is not fired on the parent element.
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__signboard',
+            'mousedown',
+            () => this.#signboardClicked()
+          )
+        )
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__signboard__type-values',
+            'click',
+            (event) => {
+              const entityID = getEntityHTMLelementFromChild(event.target)
+                .dataset.id
+              this.#typeValuesClicked(event, entityID)
+            }
+          )
+        )
+
+        return listeners
       }
 
-      signboardClicked() {
-        this._editorHTMLElement.focus()
+      #bodyClicked() {
+        this.#pallet.hide()
+        this.#selectionModel.removeAll()
       }
 
-      typeValuesClicked(event, entityID) {
+      #signboardClicked() {
+        this.#editorHTMLElement.focus()
+      }
+
+      #typeValuesClicked(event, entityID) {
         typeValuesClicked(
-          this._selectionModel,
-          this._commander,
-          this._typeDefinition.relation,
+          this.#selectionModel,
+          this.#commander,
+          this.#typeDefinition.relation,
           event,
           entityID
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/EditRelation/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/index.js
 
-    class EditRelation extends Edit {
+    class RelationEditMode extends EditMode {
+      #mouseEventHandler
+      #propertyEditor
+      #selectionModel
+
       constructor(
         editorHTMLElement,
         eventEmitter,
@@ -66465,19 +66755,19 @@
         selectionModel,
         commander,
         autocompletionWs,
-        controlViewModel,
+        menuState,
         mousePoint
       ) {
         const relationPallet = new TypeValuesPallet(
           editorHTMLElement,
           eventEmitter,
           annotationModel.typeDefinition,
-          annotationModel.attribute,
+          annotationModel.attributeInstanceContainer,
           annotationModel.typeDefinition.relation,
           selectionModel.relation,
           commander,
           'Relation configuration',
-          controlViewModel,
+          menuState,
           mousePoint
         )
 
@@ -66486,78 +66776,69 @@
 
         super(
           editorHTMLElement,
-          selectionModel,
           annotationModel,
-          relationPallet,
+          selectionModel,
           commander,
           getAutocompletionWs,
           annotationModel.typeDefinition.relation,
-          'relation'
+          'relation',
+          relationPallet
         )
 
-        this._editorHTMLElement = editorHTMLElement
-        this._mouseEventHandler =
-          new EditRelation_MouseEventHandler_MouseEventHandler(
+        this.#mouseEventHandler =
+          new RelationEditMode_MouseEventHandler_MouseEventHandler(
             editorHTMLElement,
             selectionModel,
             commander,
             annotationModel.typeDefinition,
             relationPallet
           )
-        this._controlViewModel = controlViewModel
-        this._attributeEditor = new AttributeEditor(
+
+        this.#propertyEditor = new PropertyEditor(
+          editorHTMLElement,
           commander,
+          relationPallet,
+          'Relation',
+          mousePoint,
+          annotationModel.typeDefinition.relation,
           annotationModel,
+          'Relation',
+          getAutocompletionWs
+        )
+        this.#selectionModel = selectionModel
+
+        const attributeEditor = new AttributeEditor(
+          commander,
+          annotationModel.typeDefinition,
           selectionModel.relation,
           new SelectionAttributePallet(editorHTMLElement, mousePoint),
           () => this.editProperties(),
           relationPallet
         )
-        this._mousePoint = mousePoint
+        forwardMethods(this, () => attributeEditor, ['manipulateAttribute'])
       }
 
       bindMouseEvents() {
-        return EditRelation_bindMouseEvents(
-          this._editorHTMLElement,
-          this._mouseEventHandler
-        )
-      }
-
-      applyTextSelection() {
-        this._controlViewModel.updateManipulateSpanButtons(false, false, false)
+        return this.#mouseEventHandler.bind()
       }
 
       editProperties() {
-        if (this._selectionModel.relation.some) {
-          new EditPropertiesDialog(
-            this._editorHTMLElement,
-            'Relation',
-            'Relation',
-            this._definitionContainer,
-            this._annotationModel.typeDefinition.attribute,
-            this._getAutocompletionWs(),
-            this._selectionModel.relation.all,
-            this.pallet,
-            this._mousePoint
-          )
-            .open()
-            .then((values) => this._typeValuesChanged(values))
-        }
+        this.#propertyEditor.startEditing(this.#selectionModel.relation)
       }
 
       relationClicked(event, relation) {
         if (event.ctrlKey || event.metaKey) {
-          this._selectionModel.relation.toggle(relation.id)
+          this.#selectionModel.relation.toggle(relation.id)
         } else {
-          this._selectionModel.selectRelation(relation.id)
+          this.#selectionModel.selectRelation(relation.id)
         }
       }
 
       relationBollardClicked(entity) {
         entity.span.forceRenderGrid()
-        this._selectionModel.selectEntity(entity.id)
+        this.#selectionModel.selectEntity(entity.id)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/ModeReactor/EditorCSS.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/ModeTransitionReactor/EditorCSS.js
 
     class EditorCSS {
       constructor(editorHTMLElement) {
@@ -66575,26 +66856,27 @@
       setFor(mode) {
         this._editorHTMLElement.classList.add(`textae-editor__mode--${mode}`)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/ModeReactor/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/ModeTransitionReactor/index.js
 
-    class ModeReactor {
+    class ModeTransitionReactor {
+      #listeners
+
       constructor(
         editorHTMLElement,
         eventEmitter,
         annotationModel,
-        cancelSelect,
-        editDenotation,
-        editBlock,
-        editRelation
+        termEditMode,
+        blockEditMode,
+        relationEditMode,
+        textEditMode
       ) {
-        this._listeners = []
+        this.#listeners = []
 
         const editorCSS = new EditorCSS(editorHTMLElement)
         eventEmitter.on(
           'textae-event.edit-mode.transition',
           (mode, showRelation) => {
-            cancelSelect()
-            this._unbindAllMouseEventHandler()
+            this.#unbindAllMouseEventHandler()
             editorCSS.clear()
 
             switch (mode) {
@@ -66608,7 +66890,7 @@
                 break
               case MODE.EDIT_DENOTATION:
                 annotationModel.typeGap.show = showRelation
-                this._listeners = editDenotation.bindMouseEvents()
+                this.#listeners = termEditMode.bindMouseEvents()
                 if (showRelation) {
                   editorCSS.setFor('denotation-with-relation')
                 } else {
@@ -66617,7 +66899,7 @@
                 break
               case MODE.EDIT_BLOCK:
                 annotationModel.typeGap.show = showRelation
-                this._listeners = editBlock.bindMouseEvents()
+                this.#listeners = blockEditMode.bindMouseEvents()
                 if (showRelation) {
                   editorCSS.setFor('block-with-relation')
                 } else {
@@ -66626,8 +66908,17 @@
                 break
               case MODE.EDIT_RELATION:
                 annotationModel.typeGap.show = true
-                this._listeners = editRelation.bindMouseEvents()
+                this.#listeners = relationEditMode.bindMouseEvents()
                 editorCSS.setFor('relation')
+                break
+              case MODE.EDIT_TEXT:
+                annotationModel.typeGap.show = showRelation
+                this.#listeners = textEditMode.bindMouseEvents()
+                if (showRelation) {
+                  editorCSS.setFor('text-with-relation')
+                } else {
+                  editorCSS.setFor('text-without-relation')
+                }
                 break
               default:
                 throw new Error(`Unknown mode: ${mode}`)
@@ -66636,21 +66927,70 @@
         )
       }
 
-      _unbindAllMouseEventHandler() {
-        for (const listener of this._listeners) {
+      #unbindAllMouseEventHandler() {
+        for (const listener of this.#listeners) {
           listener.destroy()
         }
-        this._listeners = []
+        this.#listeners = []
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditMode/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TextEditMode.js
 
-    class EditMode {
-      #editDenotation
-      #editBlock
-      #editRelation
+    class TextEditMode extends EditMode {
+      #editorHTMLElement
+      #annotationModel
+      #spanConfig
+      #menuState
+
+      constructor(editorHTMLElement, annotationModel, spanConfig, menuState) {
+        super()
+        this.#editorHTMLElement = editorHTMLElement
+        this.#annotationModel = annotationModel
+        this.#spanConfig = spanConfig
+        this.#menuState = menuState
+      }
+
+      bindMouseEvents() {
+        const listeners = []
+
+        listeners.push(
+          delegate_default()(
+            this.#editorHTMLElement,
+            '.textae-editor__text-box',
+            'click',
+            (e) => {
+              if (e.target.classList.contains('textae-editor__text-box')) {
+                const textBox = e.target
+                const selection = window.getSelection()
+
+                if (isRangeInTextBox(selection, textBox)) {
+                  if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
+                    const { begin, end } = this.#annotationModel.getNewSpan(
+                      this.#spanConfig,
+                      this.#menuState.textSelectionAdjuster
+                    )
+                    const targetText = this.#annotationModel.getTextBetween(
+                      begin,
+                      end
+                    )
+                    alert(`selection: ${targetText}`)
+                  }
+                }
+              }
+            }
+          )
+        )
+
+        return listeners
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/index.js
+
+    class EditModeSwitch {
+      #termEditMode
+      #blockEditMode
+      #relationEditMode
+      #textEditMode
       #state
       #annotationModel
-      #selectionModel
       #startUpOptions
 
       /**
@@ -66664,96 +67004,113 @@
         selectionModel,
         spanConfig,
         commander,
-        controlViewModel,
+        menuState,
         startUpOptions,
         functionAvailability,
         mousePoint
       ) {
-        this.#editDenotation = new EditDenotation(
+        this.#termEditMode = new TermEditMode(
           editorHTMLElement,
           eventEmitter,
           annotationModel,
           selectionModel,
           commander,
-          controlViewModel,
+          menuState,
           spanConfig,
           startUpOptions.autocompletionWs,
           mousePoint
         )
 
-        this.#editBlock = new EditBlock(
+        this.#blockEditMode = new BlockEditMode(
           editorHTMLElement,
           eventEmitter,
           annotationModel,
           selectionModel,
           spanConfig,
           commander,
-          controlViewModel,
+          menuState,
           startUpOptions.autocompletionWs,
           mousePoint
         )
 
-        this.#editRelation = new EditRelation(
+        this.#relationEditMode = new RelationEditMode(
           editorHTMLElement,
           eventEmitter,
           annotationModel,
           selectionModel,
           commander,
           startUpOptions.autocompletionWs,
-          controlViewModel,
+          menuState,
           mousePoint
         )
 
-        new ModeReactor(
+        this.#textEditMode = new TextEditMode(
+          editorHTMLElement,
+          annotationModel,
+          spanConfig,
+          menuState
+        )
+
+        new ModeTransitionReactor(
           editorHTMLElement,
           eventEmitter,
           annotationModel,
-          () => this.cancelSelect(),
-          this.#editDenotation,
-          this.#editBlock,
-          this.#editRelation
+          this.#termEditMode,
+          this.#blockEditMode,
+          this.#relationEditMode,
+          this.#textEditMode
         )
 
         this.#state = new State(
-          annotationModel.relation,
+          annotationModel.relationInstanceContainer,
           eventEmitter,
           functionAvailability
         )
 
         this.#annotationModel = annotationModel
-        this.#selectionModel = selectionModel
         this.#startUpOptions = startUpOptions
 
         eventEmitter
           .on('textae-event.editor.relation.click', (event, relation) =>
-            this.currentEdit.relationClicked(event, relation)
+            this.currentMode.relationClicked(event, relation)
           )
           .on('textae-event.editor.relation-bollard.click', (event, entity) =>
-            this.currentEdit.relationBollardClicked(entity)
+            this.currentMode.relationBollardClicked(entity)
           )
       }
 
       toViewMode() {
+        this.hidePallet()
         this.#state.toViewMode(this.#state.nextShowRelation)
       }
 
-      toTermMode() {
-        this.#state.toTermMode(this.#state.nextShowRelation)
+      toTermEditMode() {
+        this.hidePallet()
+        this.#state.toTermEditMode(this.#state.nextShowRelation)
       }
 
-      toBlockMode() {
-        this.#state.toBlockMode(this.#state.nextShowRelation)
+      toBlockEditMode() {
+        this.hidePallet()
+        this.#state.toBlockEditMode(this.#state.nextShowRelation)
       }
 
-      toRelationMode() {
-        this.#state.toRelationMode()
+      toRelationEditMode() {
+        this.hidePallet()
+        this.#state.toRelationEditMode()
+      }
+
+      toTextEditMode() {
+        this.hidePallet()
+        this.#state.toTextEditMode(this.#state.nextShowRelation)
       }
 
       toggleSimpleMode() {
+        this.hidePallet()
         this.#state.toggleSimpleMode()
       }
 
       changeModeByShortcut() {
+        this.hidePallet()
         this.#state.changeModeByShortcut()
       }
 
@@ -66765,57 +67122,56 @@
        * For an initiation transition on an annotations data loaded.
        */
       reset() {
-        if (this.#startUpOptions.isTermEditMode) {
-          this.#state.toTermMode(this.#annotationModel.relation.some)
+        if (this.#startUpOptions.isEditTermMode) {
+          this.#state.toTermEditMode(
+            this.#annotationModel.relationInstanceContainer.some
+          )
           return
         }
 
-        if (this.#startUpOptions.isBlockEditMode) {
-          this.#state.toBlockMode(this.#annotationModel.relation.some)
+        if (this.#startUpOptions.isEditBlockMode) {
+          this.#state.toBlockEditMode(
+            this.#annotationModel.relationInstanceContainer.some
+          )
           return
         }
 
-        if (this.#startUpOptions.isRelationEditMode) {
-          this.#state.toRelationMode()
+        if (this.#startUpOptions.isEditRelationMode) {
+          this.#state.toRelationEditMode()
           return
         }
 
-        this.#state.toViewMode(this.#annotationModel.relation.some)
-      }
-
-      cancelSelect() {
-        // Close all pallets.
-        this.#editDenotation.pallet.hide()
-        this.#editBlock.pallet.hide()
-        this.#editRelation.pallet.hide()
-
-        this.#selectionModel.removeAll()
-      }
-
-      get isTypeValuesPalletShown() {
-        return (
-          this.#editDenotation.pallet.visibly ||
-          this.#editBlock.pallet.visibly ||
-          this.#editRelation.pallet.visibly
+        this.#state.toViewMode(
+          this.#annotationModel.relationInstanceContainer.some
         )
       }
 
+      hidePallet() {
+        this.currentMode.hidePallet()
+      }
+
+      get isTypeValuesPalletShown() {
+        return this.currentMode.isPalletShown
+      }
+
       selectLeftAttributeTab() {
-        this.currentEdit.pallet.selectLeftAttributeTab()
+        this.currentMode.pallet.selectLeftAttributeTab()
       }
 
       selectRightAttributeTab() {
-        this.currentEdit.pallet.selectRightAttributeTab()
+        this.currentMode.pallet.selectRightAttributeTab()
       }
 
-      get currentEdit() {
+      get currentMode() {
         switch (this.#state.currentState) {
           case MODE.EDIT_DENOTATION:
-            return this.#editDenotation
+            return this.#termEditMode
           case MODE.EDIT_BLOCK:
-            return this.#editBlock
+            return this.#blockEditMode
           case MODE.EDIT_RELATION:
-            return this.#editRelation
+            return this.#relationEditMode
+          case MODE.EDIT_TEXT:
+            return this.#textEditMode
           default:
             return {
               showPallet() {},
@@ -66827,7 +67183,11 @@
               relationBollardClicked(entity) {
                 entity.focus()
               },
-              applyTextSelection() {}
+              applyTextSelectionWithTouchDevice() {},
+              hidePallet() {},
+              get isPalletShown() {
+                return false
+              }
             }
         }
       }
@@ -67016,7 +67376,7 @@
       bindChangeLockConfig(content, typeDefinition)
     } // CONCATENATED MODULE: ./package.json
 
-    const package_namespaceObject = { rE: '13.0.1' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
+    const package_namespaceObject = { rE: '13.1.0' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
     function template_template(context) {
       const {
         typeGap,
@@ -67093,10 +67453,10 @@
       #commander
       #selectionModel
       #annotationModel
-      #controlViewModel
+      #menuState
       #spanConfig
       #clipBoard
-      #editMode
+      #editModeSwitch
       #horizontal
       #vertical
       #isActive
@@ -67113,44 +67473,43 @@
         commander,
         spanConfig,
         clipBoard,
-        controlViewModel,
+        menuState,
         startUpOptions,
         functionAvailability,
         mousePoint
       ) {
-        const editMode = new EditMode(
+        const editModeSwitch = new EditModeSwitch(
           editorHTMLElement,
           eventEmitter,
           annotationModel,
           selectionModel,
           spanConfig,
           commander,
-          controlViewModel,
+          menuState,
           startUpOptions,
           functionAvailability,
           mousePoint
         )
 
         eventEmitter
-          .on(
-            'textae-event.annotation-data.all.change',
-            (_, hasMultiTracks) => {
-              if (startUpOptions.isEditMode && hasMultiTracks) {
-                alertify_default().success(
-                  'track annotations have been merged to root annotations.'
-                )
-              }
-
-              editMode.reset()
+          .on('textae-event.annotation-data.all.change', (hasMultiTracks) => {
+            if (startUpOptions.isEditMode && hasMultiTracks) {
+              alertify_default().success(
+                'track annotations have been merged to root annotations.'
+              )
             }
-          )
+
+            editModeSwitch.reset()
+          })
           .on('textae-event.edit-mode.transition', (mode) => {
+            selectionModel.removeAll()
+
             switch (mode) {
               case MODE.VIEW:
-                annotationModel.entity.clarifyLabelOfAll()
+                annotationModel.entityInstanceContainer.clarifyLabelOfAll()
                 break
               default:
-                annotationModel.entity.declarifyLabelOfAll()
+                annotationModel.entityInstanceContainer.declarifyLabelOfAll()
             }
           })
 
@@ -67159,26 +67518,27 @@
         this.#commander = commander
         this.#selectionModel = selectionModel
         this.#annotationModel = annotationModel
-        this.#controlViewModel = controlViewModel
+        this.#menuState = menuState
         this.#spanConfig = spanConfig
         this.#clipBoard = clipBoard
-        this.#editMode = editMode
+        this.#editModeSwitch = editModeSwitch
         this.#horizontal = new Horizontal(editorHTMLElement, selectionModel)
         this.#vertical = new Vertical(editorHTMLElement, selectionModel)
         this.#isActive = false
 
-        forwardMethods(this, () => this.#editMode, [
+        forwardMethods(this, () => this.#editModeSwitch, [
           'toViewMode',
-          'toTermMode',
-          'toBlockMode',
-          'toRelationMode',
+          'toTermEditMode',
+          'toBlockEditMode',
+          'toRelationEditMode',
+          'toTextEditMode',
           'toggleSimpleMode',
           'changeModeByShortcut'
         ])
-        forwardMethods(this, () => this.#editMode.currentEdit, [
-          'createSpan',
-          'expandSpan',
-          'shrinkSpan',
+        forwardMethods(this, () => this.#editModeSwitch.currentMode, [
+          'createSpanWithTouchDevice',
+          'expandSpanWithTouchDevice',
+          'shrinkSpanWithTouchDevice',
           'showPallet',
           'selectLeftAttributeTab',
           'selectRightAttributeTab',
@@ -67193,11 +67553,11 @@
           'pasteEntitiesFromLocalClipboard',
           'pasteEntitiesFromSystemClipboard'
         ])
-        forwardMethods(this, () => this.#controlViewModel, ['toggleButton'])
+        forwardMethods(this, () => this.#menuState, ['toggleButton'])
       }
 
       removeSelectedElements() {
-        const commands = this.#commander.factory.removeSelectedComand()
+        const commands = this.#commander.factory.removeSelectedCommand()
 
         // Select the next element before clear selection.
         this.#horizontal.right(null)
@@ -67218,7 +67578,7 @@
 
       replicate() {
         const isDelimiterFunc = getIsDelimiterFunc(
-          this.#controlViewModel,
+          this.#menuState,
           this.#spanConfig
         )
 
@@ -67240,7 +67600,8 @@
       }
 
       cancelSelect() {
-        this.#editMode.cancelSelect()
+        this.#editModeSwitch.hidePallet()
+        this.#selectionModel.removeAll()
         // Focus the editor for ESC key
         this.#editorHTMLElement.focus()
       }
@@ -67269,7 +67630,7 @@
       }
 
       selectLeft(shiftKey) {
-        if (this.#editMode.isTypeValuesPalletShown) {
+        if (this.#editModeSwitch.isTypeValuesPalletShown) {
           this.selectLeftAttributeTab()
         } else {
           this.#horizontal.left(shiftKey)
@@ -67277,7 +67638,7 @@
       }
 
       selectRight(shiftKey) {
-        if (this.#editMode.isTypeValuesPalletShown) {
+        if (this.#editModeSwitch.isTypeValuesPalletShown) {
           this.selectRightAttributeTab()
         } else {
           this.#horizontal.right(shiftKey)
@@ -67285,20 +67646,20 @@
       }
 
       selectUp() {
-        if (this.#editMode.isEditDenotation) {
+        if (this.#editModeSwitch.isEditDenotation) {
           this.#vertical.up()
         }
       }
 
       selectDown() {
-        if (this.#editMode.isEditDenotation) {
+        if (this.#editModeSwitch.isEditDenotation) {
           this.#vertical.down()
         }
       }
 
-      applyTextSelection() {
+      applyTextSelectionWithTouchDevice() {
         if (this.#isActive) {
-          this.#editMode.currentEdit.applyTextSelection()
+          this.#editModeSwitch.currentMode.applyTextSelectionWithTouchDevice()
         }
       }
     }
@@ -73142,7 +73503,7 @@ situation.
       webkit,
       safari,
       webkit_version: webkit
-        ? +/*@__PURE__*/ (/\bAppleWebKit\/(\d+)/.exec(navigator.userAgent) || [
+        ? +/*@__PURE__*/ (/\bAppleWebKit\/(\d+)/.exec(nav.userAgent) || [
             0, 0
           ])[1]
         : 0,
@@ -76036,6 +76397,15 @@ class, which describe what happened, whenever the view is updated.
           ) {
             best = child
             bestPos = start
+          } else if (
+            best &&
+            start == pos &&
+            end == pos &&
+            child instanceof BlockWidgetView &&
+            Math.abs(side) < 2
+          ) {
+            if (child.deco.startSide < 0) break
+            else if (i) best = null
           }
           off = start
         }
@@ -76868,9 +77238,16 @@ class, which describe what happened, whenever the view is updated.
         // (after which we retroactively handle them and reset the DOM) to
         // avoid messing up the virtual keyboard state.
         this.pendingIOSKey = undefined
+        /**
+        When enabled (>-1), tab presses are not given to key handlers,
+        leaving the browser's default behavior. If >0, the mode expires
+        at that timestamp, and any other keypress clears it.
+        Esc enables temporary tab focus mode for two seconds when not
+        otherwise handled.
+        */
+        this.tabFocusMode = -1
         this.lastSelectionOrigin = null
         this.lastSelectionTime = 0
-        this.lastEscPress = 0
         this.lastContextMenu = 0
         this.scrollHandlers = []
         this.handlers = Object.create(null)
@@ -76951,10 +77328,18 @@ class, which describe what happened, whenever the view is updated.
         // Must always run, even if a custom handler handled the event
         this.lastKeyCode = event.keyCode
         this.lastKeyTime = Date.now()
-        if (event.keyCode == 9 && Date.now() < this.lastEscPress + 2000)
+        if (
+          event.keyCode == 9 &&
+          this.tabFocusMode > -1 &&
+          (!this.tabFocusMode || Date.now() <= this.tabFocusMode)
+        )
           return true
-        if (event.keyCode != 27 && modifierCodes.indexOf(event.keyCode) < 0)
-          this.view.inputState.lastEscPress = 0
+        if (
+          this.tabFocusMode > 0 &&
+          event.keyCode != 27 &&
+          modifierCodes.indexOf(event.keyCode) < 0
+        )
+          this.tabFocusMode = -1
         // Chrome for Android usually doesn't fire proper key events, but
         // occasionally does, usually surrounded by a bunch of complicated
         // composition changes. When an enter or backspace key event is
@@ -77234,7 +77619,9 @@ class, which describe what happened, whenever the view is updated.
         this.mustSelect = false
       }
       update(update) {
-        if (this.style.update(update))
+        if (update.transactions.some((tr) => tr.isUserEvent('input.type')))
+          this.destroy()
+        else if (this.style.update(update))
           setTimeout(() => this.select(this.lastEvent), 20)
       }
     }
@@ -77356,7 +77743,8 @@ class, which describe what happened, whenever the view is updated.
     }
     handlers.keydown = (view, event) => {
       view.inputState.setSelectionOrigin('select')
-      if (event.keyCode == 27) view.inputState.lastEscPress = Date.now()
+      if (event.keyCode == 27 && view.inputState.tabFocusMode != 0)
+        view.inputState.tabFocusMode = Date.now() + 2000
       return false
     }
     observers.touchstart = (view, e) => {
@@ -77381,7 +77769,11 @@ class, which describe what happened, whenever the view is updated.
           new MouseSelection(view, event, style, mustFocus)
         )
         if (mustFocus)
-          view.observer.ignore(() => focusPreventScroll(view.contentDOM))
+          view.observer.ignore(() => {
+            focusPreventScroll(view.contentDOM)
+            let active = view.root.activeElement
+            if (active && !active.contains(view.contentDOM)) active.blur()
+          })
         let mouseSel = view.inputState.mouseSelection
         if (mouseSel) {
           mouseSel.start(event)
@@ -78881,9 +79273,11 @@ in the editor view.
           this.heightOracle.setDoc(state.doc),
           [new ChangedRange(0, 0, 0, state.doc.length)]
         )
-        this.viewport = this.getViewport(0, null)
+        for (let i = 0; i < 2; i++) {
+          this.viewport = this.getViewport(0, null)
+          if (!this.updateForViewport()) break
+        }
         this.updateViewportLines()
-        this.updateForViewport()
         this.lineGaps = this.ensureLineGaps([])
         this.lineGapDeco = Decoration.set(
           this.lineGaps.map((gap) => gap.draw(this, false))
@@ -78901,10 +79295,15 @@ in the editor view.
           }
         }
         this.viewports = viewports.sort((a, b) => a.from - b.from)
+        return this.updateScaler()
+      }
+      updateScaler() {
+        let scaler = this.scaler
         this.scaler =
           this.heightMap.height <= 7000000 /* VP.MaxDOMHeight */
             ? IdScaler
             : new BigScaler(this.heightOracle, this.heightMap, this.viewports)
+        return scaler.eq(this.scaler) ? 0 : 2 /* UpdateFlag.Height */
       }
       updateViewportLines() {
         this.viewportLines = []
@@ -78915,9 +79314,7 @@ in the editor view.
           0,
           0,
           (block) => {
-            this.viewportLines.push(
-              this.scaler.scale == 1 ? block : scaleBlock(block, this.scaler)
-            )
+            this.viewportLines.push(scaleBlock(block, this.scaler))
           }
         )
       }
@@ -78965,14 +79362,16 @@ in the editor view.
           !this.viewportIsAppropriate(viewport)
         )
           viewport = this.getViewport(0, scrollTarget)
-        let updateLines =
-          !update.changes.empty ||
-          update.flags & 2 /* UpdateFlag.Height */ ||
-          viewport.from != this.viewport.from ||
-          viewport.to != this.viewport.to
+        let viewportChange =
+          viewport.from != this.viewport.from || viewport.to != this.viewport.to
         this.viewport = viewport
-        this.updateForViewport()
-        if (updateLines) this.updateViewportLines()
+        update.flags |= this.updateForViewport()
+        if (
+          viewportChange ||
+          !update.changes.empty ||
+          update.flags & 2 /* UpdateFlag.Height */
+        )
+          this.updateViewportLines()
         if (
           this.lineGaps.length ||
           this.viewport.to - this.viewport.from > 2000 /* LG.Margin */ << 1
@@ -79125,9 +79524,11 @@ in the editor view.
           (this.scrollTarget &&
             (this.scrollTarget.range.head < this.viewport.from ||
               this.scrollTarget.range.head > this.viewport.to))
-        if (viewportChange)
+        if (viewportChange) {
+          if (result & 2 /* UpdateFlag.Height */) result |= this.updateScaler()
           this.viewport = this.getViewport(bias, this.scrollTarget)
-        this.updateForViewport()
+          result |= this.updateForViewport()
+        }
         if (result & 2 /* UpdateFlag.Height */ || viewportChange)
           this.updateViewportLines()
         if (
@@ -79447,15 +79848,23 @@ in the editor view.
         )
       }
       lineBlockAtHeight(height) {
-        return scaleBlock(
-          this.heightMap.lineAt(
-            this.scaler.fromDOM(height),
-            QueryType.ByHeight,
-            this.heightOracle,
-            0,
-            0
-          ),
-          this.scaler
+        return (
+          (height >= this.viewportLines[0].top &&
+            height <=
+              this.viewportLines[this.viewportLines.length - 1].bottom &&
+            this.viewportLines.find(
+              (l) => l.top <= height && l.bottom >= height
+            )) ||
+          scaleBlock(
+            this.heightMap.lineAt(
+              this.scaler.fromDOM(height),
+              QueryType.ByHeight,
+              this.heightOracle,
+              0,
+              0
+            ),
+            this.scaler
+          )
         )
       }
       scrollAnchorAt(scrollTop) {
@@ -79550,7 +79959,10 @@ in the editor view.
       fromDOM(n) {
         return n
       },
-      scale: 1
+      scale: 1,
+      eq(other) {
+        return other == this
+      }
     }
     // When the height is too big (> VP.MaxDOMHeight), scale down the
     // regions outside the viewports so that the total height is
@@ -79598,6 +80010,18 @@ in the editor view.
           base = vp.bottom
           domBase = vp.domBottom
         }
+      }
+      eq(other) {
+        if (!(other instanceof BigScaler)) return false
+        return (
+          this.scale == other.scale &&
+          this.viewports.length == other.viewports.length &&
+          this.viewports.every(
+            (vp, i) =>
+              vp.from == other.viewports[i].from &&
+              vp.to == other.viewports[i].to
+          )
+        )
       }
     }
     function scaleBlock(block, scaler) {
@@ -80013,6 +80437,7 @@ in the editor view.
         this.typeOver = typeOver
         this.bounds = null
         this.text = ''
+        this.domChanged = start > -1
         let { impreciseHead: iHead, impreciseAnchor: iAnchor } = view.docView
         if (view.state.readOnly && start > -1) {
           // Ignore changes when the editor is read-only
@@ -80824,8 +81249,14 @@ in the editor view.
         }
         let startState = this.view.state
         let handled = applyDOMChange(this.view, domChange)
-        // The view wasn't updated
-        if (this.view.state == startState) this.view.update([])
+        // The view wasn't updated but DOM/selection changes were seen. Reset the view.
+        if (
+          this.view.state == startState &&
+          (domChange.domChanged ||
+            (domChange.newSel &&
+              !domChange.newSel.main.eq(this.view.state.selection.main)))
+        )
+          this.view.update([])
         return handled
       }
       readMutation(rec) {
@@ -81963,6 +82394,26 @@ transactions for editing actions.
         )
       }
       /**
+    Enable or disable tab-focus mode, which disables key bindings
+    for Tab and Shift-Tab, letting the browser's default
+    focus-changing behavior go through instead. This is useful to
+    prevent trapping keyboard users in your editor.
+    
+    Without argument, this toggles the mode. With a boolean, it
+    enables (true) or disables it (false). Given a number, it
+    temporarily enables the mode until that number of milliseconds
+    have passed or another non-Tab key is pressed.
+    */
+      setTabFocusMode(to) {
+        if (to == null)
+          this.inputState.tabFocusMode =
+            this.inputState.tabFocusMode < 0 ? 0 : -1
+        else if (typeof to == 'boolean')
+          this.inputState.tabFocusMode = to ? 0 : -1
+        else if (this.inputState.tabFocusMode != 0)
+          this.inputState.tabFocusMode = Date.now() + to
+      }
+      /**
     Returns an extension that can be used to add DOM event handlers.
     The value should be an object mapping event names to handler
     functions. For any given event, such functions are ordered by
@@ -82416,7 +82867,9 @@ handlers handled it.
                 stopPropagation: false,
                 run: []
               }
-            for (let key in scopeObj) scopeObj[key].run.push(b.any)
+            let { any } = b
+            for (let key in scopeObj)
+              scopeObj[key].run.push((view) => any(view, currentKeyEvent))
           }
         let name = b[platform] || b.key
         if (!name) continue
@@ -82434,7 +82887,9 @@ handlers handled it.
       }
       return bound
     }
+    let currentKeyEvent = null
     function runHandlers(map, event, view, scope) {
+      currentKeyEvent = event
       let name = keyName(event)
       let charCode = codePointAt(name, 0),
         isChar = codePointSize(charCode) == name.length && name != ' '
@@ -82459,7 +82914,7 @@ handlers handled it.
           for (let cmd of binding.run)
             if (!ran.has(cmd)) {
               ran.add(cmd)
-              if (cmd(view, event)) {
+              if (cmd(view)) {
                 if (binding.stopPropagation) stopPropagation = true
                 return true
               }
@@ -82506,6 +82961,7 @@ handlers handled it.
       }
       if (prevented) handled = true
       if (handled && stopPropagation) event.stopPropagation()
+      currentKeyEvent = null
       return handled
     }
 
@@ -82606,18 +83062,17 @@ a rectangle at a given set of coordinates.
         top: rect.top - view.scrollDOM.scrollTop * view.scaleY
       }
     }
-    function wrappedLine(view, pos, inside) {
-      let range = dist_EditorSelection.cursor(pos)
+    function wrappedLine(view, pos, side, inside) {
+      let coords = view.coordsAtPos(pos, side * 2)
+      if (!coords) return inside
+      let editorRect = view.dom.getBoundingClientRect()
+      let y = (coords.top + coords.bottom) / 2
+      let left = view.posAtCoords({ x: editorRect.left + 1, y })
+      let right = view.posAtCoords({ x: editorRect.right - 1, y })
+      if (left == null || right == null) return inside
       return {
-        from: Math.max(
-          inside.from,
-          view.moveToLineBoundary(range, false, true).from
-        ),
-        to: Math.min(
-          inside.to,
-          view.moveToLineBoundary(range, true, true).from
-        ),
-        type: BlockType.Text
+        from: Math.max(inside.from, Math.min(left, right)),
+        to: Math.min(inside.to, Math.max(left, right))
       }
     }
     function rectanglesForRange(view, className, range) {
@@ -82644,10 +83099,15 @@ a rectangle at a given set of coordinates.
       let visualStart = startBlock.type == BlockType.Text ? startBlock : null
       let visualEnd = endBlock.type == BlockType.Text ? endBlock : null
       if (visualStart && (view.lineWrapping || startBlock.widgetLineBreaks))
-        visualStart = wrappedLine(view, from, visualStart)
+        visualStart = wrappedLine(view, from, 1, visualStart)
       if (visualEnd && (view.lineWrapping || endBlock.widgetLineBreaks))
-        visualEnd = wrappedLine(view, to, visualEnd)
-      if (visualStart && visualEnd && visualStart.from == visualEnd.from) {
+        visualEnd = wrappedLine(view, to, -1, visualEnd)
+      if (
+        visualStart &&
+        visualEnd &&
+        visualStart.from == visualEnd.from &&
+        visualStart.to == visualEnd.to
+      ) {
         return pieces(drawForLine(range.from, range.to, visualStart))
       } else {
         let top = visualStart
@@ -82968,14 +83428,22 @@ if `drawSelection` isn't enabled.)
     })
     const themeSpec = {
       '.cm-line': {
-        '& ::selection': { backgroundColor: 'transparent !important' },
-        '&::selection': { backgroundColor: 'transparent !important' }
+        '& ::selection, &::selection': {
+          backgroundColor: 'transparent !important'
+        }
+      },
+      '.cm-content': {
+        '& :focus': {
+          caretColor: 'initial !important',
+          '&::selection, & ::selection': {
+            backgroundColor: 'Highlight !important'
+          }
+        }
       }
     }
-    if (CanHidePrimary) {
-      themeSpec['.cm-line'].caretColor = 'transparent !important'
-      themeSpec['.cm-content'] = { caretColor: 'transparent !important' }
-    }
+    if (CanHidePrimary)
+      themeSpec['.cm-line'].caretColor = themeSpec['.cm-content'].caretColor =
+        'transparent !important'
     const hideNativeSelection = /*@__PURE__*/ Prec.highest(
       /*@__PURE__*/ EditorView.theme(themeSpec)
     )
@@ -92280,8 +92748,12 @@ isolates them from the surrounding text.
         result = [],
         last = null
       for (let { from, to } of ranges) {
-        if (from != pos) {
-          if (pos < from) cur.next(from - pos)
+        if (last && last.to > from) {
+          from = last.to
+          if (from >= to) continue
+        }
+        if (pos + cur.value.length < from) {
+          cur.next(from - (pos + cur.value.length))
           pos = from
         }
         for (;;) {
@@ -92291,7 +92763,7 @@ isolates them from the surrounding text.
             if (last && last.to > start - 10) last.to = Math.min(to, end)
             else result.push((last = { from: start, to: Math.min(to, end) }))
           }
-          if (pos >= to) break
+          if (end >= to) break
           pos = end
           cur.next()
         }
@@ -94315,6 +94787,26 @@ selected lines.
       return true
     }
     /**
+Enables or disables
+[tab-focus mode](https://codemirror.net/6/docs/ref/#view.EditorView.setTabFocusMode). While on, this
+prevents the editor's key bindings from capturing Tab or
+Shift-Tab, making it possible for the user to move focus out of
+the editor with the keyboard.
+*/
+    const toggleTabFocusMode = (view) => {
+      view.setTabFocusMode()
+      return true
+    }
+    /**
+Temporarily enables [tab-focus
+mode](https://codemirror.net/6/docs/ref/#view.EditorView.setTabFocusMode) for two seconds or until
+another key is pressed.
+*/
+    const temporarilySetTabFocusMode = (view) => {
+      view.setTabFocusMode(2000)
+      return true
+    }
+    /**
 Insert a tab character at the cursor or, if something is selected,
 use [`indentMore`](https://codemirror.net/6/docs/ref/#commands.indentMore) to indent the entire
 selection.
@@ -94509,6 +95001,7 @@ The default keymap. Includes all bindings from
 - Shift-Ctrl-\\ (Shift-Cmd-\\ on macOS): [`cursorMatchingBracket`](https://codemirror.net/6/docs/ref/#commands.cursorMatchingBracket)
 - Ctrl-/ (Cmd-/ on macOS): [`toggleComment`](https://codemirror.net/6/docs/ref/#commands.toggleComment).
 - Shift-Alt-a: [`toggleBlockComment`](https://codemirror.net/6/docs/ref/#commands.toggleBlockComment).
+- Ctrl-m (Alt-Shift-m on macOS): [`toggleTabFocusMode`](https://codemirror.net/6/docs/ref/#commands.toggleTabFocusMode).
 */
     const dist_defaultKeymap = /*@__PURE__*/ [
       {
@@ -94537,7 +95030,8 @@ The default keymap. Includes all bindings from
       { key: 'Shift-Mod-k', run: deleteLine },
       { key: 'Shift-Mod-\\', run: cursorMatchingBracket },
       { key: 'Mod-/', run: toggleComment },
-      { key: 'Alt-A', run: toggleBlockComment }
+      { key: 'Alt-A', run: toggleBlockComment },
+      { key: 'Ctrl-m', mac: 'Shift-Alt-m', run: toggleTabFocusMode }
     ].concat(standardKeymap)
     /**
 A binding that binds Tab to [`indentMore`](https://codemirror.net/6/docs/ref/#commands.indentMore) and
@@ -97997,10 +98491,13 @@ Close the currently active completion.
           positions = [],
           m
         for (let line of template.split(/\r\n?|\n/)) {
-          while ((m = /[#$]\{(?:(\d+)(?::([^}]*))?|([^}]*))\}/.exec(line))) {
+          while (
+            (m = /[#$]\{(?:(\d+)(?::([^}]*))?|((?:\\[{}]|[^}])*))\}/.exec(line))
+          ) {
             let seq = m[1] ? +m[1] : null,
-              name = m[2] || m[3] || '',
+              rawName = m[2] || m[3] || '',
               found = -1
+            let name = rawName.replace(/\\[{}]/g, (m) => m[1])
             for (let i = 0; i < fields.length; i++) {
               if (
                 seq != null
@@ -98026,19 +98523,18 @@ Close the currently active completion.
               new FieldPos(found, lines.length, m.index, m.index + name.length)
             )
             line =
-              line.slice(0, m.index) + name + line.slice(m.index + m[0].length)
+              line.slice(0, m.index) +
+              rawName +
+              line.slice(m.index + m[0].length)
           }
-          for (let esc; (esc = /\\([{}])/.exec(line)); ) {
-            line =
-              line.slice(0, esc.index) +
-              esc[1] +
-              line.slice(esc.index + esc[0].length)
+          line = line.replace(/\\([{}])/g, (_, brace, index) => {
             for (let pos of positions)
-              if (pos.line == lines.length && pos.from > esc.index) {
+              if (pos.line == lines.length && pos.from > index) {
                 pos.from--
                 pos.to--
               }
-          }
+            return brace
+          })
           lines.push(line)
         }
         return new Snippet(lines, positions)
@@ -98938,20 +99434,28 @@ be useful when writing an extension that needs to track these.
         return new LintState(Decoration.none, null, null)
       },
       update(value, tr) {
-        if (tr.docChanged) {
+        if (tr.docChanged && value.diagnostics.size) {
           let mapped = value.diagnostics.map(tr.changes),
-            selected = null
+            selected = null,
+            panel = value.panel
           if (value.selected) {
             let selPos = tr.changes.mapPos(value.selected.from, 1)
             selected =
               findDiagnostic(mapped, value.selected.diagnostic, selPos) ||
               findDiagnostic(mapped, null, selPos)
           }
-          value = new LintState(mapped, value.panel, selected)
+          if (!mapped.size && panel && tr.state.facet(lintConfig).autoPanel)
+            panel = null
+          value = new LintState(mapped, panel, selected)
         }
         for (let effect of tr.effects) {
           if (effect.is(setDiagnosticsEffect)) {
-            value = LintState.init(effect.value, value.panel, tr.state)
+            let panel = !tr.state.facet(lintConfig).autoPanel
+              ? value.panel
+              : effect.value.length
+                ? LintPanel.open
+                : null
+            value = LintState.init(effect.value, panel, tr.state)
           } else if (effect.is(dist_togglePanel)) {
             value = new LintState(
               value.diagnostics,
@@ -99115,6 +99619,7 @@ A set of default key bindings for the lint functionality.
             this.timeout = setTimeout(this.run, delay)
           }
           run() {
+            clearTimeout(this.timeout)
             let now = Date.now()
             if (now < this.lintTime - 10) {
               this.timeout = setTimeout(this.run, this.lintTime - now)
@@ -100036,6 +100541,8 @@ about the parse state.
         let depth = action >> 19 /* Action.ReduceDepthShift */,
           type = action & 65535 /* Action.ValueMask */
         let { parser } = this.p
+        if (this.reducePos < this.pos - 25 /* Lookahead.Margin */)
+          this.setLookAhead(this.pos)
         let dPrec = parser.dynamicPrecedence(type)
         if (dPrec) this.score += dPrec
         if (depth == 0) {
@@ -101073,11 +101580,11 @@ an instance of this class.
               return side < 0
                 ? Math.max(
                     0,
-                    Math.min(cursor.to - 1, pos - 25 /* Safety.Margin */)
+                    Math.min(cursor.to - 1, pos - 25 /* Lookahead.Margin */)
                   )
                 : Math.min(
                     tree.length,
-                    Math.max(cursor.from + 1, pos + 25 /* Safety.Margin */)
+                    Math.max(cursor.from + 1, pos + 25 /* Lookahead.Margin */)
                   )
             if (side < 0 ? cursor.prevSibling() : cursor.nextSibling()) break
             if (!cursor.parent()) return side < 0 ? 0 : tree.length
@@ -101204,7 +101711,7 @@ an instance of this class.
             token.mask = mask
             token.context = context
           }
-          if (token.lookAhead > token.end + 25 /* Safety.Margin */)
+          if (token.lookAhead > token.end + 25 /* Lookahead.Margin */)
             lookAhead = Math.max(token.lookAhead, lookAhead)
           if (token.value != 0 /* Term.Err */) {
             let startIndex = actionIndex
@@ -105652,6 +106159,69 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       return loadAnnotation(eventEmitter, JSON.parse(text))
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/PersistenceInterface/LastLoadedURL.js
+
+    class LastLoadedURL {
+      #annotation
+      #configuration
+
+      constructor(eventEmitter) {
+        // The configuration validation is done with setConfigAndAnnotation
+        // because it requires both configuration and annotation.
+        // The URL is set after the validation.
+        eventEmitter
+          .on('textae-event.original-data.annotation.reset', (dataSource) => {
+            if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
+              this.#annotation = dataSource.id
+            }
+          })
+          .on(
+            'textae-event.original-data.configuration.reset',
+            (dataSource) => {
+              if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
+                this.#configuration = dataSource.id
+              }
+            }
+          )
+      }
+
+      get annotation() {
+        return this.#annotation || ''
+      }
+
+      get configuration() {
+        return this.#configuration || ''
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/PersistenceInterface/LastLoadedFilename.js
+
+    class LastLoadedFilename {
+      #annotation
+      #configuration
+
+      constructor(eventEmitter) {
+        eventEmitter
+          .on('textae-event.original-data.annotation.reset', (dataSource) => {
+            if (dataSource.resourceType === RESOURCE_TYPE.LOCAL_FILE) {
+              this.#annotation = dataSource.id
+            }
+          })
+          .on(
+            'textae-event.original-data.configuration.reset',
+            (dataSource) => {
+              if (dataSource.resourceType === RESOURCE_TYPE.LOCAL_FILE) {
+                this.#configuration = dataSource.id
+              }
+            }
+          )
+      }
+
+      get annotation() {
+        return this.#annotation
+      }
+
+      get configuration() {
+        return this.#configuration
+      }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/PersistenceInterface/index.js
 
     class PersistenceInterface {
@@ -105662,8 +106232,9 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       #getOriginalConfig
       #saveToParameter
       #annotationModelEventsObserver
-      #controlViewModel
-      #filenameOfLastRead
+      #menuState
+      #lastLoadedURL
+      #lastLoadedFilename
 
       /**
        *
@@ -105677,7 +106248,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         getOriginalConfig,
         saveToParameter,
         annotationModelEventsObserver,
-        controlViewModel
+        menuState
       ) {
         this.#eventEmitter = eventEmitter
         this.#remoteResource = remoteResource
@@ -105686,13 +106257,9 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         this.#getOriginalConfig = getOriginalConfig
         this.#saveToParameter = saveToParameter
         this.#annotationModelEventsObserver = annotationModelEventsObserver
-        this.#controlViewModel = controlViewModel
-
-        // Store the filename of the annotation and configuration.
-        this.#filenameOfLastRead = {
-          annotation: '',
-          configuration: ''
-        }
+        this.#menuState = menuState
+        this.#lastLoadedURL = new LastLoadedURL(eventEmitter)
+        this.#lastLoadedFilename = new LastLoadedFilename(eventEmitter)
 
         eventEmitter
           .on('textae-event.pallet.import-button.click', () =>
@@ -105706,12 +106273,9 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       importAnnotation() {
         new LoadDialog(
           'Load Annotations',
-          this.#remoteResource.annotationURL,
+          this.#lastLoadedURL.annotation,
           (url) => this.#remoteResource.loadAnnotation(url),
-          (file) => {
-            readAnnotationFile(file, this.#eventEmitter)
-            this.#filenameOfLastRead.annotation = file.name
-          },
+          (file) => readAnnotationFile(file, this.#eventEmitter),
           (text) => {
             if (readAnnotationText(this.#eventEmitter, text)) {
               return
@@ -105729,13 +106293,13 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       uploadAnnotation() {
         const url =
           this.#saveToParameter ||
-          this.#remoteResource.annotationURL ||
+          this.#lastLoadedURL.annotation ||
           'https://pubannotatoin.org/annotations.json' // Default destination URL
 
         new SaveAnnotationDialog(
           this.#eventEmitter,
           url,
-          this.#filenameOfLastRead.annotation,
+          this.#lastLoadedFilename.annotation,
           this.#editedAnnotation,
           (url) =>
             this.#remoteResource.saveAnnotation(url, this.#editedAnnotation)
@@ -105744,7 +106308,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
       saveAnnotation() {
         this.#remoteResource.saveAnnotation(
-          this.#saveToParameter || this.#remoteResource.annotationURL,
+          this.#saveToParameter || this.#lastLoadedURL.annotation,
           this.#editedAnnotation
         )
       }
@@ -105752,12 +106316,9 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       importConfiguration() {
         new LoadDialog(
           'Load Configurations',
-          this.#remoteResource.configurationURL,
+          this.#lastLoadedURL.configuration,
           (url) => this.#remoteResource.loadConfiguration(url),
-          (file) => {
-            readConfigurationFile(file, this.#eventEmitter)
-            this.#filenameOfLastRead.configuration = file.name
-          },
+          (file) => readConfigurationFile(file, this.#eventEmitter),
           (text) => {
             if (isJSON(text)) {
               this.#eventEmitter.emit(
@@ -105771,7 +106332,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
               )
             }
           },
-          this.#controlViewModel.diffOfConfiguration
+          this.#menuState.diffOfConfiguration
         ).open()
       }
 
@@ -105784,8 +106345,8 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
         new SaveConfigurationDialog(
           this.#eventEmitter,
-          this.#remoteResource.configurationURL,
-          this.#filenameOfLastRead.configuration,
+          this.#lastLoadedURL.configuration,
+          this.#lastLoadedFilename.configuration,
           this.#getOriginalConfig(),
           editedConfig,
           (url) => this.#remoteResource.saveConfiguration(url, editedConfig)
@@ -105810,18 +106371,18 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
     /**
      *
-     * @param {import('./ControlViewModel').default} controlViewModel
+     * @param {import('./MenuState').MenuState} menuState
      * @param {import('../AnnotationModel').AnnotationModel} annotationModel
      */
     /* harmony default export */ function setAnnotationAndConfiguration(
       validConfig,
-      controlViewModel,
+      menuState,
       spanConfig,
       annotationModel,
       annotation,
       functionAvailability
     ) {
-      controlViewModel.setPushBUttons(validConfig)
+      menuState.setPushButtons(validConfig)
       spanConfig.set(validConfig)
       annotationModel.reset(annotation, validConfig)
       functionAvailability.availability = validConfig['function availability']
@@ -105829,14 +106390,14 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
     /* harmony default export */ function setDefault(
       originalData,
-      controlViewModel,
+      menuState,
       spanConfig,
       annotationModel,
       functionAvailability
     ) {
       setAnnotationAndConfiguration(
         originalData.defaultConfiguration,
-        controlViewModel,
+        menuState,
         spanConfig,
         annotationModel,
         originalData.defaultAnnotation,
@@ -106284,7 +106845,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       dataSource,
       configurationURL,
       remoteResource,
-      controlViewModel,
+      menuState,
       spanConfig,
       annotationModel,
       functionAvailability,
@@ -106314,7 +106875,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         if (validConfig) {
           setAnnotationAndConfiguration(
             validConfig,
-            controlViewModel,
+            menuState,
             spanConfig,
             annotationModel,
             dataSource.data,
@@ -106334,7 +106895,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       spanConfig,
       annotationModel,
       remoteResource,
-      controlViewModel,
+      menuState,
       originalData,
       startUpOptions,
       functionAvailability
@@ -106345,7 +106906,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             DataSource.createParameterSource(startUpOptions.annotation),
             startUpOptions.config,
             remoteResource,
-            controlViewModel,
+            menuState,
             spanConfig,
             annotationModel,
             functionAvailability,
@@ -106357,7 +106918,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             DataSource.createInlineSource(startUpOptions.annotation),
             startUpOptions.config,
             remoteResource,
-            controlViewModel,
+            menuState,
             spanConfig,
             annotationModel,
             functionAvailability,
@@ -106374,7 +106935,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           } else {
             setDefault(
               originalData,
-              controlViewModel,
+              menuState,
               spanConfig,
               annotationModel,
               functionAvailability
@@ -106451,9 +107012,6 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             'textae-event.resource.configuration.save',
             (editedConfiguration) => {
               this.#configuration = editedConfiguration
-              this.#eventEmitter.emit(
-                'textae-event.original-data.configuration.reset'
-              )
             }
           )
       }
@@ -106494,7 +107052,8 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       set configuration(dataSource) {
         this.#configuration = dataSource.data
         this.#eventEmitter.emit(
-          'textae-event.original-data.configuration.reset'
+          'textae-event.original-data.configuration.reset',
+          dataSource
         )
       }
 
@@ -106504,7 +107063,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           this.#configuration = annotation.config
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/Buttons/definition.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/Buttons/definition.js
 
     const definition = [
       {
@@ -106552,6 +107111,11 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           {
             type: 'relation edit mode',
             title: 'Relation Edit Mode',
+            push: true
+          },
+          {
+            type: 'text edit mode',
+            title: 'Text Edit Mode',
             push: true
           }
         ]
@@ -106721,7 +107285,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       // Because the navigator.userAgentData only work in the secure context(HTTPS).
       // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/userAgentData
       return /Android/.test(navigator.userAgent)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/Buttons/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/Buttons/index.js
 
     function isIOS() {
       // iPad Safari (iPadOS 14 or later) does not include the string iPad in its userAgent.
@@ -106786,7 +107350,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       get _buttonList() {
         return definition.map(({ list }) => list).flat()
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/PushButtons/PushButton.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/PushButtons/PushButton.js
 
     class PushButton {
       #name
@@ -106822,7 +107386,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           this.#eventEmitter.emit('textae-event.control.button.push', this)
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/PushButtons/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/PushButtons/index.js
 
     class PushButtons {
       #buttons
@@ -106853,49 +107417,66 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       #setMode(mode, isSimple) {
         switch (mode) {
           case MODE.VIEW:
-            this.#updateModeButtons(true, false, false, false, isSimple)
+            this.#updateModeButtons(true, false, false, false, false, isSimple)
             break
           case MODE.EDIT_DENOTATION:
-            this.#updateModeButtons(false, true, false, false, isSimple)
+            this.#updateModeButtons(false, true, false, false, false, isSimple)
             break
           case MODE.EDIT_BLOCK:
-            this.#updateModeButtons(false, false, true, false, isSimple)
+            this.#updateModeButtons(false, false, true, false, false, isSimple)
             break
           case MODE.EDIT_RELATION:
-            this.#updateModeButtons(false, false, false, true, false)
+            this.#updateModeButtons(false, false, false, true, false, false)
+            break
+          case MODE.EDIT_TEXT:
+            this.#updateModeButtons(false, false, false, false, true, isSimple)
             break
           default:
             throw `unknown edit mode!${mode}`
         }
       }
 
-      #updateModeButtons(view, term, block, relation, simple) {
+      #updateModeButtons(
+        view,
+        editTerm,
+        editBlock,
+        editRelation,
+        editText,
+        simple
+      ) {
         this.#buttons.get('view mode').isPushed = view
-        this.#buttons.get('term edit mode').isPushed = term
-        this.#buttons.get('block edit mode').isPushed = block
-        this.#buttons.get('relation edit mode').isPushed = relation
+        this.#buttons.get('term edit mode').isPushed = editTerm
+        this.#buttons.get('block edit mode').isPushed = editBlock
+        this.#buttons.get('relation edit mode').isPushed = editRelation
+        this.#buttons.get('text edit mode').isPushed = editText
         this.#buttons.get('simple view').isPushed = simple
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/EnableState.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/EnableState.js
 
     class EnableState {
+      #states
+      #eventEmitter
+      #selectionModel
+      #clipBoard
+
       constructor(eventEmitter, selectionModel, clipBoard) {
         // Enable always enabled buttons.
-        this._states = new Map([
+        this.#states = new Map([
           ['import', true],
           ['upload', true],
           ['view mode', true],
           ['term edit mode', true],
           ['block edit mode', true],
           ['relation edit mode', true],
+          ['text edit mode', true],
           ['simple view', true],
           ['setting', true],
           ['help', true]
         ])
 
-        this._eventEmitter = eventEmitter
-        this._selectionModel = selectionModel
-        this._clipBoard = clipBoard
+        this.#eventEmitter = eventEmitter
+        this.#selectionModel = selectionModel
+        this.#clipBoard = clipBoard
 
         eventEmitter
           .on('textae-event.history.change', (history) => {
@@ -106903,74 +107484,74 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             this.enable('undo', history.hasAnythingToUndo)
             this.enable('redo', history.hasAnythingToRedo)
           })
-          .on('textae-event.selection.span.change', () => this._updateButtons())
+          .on('textae-event.selection.span.change', () => this.#updateButtons())
           .on('textae-event.selection.relation.change', () =>
-            this._updateButtons()
+            this.#updateButtons()
           )
           .on('textae-event.selection.entity.change', () =>
-            this._updateButtons()
+            this.#updateButtons()
           )
           .on('textae-event.edit-mode.transition', (mode) =>
-            this._setForMode(mode)
+            this.#setForMode(mode)
           )
-          .on('textae-event.clip-board.change', () => this._updateByClipboard())
+          .on('textae-event.clip-board.change', () => this.#updateByClipboard())
           .on('textae-event.annotation-auto-saver.enable', (enable) =>
             this.enable('upload automatically', enable)
           )
       }
 
       get(button) {
-        return this._states.get(button)
+        return this.#states.get(button)
       }
 
       enable(button, enable) {
-        this._states.set(button, enable)
-        this._propagate()
+        this.#states.set(button, enable)
+        this.#propagate()
       }
 
-      updateManipulateSpanButtons(
+      updateButtonsToOperateSpanWithTouchDevice(
         enableToCreate,
         enableToExpand,
         enableToShrink
       ) {
-        this._states.set('create span by touch', enableToCreate)
-        this._states.set('expand span by touch', enableToExpand)
-        this._states.set('shrink span by touch', enableToShrink)
-        this._propagate()
+        this.#states.set('create span by touch', enableToCreate)
+        this.#states.set('expand span by touch', enableToExpand)
+        this.#states.set('shrink span by touch', enableToShrink)
+        this.#propagate()
       }
 
-      _updateButtons() {
+      #updateButtons() {
         for (const { type, enableWhenSelecting } of new Buttons()
           .enableButtonsWhenSelecting) {
           this.enable(
             type,
-            enableWhenSelecting(this._selectionModel, this._clipBoard)
+            enableWhenSelecting(this.#selectionModel, this.#clipBoard)
           )
         }
-        this._propagate()
+        this.#propagate()
       }
 
-      _updateByClipboard() {
+      #updateByClipboard() {
         this.enable(
           'paste',
           new Buttons().pasteButton.enableWhenSelecting(
-            this._selectionModel,
-            this._clipBoard
+            this.#selectionModel,
+            this.#clipBoard
           )
         )
       }
 
-      _propagate() {
-        this._eventEmitter.emit(
+      #propagate() {
+        this.#eventEmitter.emit(
           'textae-event.control.buttons.change',
-          this._states.keys()
+          this.#states.keys()
         )
       }
 
-      _setForMode(mode) {
+      #setForMode(mode) {
         switch (mode) {
           case MODE.VIEW:
-            this._updateButtonsForMode(
+            this.#updateButtonsForMode(
               true,
               false,
               false,
@@ -106981,10 +107562,10 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             )
             break
           case MODE.EDIT_DENOTATION:
-            this._updateButtonsForMode(true, true, true, true, true, true, true)
+            this.#updateButtonsForMode(true, true, true, true, true, true, true)
             break
           case MODE.EDIT_BLOCK:
-            this._updateButtonsForMode(
+            this.#updateButtonsForMode(
               true,
               false,
               true,
@@ -106995,7 +107576,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             )
             break
           case MODE.EDIT_RELATION:
-            this._updateButtonsForMode(
+            this.#updateButtonsForMode(
               false,
               false,
               false,
@@ -107005,10 +107586,21 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
               true
             )
             break
+          case MODE.EDIT_TEXT:
+            this.#updateButtonsForMode(
+              true,
+              false,
+              true,
+              true,
+              true,
+              false,
+              false
+            )
+            break
           default:
             throw `unknown edit mode!${mode}`
         }
-        this._propagate()
+        this.#propagate()
       }
 
       /**
@@ -107021,7 +107613,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
        * @param {boolean} span
        * @param {boolean} pallet
        */
-      _updateButtonsForMode(
+      #updateButtonsForMode(
         simple,
         replicateAuto,
         boundaryDetection,
@@ -107030,17 +107622,17 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         span,
         pallet
       ) {
-        this._states.set('simple view', simple)
-        this._states.set('auto replicate', replicateAuto)
-        this._states.set('boundary detection', boundaryDetection)
-        this._states.set('adjust lineheight', lineHeight)
-        this._states.set('auto adjust lineheight', lineHeightAuto)
-        this._states.set('create span by touch', span)
-        this._states.set('expand span by touch', span)
-        this._states.set('shrink span by touch', span)
-        this._states.set('pallet', pallet)
+        this.#states.set('simple view', simple)
+        this.#states.set('auto replicate', replicateAuto)
+        this.#states.set('boundary detection', boundaryDetection)
+        this.#states.set('adjust lineheight', lineHeight)
+        this.#states.set('auto adjust lineheight', lineHeightAuto)
+        this.#states.set('create span by touch', span)
+        this.#states.set('expand span by touch', span)
+        this.#states.set('shrink span by touch', span)
+        this.#states.set('pallet', pallet)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/skipCharacters.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/skipCharacters.js
 
     /* harmony default export */ function skipCharacters(
       getChars,
@@ -107052,7 +107644,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       while (predicate(getChars(str, position))) position += step
 
       return position
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/skipBlank.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/skipBlank.js
 
     const getNow = function (str, position) {
       return str.charAt(position)
@@ -107067,9 +107659,9 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     /* harmony default export */ const skipBlank = {
       forward: skipForwardBlank,
       back: skipBackBlank
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/SpanAdjuster.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/TextSelectionAdjuster.js
 
-    class SpanAdjuster {
+    class TextSelectionAdjuster {
       backFromBegin(str, position, spanConfig) {}
 
       forwardFromEnd(str, position, spanConfig) {}
@@ -107077,11 +107669,11 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       forwardFromBegin(str, position, spanConfig) {}
 
       backFromEnd(str, position, spanConfig) {}
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/DelimiterDetectAdjuster/getPrev.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/getPrev.js
 
     /* harmony default export */ function getPrev(str, position) {
       return [str.charAt(position), str.charAt(position - 1)]
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/DelimiterDetectAdjuster/backToDelimiter.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/backToDelimiter.js
 
     /* harmony default export */ function backToDelimiter(
       str,
@@ -107092,11 +107684,11 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         // Proceed the position between two characters as (!delimiter delimiter) || (delimiter !delimiter) || (!delimiter !delimiter).
         return chars[1] && !isDelimiter(chars[0]) && !isDelimiter(chars[1])
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/DelimiterDetectAdjuster/getNext.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/getNext.js
 
     /* harmony default export */ function getNext(str, position) {
       return [str.charAt(position), str.charAt(position + 1)]
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/DelimiterDetectAdjuster/skipToDelimiter.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/skipToDelimiter.js
 
     function skipToDelimiter(str, position, isDelimiter) {
       return skipCharacters(getNext, 1, str, position, (chars) => {
@@ -107104,7 +107696,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         // Return false to stop an infinite loop when the character undefined.
         return chars[1] && !isDelimiter(chars[0]) && !isDelimiter(chars[1])
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/DelimiterDetectAdjuster/isNotWord.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/isNotWord.js
 
     /* harmony default export */ function isNotWord(
       isBlankCharacter,
@@ -107118,7 +107710,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           !isDelimiter(chars[1])) ||
         isDelimiter(chars[0])
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/DelimiterDetectAdjuster/skipToWord.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/skipToWord.js
 
     /* harmony default export */ function skipToWord(
       str,
@@ -107126,7 +107718,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       isWordEdge
     ) {
       return skipCharacters(getPrev, 1, str, position, isWordEdge)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/DelimiterDetectAdjuster/backToWord.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/backToWord.js
 
     /* harmony default export */ function backToWord(
       str,
@@ -107134,9 +107726,9 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       isWordEdge
     ) {
       return skipCharacters(getNext, -1, str, position, isWordEdge)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/DelimiterDetectAdjuster/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/index.js
 
-    class DelimiterDetectAdjuster extends SpanAdjuster {
+    class DelimiterDetectAdjuster extends TextSelectionAdjuster {
       backFromBegin(str, beginPosition, spanConfig) {
         const nonEdgePos = skipBlank.forward(str, beginPosition, (char) =>
           spanConfig.isBlankCharacter(char)
@@ -107182,9 +107774,9 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
         return backToWord(str, endPosition, isWordEdge)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/BlankSkipAdjuster.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/BlankSkipAdjuster.js
 
-    class BlankSkipAdjuster extends SpanAdjuster {
+    class BlankSkipAdjuster extends TextSelectionAdjuster {
       backFromBegin(str, position, spanConfig) {
         return skipBlank.forward(str, position, (char) =>
           spanConfig.isBlankCharacter(char)
@@ -107221,9 +107813,17 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         default:
           return ''
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/ControlViewModel/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/index.js
 
-    class ControlViewModel {
+    class MenuState {
+      #enableState
+      #pushButtons
+      #annotationModelEventsObserver
+      #originalData
+      #typeDefinition
+      #functionAvailability
+      #mode
+
       constructor(
         eventEmitter,
         selectionModel,
@@ -107233,49 +107833,49 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         typeDefinition,
         functionAvailability
       ) {
-        this._enableState = new EnableState(
+        this.#enableState = new EnableState(
           eventEmitter,
           selectionModel,
           clipBoard
         )
         // Save state of push control buttons.
-        this._pushButtons = new PushButtons(eventEmitter)
+        this.#pushButtons = new PushButtons(eventEmitter)
 
-        this._annotationModelEventsObserver = annotationModelEventsObserver
+        this.#annotationModelEventsObserver = annotationModelEventsObserver
 
-        this._originalData = originalData
+        this.#originalData = originalData
 
-        this._typeDefinition = typeDefinition
+        this.#typeDefinition = typeDefinition
 
-        this._functionAvailability = functionAvailability
+        this.#functionAvailability = functionAvailability
 
         // Change the title of the palette button to match the edit mode.
         eventEmitter.on('textae-event.edit-mode.transition', (mode) => {
-          this._mode = mode
+          this.#mode = mode
         })
       }
 
       get pushButtonNames() {
-        return this._pushButtons.names
+        return this.#pushButtons.names
       }
 
       isPushed(buttonName) {
-        return this._pushButtons.get(buttonName).isPushed
+        return this.#pushButtons.get(buttonName).isPushed
       }
 
       push(buttonName) {
-        this._pushButtons.get(buttonName).isPushed = true
+        this.#pushButtons.get(buttonName).isPushed = true
       }
 
       release(buttonName) {
-        this._pushButtons.get(buttonName).isPushed = false
+        this.#pushButtons.get(buttonName).isPushed = false
       }
 
       toggleButton(buttonName) {
-        return this._pushButtons.get(buttonName).toggle()
+        return this.#pushButtons.get(buttonName).toggle()
       }
 
-      get spanAdjuster() {
+      get textSelectionAdjuster() {
         return this.isPushed('boundary detection')
           ? new DelimiterDetectAdjuster()
           : new BlankSkipAdjuster()
@@ -107285,8 +107885,10 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         return new Buttons().controlBar
           .map(({ list }) =>
             list
-              .filter(({ type }) => this._functionAvailability.get(type))
-              .map(({ type, title }) => this._getPalletButtonTitle(type, title))
+              .filter(({ type }) =>
+                this.#functionAvailability.isAvailable(type)
+              )
+              .map(({ type, title }) => this.#getPalletButtonTitle(type, title))
               .map(({ type, title }) => ({
                 type,
                 title,
@@ -107303,14 +107905,16 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         return new Buttons().contextMenu
           .map(({ list }) =>
             list
-              .filter(({ type }) => this._functionAvailability.get(type))
-              .map(({ type, title }) => this._getPalletButtonTitle(type, title))
+              .filter(({ type }) =>
+                this.#functionAvailability.isAvailable(type)
+              )
+              .map(({ type, title }) => this.#getPalletButtonTitle(type, title))
               .reduce((acc, { type, title }) => {
                 if (!isTouchable() && this.getState(type, 'disabled')) {
                   return acc
                 }
 
-                acc.push(this._convertToButtonHash(type, title))
+                acc.push(this.#convertToButtonHash(type, title))
                 return acc
               }, [])
           )
@@ -107320,13 +107924,13 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       getState(name, state) {
         switch (state) {
           case 'pushed':
-            return this._pushButtons.get(name).isPushed
+            return this.#pushButtons.get(name).isPushed
           case 'disabled':
-            return !this._enableState.get(name)
+            return !this.#enableState.get(name)
           case 'transit':
             switch (name) {
               case 'upload':
-                return this._annotationModelEventsObserver.hasChange
+                return this.#annotationModelEventsObserver.hasChange
               case 'pallet':
                 return this.diffOfConfiguration
               default:
@@ -107338,12 +107942,12 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         }
       }
 
-      updateManipulateSpanButtons(
+      updateButtonsToOperateSpanWithTouchDevice(
         enableToCreate,
         enableToExpand,
         enableToShrink
       ) {
-        this._enableState.updateManipulateSpanButtons(
+        this.#enableState.updateButtonsToOperateSpanWithTouchDevice(
           enableToCreate,
           enableToExpand,
           enableToShrink
@@ -107351,13 +107955,13 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       get diffOfConfiguration() {
-        return lib_diff(this._originalData.configuration, {
-          ...this._originalData.configuration,
-          ...this._typeDefinition.config
+        return lib_diff(this.#originalData.configuration, {
+          ...this.#originalData.configuration,
+          ...this.#typeDefinition.config
         })
       }
 
-      setPushBUttons(configuration) {
+      setPushButtons(configuration) {
         if (configuration.autosave === true) {
           this.push('upload automatically')
         } else {
@@ -107378,18 +107982,18 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       get detailModifierClassName() {
-        return this._functionAvailability.get('show logo')
+        return this.#functionAvailability.isAvailable('show logo')
           ? 'textae-control-details--show-logo'
           : 'textae-control-details--hide-logo'
       }
 
-      _getPalletButtonTitle(type, title) {
+      #getPalletButtonTitle(type, title) {
         return type == 'pallet'
-          ? { type, title: getPalletButtonTitleFor(this._mode) }
+          ? { type, title: getPalletButtonTitleFor(this.#mode) }
           : { type, title }
       }
 
-      _convertToButtonHash(type, title) {
+      #convertToButtonHash(type, title) {
         return {
           type,
           title,
@@ -107400,7 +108004,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
     } // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/native.js
 
-    const randomUUID =
+    var randomUUID =
       typeof crypto !== 'undefined' &&
       crypto.randomUUID &&
       crypto.randomUUID.bind(crypto)
@@ -107410,8 +108014,9 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     // Unique ID creation requires a high quality random # generator. In the browser we therefore
     // require the crypto API and do not support built-in fallback to lower quality random number
     // generators (like Math.random()).
-    let getRandomValues
-    const rnds8 = new Uint8Array(16)
+
+    var getRandomValues
+    var rnds8 = new Uint8Array(16)
     function rng() {
       // lazy load so that environments that need to polyfill have a chance to do so
       if (!getRandomValues) {
@@ -107420,30 +108025,28 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           typeof crypto !== 'undefined' &&
           crypto.getRandomValues &&
           crypto.getRandomValues.bind(crypto)
-
         if (!getRandomValues) {
           throw new Error(
             'crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported'
           )
         }
       }
-
       return getRandomValues(rnds8)
     } // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/stringify.js
     /**
      * Convert array of 16 byte values to UUID string format of the form:
      * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
      */
-
-    const byteToHex = []
-
-    for (let i = 0; i < 256; ++i) {
-      byteToHex.push((i + 0x100).toString(16).slice(1))
+    var byteToHex = []
+    for (var stringify_i = 0; stringify_i < 256; ++stringify_i) {
+      byteToHex.push((stringify_i + 0x100).toString(16).slice(1))
     }
-
     function unsafeStringify(arr, offset = 0) {
       // Note: Be careful editing this code!  It's been tuned for performance
       // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
+      //
+      // Note to future-self: No, you can't remove the `toLowerCase()` call.
+      // REF: https://github.com/uuidjs/uuid/pull/677#issuecomment-1757351351
       return (
         byteToHex[arr[offset + 0]] +
         byteToHex[arr[offset + 1]] +
@@ -107465,49 +108068,43 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         byteToHex[arr[offset + 13]] +
         byteToHex[arr[offset + 14]] +
         byteToHex[arr[offset + 15]]
-      )
+      ).toLowerCase()
     }
-
     function stringify(arr, offset = 0) {
-      const uuid = unsafeStringify(arr, offset) // Consistency check for valid UUID.  If this throws, it's likely due to one
+      var uuid = unsafeStringify(arr, offset)
+      // Consistency check for valid UUID.  If this throws, it's likely due to one
       // of the following:
       // - One or more input array values don't map to a hex octet (leading to
       // "undefined" in the uuid)
       // - Invalid input values for the RFC `version` or `variant` fields
-
       if (!validate(uuid)) {
         throw TypeError('Stringified UUID is invalid')
       }
-
       return uuid
     }
-
     /* harmony default export */ const esm_browser_stringify =
       /* unused pure expression or super */ null && stringify // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/v4.js
     function v4(options, buf, offset) {
       if (esm_browser_native.randomUUID && !buf && !options) {
         return esm_browser_native.randomUUID()
       }
-
       options = options || {}
-      const rnds = options.random || (options.rng || rng)() // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+      var rnds = options.random || (options.rng || rng)()
 
+      // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
       rnds[6] = (rnds[6] & 0x0f) | 0x40
-      rnds[8] = (rnds[8] & 0x3f) | 0x80 // Copy bytes to buffer, if provided
+      rnds[8] = (rnds[8] & 0x3f) | 0x80
 
+      // Copy bytes to buffer, if provided
       if (buf) {
         offset = offset || 0
-
-        for (let i = 0; i < 16; ++i) {
+        for (var i = 0; i < 16; ++i) {
           buf[offset + i] = rnds[i]
         }
-
         return buf
       }
-
       return unsafeStringify(rnds)
     }
-
     /* harmony default export */ const esm_browser_v4 = v4 // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Clipboard/index.js
     class Clipboard {
       /**
@@ -107810,16 +108407,16 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/AnnotationAutoSaver.js
 
     class AnnotationAutoSaver {
-      #controlViewModel
+      #menuState
 
       constructor(
         eventEmitter,
-        controlViewModel,
+        menuState,
         persistenceInterface,
         saveToParameter,
         annotationModelEventsObserver
       ) {
-        this.#controlViewModel = controlViewModel
+        this.#menuState = menuState
 
         const debounceSaveAnnotation = debounce_default()(
           () => persistenceInterface.saveAnnotation(),
@@ -107851,7 +108448,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           .on(
             'textae-event.annotation-data.events-observer.unsaved-change',
             (val) => {
-              if (val && controlViewModel.isPushed('upload automatically')) {
+              if (val && menuState.isPushed('upload automatically')) {
                 debounceSaveAnnotation()
               }
             }
@@ -107859,11 +108456,11 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       #disabled() {
-        if (this.#controlViewModel.isPushed('upload automatically')) {
-          this.#controlViewModel.toggleButton('upload automatically')
+        if (this.#menuState.isPushed('upload automatically')) {
+          this.#menuState.toggleButton('upload automatically')
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/Control/bindEventHandler.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/control/Menu/bindEventHandler.js
 
     const bindEventHandler_helpDialog = new HelpDialog()
 
@@ -107925,21 +108522,28 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             .classList.toggle('textae-control-details--force-show')
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/Control/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/control/Menu/index.js
 
     // The control is a control bar in an editor.
-    class Control {
+    class Menu {
+      #el
+
       constructor(html, iconEventMap) {
         const el = dohtml_default().create(html)
 
-        this._el = el
-        bindEventHandler(this._el, iconEventMap)
+        this.#el = el
+        bindEventHandler(this.#el, iconEventMap)
       }
 
       get el() {
-        return this._el
+        return this.#el
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/ControlBar/toButtonGroup/toButtonIcon.js
+
+      // protected method
+      _querySelector(selector) {
+        return this.#el.querySelector(selector)
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/control/ToolBar/toButtonGroup/toButtonIcon.js
 
     /* harmony default export */ function toButtonIcon({
       type,
@@ -107953,7 +108557,7 @@ title="${title}"
 data-button-type="${type}">
 </span>
 `
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/ControlBar/toButtonGroup/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/control/ToolBar/toButtonGroup/index.js
 
     /* harmony default export */ function toButtonGroup() {
       return (list) => `
@@ -107988,9 +108592,9 @@ data-button-type="${type}">
 
         return ret
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/ControlBar/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/control/ToolBar/index.js
 
-    function ControlBar_template(context) {
+    function ToolBar_template(context) {
       return `
 <div class="textae-control ${
         isTouchable() ? 'textae-touch-bar' : 'textae-control-bar'
@@ -108016,15 +108620,17 @@ data-button-type="${type}">
     }
 
     // The control is a control bar in an editor.
-    class ControlBar extends Control {
+    class ToolBar extends Menu {
+      #menuState
+
       /**
        *
-       * @param {import('../../UseCase/ControlViewModel').default} controlViewModel
+       * @param {import('../../UseCase/MenuState').MenuState} menuState
        */
-      constructor(eventEmitter, controlViewModel, iconEventMap) {
-        super(ControlBar_template(controlViewModel), iconEventMap)
+      constructor(eventEmitter, menuState, iconEventMap) {
+        super(ToolBar_template(menuState), iconEventMap)
 
-        this._controlViewModel = controlViewModel
+        this.#menuState = menuState
 
         // If you use position: sticky,
         // the height of the toolbar will affect the Y coordinate of the textae-body
@@ -108054,68 +108660,67 @@ data-button-type="${type}">
 
         eventEmitter
           .on('textae-event.control.button.push', ({ name }) => {
-            this._updateButton(name, 'pushed')
+            this.#updateButton(name, 'pushed')
           })
           .on('textae-event.control.buttons.change', (buttons) => {
             for (const name of buttons) {
-              this._updateButton(name, 'disabled')
+              this.#updateButton(name, 'disabled')
             }
           })
           .on(
             'textae-event.annotation-data.events-observer.unsaved-change',
             () => {
-              this._updateButton('upload', 'transit')
+              this.#updateButton('upload', 'transit')
             }
           )
           .on('textae-event.edit-mode.transition', (mode) => {
+            // The palette is not used in text editing mode.
             const title = getPalletButtonTitleFor(mode)
-            const button = this._el.querySelector(
-              `.textae-control-pallet-button`
-            )
+            const button = super._querySelector(`.textae-control-pallet-button`)
             button.title = title
           })
           .on('textae-event.original-data.configuration.reset', () =>
-            this._redrawAllButtons()
+            this.#redrawAllButtons()
           )
           .on('textae-event.type-definition.entity.change', () =>
-            this._updateButton('pallet', 'transit')
+            this.#updateButton('pallet', 'transit')
           )
           .on('textae-event.type-definition.entity.delete', () =>
-            this._updateButton('pallet', 'transit')
+            this.#updateButton('pallet', 'transit')
           )
           .on('textae-event.type-definition.entity.change-default', () =>
-            this._updateButton('pallet', 'transit')
+            this.#updateButton('pallet', 'transit')
           )
           .on('textae-event.type-definition.relation.change', () =>
-            this._updateButton('pallet', 'transit')
+            this.#updateButton('pallet', 'transit')
           )
           .on('textae-event.type-definition.relation.delete', () =>
-            this._updateButton('pallet', 'transit')
+            this.#updateButton('pallet', 'transit')
           )
           .on('textae-event.type-definition.relation.change-default', () =>
-            this._updateButton('pallet', 'transit')
+            this.#updateButton('pallet', 'transit')
           )
           .on('textae-event.type-definition.attribute.create', () =>
-            this._updateButton('pallet', 'transit')
+            this.#updateButton('pallet', 'transit')
           )
           .on('textae-event.type-definition.attribute.change', () =>
-            this._updateButton('pallet', 'transit')
+            this.#updateButton('pallet', 'transit')
           )
           .on('textae-event.type-definition.attribute.delete', () =>
-            this._updateButton('pallet', 'transit')
+            this.#updateButton('pallet', 'transit')
           )
           .on('textae-event.type-definition.attribute.move', () =>
-            this._updateButton('pallet', 'transit')
+            this.#updateButton('pallet', 'transit')
           )
       }
 
-      _updateButton(buttonName, stateName) {
-        const button = this._el.querySelector(
+      #updateButton(buttonName, stateName) {
+        const button = super._querySelector(
           `.textae-control-${buttonName.replaceAll(' ', '-')}-button`
         )
 
         if (button) {
-          if (this._controlViewModel.getState(buttonName, stateName)) {
+          if (this.#menuState.getState(buttonName, stateName)) {
             button.classList.add(`textae-control-icon--${stateName}`)
           } else {
             button.classList.remove(`textae-control-icon--${stateName}`)
@@ -108123,11 +108728,11 @@ data-button-type="${type}">
         }
       }
 
-      _redrawAllButtons() {
-        this.el.innerHTML = ''
-        this.el.insertAdjacentHTML(
+      #redrawAllButtons() {
+        super.el.innerHTML = ''
+        super.el.insertAdjacentHTML(
           'beforeend',
-          ControlBar_template(this._controlViewModel)
+          ToolBar_template(this.#menuState)
         )
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/control/ContextMenu/toContextMenuItem.js
@@ -108143,8 +108748,11 @@ data-button-type="${type}">
   </p>`
     } // CONCATENATED MODULE: ./src/lib/Editor/control/ContextMenu/index.js
 
-    class ContextMenu extends Control {
-      constructor(editorHTMLElement, controlViewModel, iconEventMap) {
+    class ContextMenu extends Menu {
+      #editorHTMLElement
+      #menuState
+
+      constructor(editorHTMLElement, menuState, iconEventMap) {
         super(
           `<div class="textae-control ${
             isTouchable()
@@ -108154,23 +108762,23 @@ data-button-type="${type}">
           iconEventMap
         )
 
-        this._editorHTMLElement = editorHTMLElement
-        this._controlViewModel = controlViewModel
+        this.#editorHTMLElement = editorHTMLElement
+        this.#menuState = menuState
       }
 
       show(contextmenuEvent) {
         const selection = window.getSelection()
-        const editorClientRect = this._editorHTMLElement.getBoundingClientRect()
+        const editorClientRect = this.#editorHTMLElement.getBoundingClientRect()
 
         if (isTouchable() && selection.rangeCount === 1) {
           const rectOfSelection = selection
             .getRangeAt(0)
             .getBoundingClientRect()
-          const rectOfTextBox = this._editorHTMLElement
+          const rectOfTextBox = this.#editorHTMLElement
             .querySelector('.textae-editor__text-box')
             .getBoundingClientRect()
 
-          this._showAbove(
+          this.#showAbove(
             rectOfSelection.y - editorClientRect.y,
             rectOfSelection.x - rectOfTextBox.x
           )
@@ -108179,7 +108787,7 @@ data-button-type="${type}">
           // I want the coordinates where you right-click with the mouse,
           // starting from the upper left of the editor.
           // So the Y coordinate is pageY minus the editor's offsetTop.
-          this._showLowerRight(
+          this.#showLowerRight(
             contextmenuEvent.pageY - editorClientRect.y,
             contextmenuEvent.pageX - editorClientRect.x
           )
@@ -108187,18 +108795,18 @@ data-button-type="${type}">
       }
 
       hide() {
-        if (this._isOpen) {
+        if (this.#isOpen) {
           super.el.classList.remove('textae-context-menu--show')
           super.el.classList.add('textae-context-menu--hide')
         }
       }
 
-      get _isOpen() {
+      get #isOpen() {
         return super.el.classList.contains('textae-context-menu--show')
       }
 
-      _showAbove(positionTop, positionLeft) {
-        this._show()
+      #showAbove(positionTop, positionLeft) {
+        this.#show()
 
         const { height } = this.el.getBoundingClientRect()
         super.el.setAttribute(
@@ -108207,8 +108815,8 @@ data-button-type="${type}">
         )
       }
 
-      _showLowerRight(positionTop, positionLeft) {
-        this._show()
+      #showLowerRight(positionTop, positionLeft) {
+        this.#show()
 
         super.el.setAttribute(
           'style',
@@ -108216,8 +108824,8 @@ data-button-type="${type}">
         )
       }
 
-      _show() {
-        const context = classify(this._controlViewModel.contextMenuButton)
+      #show() {
+        const context = classify(this.#menuState.contextMenuButton)
         const html = `
     <div">
       ${context
@@ -108254,56 +108862,68 @@ data-button-type="${type}">
           ['7', (shiftKey) => presenter.manipulateAttribute(7, shiftKey)],
           ['8', (shiftKey) => presenter.manipulateAttribute(8, shiftKey)],
           ['9', (shiftKey) => presenter.manipulateAttribute(9, shiftKey)],
-          ['a', () => functionAvailability.get('redo') && commander.redo()],
+          [
+            'a',
+            () => functionAvailability.isAvailable('redo') && commander.redo()
+          ],
           [
             'b',
             () =>
-              functionAvailability.get('boundary detection') &&
+              functionAvailability.isAvailable('boundary detection') &&
               presenter.toggleButton('boundary detection')
           ],
           [
             'd',
             () =>
-              functionAvailability.get('delete') &&
+              functionAvailability.isAvailable('delete') &&
               presenter.removeSelectedElements()
           ],
           [
             'e',
             () =>
-              functionAvailability.get('new entity') && presenter.createEntity()
+              functionAvailability.isAvailable('new entity') &&
+              presenter.createEntity()
           ],
           ['f', () => presenter.changeModeByShortcut()],
           [
             'i',
             () =>
-              functionAvailability.get('import') &&
+              functionAvailability.isAvailable('import') &&
               persistenceInterface.importAnnotation()
           ],
           ['m', () => presenter.changeModeByShortcut()],
           [
             'q',
-            () => functionAvailability.get('pallet') && presenter.showPallet()
+            () =>
+              functionAvailability.isAvailable('pallet') &&
+              presenter.showPallet()
           ],
           [
             'r',
             () =>
-              functionAvailability.get('replicate span annotation') &&
+              functionAvailability.isAvailable('replicate span annotation') &&
               presenter.replicate()
           ],
           [
             'u',
             () =>
-              functionAvailability.get('upload') &&
+              functionAvailability.isAvailable('upload') &&
               persistenceInterface.uploadAnnotation()
           ],
           [
             'w',
             () =>
-              functionAvailability.get('edit properties') &&
+              functionAvailability.isAvailable('edit properties') &&
               presenter.editProperties()
           ],
-          ['y', () => functionAvailability.get('redo') && commander.redo()],
-          ['z', () => functionAvailability.get('undo') && commander.undo()],
+          [
+            'y',
+            () => functionAvailability.isAvailable('redo') && commander.redo()
+          ],
+          [
+            'z',
+            () => functionAvailability.isAvailable('undo') && commander.undo()
+          ],
           ['ArrowDown', () => presenter.selectDown()],
           ['ArrowLeft', (shiftKey) => presenter.selectLeft(shiftKey)],
           ['ArrowRight', (shiftKey) => presenter.selectRight(shiftKey)],
@@ -108334,23 +108954,24 @@ data-button-type="${type}">
         commander,
         presenter,
         persistenceInterface,
-        controlViewModel,
+        menuState,
         annotationModel
       ) {
         this._map = new Map([
           ['view mode', () => presenter.toViewMode()],
-          ['term edit mode', () => presenter.toTermMode()],
-          ['block edit mode', () => presenter.toBlockMode()],
-          ['relation edit mode', () => presenter.toRelationMode()],
+          ['term edit mode', () => presenter.toTermEditMode()],
+          ['block edit mode', () => presenter.toBlockEditMode()],
+          ['relation edit mode', () => presenter.toRelationEditMode()],
+          ['text edit mode', () => presenter.toTextEditMode()],
           ['simple view', () => presenter.toggleSimpleMode()],
           ['import', () => persistenceInterface.importAnnotation()],
           ['upload', () => persistenceInterface.uploadAnnotation()],
           ['undo', () => commander.undo()],
           ['redo', () => commander.redo()],
           ['replicate span annotation', () => presenter.replicate()],
-          ['create span by touch', () => presenter.createSpan()],
-          ['expand span by touch', () => presenter.expandSpan()],
-          ['shrink span by touch', () => presenter.shrinkSpan()],
+          ['create span by touch', () => presenter.createSpanWithTouchDevice()],
+          ['expand span by touch', () => presenter.expandSpanWithTouchDevice()],
+          ['shrink span by touch', () => presenter.shrinkSpanWithTouchDevice()],
           ['new entity', () => presenter.createEntity()],
           ['edit properties', () => presenter.editProperties()],
           ['pallet', () => presenter.showPallet()],
@@ -108366,7 +108987,7 @@ data-button-type="${type}">
         ])
 
         // Set handler for push buttons.
-        for (const buttonName of controlViewModel.pushButtonNames) {
+        for (const buttonName of menuState.pushButtonNames) {
           if (!this._map.has(buttonName)) {
             this._map.set(buttonName, () => presenter.toggleButton(buttonName))
           }
@@ -108536,42 +109157,9 @@ data-button-type="${type}">
     // A sub component to save and load data.
     class RemoteSource {
       #eventEmitter
-      #urlOfLastRead
 
       constructor(eventEmitter) {
         this.#eventEmitter = eventEmitter
-
-        // Store the url the annotation data is loaded from per editor.
-        this.#urlOfLastRead = {
-          annotation: '',
-          config: ''
-        }
-
-        eventEmitter.on(
-          'textae-event.original-data.annotation.reset',
-          (dataSource) => {
-            if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
-              this.#urlOfLastRead.annotation = dataSource.id
-            }
-          }
-        )
-      }
-
-      get annotationURL() {
-        return this.#urlOfLastRead.annotation
-      }
-
-      get configurationURL() {
-        return this.#urlOfLastRead.config
-      }
-
-      // The configuration validation is done with setConfigAndAnnotation
-      // because it requires both configuration and annotation.
-      // The URL is set after the validation.
-      set configurationURL(dataSource) {
-        if (dataSource.resourceType === RESOURCE_TYPE.REMOTE_URL) {
-          this.#urlOfLastRead.config = dataSource.id
-        }
       }
 
       loadAnnotation(url) {
@@ -108845,84 +109433,125 @@ data-button-type="${type}">
         alertify_default().error('could not save')
         this.#eventEmitter.emit('textae-event.resource.save.error')
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/FunctionAvailability.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/FunctionAvailability/Translator.js
 
     // This is a map of function names specified in config and those used internally.
-    const NAME_MAP = new Map([
-      ['logo', 'show logo'],
-      ['read', 'import'],
-      ['write', 'upload'],
-      ['write-auto', 'upload automatically'],
-      ['view', 'view mode'],
-      ['term', 'term edit mode'],
-      ['block', 'block edit mode'],
-      ['relation', 'relation edit mode'],
-      ['simple', 'simple view'],
-      ['line-height', 'adjust lineheight'],
-      ['line-height-auto', 'auto adjust lineheight'],
-      ['undo', 'undo'],
-      ['redo', 'redo'],
-      ['replicate', 'replicate span annotation'],
-      ['replicate-auto', 'auto replicate'],
-      ['boundary-detection', 'boundary detection'],
-      ['create-span-by-touch', 'create span by touch'],
-      ['expand-span-by-touch', 'expand span by touch'],
-      ['shrink-span-by-touch', 'shrink span by touch'],
-      ['entity', 'new entity'],
-      ['pallet', 'pallet'],
-      ['edit-properties', 'edit properties'],
-      ['delete', 'delete'],
-      ['copy', 'copy'],
-      ['cut', 'cut'],
-      ['paste', 'paste'],
-      ['setting', 'setting'],
-      ['help', 'help']
-    ])
+    class Translator {
+      #map
 
-    class FunctionAvailability {
       constructor() {
-        // This is a map whose key is the function name
-        // and its value is boolean value that is true if enabled.
-        this._availabilities = this._default
+        // The key is the function name specified in config.
+        // The value is an object with the following properties:
+        // - name: The function name used internally.
+        // - enabled: Whether the function is enabled or not in default.
+        // - alias: The function name specified in config that is an alias of the function.
+        this.#map = new Map([
+          ['logo', { name: 'show logo', enabled: true }],
+          ['read', { name: 'import', enabled: true }],
+          ['write', { name: 'upload', enabled: true }],
+          ['write-auto', { name: 'upload automatically', enabled: true }],
+          ['view', { name: 'view mode', enabled: true }],
+          ['term', { name: 'term edit mode', enabled: true }],
+          ['term-edit', { alias: 'term' }],
+          ['block', { name: 'block edit mode', enabled: true }],
+          ['block-edit', { alias: 'block' }],
+          ['relation', { name: 'relation edit mode', enabled: true }],
+          ['relation-edit', { alias: 'relation' }],
+          // Text edit mode is disabled by default because it is under development.
+          ['text-edit', { name: 'text edit mode', enabled: false }],
+          ['simple', { name: 'simple view', enabled: true }],
+          ['line-height', { name: 'adjust lineheight', enabled: true }],
+          [
+            'line-height-auto',
+            { name: 'auto adjust lineheight', enabled: true }
+          ],
+          ['undo', { name: 'undo', enabled: true }],
+          ['redo', { name: 'redo', enabled: true }],
+          ['replicate', { name: 'replicate span annotation', enabled: true }],
+          ['replicate-auto', { name: 'auto replicate', enabled: true }],
+          ['boundary-detection', { name: 'boundary detection', enabled: true }],
+          [
+            'create-span-by-touch',
+            { name: 'create span by touch', enabled: true }
+          ],
+          [
+            'expand-span-by-touch',
+            { name: 'expand span by touch', enabled: true }
+          ],
+          [
+            'shrink-span-by-touch',
+            { name: 'shrink span by touch', enabled: true }
+          ],
+          ['entity', { name: 'new entity', enabled: true }],
+          ['pallet', { name: 'pallet', enabled: true }],
+          ['edit-properties', { name: 'edit properties', enabled: true }],
+          ['delete', { name: 'delete', enabled: true }],
+          ['copy', { name: 'copy', enabled: true }],
+          ['cut', { name: 'cut', enabled: true }],
+          ['paste', { name: 'paste', enabled: true }],
+          ['setting', { name: 'setting', enabled: true }],
+          ['help', { name: 'help', enabled: true }]
+        ])
       }
 
-      get(type) {
-        return this._availabilities.get(type)
+      get defaultAvailabilities() {
+        return this.#map
+          .values()
+          .filter(
+            ({ name, enabled }) => name !== undefined && enabled !== undefined
+          )
+          .reduce((map, { name, enabled }) => map.set(name, enabled), new Map())
       }
 
-      set availability(values) {
-        const availabilities = this._default
-
-        if (values) {
-          for (const [key, value] of Object.entries(values)) {
-            availabilities.set(this._translate(key), value)
+      translateToInnerNameFrom(functionName) {
+        if (this.#map.has(functionName)) {
+          const value = this.#map.get(functionName)
+          if (value.alias) {
+            return this.#map.get(value.alias).name
+          } else {
+            return value.name
           }
         }
 
-        this._availabilities = availabilities
-      }
-
-      get _default() {
-        const map = new Map()
-
-        // All functions are enabled by default.
-        for (const key of NAME_MAP.values()) {
-          map.set(key, true)
-        }
-
-        return map
-      }
-
-      _translate(keyName) {
-        if (NAME_MAP.has(keyName)) {
-          return NAME_MAP.get(keyName)
-        }
-
+        // It is sad to see an error when a user makes a mistake in a config value,
+        // so we will just display a warning.
         alertify_default().warning(
-          `'${keyName}' is an unknown function name for function availabilities.`
+          `'${functionName}' is an unknown function name for function availabilities.`
         )
 
-        return keyName
+        return functionName
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/FunctionAvailability/index.js
+
+    class FunctionAvailability {
+      #translator
+      #availabilities
+
+      constructor() {
+        this.#translator = new Translator()
+
+        // This is a map whose key is the function name
+        // and its value is boolean value that is true if enabled.
+        this.#availabilities = this.#translator.defaultAvailabilities
+      }
+
+      isAvailable(innerName) {
+        return this.#availabilities.get(innerName)
+      }
+
+      set availability(values) {
+        const availabilities = this.#translator.defaultAvailabilities
+
+        if (values) {
+          for (const [functionName, value] of Object.entries(values)) {
+            availabilities.set(
+              this.#translator.translateToInnerNameFrom(functionName),
+              value
+            )
+          }
+        }
+
+        this.#availabilities = availabilities
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/index.js
 
@@ -108959,7 +109588,7 @@ data-button-type="${type}">
           commander,
           selectionModel,
           annotationModel.denotationDefinitionContainer,
-          annotationModel.attributeDefinitionContainer,
+          annotationModel.attributeInstanceContainerDefinitionContainer,
           annotationModel.typeDefinition
         )
         const originalData = new OriginalData(
@@ -108974,7 +109603,7 @@ data-button-type="${type}">
           annotationModel
         )
         const functionAvailability = new FunctionAvailability()
-        const controlViewModel = new ControlViewModel(
+        const menuState = new MenuState(
           eventEmitter,
           selectionModel,
           clipBoard,
@@ -108991,7 +109620,7 @@ data-button-type="${type}">
           commander,
           spanConfig,
           clipBoard,
-          controlViewModel,
+          menuState,
           startUpOptions,
           functionAvailability,
           mousePoint
@@ -109009,12 +109638,12 @@ data-button-type="${type}">
           () => originalData.configuration,
           startUpOptions.saveTo,
           annotationModelEventsObserver,
-          controlViewModel
+          menuState
         )
 
         new AnnotationAutoSaver(
           eventEmitter,
-          controlViewModel,
+          menuState,
           persistenceInterface,
           startUpOptions.saveTo,
           annotationModelEventsObserver
@@ -109049,7 +109678,7 @@ data-button-type="${type}">
               if (validConfig) {
                 setAnnotationAndConfiguration(
                   validConfig,
-                  controlViewModel,
+                  menuState,
                   spanConfig,
                   annotationModel,
                   dataSource.data,
@@ -109058,7 +109687,9 @@ data-button-type="${type}">
 
                 if (startUpOptions.isFocusFirstDenotation) {
                   const firstDenotation =
-                    annotationModel.span.allDenotationSpans.at(0)
+                    annotationModel.spanInstanceContainer.allDenotationSpans.at(
+                      0
+                    )
                   if (firstDenotation) {
                     firstDenotation.focus()
                   }
@@ -109105,7 +109736,7 @@ data-button-type="${type}">
 
               setAnnotationAndConfiguration(
                 validConfig,
-                controlViewModel,
+                menuState,
                 spanConfig,
                 annotationModel,
                 annotation,
@@ -109117,7 +109748,6 @@ data-button-type="${type}">
               }
 
               originalData.configuration = configurationDataSource
-              remoteResource.configurationURL = configurationDataSource
             }
           )
 
@@ -109125,18 +109755,18 @@ data-button-type="${type}">
           commander,
           presenter,
           persistenceInterface,
-          controlViewModel,
+          menuState,
           annotationModel
         )
 
-        // add control bar
-        const controlBarHTMLElement = new ControlBar(
+        // Add the tool bar
+        const toolBarHTMLElement = new ToolBar(
           eventEmitter,
-          controlViewModel,
+          menuState,
           iconEventMap
         ).el
         editorHTMLElement.insertBefore(
-          controlBarHTMLElement,
+          toolBarHTMLElement,
           editorHTMLElement.childNodes[0]
         )
 
@@ -109155,14 +109785,14 @@ data-button-type="${type}">
             break
         }
 
-        annotationModel.controlBarHeight =
-          controlBarHTMLElement.getBoundingClientRect().height
+        annotationModel.toolBarHeight =
+          toolBarHTMLElement.getBoundingClientRect().height
 
         initAnnotation(
           spanConfig,
           annotationModel,
           remoteResource,
-          controlViewModel,
+          menuState,
           originalData,
           startUpOptions,
           functionAvailability
@@ -109171,7 +109801,7 @@ data-button-type="${type}">
         // add context menu
         const contextMenu = new ContextMenu(
           editorHTMLElement,
-          controlViewModel,
+          menuState,
           iconEventMap
         )
         editorHTMLElement.appendChild(contextMenu.el)
@@ -109195,7 +109825,7 @@ data-button-type="${type}">
           'pasteEntitiesFromSystemClipboard',
           'activate',
           'deactivate',
-          'applyTextSelection'
+          'applyTextSelectionWithTouchDevice'
         ])
 
         this.#contextMenu = contextMenu
@@ -109210,7 +109840,7 @@ data-button-type="${type}">
       }
 
       focusDenotation(denotationID) {
-        this.#presenter.toTermMode()
+        this.#presenter.toTermEditMode()
         this.#annotationModel.focusDenotation(denotationID)
       }
     }
@@ -109351,7 +109981,7 @@ data-button-type="${type}">
         }
       }
 
-      get isTermEditMode() {
+      get isEditTermMode() {
         // Same as edit mode and term-edit mode for compatibility.
         return (
           this.#readAttribute('mode') === 'edit' ||
@@ -109359,11 +109989,11 @@ data-button-type="${type}">
         )
       }
 
-      get isBlockEditMode() {
+      get isEditBlockMode() {
         return this.#readAttribute('mode') === 'block-edit'
       }
 
-      get isRelationEditMode() {
+      get isEditRelationMode() {
         return this.#readAttribute('mode') === 'relation-edit'
       }
 
@@ -109956,7 +110586,7 @@ data-button-type="${type}">
               `${displayName} is not a configuration file or its format is invalid.!`
             )
         )
-        .on('textae-event.annotation-data.all.change', (_, __, rejects) => {
+        .on('textae-event.annotation-data.all.change', (_, rejects) => {
           if (rejects.some((r) => r.hasError)) {
             new ValidationDialog(rejects).open()
           }
@@ -110052,18 +110682,23 @@ data-button-type="${type}">
     } // CONCATENATED MODULE: ./src/lib/Editor/SelectionModel/SelectedItems.js
 
     class SelectedItems {
+      #emitter
+      #annotationType
+      #instanceContainer
+
       constructor(emitter, annotationType, annotationModel) {
-        this._emitter = emitter
-        this._annotationType = annotationType
-        this._instanceContainer = annotationModel[annotationType]
+        this.#emitter = emitter
+        this.#annotationType = annotationType
+        this.#instanceContainer =
+          annotationModel.getInstanceContainerFor(annotationType)
       }
 
       add(id) {
-        const instance = this._instanceContainer.get(id)
+        const instance = this.#instanceContainer.get(id)
 
         console.assert(
           instance,
-          `${id} is not a instance of ${this._annotationType}.`
+          `${id} is not a instance of ${this.#annotationType}.`
         )
 
         if (instance.isSelected) {
@@ -110075,7 +110710,7 @@ data-button-type="${type}">
       }
 
       has(id) {
-        const instance = this._instanceContainer.get(id)
+        const instance = this.#instanceContainer.get(id)
 
         if (instance) {
           return instance.isSelected
@@ -110085,7 +110720,7 @@ data-button-type="${type}">
       }
 
       contains(predicate) {
-        for (const v of this._instanceContainer.selectedItems) {
+        for (const v of this.#instanceContainer.selectedItems) {
           if (predicate(v)) {
             return true
           }
@@ -110095,11 +110730,11 @@ data-button-type="${type}">
       }
 
       get all() {
-        return this._instanceContainer.selectedItems
+        return this.#instanceContainer.selectedItems
       }
 
       get size() {
-        return this._instanceContainer.selectedItems.length
+        return this.#instanceContainer.selectedItems.length
       }
 
       get some() {
@@ -110116,7 +110751,7 @@ data-button-type="${type}">
       }
 
       get single() {
-        return this.size === 1 ? this._instanceContainer.selectedItems[0] : null
+        return this.size === 1 ? this.#instanceContainer.selectedItems[0] : null
       }
 
       toggle(id) {
@@ -110129,7 +110764,7 @@ data-button-type="${type}">
 
       remove(id) {
         if (this.has(id)) {
-          this._instanceContainer.get(id).deselect()
+          this.#instanceContainer.get(id).deselect()
           this.triggerChange()
         }
       }
@@ -110149,8 +110784,8 @@ data-button-type="${type}">
       }
 
       triggerChange() {
-        this._emitter.emit(
-          `textae-event.selection.${this._annotationType}.change`
+        this.#emitter.emit(
+          `textae-event.selection.${this.#annotationType}.change`
         )
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/SelectionModel/SelectedItemsWithAttributes.js
@@ -110177,7 +110812,7 @@ data-button-type="${type}">
         )
       }
 
-      isDupulicatedPredAttrributeSelected(pred) {
+      isDuplicatedPredAttributeSelected(pred) {
         return this.all.some(
           (item) =>
             item.attributes.filter((attribute) => attribute.pred === pred)
@@ -110326,7 +110961,7 @@ data-button-type="${type}">
       }
 
       #isDenotation(id) {
-        return this.#annotationModel.entity.hasDenotation(id)
+        return this.#annotationModel.entityInstanceContainer.hasDenotation(id)
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/filterIfModelModified.js
 
@@ -110440,7 +111075,7 @@ data-button-type="${type}">
           'pasteEntitiesFromSystemClipboard',
           'activate',
           'deactivate',
-          'applyTextSelection',
+          'applyTextSelectionWithTouchDevice',
           'showContextMenu',
           'hideContextMenu',
           'focusDenotation'
@@ -110453,7 +111088,8 @@ data-button-type="${type}">
       }
 
       updateDenotationEntitiesWidth() {
-        for (const span of this.#annotationModel.span.allDenotationSpans) {
+        for (const span of this.#annotationModel.spanInstanceContainer
+          .allDenotationSpans) {
           span.updateDenotationEntitiesWidth()
         }
       }

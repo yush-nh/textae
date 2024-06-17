@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.1.0](https://github.com/pubannotation/textae/compare/v13.0.1...v13.1.0) (2024-06-17)
+
+
+### Features
+
+* Add alias names term-edit, block-edit and relation-edit for function availavility ([159a8cf](https://github.com/pubannotation/textae/commit/159a8cf78d61599e3f44dd152fa7f7710fc81977))
+
+
+### Bug Fixes
+
+* Undefined` is displayed in the load dialog when there is no URL to display ([3318c45](https://github.com/pubannotation/textae/commit/3318c45e3af803dafc7bd4b4427e34171806290f))
+
 ### [13.0.1](https://github.com/pubannotation/textae/compare/v13.0.0...v13.0.1) (2024-05-14)
 
 

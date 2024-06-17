@@ -2581,6 +2581,9 @@ ul.jsondiffpatch-textdiff {
 .textae-control-relation-edit-mode-button {
   background: url('./images/btn_relation_edit_mode_16.png');
 }
+.textae-control-text-edit-mode-button {
+  background: url('./images/btn_text_edit_mode_16.png');
+}
 .textae-control-simple-view-button {
   background: url('./images/btn_simple_view_16.png');
 }
@@ -3940,6 +3943,10 @@ ul.jsondiffpatch-textdiff {
 }
 .textae-editor--active.textae-editor__mode--relation {
   background-color: #ffedee;
+}
+.textae-editor--active.textae-editor__mode--text-with-relation,
+.textae-editor--active.textae-editor__mode--text-without-relation {
+  background-color: #cfc;
 }
 .textae-editor__body {
   position: relative;
