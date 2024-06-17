@@ -6,12 +6,14 @@ import isRangeInTextBox from '../isRangeInTextBox'
 import SelectionWrapper from '../SelectionWrapper'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
+import PropertyEditor from '../EditMode/PropertyEditor'
 
 export default class BlockEditMode extends EditMode {
   #mouseEventHandler
   #spanEditor
   #textBox
   #spanInstanceContainer
+  #propertyEditor
 
   constructor(
     editorHTMLElement,
@@ -78,6 +80,16 @@ export default class BlockEditMode extends EditMode {
       blockPallet
     )
 
+    this.#propertyEditor = new PropertyEditor(
+      editorHTMLElement,
+      commander,
+      blockPallet,
+      mousePoint,
+      annotationModel.typeDefinition.block,
+      annotationModel,
+      getAutocompletionWs
+    )
+
     // For touch device actions
     this.#spanEditor = spanEditor
     this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
@@ -118,6 +130,10 @@ export default class BlockEditMode extends EditMode {
   }
 
   editProperties() {
-    this._editProperties(this._selectionModel.entity, 'Block', 'Entity')
+    this.#propertyEditor.startEditing(
+      this._selectionModel.entity,
+      'Block',
+      'Entity'
+    )
   }
 }
