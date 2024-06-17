@@ -84,9 +84,11 @@ export default class TermEditMode extends EditMode {
       editorHTMLElement,
       commander,
       denotationPallet,
+      'Entity',
       mousePoint,
       annotationModel.typeDefinition.denotation,
       annotationModel,
+      'Denotation',
       getAutocompletionWs
     )
     this.#selectionModel = selectionModel

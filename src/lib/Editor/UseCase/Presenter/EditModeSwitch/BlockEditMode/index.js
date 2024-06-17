@@ -84,9 +84,11 @@ export default class BlockEditMode extends EditMode {
       editorHTMLElement,
       commander,
       blockPallet,
+      'Block',
       mousePoint,
       annotationModel.typeDefinition.block,
       annotationModel,
+      'Entity',
       getAutocompletionWs
     )
     this.#selectionModel = selectionModel

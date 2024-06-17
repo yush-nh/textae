@@ -68,9 +68,11 @@ export default class RelationEditMode extends EditMode {
       editorHTMLElement,
       commander,
       relationPallet,
+      'Relation',
       mousePoint,
       annotationModel.typeDefinition.relation,
       annotationModel,
+      'Relation',
       getAutocompletionWs
     )
     this.#selectionModel = selectionModel

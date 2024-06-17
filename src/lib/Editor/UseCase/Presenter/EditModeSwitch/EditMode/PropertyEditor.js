@@ -4,26 +4,33 @@ export default class PropertyEditor {
   #editorHTMLElement
   #commander
   #pallet
+  #palletName
   #mousePoint
   #definitionContainer
   #annotationModel
+  #annotationType
   #getAutocompletionWs
 
   constructor(
     editorHTMLElement,
     commander,
     pallet,
+    palletName,
     mousePoint,
     definitionContainer,
     annotationModel,
+    annotationType,
+
     getAutocompletionWs
   ) {
     this.#editorHTMLElement = editorHTMLElement
     this.#commander = commander
     this.#pallet = pallet
+    this.#palletName = palletName
     this.#mousePoint = mousePoint
     this.#definitionContainer = definitionContainer
     this.#annotationModel = annotationModel
+    this.#annotationType = annotationType
     this.#getAutocompletionWs = getAutocompletionWs
   }
 
