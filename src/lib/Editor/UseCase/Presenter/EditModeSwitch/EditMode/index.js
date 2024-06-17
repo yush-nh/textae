@@ -2,13 +2,78 @@ import EditPropertiesDialog from '../../../../../component/EditPropertiesDialog'
 import forwardMethods from '../../../../forwardMethods'
 import bindPalletEvents from './bindPalletEvents'
 
-export default class EditMode {
+class EditProperties {
   #editorHTMLElement
   #commander
+  #pallet
+  #mousePoint
+  #definitionContainer
+  #annotationModel
+  #getAutocompletionWs
+
+  constructor(
+    editorHTMLElement,
+    commander,
+    pallet,
+    mousePoint,
+    definitionContainer,
+    annotationModel,
+    getAutocompletionWs
+  ) {
+    this.#editorHTMLElement = editorHTMLElement
+    this.#commander = commander
+    this.#pallet = pallet
+    this.#mousePoint = mousePoint
+    this.#definitionContainer = definitionContainer
+    this.#annotationModel = annotationModel
+    this.#getAutocompletionWs = getAutocompletionWs
+  }
+
+  editProperties(selectionModel, annotationType, palletName, mousePoint) {
+    if (selectionModel.some) {
+      this.#createEditPropertiesDialog(
+        annotationType,
+        palletName,
+        selectionModel.all,
+        mousePoint
+      )
+        .open()
+        .then((values) => this.#typeValuesChanged(values))
+    }
+  }
+
+  #typeValuesChanged({ typeName, label, attributes = [] }) {
+    const commands = this.#commander.factory.changeTypeValuesCommand(
+      label,
+      typeName,
+      this.#definitionContainer,
+      attributes
+    )
+
+    if (typeName) {
+      this.#commander.invoke(commands)
+    }
+  }
+
+  #createEditPropertiesDialog(annotationType, palletName, selectedItems) {
+    return new EditPropertiesDialog(
+      this.#editorHTMLElement,
+      annotationType,
+      palletName,
+      this.#definitionContainer,
+      this.#annotationModel.typeDefinition.attribute,
+      this.#getAutocompletionWs(),
+      selectedItems,
+      this.#pallet,
+      this.#mousePoint
+    )
+  }
+}
+export default class EditMode {
   #attributeEditor
   #menuState
-  #mousePoint
   #pallet
+  #editProperties
 
   constructor(
     editorHTMLElement,
@@ -23,11 +88,17 @@ export default class EditMode {
     mousePoint,
     pallet = null
   ) {
-    this.#editorHTMLElement = editorHTMLElement
-    this.#commander = commander
     this.#attributeEditor = attributeEditor
     this.#menuState = menuState
-    this.#mousePoint = mousePoint
+    this.#editProperties = new EditProperties(
+      editorHTMLElement,
+      commander,
+      pallet,
+      mousePoint,
+      definitionContainer,
+      annotationModel,
+      getAutocompletionWs
+    )
 
     // protected fields referenced by the child classes
     this._selectionModel = selectionModel
@@ -102,42 +173,11 @@ export default class EditMode {
 
   // A protected method
   _editProperties(selectionModel, annotationType, palletName, mousePoint) {
-    if (selectionModel.some) {
-      this.#createEditPropertiesDialog(
-        annotationType,
-        palletName,
-        selectionModel.all,
-        mousePoint
-      )
-        .open()
-        .then((values) => this.#typeValuesChanged(values))
-    }
-  }
-
-  #typeValuesChanged({ typeName, label, attributes = [] }) {
-    const commands = this.#commander.factory.changeTypeValuesCommand(
-      label,
-      typeName,
-      this._definitionContainer,
-      attributes
-    )
-
-    if (typeName) {
-      this.#commander.invoke(commands)
-    }
-  }
-
-  #createEditPropertiesDialog(annotationType, palletName, selectedItems) {
-    return new EditPropertiesDialog(
-      this.#editorHTMLElement,
+    this.#editProperties.editProperties(
+      selectionModel,
       annotationType,
       palletName,
-      this._definitionContainer,
-      this._annotationModel.typeDefinition.attribute,
-      this._getAutocompletionWs(),
-      selectedItems,
-      this.#pallet,
-      this.#mousePoint
+      mousePoint
     )
   }
 }
