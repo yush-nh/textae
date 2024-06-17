@@ -3,9 +3,11 @@ import EditMode from '../EditMode'
 import TypeValuesPallet from '../../../../../component/TypeValuesPallet'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
+import PropertyEditor from '../EditMode/PropertyEditor'
 
 export default class RelationEditMode extends EditMode {
   #mouseEventHandler
+  #propertyEditor
 
   constructor(
     editorHTMLElement,
@@ -61,6 +63,16 @@ export default class RelationEditMode extends EditMode {
       annotationModel.typeDefinition,
       relationPallet
     )
+
+    this.#propertyEditor = new PropertyEditor(
+      editorHTMLElement,
+      commander,
+      relationPallet,
+      mousePoint,
+      annotationModel.typeDefinition.relation,
+      annotationModel,
+      getAutocompletionWs
+    )
   }
 
   bindMouseEvents() {
@@ -68,7 +80,11 @@ export default class RelationEditMode extends EditMode {
   }
 
   editProperties() {
-    this._editProperties(this._selectionModel.relation, 'Relation', 'Relation')
+    this.#propertyEditor.startEditing(
+      this._selectionModel.relation,
+      'Relation',
+      'Relation'
+    )
   }
 
   relationClicked(event, relation) {
