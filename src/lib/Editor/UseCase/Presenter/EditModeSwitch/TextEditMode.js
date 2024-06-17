@@ -6,14 +6,14 @@ export default class TextEditMode extends EditMode {
   #editorHTMLElement
   #annotationModel
   #spanConfig
-  menuState
+  #menuState
 
   constructor(editorHTMLElement, annotationModel, spanConfig, menuState) {
     super()
     this.#editorHTMLElement = editorHTMLElement
     this.#annotationModel = annotationModel
     this.#spanConfig = spanConfig
-    this.menuState = menuState
+    this.#menuState = menuState
   }
 
   bindMouseEvents() {
@@ -33,7 +33,7 @@ export default class TextEditMode extends EditMode {
               if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
                 const { begin, end } = this.#annotationModel.getNewSpan(
                   this.#spanConfig,
-                  this.menuState.textSelectionAdjuster
+                  this.#menuState.textSelectionAdjuster
                 )
                 const targetText = this.#annotationModel.getTextBetween(
                   begin,
