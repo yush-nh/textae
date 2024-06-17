@@ -286,6 +286,13 @@ export default class AnnotationModel {
     return this.sourceDoc.substring(begin, end)
   }
 
+  changeTextBetween(begin, end, newText) {
+    this.#sourceDoc = `${this.#sourceDoc.slice(0, begin)}${newText}${this.#sourceDoc.slice(end)}`
+
+    this.#textBox.render(this.sourceDoc)
+    this.#eventEmitter.emit('textae-event.annotation-data.all.change')
+  }
+
   get #selectedText() {
     const { begin, end } = this.textSelection
     return this.getTextBetween(begin, end)
