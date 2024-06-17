@@ -2,7 +2,6 @@ import forwardMethods from '../../../../forwardMethods'
 import bindPalletEvents from './bindPalletEvents'
 
 export default class EditMode {
-  #attributeEditor
   #pallet
 
   constructor(
@@ -10,14 +9,11 @@ export default class EditMode {
     annotationModel,
     selectionModel,
     commander,
-    attributeEditor,
     getAutocompletionWs,
     definitionContainer,
     annotationType,
     pallet = null
   ) {
-    this.#attributeEditor = attributeEditor
-
     if (pallet) {
       this.#pallet = pallet
 
@@ -61,12 +57,5 @@ export default class EditMode {
   relationClicked() {}
   relationBollardClicked() {}
   applyTextSelectionWithTouchDevice() {}
-
-  manipulateAttribute(number, shiftKey) {
-    if (shiftKey) {
-      this.#attributeEditor.deleteAt(number)
-    } else {
-      this.#attributeEditor.addOrEditAt(number)
-    }
-  }
+  manipulateAttribute() {}
 }

@@ -12,7 +12,7 @@ export default class AttributeEditor {
 
   constructor(
     commander,
-    annotationModel,
+    typeDefinition,
     selectionModelItems,
     selectionAttributePallet,
     editProperties,
@@ -21,12 +21,40 @@ export default class AttributeEditor {
     this.#commander = commander
     this.#selectionModelItems = selectionModelItems
     this.#selectionAttributePallet = selectionAttributePallet
-    this.#typeDefinition = annotationModel.typeDefinition
+    this.#typeDefinition = typeDefinition
     this.#editProperties = editProperties
     this.#typeValuesPallet = typeValuesPallet
   }
 
-  addOrEditAt(number) {
+  manipulateAttribute(number, shiftKey) {
+    if (shiftKey) {
+      this.#deleteAt(number)
+    } else {
+      this.#addOrEditAt(number)
+    }
+  }
+
+  #deleteAt(number) {
+    const attrDef = this.#typeDefinition.attribute.getAttributeAt(number)
+
+    if (!attrDef) {
+      alertifyjs.warning(`Attribute No.${number} is not defined`)
+      return
+    }
+
+    if (this.#selectionModelItems.selectedWithAttributeOf(attrDef.pred)) {
+      const command =
+        this.#commander.factory.removeAttributesFromItemsByPredCommand(
+          this.#selectionModelItems.all,
+          attrDef
+        )
+      this.#commander.invoke(command)
+    } else {
+      alertifyjs.warning('None of the selected items has this attribute.')
+    }
+  }
+
+  #addOrEditAt(number) {
     this.#selectionAttributePallet.hide()
 
     const attrDef = this.#typeDefinition.attribute.getAttributeAt(number)
@@ -97,26 +125,6 @@ export default class AttributeEditor {
         break
       default:
         throw `${attrDef.valueType} is unknown attribute`
-    }
-  }
-
-  deleteAt(number) {
-    const attrDef = this.#typeDefinition.attribute.getAttributeAt(number)
-
-    if (!attrDef) {
-      alertifyjs.warning(`Attribute No.${number} is not defined`)
-      return
-    }
-
-    if (this.#selectionModelItems.selectedWithAttributeOf(attrDef.pred)) {
-      const command =
-        this.#commander.factory.removeAttributesFromItemsByPredCommand(
-          this.#selectionModelItems.all,
-          attrDef
-        )
-      this.#commander.invoke(command)
-    } else {
-      alertifyjs.warning('None of the selected items has this attribute.')
     }
   }
 }

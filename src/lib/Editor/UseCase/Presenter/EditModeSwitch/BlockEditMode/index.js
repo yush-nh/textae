@@ -7,6 +7,7 @@ import SelectionWrapper from '../SelectionWrapper'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
 import PropertyEditor from '../EditMode/PropertyEditor'
+import forwardMethods from '../../../../forwardMethods'
 
 export default class BlockEditMode extends EditMode {
   #mouseEventHandler
@@ -16,6 +17,7 @@ export default class BlockEditMode extends EditMode {
   #propertyEditor
   #selectionModel
   #menuState
+  #attributeEditor
 
   constructor(
     editorHTMLElement,
@@ -43,20 +45,12 @@ export default class BlockEditMode extends EditMode {
 
     const getAutocompletionWs = () =>
       autocompletionWs || annotationModel.typeDefinition.autocompletionWs
-    const attributeEditor = new AttributeEditor(
-      commander,
-      selectionModel.entity,
-      new SelectionAttributePallet(editorHTMLElement, mousePoint),
-      () => this.editProperties(),
-      blockPallet
-    )
 
     super(
       editorHTMLElement,
       annotationModel,
       selectionModel,
       commander,
-      attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.block,
       'entity',
@@ -98,6 +92,16 @@ export default class BlockEditMode extends EditMode {
     this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
     this.#spanInstanceContainer = annotationModel.spanInstanceContainer
     this.#menuState = menuState
+
+    const attributeEditor = new AttributeEditor(
+      commander,
+      annotationModel.typeDefinition,
+      selectionModel.entity,
+      new SelectionAttributePallet(editorHTMLElement, mousePoint),
+      () => this.editProperties(),
+      blockPallet
+    )
+    forwardMethods(this, () => attributeEditor, ['manipulateAttribute'])
   }
 
   bindMouseEvents() {

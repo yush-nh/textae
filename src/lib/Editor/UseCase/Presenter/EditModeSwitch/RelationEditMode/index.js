@@ -4,6 +4,7 @@ import TypeValuesPallet from '../../../../../component/TypeValuesPallet'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
 import PropertyEditor from '../EditMode/PropertyEditor'
+import forwardMethods from '../../../../forwardMethods'
 
 export default class RelationEditMode extends EditMode {
   #mouseEventHandler
@@ -35,20 +36,12 @@ export default class RelationEditMode extends EditMode {
 
     const getAutocompletionWs = () =>
       autocompletionWs || annotationModel.typeDefinition.autocompletionWs
-    const attributeEditor = new AttributeEditor(
-      commander,
-      selectionModel.relation,
-      new SelectionAttributePallet(editorHTMLElement, mousePoint),
-      () => this.editProperties(),
-      relationPallet
-    )
 
     super(
       editorHTMLElement,
       annotationModel,
       selectionModel,
       commander,
-      attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.relation,
       'relation',
@@ -75,6 +68,16 @@ export default class RelationEditMode extends EditMode {
       getAutocompletionWs
     )
     this.#selectionModel = selectionModel
+
+    const attributeEditor = new AttributeEditor(
+      commander,
+      annotationModel.typeDefinition,
+      selectionModel.relation,
+      new SelectionAttributePallet(editorHTMLElement, mousePoint),
+      () => this.editProperties(),
+      relationPallet
+    )
+    forwardMethods(this, () => attributeEditor, ['manipulateAttribute'])
   }
 
   bindMouseEvents() {
