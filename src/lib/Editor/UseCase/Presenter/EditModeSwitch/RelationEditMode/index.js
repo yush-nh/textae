@@ -53,7 +53,6 @@ export default class RelationEditMode extends EditMode {
       getAutocompletionWs,
       annotationModel.typeDefinition.relation,
       'relation',
-      mousePoint,
       relationPallet
     )
 

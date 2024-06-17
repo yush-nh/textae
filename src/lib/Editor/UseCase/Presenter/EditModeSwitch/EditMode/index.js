@@ -16,7 +16,6 @@ export default class EditMode {
     getAutocompletionWs,
     definitionContainer,
     annotationType,
-    mousePoint,
     pallet = null
   ) {
     this.#attributeEditor = attributeEditor

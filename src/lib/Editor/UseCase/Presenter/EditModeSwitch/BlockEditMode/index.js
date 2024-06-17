@@ -60,7 +60,6 @@ export default class BlockEditMode extends EditMode {
       getAutocompletionWs,
       annotationModel.typeDefinition.block,
       'entity',
-      mousePoint,
       blockPallet
     )
 

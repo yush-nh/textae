@@ -60,7 +60,6 @@ export default class TermEditMode extends EditMode {
       getAutocompletionWs,
       annotationModel.typeDefinition.denotation,
       'entity',
-      mousePoint,
       denotationPallet
     )
 
