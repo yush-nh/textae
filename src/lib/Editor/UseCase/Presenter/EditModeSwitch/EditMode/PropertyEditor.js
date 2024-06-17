@@ -27,13 +27,12 @@ export default class PropertyEditor {
     this.#getAutocompletionWs = getAutocompletionWs
   }
 
-  startEditing(selectionModel, annotationType, palletName, mousePoint) {
+  startEditing(selectionModel, annotationType, palletName) {
     if (selectionModel.some) {
       this.#createEditPropertiesDialog(
         annotationType,
         palletName,
-        selectionModel.all,
-        mousePoint
+        selectionModel.all
       )
         .open()
         .then((values) => this.#typeValuesChanged(values))
