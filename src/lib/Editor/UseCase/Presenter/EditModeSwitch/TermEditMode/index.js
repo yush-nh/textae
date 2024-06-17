@@ -15,6 +15,7 @@ export default class TermEditMode extends EditMode {
   #spanInstanceContainer
   #propertyEditor
   #selectionModel
+  #menuState
 
   constructor(
     editorHTMLElement,
@@ -55,7 +56,6 @@ export default class TermEditMode extends EditMode {
       annotationModel,
       selectionModel,
       commander,
-      menuState,
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.denotation,
@@ -97,6 +97,7 @@ export default class TermEditMode extends EditMode {
     this.#spanEditor = spanEditor
     this.#textBox = editorHTMLElement.querySelector('.textae-editor__text-box')
     this.#spanInstanceContainer = annotationModel.spanInstanceContainer
+    this.#menuState = menuState
   }
 
   bindMouseEvents() {
@@ -122,13 +123,17 @@ export default class TermEditMode extends EditMode {
         this.#spanInstanceContainer.isBoundaryCrossingWithOtherSpans(begin, end)
 
       const { isParentOfBothNodesSame } = new SelectionWrapper()
-      this._updateButtonsToOperateSpanWithTouchDevice(
+      this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
         isParentOfBothNodesSame,
         isSelectionTextCrossingAnySpan,
         isSelectionTextCrossingAnySpan
       )
     } else {
-      this._updateButtonsToOperateSpanWithTouchDevice(false, false, false)
+      this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+        false,
+        false,
+        false
+      )
     }
   }
 

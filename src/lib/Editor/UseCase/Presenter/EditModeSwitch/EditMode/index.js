@@ -3,7 +3,6 @@ import bindPalletEvents from './bindPalletEvents'
 
 export default class EditMode {
   #attributeEditor
-  #menuState
   #pallet
 
   constructor(
@@ -11,7 +10,6 @@ export default class EditMode {
     annotationModel,
     selectionModel,
     commander,
-    menuState,
     attributeEditor,
     getAutocompletionWs,
     definitionContainer,
@@ -19,12 +17,6 @@ export default class EditMode {
     pallet = null
   ) {
     this.#attributeEditor = attributeEditor
-    this.#menuState = menuState
-
-    // protected fields referenced by the child classes
-    this._annotationModel = annotationModel
-    this._getAutocompletionWs = getAutocompletionWs
-    this._definitionContainer = definitionContainer
 
     if (pallet) {
       this.#pallet = pallet
@@ -76,18 +68,5 @@ export default class EditMode {
     } else {
       this.#attributeEditor.addOrEditAt(number)
     }
-  }
-
-  // A protected method
-  _updateButtonsToOperateSpanWithTouchDevice(
-    enableToCreate,
-    enableToExpand,
-    enableToShrink
-  ) {
-    this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
-      enableToCreate,
-      enableToExpand,
-      enableToShrink
-    )
   }
 }

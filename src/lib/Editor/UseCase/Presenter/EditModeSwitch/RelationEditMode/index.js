@@ -48,7 +48,6 @@ export default class RelationEditMode extends EditMode {
       annotationModel,
       selectionModel,
       commander,
-      menuState,
       attributeEditor,
       getAutocompletionWs,
       annotationModel.typeDefinition.relation,
