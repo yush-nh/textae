@@ -8,6 +8,7 @@ import PropertyEditor from '../EditMode/PropertyEditor'
 export default class RelationEditMode extends EditMode {
   #mouseEventHandler
   #propertyEditor
+  #selectionModel
 
   constructor(
     editorHTMLElement,
@@ -73,6 +74,7 @@ export default class RelationEditMode extends EditMode {
       annotationModel,
       getAutocompletionWs
     )
+    this.#selectionModel = selectionModel
   }
 
   bindMouseEvents() {
@@ -81,7 +83,7 @@ export default class RelationEditMode extends EditMode {
 
   editProperties() {
     this.#propertyEditor.startEditing(
-      this._selectionModel.relation,
+      this.#selectionModel.relation,
       'Relation',
       'Relation'
     )
@@ -89,14 +91,14 @@ export default class RelationEditMode extends EditMode {
 
   relationClicked(event, relation) {
     if (event.ctrlKey || event.metaKey) {
-      this._selectionModel.relation.toggle(relation.id)
+      this.#selectionModel.relation.toggle(relation.id)
     } else {
-      this._selectionModel.selectRelation(relation.id)
+      this.#selectionModel.selectRelation(relation.id)
     }
   }
 
   relationBollardClicked(entity) {
     entity.span.forceRenderGrid()
-    this._selectionModel.selectEntity(entity.id)
+    this.#selectionModel.selectEntity(entity.id)
   }
 }

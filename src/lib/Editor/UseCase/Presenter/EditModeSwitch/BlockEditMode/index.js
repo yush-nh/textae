@@ -14,6 +14,7 @@ export default class BlockEditMode extends EditMode {
   #textBox
   #spanInstanceContainer
   #propertyEditor
+  #selectionModel
 
   constructor(
     editorHTMLElement,
@@ -89,6 +90,7 @@ export default class BlockEditMode extends EditMode {
       annotationModel,
       getAutocompletionWs
     )
+    this.#selectionModel = selectionModel
 
     // For touch device actions
     this.#spanEditor = spanEditor
@@ -131,7 +133,7 @@ export default class BlockEditMode extends EditMode {
 
   editProperties() {
     this.#propertyEditor.startEditing(
-      this._selectionModel.entity,
+      this.#selectionModel.entity,
       'Block',
       'Entity'
     )
