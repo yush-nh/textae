@@ -21,7 +21,7 @@ export default class SelectedItemsWithAttributes extends SelectedItems {
     )
   }
 
-  isDupulicatedPredAttrributeSelected(pred) {
+  isDuplicatedPredAttributeSelected(pred) {
     return this.all.some(
       (item) =>
         item.attributes.filter((attribute) => attribute.pred === pred).length >

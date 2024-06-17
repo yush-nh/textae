@@ -53,7 +53,7 @@ export default class AttributeEditor {
           if (this._selectionModelItems.selectedWithAttributeOf(attrDef.pred)) {
             this._selectionAttributePallet.show(attrDef).then((newObj) => {
               if (
-                this._selectionModelItems.isDupulicatedPredAttrributeSelected(
+                this._selectionModelItems.isDuplicatedPredAttributeSelected(
                   attrDef.pred
                 )
               ) {

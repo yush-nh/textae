@@ -59,7 +59,7 @@ export default function (pallet, el, commander, selectionModelEntity) {
     (e) => {
       if (selectionModelEntity.selectedWithAttributeOf(pallet.attrDef.pred)) {
         if (
-          selectionModelEntity.isDupulicatedPredAttrributeSelected(
+          selectionModelEntity.isDuplicatedPredAttributeSelected(
             pallet.attrDef.pred
           )
         ) {
