@@ -13,10 +13,10 @@ export default function (
   )
 
   if (attribute) {
-    const isOnlyEntityWithJsutOneSamePredSelected =
+    const isOnlyEntityWithJustOneSamePredSelected =
       selectionModelItems.onlySelectedWithJustOneAttributeOf(attrDef.pred)
 
-    if (isOnlyEntityWithJsutOneSamePredSelected) {
+    if (isOnlyEntityWithJustOneSamePredSelected) {
       openEditStringAttributeDialog(
         selectionModelItems,
         attribute,
