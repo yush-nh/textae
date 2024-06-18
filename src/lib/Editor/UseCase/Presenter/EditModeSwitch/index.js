@@ -70,7 +70,8 @@ export default class EditModeSwitch {
       editorHTMLElement,
       annotationModel,
       spanConfig,
-      menuState
+      menuState,
+      commander
     )
 
     new ModeTransitionReactor(

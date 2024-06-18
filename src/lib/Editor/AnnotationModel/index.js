@@ -290,7 +290,7 @@ export default class AnnotationModel {
     this.#sourceDoc = `${this.#sourceDoc.slice(0, begin)}${newText}${this.#sourceDoc.slice(end)}`
 
     this.#textBox.render(this.sourceDoc)
-    this.#eventEmitter.emit('textae-event.annotation-data.all.change')
+    this.#eventEmitter.emit('textae-event.annotation-data.all.change', null, [])
   }
 
   get #selectedText() {

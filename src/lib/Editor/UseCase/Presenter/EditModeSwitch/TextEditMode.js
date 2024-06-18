@@ -7,13 +7,21 @@ export default class TextEditMode extends EditMode {
   #annotationModel
   #spanConfig
   #menuState
+  #commander
 
-  constructor(editorHTMLElement, annotationModel, spanConfig, menuState) {
+  constructor(
+    editorHTMLElement,
+    annotationModel,
+    spanConfig,
+    menuState,
+    commander
+  ) {
     super()
     this.#editorHTMLElement = editorHTMLElement
     this.#annotationModel = annotationModel
     this.#spanConfig = spanConfig
     this.#menuState = menuState
+    this.#commander = commander
   }
 
   bindMouseEvents() {
@@ -40,6 +48,10 @@ export default class TextEditMode extends EditMode {
                   end
                 )
                 alert(`selection: ${targetText}`)
+
+                this.#commander.factory
+                  .changeTextAndMoveSpanCommand(begin, end, 'foo bar baz')
+                  .execute()
               }
             }
           }

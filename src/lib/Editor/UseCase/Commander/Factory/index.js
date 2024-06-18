@@ -26,6 +26,7 @@ import RemoveSpanCommand from './RemoveSpanCommand'
 import RemoveTypeDefinitionCommand from './RemoveTypeDefinitionCommand'
 import RemoveValueFromAttributeDefinitionCommand from './RemoveValueFromAttributeDefinitionCommand'
 import ToggleFlagAttributeToItemsCommand from './ToggleFlagAttributeToItemsCommand'
+import ChangeTextAndMoveSpanCommand from './ChangeTextAndMoveSpanCommand'
 
 export default class Factory {
   #editorID
@@ -294,6 +295,15 @@ export default class Factory {
       this.#annotationModel,
       items,
       attributeDefinition
+    )
+  }
+
+  changeTextAndMoveSpanCommand(begin, end, newText) {
+    return new ChangeTextAndMoveSpanCommand(
+      this.#annotationModel,
+      begin,
+      end,
+      newText
     )
   }
 }
