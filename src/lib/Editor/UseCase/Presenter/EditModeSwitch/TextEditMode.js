@@ -49,9 +49,13 @@ export default class TextEditMode extends EditMode {
                 )
                 alert(`selection: ${targetText}`)
 
-                this.#commander.factory
-                  .changeTextAndMoveSpanCommand(begin, end, 'foo bar baz')
-                  .execute()
+                const command =
+                  this.#commander.factory.changeTextAndMoveSpanCommand(
+                    begin,
+                    end,
+                    'foo bar baz'
+                  )
+                this.#commander.invoke(command)
               }
             }
           }
