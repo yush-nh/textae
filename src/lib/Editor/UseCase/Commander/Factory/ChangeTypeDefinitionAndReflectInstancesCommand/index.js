@@ -2,7 +2,7 @@ import CompositeCommand from '../CompositeCommand'
 import createChangeConfigCommand from '../createChangeConfigCommand'
 import createChangeAnnotationCommands from './createChangeAnnotationCommands'
 
-export default class ChangeTypeDefinitionAndRefectInstancesCommand extends CompositeCommand {
+export default class ChangeTypeDefinitionAndReflectInstancesCommand extends CompositeCommand {
   constructor(
     annotationModel,
     definitionContainer,

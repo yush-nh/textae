@@ -4,7 +4,7 @@ import ChangeAttributeDefinitionAndReflectInstancesCommand from './ChangeAttribu
 import ChangeAttributeObjOfItemsCommand from './ChangeAttributeObjOfItemsCommand'
 import ChangeStringAttributeObjOfItemsCommand from './ChangeStringAttributeObjOfItemsCommand'
 import ChangeTypeValuesCommand from './ChangeTypeValuesCommand'
-import ChangeTypeDefinitionAndRefectInstancesCommand from './ChangeTypeDefinitionAndRefectInstancesCommand'
+import ChangeTypeDefinitionAndReflectInstancesCommand from './ChangeTypeDefinitionAndReflectInstancesCommand'
 import ChangeTypeOfSelectedItemsCommand from './ChangeTypeOfSelectedItemsCommand'
 import ChangeValueOfAttributeDefinitionAndObjectOfAttributeCommand from './ChangeValueOfAttributeDefinitionAndObjectOfAttributeCommand'
 import CreateAttributeDefinitionCommand from './CreateAttributeDefinitionCommand'
@@ -102,7 +102,7 @@ export default class Factory {
     id,
     changedProperties
   ) {
-    return new ChangeTypeDefinitionAndRefectInstancesCommand(
+    return new ChangeTypeDefinitionAndReflectInstancesCommand(
       this.#annotationModel,
       definitionContainer,
       annotationType,
