@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.1.1](https://github.com/pubannotation/textae/compare/v13.1.0...v13.1.1) (2024-06-18)
+
+
+### Bug Fixes
+
+* Attribute labels displayed when editing a relation's attributes are broken ([aaa3744](https://github.com/pubannotation/textae/commit/aaa37440995d0f9da9b2fa6284eab14ac4d66c83))
+
 ## [13.1.0](https://github.com/pubannotation/textae/compare/v13.0.1...v13.1.0) (2024-06-17)
 
 
