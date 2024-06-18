@@ -15,14 +15,14 @@ export default class Clipboard {
     selectionModel,
     denotationDefinitionContainer,
     attributeDefinitionContainer,
-    typeDefinition
+    typeDictionary
   ) {
     this._eventEmitter = eventEmitter
     this._commander = commander
     this._selectionModel = selectionModel
     this._denotationDefinitionContainer = denotationDefinitionContainer
     this._attributeDefinitionContainer = attributeDefinitionContainer
-    this._typeDefinition = typeDefinition
+    this._typeDictionary = typeDictionary
 
     // This list stores two types of things: type for copy and entity for cut.
     // Only one type is stored at a time.
@@ -160,7 +160,7 @@ export default class Clipboard {
       const newAttrDefContainer = new AttributeDefinitionContainer()
       newAttrDefContainer.definedTypes = data.config['attribute types']
 
-      if (this._typeDefinition.isLock) {
+      if (this._typeDictionary.isLock) {
         const typeValuesList = data.typeValues.map(
           ({ obj, attributes }) =>
             new TypeValues(

@@ -7,8 +7,8 @@ export default function (
   annotationModel,
   changedProperties
 ) {
-  // The palette also displays instance types other than type in the typeDefinition,
-  // so modified type may not be in the typeDefinition.
+  // The palette also displays instance types other than type in the typeDictionary,
+  // so modified type may not be in the typeDictionary.
   if (definitionContainer.has(id)) {
     return new ChangeTypeDefinitionCommand(
       annotationModel,

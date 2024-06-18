@@ -54,7 +54,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       this.#relationInstanceContainer,
       this.#namespaceInstanceContainer,
       this.#typeGap,
-      this.#annotationModel.typeDefinition,
+      this.#annotationModel.typeDictionary,
       span,
       denotation.obj,
       this.#toolBarHeight,
@@ -83,7 +83,7 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       this.#relationInstanceContainer,
       this.#namespaceInstanceContainer,
       this.#typeGap,
-      this.#annotationModel.typeDefinition,
+      this.#annotationModel.typeDictionary,
       span,
       newValue.typeName,
       this.#toolBarHeight

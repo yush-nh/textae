@@ -61,7 +61,7 @@ export default class PropertyEditor {
       this.#annotationType,
       this.#palletName,
       this.#definitionContainer,
-      this.#annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDictionary.attribute,
       this.#getAutocompletionWs(),
       selectedItems,
       this.#pallet,

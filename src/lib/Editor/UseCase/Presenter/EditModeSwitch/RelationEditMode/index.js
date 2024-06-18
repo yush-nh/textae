@@ -26,14 +26,14 @@ export default class RelationEditMode extends EditMode {
     super()
 
     const getAutocompletionWs = () =>
-      autocompletionWs || annotationModel.typeDefinition.autocompletionWs
+      autocompletionWs || annotationModel.typeDictionary.autocompletionWs
 
     const relationPallet = new TypeValuesPallet(
       editorHTMLElement,
       eventEmitter,
-      annotationModel.typeDefinition,
+      annotationModel.typeDictionary,
       annotationModel.attributeInstanceContainer,
-      annotationModel.typeDefinition.relation,
+      annotationModel.typeDictionary.relation,
       selectionModel.relation,
       commander,
       'Relation configuration',
@@ -44,7 +44,7 @@ export default class RelationEditMode extends EditMode {
       relationPallet,
       commander,
       getAutocompletionWs,
-      annotationModel.typeDefinition.relation,
+      annotationModel.typeDictionary.relation,
       'relation',
       selectionModel,
       annotationModel
@@ -62,7 +62,7 @@ export default class RelationEditMode extends EditMode {
       editorHTMLElement,
       selectionModel,
       commander,
-      annotationModel.typeDefinition,
+      annotationModel.typeDictionary,
       relationPallet
     )
 
@@ -72,7 +72,7 @@ export default class RelationEditMode extends EditMode {
       relationPallet,
       'Relation',
       mousePoint,
-      annotationModel.typeDefinition.relation,
+      annotationModel.typeDictionary.relation,
       annotationModel,
       'Relation',
       getAutocompletionWs
@@ -81,7 +81,7 @@ export default class RelationEditMode extends EditMode {
 
     const attributeEditor = new AttributeEditor(
       commander,
-      annotationModel.typeDefinition,
+      annotationModel.typeDictionary,
       selectionModel.relation,
       new SelectionAttributePallet(editorHTMLElement, mousePoint),
       () => this.editProperties(),

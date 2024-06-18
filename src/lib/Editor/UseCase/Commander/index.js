@@ -65,7 +65,7 @@ export default class Commander {
       this._eventEmitter,
       this._annotationModel,
       this._selectionModel,
-      this._annotationModel.typeDefinition
+      this._annotationModel.typeDictionary
     )
   }
 }

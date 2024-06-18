@@ -11,7 +11,7 @@ import toBlocks from './toBlocks'
 import getReplicationRanges from './getReplicationRanges'
 import TypeGap from './TypeGap'
 import createTextBox from './createTextBox'
-import TypeDefinition from './TypeDefinition'
+import TypeDictionary from './TypeDictionary'
 import DefinitionContainer from './DefinitionContainer'
 import AttributeDefinitionContainer from '../AttributeDefinitionContainer'
 import getAnnotationBox from './getAnnotationBox'
@@ -27,7 +27,7 @@ export default class AnnotationModel {
   #entityInstanceContainer
   #relationInstanceContainer
   #attributeInstanceContainer
-  #typeDefinition
+  #typeDictionary
   #editorHTMLElement
   #eventEmitter
 
@@ -120,7 +120,7 @@ export default class AnnotationModel {
       () => this.#entityInstanceContainer.blocks,
       '#77DDDD'
     )
-    this.#typeDefinition = new TypeDefinition(
+    this.#typeDictionary = new TypeDictionary(
       eventEmitter,
       this.denotationDefinitionContainer,
       blockDefinitionContainer,
@@ -193,7 +193,7 @@ export default class AnnotationModel {
   reset(rawData, config) {
     console.assert(rawData.text, 'This is not a json file of annotations.')
 
-    this.#typeDefinition.setTypeConfig(config)
+    this.#typeDictionary.setTypeConfig(config)
     this.#sourceDoc = rawData.text
     this.#textBox.render(this.sourceDoc)
 
@@ -254,8 +254,8 @@ export default class AnnotationModel {
     return this.#sourceDoc.replaceAll(/\r\n/g, ' \n')
   }
 
-  get typeDefinition() {
-    return this.#typeDefinition
+  get typeDictionary() {
+    return this.#typeDictionary
   }
 
   get spanInstanceContainer() {

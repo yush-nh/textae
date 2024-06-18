@@ -1,6 +1,6 @@
 import Observable from 'observ'
 
-export default class TypeDefinition {
+export default class TypeDictionary {
   /**
    *
    * @param {import('../AttributeDefinitionContainer').default} attribute

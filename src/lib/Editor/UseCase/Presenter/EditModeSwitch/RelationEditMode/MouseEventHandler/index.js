@@ -6,20 +6,20 @@ export default class MouseEventHandler {
   #editorHTMLElement
   #selectionModel
   #commander
-  #typeDefinition
+  #typeDictionary
   #pallet
 
   constructor(
     editorHTMLElement,
     selectionModel,
     commander,
-    typeDefinition,
+    typeDictionary,
     pallet
   ) {
     this.#editorHTMLElement = editorHTMLElement
     this.#selectionModel = selectionModel
     this.#commander = commander
-    this.#typeDefinition = typeDefinition
+    this.#typeDictionary = typeDictionary
     this.#pallet = pallet
   }
 
@@ -87,7 +87,7 @@ export default class MouseEventHandler {
     typeValuesClicked(
       this.#selectionModel,
       this.#commander,
-      this.#typeDefinition.relation,
+      this.#typeDictionary.relation,
       event,
       entityID
     )

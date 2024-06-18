@@ -12,7 +12,7 @@ export default class MenuState {
   #pushButtons
   #annotationModelEventsObserver
   #originalData
-  #typeDefinition
+  #typeDictionary
   #functionAvailability
   #mode
 
@@ -22,7 +22,7 @@ export default class MenuState {
     clipBoard,
     annotationModelEventsObserver,
     originalData,
-    typeDefinition,
+    typeDictionary,
     functionAvailability
   ) {
     this.#enableState = new EnableState(eventEmitter, selectionModel, clipBoard)
@@ -33,7 +33,7 @@ export default class MenuState {
 
     this.#originalData = originalData
 
-    this.#typeDefinition = typeDefinition
+    this.#typeDictionary = typeDictionary
 
     this.#functionAvailability = functionAvailability
 
@@ -141,7 +141,7 @@ export default class MenuState {
   get diffOfConfiguration() {
     return diff(this.#originalData.configuration, {
       ...this.#originalData.configuration,
-      ...this.#typeDefinition.config
+      ...this.#typeDictionary.config
     })
   }
 

@@ -42,7 +42,7 @@ export default class Factory {
 
   addValueToAttributeDefinitionCommand(attributeDefinition, value) {
     return new AddValueToAttributeDefinitionCommand(
-      this.#annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDictionary.attribute,
       attributeDefinition,
       value
     )
@@ -52,7 +52,7 @@ export default class Factory {
     return new ChangeAttributeDefinitionAndReflectInstancesCommand(
       this.#eventEmitter,
       this.#annotationModel,
-      this.#annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDictionary.attribute,
       attributeDefinition,
       changedProperties
     )
@@ -77,7 +77,7 @@ export default class Factory {
     return new ChangeStringAttributeObjOfItemsCommand(
       this.#eventEmitter,
       this.#annotationModel,
-      this.#annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDictionary.attribute,
       items,
       attributeDefinition,
       newObj,
@@ -128,7 +128,7 @@ export default class Factory {
     return new ChangeValueOfAttributeDefinitionAndObjectOfAttributeCommand(
       this.#eventEmitter,
       this.#annotationModel,
-      this.#annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDictionary.attribute,
       attributeDefinition,
       index,
       value
@@ -137,7 +137,7 @@ export default class Factory {
 
   createAttributeDefinitionCommand(attributeDefinition) {
     return new CreateAttributeDefinitionCommand(
-      this.#annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDictionary.attribute,
       attributeDefinition
     )
   }
@@ -158,7 +158,7 @@ export default class Factory {
       this.#selectionModel,
       newSpan.begin,
       newSpan.end,
-      this.#annotationModel.typeDefinition.block.defaultType
+      this.#annotationModel.typeDictionary.block.defaultType
     )
   }
 
@@ -185,7 +185,7 @@ export default class Factory {
       this.#annotationModel,
       this.#selectionModel,
       newSpan,
-      this.#annotationModel.typeDefinition.denotation.defaultType,
+      this.#annotationModel.typeDictionary.denotation.defaultType,
       isReplicateAuto,
       isDelimiterFunc
     )
@@ -197,14 +197,14 @@ export default class Factory {
 
   deleteAttributeDefinitionCommand(attributeDefinition) {
     return new DeleteAttributeDefinitionCommand(
-      this.#annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDictionary.attribute,
       attributeDefinition
     )
   }
 
   moveAttributeDefinitionCommand(oldIndex, newIndex) {
     return new MoveAttributeDefinitionCommand(
-      this.#annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDictionary.attribute,
       oldIndex,
       newIndex
     )
@@ -283,7 +283,7 @@ export default class Factory {
 
   removeValueFromAttributeDefinitionCommand(attributeDefinition, index) {
     return new RemoveValueFromAttributeDefinitionCommand(
-      this.#annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDictionary.attribute,
       attributeDefinition,
       index
     )

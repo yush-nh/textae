@@ -35,7 +35,7 @@ export default class ChangeTypeNameAndAttributeOfSelectedItemsCommand extends Co
     )
 
     for (const { pred, obj, label } of attributes) {
-      const definitionContainer = annotationModel.typeDefinition.attribute
+      const definitionContainer = annotationModel.typeDictionary.attribute
       const attrDef = definitionContainer.get(pred)
       const commnad = getAddPatternToStringAttributeDefinitionCommand(
         definitionContainer,

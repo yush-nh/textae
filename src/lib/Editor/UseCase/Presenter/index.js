@@ -128,7 +128,7 @@ export default class Presenter {
   createEntity() {
     const command =
       this.#commander.factory.createDefaultTypeEntityToSelectedSpansCommand(
-        this.#annotationModel.typeDefinition.denotation.defaultType
+        this.#annotationModel.typeDictionary.denotation.defaultType
       )
 
     if (!command.isEmpty) {
@@ -166,7 +166,7 @@ export default class Presenter {
 
   showSettingDialog() {
     new SettingDialog(
-      this.#annotationModel.typeDefinition,
+      this.#annotationModel.typeDictionary,
       this.#annotationModel.typeGap,
       this.#annotationModel.textBox
     ).open()

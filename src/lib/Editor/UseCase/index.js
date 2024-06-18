@@ -54,7 +54,7 @@ export default class UseCase {
       selectionModel,
       annotationModel.denotationDefinitionContainer,
       annotationModel.attributeInstanceContainerDefinitionContainer,
-      annotationModel.typeDefinition
+      annotationModel.typeDictionary
     )
     const originalData = new OriginalData(
       eventEmitter,
@@ -74,7 +74,7 @@ export default class UseCase {
       clipBoard,
       annotationModelEventsObserver,
       originalData,
-      annotationModel.typeDefinition,
+      annotationModel.typeDictionary,
       functionAvailability
     )
     const presenter = new Presenter(

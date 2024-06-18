@@ -34,14 +34,14 @@ export default class BlockEditMode extends EditMode {
     super()
 
     const getAutocompletionWs = () =>
-      autocompletionWs || annotationModel.typeDefinition.autocompletionWs
+      autocompletionWs || annotationModel.typeDictionary.autocompletionWs
 
     const blockPallet = new TypeValuesPallet(
       editorHTMLElement,
       eventEmitter,
-      annotationModel.typeDefinition,
+      annotationModel.typeDictionary,
       annotationModel.attributeInstanceContainer,
-      annotationModel.typeDefinition.block,
+      annotationModel.typeDictionary.block,
       selectionModel.entity,
       commander,
       'Block configuration',
@@ -52,7 +52,7 @@ export default class BlockEditMode extends EditMode {
       blockPallet,
       commander,
       getAutocompletionWs,
-      annotationModel.typeDefinition.block,
+      annotationModel.typeDictionary.block,
       'entity',
       selectionModel,
       annotationModel
@@ -89,7 +89,7 @@ export default class BlockEditMode extends EditMode {
       blockPallet,
       'Block',
       mousePoint,
-      annotationModel.typeDefinition.block,
+      annotationModel.typeDictionary.block,
       annotationModel,
       'Entity',
       getAutocompletionWs
@@ -104,7 +104,7 @@ export default class BlockEditMode extends EditMode {
 
     const attributeEditor = new AttributeEditor(
       commander,
-      annotationModel.typeDefinition,
+      annotationModel.typeDictionary,
       selectionModel.entity,
       new SelectionAttributePallet(editorHTMLElement, mousePoint),
       () => this.editProperties(),

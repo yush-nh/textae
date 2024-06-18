@@ -124,7 +124,7 @@ export default class PersistenceInterface {
     // Merge with the original config and save the value unchanged in the editor.
     const editedConfig = {
       ...this.#getOriginalConfig(),
-      ...this.#annotationModel.typeDefinition.config
+      ...this.#annotationModel.typeDictionary.config
     }
 
     new SaveConfigurationDialog(
@@ -142,7 +142,7 @@ export default class PersistenceInterface {
       ...this.#getOriginalAnnotation(),
       ...this.#annotationModel.externalFormat,
       ...{
-        config: this.#annotationModel.typeDefinition.config
+        config: this.#annotationModel.typeDictionary.config
       }
     }
 

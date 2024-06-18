@@ -16,7 +16,7 @@ export default class EntityInstance {
   #relationInstanceContainer
   #namespaceInstanceContainer
   #typeGap
-  #typeDefinition
+  #typeDictionary
   #toolBarHeight
   #isSelected = false
   #isHovered = false
@@ -37,7 +37,7 @@ export default class EntityInstance {
     relationInstanceContainer,
     namespaceInstanceContainer,
     typeGap,
-    typeDefinition,
+    typeDictionary,
     span,
     typeName,
     toolBarHeight,
@@ -48,7 +48,7 @@ export default class EntityInstance {
     this.#attributeInstanceContainer = attributeInstanceContainer
     this.#relationInstanceContainer = relationInstanceContainer
     this.#typeGap = typeGap
-    this.#typeDefinition = typeDefinition
+    this.#typeDictionary = typeDictionary
     this.#namespaceInstanceContainer = namespaceInstanceContainer
     this.#toolBarHeight = toolBarHeight
 
@@ -430,9 +430,9 @@ export default class EntityInstance {
   /** @return {import('./AnnotationModel/DefinitionContainer/index.js').default} */
   get #definitionContainer() {
     if (this.isDenotation) {
-      return this.#typeDefinition.denotation
+      return this.#typeDictionary.denotation
     } else if (this.isBlock) {
-      return this.#typeDefinition.block
+      return this.#typeDictionary.block
     } else {
       throw 'unknown entity type'
     }

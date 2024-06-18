@@ -6,13 +6,13 @@ export default class AttributeEditor {
   #commander
   #selectionModelItems
   #selectionAttributePallet
-  #typeDefinition
+  #typeDictionary
   #editProperties
   #typeValuesPallet
 
   constructor(
     commander,
-    typeDefinition,
+    typeDictionary,
     selectionModelItems,
     selectionAttributePallet,
     editProperties,
@@ -21,7 +21,7 @@ export default class AttributeEditor {
     this.#commander = commander
     this.#selectionModelItems = selectionModelItems
     this.#selectionAttributePallet = selectionAttributePallet
-    this.#typeDefinition = typeDefinition
+    this.#typeDictionary = typeDictionary
     this.#editProperties = editProperties
     this.#typeValuesPallet = typeValuesPallet
   }
@@ -35,7 +35,7 @@ export default class AttributeEditor {
   }
 
   #deleteAt(number) {
-    const attrDef = this.#typeDefinition.attribute.getAttributeAt(number)
+    const attrDef = this.#typeDictionary.attribute.getAttributeAt(number)
 
     if (!attrDef) {
       alertifyjs.warning(`Attribute No.${number} is not defined`)
@@ -57,7 +57,7 @@ export default class AttributeEditor {
   #addOrEditAt(number) {
     this.#selectionAttributePallet.hide()
 
-    const attrDef = this.#typeDefinition.attribute.getAttributeAt(number)
+    const attrDef = this.#typeDictionary.attribute.getAttributeAt(number)
 
     if (!attrDef) {
       alertifyjs.warning(`Attribute No.${number} is not defined`)

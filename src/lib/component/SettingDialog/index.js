@@ -5,19 +5,19 @@ import packageJson from '../../../../package.json'
 import template from './template'
 
 export default class SettingDialog extends Dialog {
-  constructor(typeDefinition, typeGap, textBox) {
+  constructor(typeDictionary, typeGap, textBox) {
     const contentHtml = template({
       typeGapDisabled: !typeGap.show,
       typeGap: typeGap.value,
       lineHeight: textBox.lineHeight,
-      typeDefinitionLocked: typeDefinition.isLock,
+      typeDictionaryLocked: typeDictionary.isLock,
       version: packageJson.version
     })
 
     super('Setting', contentHtml)
 
     // Reflects configuration changes in real time.
-    reflectImmediately(super.el, typeGap, typeDefinition, textBox)
+    reflectImmediately(super.el, typeGap, typeDictionary, textBox)
 
     // Observe enter key press
     delegate(super.el, `.textae-editor__dialog`, 'keyup', (e) => {

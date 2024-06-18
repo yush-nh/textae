@@ -5,7 +5,7 @@ export default function template(context) {
     typeGap,
     typeGapDisabled,
     lineHeight,
-    typeDefinitionLocked,
+    typeDictionaryLocked,
     version
   } = context
 
@@ -35,7 +35,7 @@ export default function template(context) {
       <input
         type="checkbox"
         class="textae-editor__setting-dialog__lock-config-text"
-        ${typeDefinitionLocked ? `checked="checked"` : ''}>
+        ${typeDictionaryLocked ? `checked="checked"` : ''}>
       Lock Edit Config
     </label>
   </div>

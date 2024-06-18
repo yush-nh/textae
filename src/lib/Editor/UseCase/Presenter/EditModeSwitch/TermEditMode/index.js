@@ -34,14 +34,14 @@ export default class TermEditMode extends EditMode {
     super()
 
     const getAutocompletionWs = () =>
-      autocompletionWs || annotationModel.typeDefinition.autocompletionWs
+      autocompletionWs || annotationModel.typeDictionary.autocompletionWs
 
     const denotationPallet = new TypeValuesPallet(
       editorHTMLElement,
       eventEmitter,
-      annotationModel.typeDefinition,
+      annotationModel.typeDictionary,
       annotationModel.attributeInstanceContainer,
-      annotationModel.typeDefinition.denotation,
+      annotationModel.typeDictionary.denotation,
       selectionModel.entity,
       commander,
       'Term configuration',
@@ -52,7 +52,7 @@ export default class TermEditMode extends EditMode {
       denotationPallet,
       commander,
       getAutocompletionWs,
-      annotationModel.typeDefinition.denotation,
+      annotationModel.typeDictionary.denotation,
       'entity',
       selectionModel,
       annotationModel
@@ -89,7 +89,7 @@ export default class TermEditMode extends EditMode {
       denotationPallet,
       'Entity',
       mousePoint,
-      annotationModel.typeDefinition.denotation,
+      annotationModel.typeDictionary.denotation,
       annotationModel,
       'Denotation',
       getAutocompletionWs
@@ -104,7 +104,7 @@ export default class TermEditMode extends EditMode {
 
     const attributeEditor = new AttributeEditor(
       commander,
-      annotationModel.typeDefinition,
+      annotationModel.typeDictionary,
       selectionModel.entity,
       new SelectionAttributePallet(editorHTMLElement, mousePoint),
       () => this.editProperties(),

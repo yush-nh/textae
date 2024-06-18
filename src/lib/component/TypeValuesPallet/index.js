@@ -5,7 +5,7 @@ import createContentHtml from './createContentHtml'
 import enableDrag from './enableDrag'
 
 export default class TypeValuesPallet extends Pallet {
-  #typeDefinition
+  #typeDictionary
   #attributeInstanceContainer
   #definitionContainer
   #selectionModelItems
@@ -14,13 +14,13 @@ export default class TypeValuesPallet extends Pallet {
 
   /**
    *
-   * @param {import('../../Editor/AnnotationModel/TypeDefinition').default} typeDefinition
+   * @param {import('../../Editor/AnnotationModel/TypeDictionary').TypeDictionayr} typeDictionary
    * @param {import('../../Editor/AttributeDefinitionContainer').default} attributeInstanceContainer
    */
   constructor(
     editorHTMLElement,
     eventEmitter,
-    typeDefinition,
+    typeDictionary,
     attributeInstanceContainer,
     definitionContainer,
     selectionModelEntity,
@@ -31,7 +31,7 @@ export default class TypeValuesPallet extends Pallet {
   ) {
     super(editorHTMLElement, title, mousePoint)
 
-    this.#typeDefinition = typeDefinition
+    this.#typeDictionary = typeDictionary
     this.#attributeInstanceContainer = attributeInstanceContainer
     this.#definitionContainer = definitionContainer
     this.#selectionModelItems = selectionModelEntity
@@ -168,17 +168,17 @@ export default class TypeValuesPallet extends Pallet {
       this.#menuState.diffOfConfiguration,
       this.#selectedPred,
       this.#selectionModelItems,
-      this.#typeDefinition.attribute,
+      this.#typeDictionary.attribute,
       this.#attributeInstanceContainer.all,
-      this.#typeDefinition.isLock
+      this.#typeDictionary.isLock
     )
   }
 
   get attrDef() {
-    return this.#typeDefinition.attribute.get(this.#selectedPred)
+    return this.#typeDictionary.attribute.get(this.#selectedPred)
   }
 
   get #attributeDefinitions() {
-    return this.#typeDefinition.attribute.attributes
+    return this.#typeDictionary.attribute.attributes
   }
 }
