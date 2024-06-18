@@ -1,6 +1,6 @@
 import { CreateCommand } from './commandTemplate'
 import AddValueToAttributeDefinitionCommand from './AddValueToAttributeDefinitionCommand'
-import ChangeAttributeDefinitionAndRefectInstancesCommand from './ChangeAttributeDefinitionAndRefectInstancesCommand'
+import ChangeAttributeDefinitionAndReflectInstancesCommand from './ChangeAttributeDefinitionAndReflectInstancesCommand'
 import ChangeAttributeObjOfItemsCommand from './ChangeAttributeObjOfItemsCommand'
 import ChangeStringAttributeObjOfItemsCommand from './ChangeStringAttributeObjOfItemsCommand'
 import ChangeTypeValuesCommand from './ChangeTypeValuesCommand'
@@ -49,7 +49,7 @@ export default class Factory {
   }
 
   changeAttributeDefinitionCommand(attributeDefinition, changedProperties) {
-    return new ChangeAttributeDefinitionAndRefectInstancesCommand(
+    return new ChangeAttributeDefinitionAndReflectInstancesCommand(
       this.#eventEmitter,
       this.#annotationModel,
       this.#annotationModel.typeDefinition.attribute,
