@@ -1,22 +1,41 @@
 import forwardMethods from '../../../forwardMethods'
 import bindPalletEvents from './EditMode/bindPalletEvents'
+import TypeValuesPallet from '../../../../component/TypeValuesPallet'
 
 export default class PalletWrapper {
   #pallet
 
   constructor(
-    pallet,
-    commander,
-    getAutocompletionWs,
+    editorHTMLElement,
+    eventEmitter,
+    typeDictionary,
+    attributeInstanceContainer,
     definitionContainer,
+    selectionModelEntity,
+    commander,
+    title,
+    menuState,
+    mousePoint,
+    getAutocompletionWs,
     annotationType,
     selectionModel,
     annotationModel
   ) {
-    this.#pallet = pallet
+    this.#pallet = new TypeValuesPallet(
+      editorHTMLElement,
+      eventEmitter,
+      typeDictionary,
+      attributeInstanceContainer,
+      definitionContainer,
+      selectionModelEntity,
+      commander,
+      title,
+      menuState,
+      mousePoint
+    )
 
     bindPalletEvents(
-      pallet,
+      this.#pallet,
       commander,
       getAutocompletionWs,
       definitionContainer,
@@ -25,7 +44,7 @@ export default class PalletWrapper {
       annotationModel
     )
 
-    forwardMethods(this, () => pallet, [
+    forwardMethods(this, () => this.#pallet, [
       'showPallet',
       'selectLeftAttributeTab',
       'selectRightAttributeTab'

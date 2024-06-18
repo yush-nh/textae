@@ -1,7 +1,6 @@
 import MouseEventHandler from './MouseEventHandler'
 import SpanEditor from './SpanEditor'
 import EditMode from '../EditMode'
-import TypeValuesPallet from '../../../../../component/TypeValuesPallet'
 import isRangeInTextBox from '../isRangeInTextBox'
 import SelectionWrapper from '../SelectionWrapper'
 import AttributeEditor from '../AttributeEditor'
@@ -36,7 +35,7 @@ export default class TermEditMode extends EditMode {
     const getAutocompletionWs = () =>
       autocompletionWs || annotationModel.typeDictionary.autocompletionWs
 
-    const denotationPallet = new TypeValuesPallet(
+    const pallet = new PalletWrapper(
       editorHTMLElement,
       eventEmitter,
       annotationModel.typeDictionary,
@@ -46,13 +45,8 @@ export default class TermEditMode extends EditMode {
       commander,
       'Term configuration',
       menuState,
-      mousePoint
-    )
-    const pallet = new PalletWrapper(
-      denotationPallet,
-      commander,
+      mousePoint,
       getAutocompletionWs,
-      annotationModel.typeDictionary.denotation,
       'entity',
       selectionModel,
       annotationModel
@@ -79,14 +73,14 @@ export default class TermEditMode extends EditMode {
       editorHTMLElement,
       annotationModel,
       selectionModel,
-      denotationPallet,
+      this.#pallet,
       spanEditor
     )
 
     this.#propertyEditor = new PropertyEditor(
       editorHTMLElement,
       commander,
-      denotationPallet,
+      this.#pallet,
       'Entity',
       mousePoint,
       annotationModel.typeDictionary.denotation,
@@ -108,7 +102,7 @@ export default class TermEditMode extends EditMode {
       selectionModel.entity,
       new SelectionAttributePallet(editorHTMLElement, mousePoint),
       () => this.editProperties(),
-      denotationPallet
+      this.#pallet
     )
     forwardMethods(this, () => attributeEditor, ['manipulateAttribute'])
   }
