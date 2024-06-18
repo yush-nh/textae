@@ -28,8 +28,7 @@ export default class PalletWrapper {
     forwardMethods(this, () => pallet, [
       'showPallet',
       'selectLeftAttributeTab',
-      'selectRightAttributeTab',
-      'visibility'
+      'selectRightAttributeTab'
     ])
   }
 

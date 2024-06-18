@@ -64,7 +64,7 @@ export default class TermEditMode extends EditMode {
       'selectLeftAttributeTab',
       'selectRightAttributeTab'
     ])
-    this.#pallet = pallet
+    this.#pallet = denotationPallet
 
     const spanEditor = new SpanEditor(
       editorHTMLElement,
