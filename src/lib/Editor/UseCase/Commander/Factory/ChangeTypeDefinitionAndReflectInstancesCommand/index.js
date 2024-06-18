@@ -13,7 +13,7 @@ export default class ChangeTypeDefinitionAndReflectInstancesCommand extends Comp
     super()
 
     // change config
-    const changeConfigcommands = [
+    const changeConfigCommands = [
       createChangeConfigCommand(
         definitionContainer,
         id,
@@ -33,7 +33,7 @@ export default class ChangeTypeDefinitionAndReflectInstancesCommand extends Comp
       )
     }
 
-    this._subCommands = changeConfigcommands.concat(changAnnotationCommands)
+    this._subCommands = changeConfigCommands.concat(changAnnotationCommands)
     this._logMessage = `set ${[...changedProperties.entries()].map(
       ([id, val]) => `${id}:${val}`
     )} to type definition ${id}`
