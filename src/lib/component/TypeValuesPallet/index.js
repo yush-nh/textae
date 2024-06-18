@@ -113,6 +113,10 @@ export default class TypeValuesPallet extends Pallet {
     this.show()
   }
 
+  hidePallet() {
+    this.hide()
+  }
+
   show() {
     this.#selectedPred = null
     super.show()

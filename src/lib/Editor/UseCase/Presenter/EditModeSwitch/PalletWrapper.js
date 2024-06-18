@@ -19,7 +19,8 @@ export default class PalletWrapper {
     getAutocompletionWs,
     annotationType,
     selectionModel,
-    annotationModel
+    annotationModel,
+    delegator
   ) {
     this.#pallet = new TypeValuesPallet(
       editorHTMLElement,
@@ -44,22 +45,21 @@ export default class PalletWrapper {
       annotationModel
     )
 
-    forwardMethods(this, () => this.#pallet, [
+    forwardMethods(delegator, () => this.#pallet, [
       'showPallet',
+      'hidePallet',
       'selectLeftAttributeTab',
       'selectRightAttributeTab'
     ])
-  }
 
-  hidePallet() {
-    this.#pallet.hide()
-  }
-
-  appendTo(editorHTMLElement) {
-    editorHTMLElement.appendChild(this.#pallet.el)
+    this.#appendTo(editorHTMLElement)
   }
 
   get pallet() {
     return this.#pallet
+  }
+
+  #appendTo(editorHTMLElement) {
+    editorHTMLElement.appendChild(this.#pallet.el)
   }
 }

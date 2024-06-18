@@ -41,15 +41,9 @@ export default class RelationEditMode extends EditMode {
       getAutocompletionWs,
       'relation',
       selectionModel,
-      annotationModel
+      annotationModel,
+      this
     )
-    pallet.appendTo(editorHTMLElement)
-    forwardMethods(this, () => pallet, [
-      'showPallet',
-      'hidePallet',
-      'selectLeftAttributeTab',
-      'selectRightAttributeTab'
-    ])
     this.#pallet = pallet.pallet
 
     this.#mouseEventHandler = new MouseEventHandler(

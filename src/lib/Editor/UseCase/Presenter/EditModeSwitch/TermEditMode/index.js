@@ -49,15 +49,9 @@ export default class TermEditMode extends EditMode {
       getAutocompletionWs,
       'entity',
       selectionModel,
-      annotationModel
+      annotationModel,
+      this
     )
-    pallet.appendTo(editorHTMLElement)
-    forwardMethods(this, () => pallet, [
-      'showPallet',
-      'hidePallet',
-      'selectLeftAttributeTab',
-      'selectRightAttributeTab'
-    ])
     this.#pallet = pallet.pallet
 
     const spanEditor = new SpanEditor(
