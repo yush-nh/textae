@@ -202,7 +202,7 @@ export default class Factory {
     )
   }
 
-  moveAttributeDefintionComannd(oldIndex, newIndex) {
+  moveAttributeDefinitionCommand(oldIndex, newIndex) {
     return new MoveAttributeDefinitionCommand(
       this.#annotationModel.typeDefinition.attribute,
       oldIndex,

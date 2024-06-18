@@ -24,7 +24,7 @@ export default function (el, commander) {
     const newIndex = parseInt(e.target.dataset.index)
 
     commander.invoke(
-      commander.factory.moveAttributeDefintionComannd(
+      commander.factory.moveAttributeDefinitionCommand(
         oldIndex,
         oldIndex < newIndex ? newIndex - 1 : newIndex
       )
