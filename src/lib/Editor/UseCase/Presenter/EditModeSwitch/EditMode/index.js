@@ -1,6 +1,44 @@
 import forwardMethods from '../../../../forwardMethods'
 import bindPalletEvents from './bindPalletEvents'
 
+class PalletWrapper {
+  #pallet
+
+  constructor(
+    pallet,
+    commander,
+    getAutocompletionWs,
+    definitionContainer,
+    annotationType,
+    selectionModel,
+    annotationModel
+  ) {
+    this.#pallet = pallet
+
+    bindPalletEvents(
+      pallet,
+      commander,
+      getAutocompletionWs,
+      definitionContainer,
+      annotationType,
+      selectionModel,
+      annotationModel
+    )
+
+    forwardMethods(this, () => pallet, [
+      'showPallet',
+      'selectLeftAttributeTab',
+      'selectRightAttributeTab',
+      'hide',
+      'visibility'
+    ])
+  }
+
+  appendTo(editorHTMLElement) {
+    editorHTMLElement.appendChild(this.#pallet.el)
+  }
+}
+
 export default class EditMode {
   #pallet
 
@@ -15,9 +53,7 @@ export default class EditMode {
     pallet = null
   ) {
     if (pallet) {
-      this.#pallet = pallet
-
-      bindPalletEvents(
+      const palletWrapper = new PalletWrapper(
         pallet,
         commander,
         getAutocompletionWs,
@@ -26,14 +62,15 @@ export default class EditMode {
         selectionModel,
         annotationModel
       )
+      palletWrapper.appendTo(editorHTMLElement)
 
-      editorHTMLElement.appendChild(pallet.el)
-
-      forwardMethods(this, () => pallet, [
+      forwardMethods(this, () => palletWrapper, [
         'showPallet',
         'selectLeftAttributeTab',
         'selectRightAttributeTab'
       ])
+
+      this.#pallet = palletWrapper
     }
   }
 
