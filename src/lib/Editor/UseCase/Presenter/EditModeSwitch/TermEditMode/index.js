@@ -55,16 +55,7 @@ export default class TermEditMode extends EditMode {
       annotationModel
     )
 
-    super(
-      editorHTMLElement,
-      annotationModel,
-      selectionModel,
-      commander,
-      getAutocompletionWs,
-      annotationModel.typeDefinition.denotation,
-      'entity',
-      pallet
-    )
+    super(editorHTMLElement, pallet)
 
     const spanEditor = new SpanEditor(
       editorHTMLElement,

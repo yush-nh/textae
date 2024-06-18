@@ -55,16 +55,7 @@ export default class BlockEditMode extends EditMode {
       annotationModel
     )
 
-    super(
-      editorHTMLElement,
-      annotationModel,
-      selectionModel,
-      commander,
-      getAutocompletionWs,
-      annotationModel.typeDefinition.block,
-      'entity',
-      pallet
-    )
+    super(editorHTMLElement, pallet)
 
     const spanEditor = new SpanEditor(
       editorHTMLElement,

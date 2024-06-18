@@ -3,16 +3,7 @@ import forwardMethods from '../../../../forwardMethods'
 export default class EditMode {
   #pallet
 
-  constructor(
-    editorHTMLElement,
-    annotationModel,
-    selectionModel,
-    commander,
-    getAutocompletionWs,
-    definitionContainer,
-    annotationType,
-    pallet = null
-  ) {
+  constructor(editorHTMLElement, pallet = null) {
     if (pallet) {
       pallet.appendTo(editorHTMLElement)
 

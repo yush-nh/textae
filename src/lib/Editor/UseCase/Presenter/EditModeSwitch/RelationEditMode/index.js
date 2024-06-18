@@ -47,16 +47,7 @@ export default class RelationEditMode extends EditMode {
       annotationModel
     )
 
-    super(
-      editorHTMLElement,
-      annotationModel,
-      selectionModel,
-      commander,
-      getAutocompletionWs,
-      annotationModel.typeDefinition.relation,
-      'relation',
-      pallet
-    )
+    super(editorHTMLElement, pallet)
 
     this.#mouseEventHandler = new MouseEventHandler(
       editorHTMLElement,
