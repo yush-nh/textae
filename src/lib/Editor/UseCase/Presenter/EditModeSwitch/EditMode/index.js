@@ -1,35 +1,5 @@
-import forwardMethods from '../../../../forwardMethods'
-
 export default class EditMode {
-  #pallet
-
-  constructor(editorHTMLElement, pallet = null) {
-    if (pallet) {
-      pallet.appendTo(editorHTMLElement)
-
-      forwardMethods(this, () => pallet, [
-        'showPallet',
-        'selectLeftAttributeTab',
-        'selectRightAttributeTab'
-      ])
-
-      this.#pallet = pallet
-    }
-  }
-
-  hidePallet() {
-    if (!this.#pallet) return
-
-    this.#pallet.hide()
-  }
-
-  get isPalletShown() {
-    if (!this.#pallet) return false
-
-    return this.#pallet.visibility
-  }
-
-  // Dummy functions
+  // Interface methods
   createSpanWithTouchDevice() {}
   expandSpanWithTouchDevice() {}
   shrinkSpanWithTouchDevice() {}
@@ -38,4 +8,8 @@ export default class EditMode {
   relationBollardClicked() {}
   applyTextSelectionWithTouchDevice() {}
   manipulateAttribute() {}
+  hidePallet() {}
+  get isPalletShown() {
+    return false
+  }
 }

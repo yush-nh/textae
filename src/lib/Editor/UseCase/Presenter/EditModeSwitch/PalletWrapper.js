@@ -29,9 +29,12 @@ export default class PalletWrapper {
       'showPallet',
       'selectLeftAttributeTab',
       'selectRightAttributeTab',
-      'hide',
       'visibility'
     ])
+  }
+
+  hidePallet() {
+    this.#pallet.hide()
   }
 
   appendTo(editorHTMLElement) {

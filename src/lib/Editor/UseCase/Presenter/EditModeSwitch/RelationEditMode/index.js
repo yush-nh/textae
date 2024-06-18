@@ -11,6 +11,7 @@ export default class RelationEditMode extends EditMode {
   #mouseEventHandler
   #propertyEditor
   #selectionModel
+  #pallet
 
   constructor(
     editorHTMLElement,
@@ -22,6 +23,8 @@ export default class RelationEditMode extends EditMode {
     menuState,
     mousePoint
   ) {
+    super()
+
     const getAutocompletionWs = () =>
       autocompletionWs || annotationModel.typeDefinition.autocompletionWs
 
@@ -46,8 +49,14 @@ export default class RelationEditMode extends EditMode {
       selectionModel,
       annotationModel
     )
-
-    super(editorHTMLElement, pallet)
+    pallet.appendTo(editorHTMLElement)
+    forwardMethods(this, () => pallet, [
+      'showPallet',
+      'hidePallet',
+      'selectLeftAttributeTab',
+      'selectRightAttributeTab'
+    ])
+    this.#pallet = pallet
 
     this.#mouseEventHandler = new MouseEventHandler(
       editorHTMLElement,
@@ -87,6 +96,10 @@ export default class RelationEditMode extends EditMode {
 
   editProperties() {
     this.#propertyEditor.startEditing(this.#selectionModel.relation)
+  }
+
+  get isPalletShown() {
+    return this.#pallet.visibility
   }
 
   relationClicked(event, relation) {

@@ -18,6 +18,7 @@ export default class BlockEditMode extends EditMode {
   #propertyEditor
   #selectionModel
   #menuState
+  #pallet
 
   constructor(
     editorHTMLElement,
@@ -30,6 +31,8 @@ export default class BlockEditMode extends EditMode {
     autocompletionWs,
     mousePoint
   ) {
+    super()
+
     const getAutocompletionWs = () =>
       autocompletionWs || annotationModel.typeDefinition.autocompletionWs
 
@@ -54,8 +57,14 @@ export default class BlockEditMode extends EditMode {
       selectionModel,
       annotationModel
     )
-
-    super(editorHTMLElement, pallet)
+    pallet.appendTo(editorHTMLElement)
+    forwardMethods(this, () => pallet, [
+      'showPallet',
+      'hidePallet',
+      'selectLeftAttributeTab',
+      'selectRightAttributeTab'
+    ])
+    this.#pallet = pallet
 
     const spanEditor = new SpanEditor(
       editorHTMLElement,
@@ -108,6 +117,14 @@ export default class BlockEditMode extends EditMode {
     return this.#mouseEventHandler.bind()
   }
 
+  editProperties() {
+    this.#propertyEditor.startEditing(this.#selectionModel.entity)
+  }
+
+  get isPalletShown() {
+    return this.#pallet.visibility
+  }
+
   createSpanWithTouchDevice() {
     this.#spanEditor.cerateSpanForTouchDevice()
   }
@@ -139,9 +156,5 @@ export default class BlockEditMode extends EditMode {
         false
       )
     }
-  }
-
-  editProperties() {
-    this.#propertyEditor.startEditing(this.#selectionModel.entity)
   }
 }
