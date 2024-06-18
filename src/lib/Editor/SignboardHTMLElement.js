@@ -65,7 +65,7 @@ export default class SignboardHTMLElement {
       attributeElement.remove()
     }
     for (const a of this.#instance.attributes) {
-      typeValues.insertAdjacentHTML('beforeend', a.contentHTML)
+      typeValues.insertAdjacentHTML('beforeend', anemone`${a.contentHTML}`)
     }
   }
 
