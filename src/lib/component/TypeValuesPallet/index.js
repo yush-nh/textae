@@ -5,6 +5,14 @@ import createContentHtml from './createContentHtml'
 import enableDrag from './enableDrag'
 
 export default class TypeValuesPallet extends Pallet {
+  #eventEmitter
+  #typeDefinition
+  #attributeInstanceContainer
+  #definitionContainer
+  #selectionModelItems
+  #menuState
+  #selectedPred
+
   /**
    *
    * @param {import('../../Editor/AnnotationModel/TypeDefinition').default} typeDefinition
@@ -24,12 +32,12 @@ export default class TypeValuesPallet extends Pallet {
   ) {
     super(editorHTMLElement, title, mousePoint)
 
-    this._eventEmitter = eventEmitter
-    this._typeDefinition = typeDefinition
-    this._attributeInstanceContainer = attributeInstanceContainer
-    this._definitionContainer = definitionContainer
-    this._selectionModelItems = selectionModelEntity
-    this._menuState = menuState
+    this.#eventEmitter = eventEmitter
+    this.#typeDefinition = typeDefinition
+    this.#attributeInstanceContainer = attributeInstanceContainer
+    this.#definitionContainer = definitionContainer
+    this.#selectionModelItems = selectionModelEntity
+    this.#menuState = menuState
 
     delegate(this._el, `.textae-editor__pallet__import-button`, 'click', () =>
       eventEmitter.emit('textae-event.pallet.import-button.click')
@@ -108,71 +116,71 @@ export default class TypeValuesPallet extends Pallet {
   }
 
   show() {
-    this._selectedPred = null
+    this.#selectedPred = null
     super.show()
     enableDrag(this._el, this)
   }
 
   showAttribute(pred) {
-    this._selectedPred = pred
+    this.#selectedPred = pred
     this.updateDisplay()
   }
 
   selectLeftAttributeTab() {
-    // Ignore when type is seleceted.
-    if (this._selectedPred) {
+    // Ignore when type is selected.
+    if (this.#selectedPred) {
       // Select type when the first attribute selected.
-      if (this._selectedIndex === 0) {
+      if (this.#selectedIndex === 0) {
         this.showAttribute()
       } else {
         this.showAttribute(
-          this._attributeDefinitions[this._selectedIndex - 1].pred
+          this.#attributeDefinitions[this.#selectedIndex - 1].pred
         )
       }
     }
   }
 
   selectRightAttributeTab() {
-    if (this._selectedPred) {
+    if (this.#selectedPred) {
       // Ignore when the last attribute is selected.
-      if (this._selectedIndex === this._attributeDefinitions.length - 1) {
+      if (this.#selectedIndex === this.#attributeDefinitions.length - 1) {
         return
       }
 
       this.showAttribute(
-        this._attributeDefinitions[this._selectedIndex + 1].pred
+        this.#attributeDefinitions[this.#selectedIndex + 1].pred
       )
     } else {
       // Select the first attribute when type selected.
-      if (this._attributeDefinitions.length) {
-        this.showAttribute(this._attributeDefinitions[0].pred)
+      if (this.#attributeDefinitions.length) {
+        this.showAttribute(this.#attributeDefinitions[0].pred)
       }
     }
   }
 
-  get _selectedIndex() {
-    return this._attributeDefinitions.findIndex(
-      (attribute) => attribute.pred === this._selectedPred
+  get #selectedIndex() {
+    return this.#attributeDefinitions.findIndex(
+      (attribute) => attribute.pred === this.#selectedPred
     )
   }
 
   get _content() {
     return createContentHtml(
-      this._definitionContainer.pallet,
-      this._menuState.diffOfConfiguration,
-      this._selectedPred,
-      this._selectionModelItems,
-      this._typeDefinition.attribute,
-      this._attributeInstanceContainer.all,
-      this._typeDefinition.isLock
+      this.#definitionContainer.pallet,
+      this.#menuState.diffOfConfiguration,
+      this.#selectedPred,
+      this.#selectionModelItems,
+      this.#typeDefinition.attribute,
+      this.#attributeInstanceContainer.all,
+      this.#typeDefinition.isLock
     )
   }
 
   get attrDef() {
-    return this._typeDefinition.attribute.get(this._selectedPred)
+    return this.#typeDefinition.attribute.get(this.#selectedPred)
   }
 
-  get _attributeDefinitions() {
-    return this._typeDefinition.attribute.attributes
+  get #attributeDefinitions() {
+    return this.#typeDefinition.attribute.attributes
   }
 }
