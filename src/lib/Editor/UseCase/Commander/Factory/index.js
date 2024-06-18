@@ -28,16 +28,21 @@ import RemoveValueFromAttributeDefinitionCommand from './RemoveValueFromAttribut
 import ToggleFlagAttributeToItemsCommand from './ToggleFlagAttributeToItemsCommand'
 
 export default class Factory {
+  #editorID
+  #eventEmitter
+  #annotationModel
+  #selectionModel
+
   constructor(editorID, eventEmitter, annotationModel, selectionModel) {
-    this._editorID = editorID
-    this._eventEmitter = eventEmitter
-    this._annotationModel = annotationModel
-    this._selectionModel = selectionModel
+    this.#editorID = editorID
+    this.#eventEmitter = eventEmitter
+    this.#annotationModel = annotationModel
+    this.#selectionModel = selectionModel
   }
 
   addValueToAttributeDefinitionCommand(attributeDefinition, value) {
     return new AddValueToAttributeDefinitionCommand(
-      this._annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDefinition.attribute,
       attributeDefinition,
       value
     )
@@ -45,9 +50,9 @@ export default class Factory {
 
   changeAttributeDefinitionCommand(attributeDefinition, changedProperties) {
     return new ChangeAttributeDefinitionAndRefectInstancesCommand(
-      this._eventEmitter,
-      this._annotationModel,
-      this._annotationModel.typeDefinition.attribute,
+      this.#eventEmitter,
+      this.#annotationModel,
+      this.#annotationModel.typeDefinition.attribute,
       attributeDefinition,
       changedProperties
     )
@@ -55,8 +60,8 @@ export default class Factory {
 
   changeAttributeObjOfItemsCommand(items, attributeDefinition, newObj) {
     return new ChangeAttributeObjOfItemsCommand(
-      this._eventEmitter,
-      this._annotationModel,
+      this.#eventEmitter,
+      this.#annotationModel,
       items,
       attributeDefinition,
       newObj
@@ -70,9 +75,9 @@ export default class Factory {
     newLabel
   ) {
     return new ChangeStringAttributeObjOfItemsCommand(
-      this._eventEmitter,
-      this._annotationModel,
-      this._annotationModel.typeDefinition.attribute,
+      this.#eventEmitter,
+      this.#annotationModel,
+      this.#annotationModel.typeDefinition.attribute,
       items,
       attributeDefinition,
       newObj,
@@ -82,8 +87,8 @@ export default class Factory {
 
   changeTypeValuesCommand(label, value, definitionContainer, attributes) {
     return new ChangeTypeValuesCommand(
-      this._annotationModel,
-      this._selectionModel,
+      this.#annotationModel,
+      this.#selectionModel,
       label,
       value,
       definitionContainer,
@@ -98,7 +103,7 @@ export default class Factory {
     changedProperties
   ) {
     return new ChangeTypeDefinitionAndRefectInstancesCommand(
-      this._annotationModel,
+      this.#annotationModel,
       definitionContainer,
       annotationType,
       id,
@@ -108,8 +113,8 @@ export default class Factory {
 
   changeTypeOfSelectedItemsCommand(annotationType, newType) {
     return new ChangeTypeOfSelectedItemsCommand(
-      this._annotationModel,
-      this._selectionModel,
+      this.#annotationModel,
+      this.#selectionModel,
       annotationType,
       newType
     )
@@ -121,9 +126,9 @@ export default class Factory {
     value
   ) {
     return new ChangeValueOfAttributeDefinitionAndObjectOfAttributeCommand(
-      this._eventEmitter,
-      this._annotationModel,
-      this._annotationModel.typeDefinition.attribute,
+      this.#eventEmitter,
+      this.#annotationModel,
+      this.#annotationModel.typeDefinition.attribute,
       attributeDefinition,
       index,
       value
@@ -132,14 +137,14 @@ export default class Factory {
 
   createAttributeDefinitionCommand(attributeDefinition) {
     return new CreateAttributeDefinitionCommand(
-      this._annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDefinition.attribute,
       attributeDefinition
     )
   }
 
   createAttributeToItemsCommand(items, attributeDefinition, obj = null) {
     return new CreateAttributeToItemsCommand(
-      this._annotationModel,
+      this.#annotationModel,
       items,
       attributeDefinition,
       obj
@@ -148,39 +153,39 @@ export default class Factory {
 
   createBlockSpanCommand(newSpan) {
     return new CreateBlockSpanCommand(
-      this._editorID,
-      this._annotationModel,
-      this._selectionModel,
+      this.#editorID,
+      this.#annotationModel,
+      this.#selectionModel,
       newSpan.begin,
       newSpan.end,
-      this._annotationModel.typeDefinition.block.defaultType
+      this.#annotationModel.typeDefinition.block.defaultType
     )
   }
 
   createDefaultTypeEntityToSelectedSpansCommand(typeName) {
     return new CreateDefaultTypeEntityToSelectedSpansCommand(
-      this._annotationModel,
-      this._selectionModel,
+      this.#annotationModel,
+      this.#selectionModel,
       typeName
     )
   }
 
   createRelationCommand(relation) {
     return new CreateCommand(
-      this._annotationModel,
+      this.#annotationModel,
       'relation',
       relation,
-      this._selectionModel
+      this.#selectionModel
     )
   }
 
   createSpanAndAutoReplicateCommand(newSpan, isReplicateAuto, isDelimiterFunc) {
     return new CreateSpanAndAutoReplicateCommand(
-      this._editorID,
-      this._annotationModel,
-      this._selectionModel,
+      this.#editorID,
+      this.#annotationModel,
+      this.#selectionModel,
       newSpan,
-      this._annotationModel.typeDefinition.denotation.defaultType,
+      this.#annotationModel.typeDefinition.denotation.defaultType,
       isReplicateAuto,
       isDelimiterFunc
     )
@@ -192,26 +197,26 @@ export default class Factory {
 
   deleteAttributeDefinitionCommand(attributeDefinition) {
     return new DeleteAttributeDefinitionCommand(
-      this._annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDefinition.attribute,
       attributeDefinition
     )
   }
 
   moveAttributeDefintionComannd(oldIndex, newIndex) {
     return new MoveAttributeDefinitionCommand(
-      this._annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDefinition.attribute,
       oldIndex,
       newIndex
     )
   }
 
   moveBlockSpanCommand(spanId, begin, end) {
-    return new MoveBlockSpanCommand(this._annotationModel, spanId, begin, end)
+    return new MoveBlockSpanCommand(this.#annotationModel, spanId, begin, end)
   }
 
   moveDenotationSpanCommand(spanId, begin, end) {
     return new MoveDenotationSpanCommand(
-      this._annotationModel,
+      this.#annotationModel,
       spanId,
       begin,
       end
@@ -220,8 +225,8 @@ export default class Factory {
 
   moveEntitiesToSelectedSpanCommand(entities) {
     return new MoveEntitiesToSelectedSpanCommand(
-      this._annotationModel,
-      this._selectionModel,
+      this.#annotationModel,
+      this.#selectionModel,
       entities
     )
   }
@@ -233,8 +238,8 @@ export default class Factory {
     newSelectionAttributeObjects = []
   ) {
     return new PasteTypesToSelectedSpansCommand(
-      this._annotationModel,
-      this._selectionModel,
+      this.#annotationModel,
+      this.#selectionModel,
       typeValuesList,
       newTypes,
       attrDefs,
@@ -244,9 +249,9 @@ export default class Factory {
 
   replicateSpanCommand(span, typeValuesList, isDelimiterFunc) {
     return new ReplicateSpanCommand(
-      this._editorID,
-      this._annotationModel,
-      this._selectionModel,
+      this.#editorID,
+      this.#annotationModel,
+      this.#selectionModel,
       span,
       typeValuesList,
       isDelimiterFunc
@@ -255,20 +260,20 @@ export default class Factory {
 
   removeAttributesFromItemsByPredCommand(items, attributeDefinition) {
     return new RemoveAttributesFromItemsByPredCommand(
-      this._annotationModel,
+      this.#annotationModel,
       items,
       attributeDefinition
     )
   }
 
   removeSpanCommand(id) {
-    return new RemoveSpanCommand(this._annotationModel, id)
+    return new RemoveSpanCommand(this.#annotationModel, id)
   }
 
   removeSelectedCommand() {
     return new RemoveSelectedCommand(
-      this._annotationModel,
-      this._selectionModel
+      this.#annotationModel,
+      this.#selectionModel
     )
   }
 
@@ -278,7 +283,7 @@ export default class Factory {
 
   removeValueFromAttributeDefinitionCommand(attributeDefinition, index) {
     return new RemoveValueFromAttributeDefinitionCommand(
-      this._annotationModel.typeDefinition.attribute,
+      this.#annotationModel.typeDefinition.attribute,
       attributeDefinition,
       index
     )
@@ -286,7 +291,7 @@ export default class Factory {
 
   toggleFlagAttributeToItemsCommand(items, attributeDefinition) {
     return new ToggleFlagAttributeToItemsCommand(
-      this._annotationModel,
+      this.#annotationModel,
       items,
       attributeDefinition
     )
