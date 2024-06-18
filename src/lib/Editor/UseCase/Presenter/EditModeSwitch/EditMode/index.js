@@ -1,5 +1,4 @@
 import forwardMethods from '../../../../forwardMethods'
-import PalletWrapper from '../PalletWrapper'
 
 export default class EditMode {
   #pallet
@@ -15,24 +14,15 @@ export default class EditMode {
     pallet = null
   ) {
     if (pallet) {
-      const palletWrapper = new PalletWrapper(
-        pallet,
-        commander,
-        getAutocompletionWs,
-        definitionContainer,
-        annotationType,
-        selectionModel,
-        annotationModel
-      )
-      palletWrapper.appendTo(editorHTMLElement)
+      pallet.appendTo(editorHTMLElement)
 
-      forwardMethods(this, () => palletWrapper, [
+      forwardMethods(this, () => pallet, [
         'showPallet',
         'selectLeftAttributeTab',
         'selectRightAttributeTab'
       ])
 
-      this.#pallet = palletWrapper
+      this.#pallet = pallet
     }
   }
 

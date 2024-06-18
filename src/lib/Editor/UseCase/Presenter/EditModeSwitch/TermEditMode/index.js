@@ -8,6 +8,7 @@ import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
 import PropertyEditor from '../EditMode/PropertyEditor'
 import forwardMethods from '../../../../forwardMethods'
+import PalletWrapper from '../PalletWrapper'
 
 export default class TermEditMode extends EditMode {
   #mouseEventHandler
@@ -29,6 +30,9 @@ export default class TermEditMode extends EditMode {
     autocompletionWs,
     mousePoint
   ) {
+    const getAutocompletionWs = () =>
+      autocompletionWs || annotationModel.typeDefinition.autocompletionWs
+
     const denotationPallet = new TypeValuesPallet(
       editorHTMLElement,
       eventEmitter,
@@ -41,9 +45,15 @@ export default class TermEditMode extends EditMode {
       menuState,
       mousePoint
     )
-
-    const getAutocompletionWs = () =>
-      autocompletionWs || annotationModel.typeDefinition.autocompletionWs
+    const pallet = new PalletWrapper(
+      denotationPallet,
+      commander,
+      getAutocompletionWs,
+      annotationModel.typeDefinition.denotation,
+      'entity',
+      selectionModel,
+      annotationModel
+    )
 
     super(
       editorHTMLElement,
@@ -53,7 +63,7 @@ export default class TermEditMode extends EditMode {
       getAutocompletionWs,
       annotationModel.typeDefinition.denotation,
       'entity',
-      denotationPallet
+      pallet
     )
 
     const spanEditor = new SpanEditor(

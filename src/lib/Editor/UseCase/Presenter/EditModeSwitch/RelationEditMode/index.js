@@ -5,6 +5,7 @@ import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
 import PropertyEditor from '../EditMode/PropertyEditor'
 import forwardMethods from '../../../../forwardMethods'
+import PalletWrapper from '../PalletWrapper'
 
 export default class RelationEditMode extends EditMode {
   #mouseEventHandler
@@ -21,6 +22,9 @@ export default class RelationEditMode extends EditMode {
     menuState,
     mousePoint
   ) {
+    const getAutocompletionWs = () =>
+      autocompletionWs || annotationModel.typeDefinition.autocompletionWs
+
     const relationPallet = new TypeValuesPallet(
       editorHTMLElement,
       eventEmitter,
@@ -33,9 +37,15 @@ export default class RelationEditMode extends EditMode {
       menuState,
       mousePoint
     )
-
-    const getAutocompletionWs = () =>
-      autocompletionWs || annotationModel.typeDefinition.autocompletionWs
+    const pallet = new PalletWrapper(
+      relationPallet,
+      commander,
+      getAutocompletionWs,
+      annotationModel.typeDefinition.relation,
+      'relation',
+      selectionModel,
+      annotationModel
+    )
 
     super(
       editorHTMLElement,
@@ -45,7 +55,7 @@ export default class RelationEditMode extends EditMode {
       getAutocompletionWs,
       annotationModel.typeDefinition.relation,
       'relation',
-      relationPallet
+      pallet
     )
 
     this.#mouseEventHandler = new MouseEventHandler(
