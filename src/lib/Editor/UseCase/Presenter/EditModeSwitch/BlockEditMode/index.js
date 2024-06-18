@@ -64,7 +64,7 @@ export default class BlockEditMode extends EditMode {
       'selectLeftAttributeTab',
       'selectRightAttributeTab'
     ])
-    this.#pallet = blockPallet
+    this.#pallet = pallet.pallet
 
     const spanEditor = new SpanEditor(
       editorHTMLElement,

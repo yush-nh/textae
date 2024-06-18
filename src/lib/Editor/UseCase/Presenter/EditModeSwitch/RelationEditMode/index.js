@@ -56,7 +56,7 @@ export default class RelationEditMode extends EditMode {
       'selectLeftAttributeTab',
       'selectRightAttributeTab'
     ])
-    this.#pallet = relationPallet
+    this.#pallet = pallet.pallet
 
     this.#mouseEventHandler = new MouseEventHandler(
       editorHTMLElement,

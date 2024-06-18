@@ -39,4 +39,8 @@ export default class PalletWrapper {
   appendTo(editorHTMLElement) {
     editorHTMLElement.appendChild(this.#pallet.el)
   }
+
+  get pallet() {
+    return this.#pallet
+  }
 }
