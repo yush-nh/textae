@@ -17,7 +17,6 @@ export default class BlockEditMode extends EditMode {
   #propertyEditor
   #selectionModel
   #menuState
-  #attributeEditor
 
   constructor(
     editorHTMLElement,
