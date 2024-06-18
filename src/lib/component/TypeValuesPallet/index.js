@@ -5,7 +5,6 @@ import createContentHtml from './createContentHtml'
 import enableDrag from './enableDrag'
 
 export default class TypeValuesPallet extends Pallet {
-  #eventEmitter
   #typeDefinition
   #attributeInstanceContainer
   #definitionContainer
@@ -32,7 +31,6 @@ export default class TypeValuesPallet extends Pallet {
   ) {
     super(editorHTMLElement, title, mousePoint)
 
-    this.#eventEmitter = eventEmitter
     this.#typeDefinition = typeDefinition
     this.#attributeInstanceContainer = attributeInstanceContainer
     this.#definitionContainer = definitionContainer
