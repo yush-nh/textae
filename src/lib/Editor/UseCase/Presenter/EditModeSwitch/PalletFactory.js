@@ -3,9 +3,7 @@ import bindPalletEvents from './EditMode/bindPalletEvents'
 import TypeValuesPallet from '../../../../component/TypeValuesPallet'
 
 export default class PalletWrapper {
-  #pallet
-
-  constructor(
+  static create(
     editorHTMLElement,
     eventEmitter,
     typeDictionary,
@@ -22,7 +20,7 @@ export default class PalletWrapper {
     annotationModel,
     delegator
   ) {
-    this.#pallet = new TypeValuesPallet(
+    const pallet = new TypeValuesPallet(
       editorHTMLElement,
       eventEmitter,
       typeDictionary,
@@ -36,7 +34,7 @@ export default class PalletWrapper {
     )
 
     bindPalletEvents(
-      this.#pallet,
+      pallet,
       commander,
       getAutocompletionWs,
       definitionContainer,
@@ -45,21 +43,19 @@ export default class PalletWrapper {
       annotationModel
     )
 
-    forwardMethods(delegator, () => this.#pallet, [
+    forwardMethods(delegator, () => pallet, [
       'showPallet',
       'hidePallet',
       'selectLeftAttributeTab',
       'selectRightAttributeTab'
     ])
 
-    this.#appendTo(editorHTMLElement)
+    this.#appendTo(editorHTMLElement, pallet)
+
+    return pallet
   }
 
-  get pallet() {
-    return this.#pallet
-  }
-
-  #appendTo(editorHTMLElement) {
-    editorHTMLElement.appendChild(this.#pallet.el)
+  static #appendTo(editorHTMLElement, pallet) {
+    editorHTMLElement.appendChild(pallet.el)
   }
 }
