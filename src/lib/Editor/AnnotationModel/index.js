@@ -198,6 +198,7 @@ export default class AnnotationModel {
     this.#textBox.render(this.sourceDoc)
 
     clearAnnotationModel(this)
+    getAnnotationBox(this.#editorHTMLElement).innerHTML = ''
 
     const annotationEvaluator = new AnnotationEvaluator(this, rawData)
     annotationEvaluator.eval()
@@ -391,8 +392,6 @@ export default class AnnotationModel {
   }
 
   #clearAndDrawAllAnnotations() {
-    getAnnotationBox(this.#editorHTMLElement).innerHTML = ''
-
     this.#textBox.updateLineHeight()
 
     this.#spanInstanceContainer.renderAll()
