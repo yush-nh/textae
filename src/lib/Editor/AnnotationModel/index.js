@@ -287,8 +287,11 @@ export default class AnnotationModel {
 
   changeTextBetween(begin, end, newText) {
     this.#sourceDoc = `${this.#sourceDoc.slice(0, begin)}${newText}${this.#sourceDoc.slice(end)}`
+    const offset = newText.length - (end - begin)
+    this.#spanInstanceContainer.offsetSpans(begin, end, offset)
+
     this.#textBox.render(this.sourceDoc)
-    this.#spanInstanceContainer.renderAll()
+    this.#drawAllAnnotations()
   }
 
   get #selectedText() {

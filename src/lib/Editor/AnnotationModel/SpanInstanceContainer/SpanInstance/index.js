@@ -92,6 +92,11 @@ export default class SpanInstance {
     this.#entities.delete(entity)
   }
 
+  offset(begin, end) {
+    this._begin += begin
+    this._end += end
+  }
+
   severTies() {
     // Reset parent
     this._parent = null

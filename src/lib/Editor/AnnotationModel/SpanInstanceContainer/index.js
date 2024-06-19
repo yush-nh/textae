@@ -368,6 +368,24 @@ export default class SpanInstanceContainer {
     }
   }
 
+  offsetSpans(begin, end, offset) {
+    for (const span of this.all) {
+      if (span.end <= begin) {
+        // No effect on the span of this section.
+        continue
+      } else if (span.end <= end) {
+        // Span movement in this section is prohibited.
+        continue
+      } else if (end < span.begin) {
+        // Change both the begin and end of the span
+        span.offset(offset, offset)
+      } else {
+        // Change the end of the span
+        span.offset(0, offset)
+      }
+    }
+  }
+
   #hasBlockSpanBetween(begin, end, option = {}) {
     for (const blockSpan of this.#blocks.values()) {
       if (
