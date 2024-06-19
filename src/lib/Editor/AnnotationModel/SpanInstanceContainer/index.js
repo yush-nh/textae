@@ -361,6 +361,12 @@ export default class SpanInstanceContainer {
     }
   }
 
+  renderAll() {
+    for (const span of this.children) {
+      span.render()
+    }
+  }
+
   #hasBlockSpanBetween(begin, end, option = {}) {
     for (const blockSpan of this.#blocks.values()) {
       if (

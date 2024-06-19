@@ -394,10 +394,7 @@ export default class AnnotationModel {
     getAnnotationBox(this.#editorHTMLElement).innerHTML = ''
 
     this.#textBox.updateLineHeight()
-
-    for (const span of this.#spanInstanceContainer.children) {
-      span.render()
-    }
+    this.#spanInstanceContainer.renderAll()
 
     // Reflects the addition and deletion of line breaks by span.
     this.#textBox.forceUpdate()
