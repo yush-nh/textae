@@ -13,6 +13,8 @@ export default class ReplicateSpanCommand extends CompositeCommand {
   ) {
     super()
 
+    console.log(span)
+
     this._subCommands = annotationModel
       .getReplicationRanges(span, isDelimiterFunc)
       .map(({ begin, end }) => {
@@ -27,10 +29,6 @@ export default class ReplicateSpanCommand extends CompositeCommand {
           typeValuesList
         )
       })
-    this._logMessage = `from span: ${makeDenotationSpanHTMLElementID(
-      editorID,
-      span.begin,
-      span.end
-    )}`
+    this._logMessage = `from span: ${span.id}`
   }
 }
