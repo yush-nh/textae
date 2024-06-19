@@ -189,18 +189,6 @@ export default class AnnotationModel {
     this.#eventEmitter = eventEmitter
   }
 
-  #clearAnnotationModel() {
-    // Clear data models.
-    this.#spanInstanceContainer.clear()
-    this.#entityInstanceContainer.clear()
-    this.#attributeInstanceContainer.clear()
-    this.#relationInstanceContainer.clear()
-    this.#namespaceInstanceContainer.clear()
-
-    // Clear rendered annotations.
-    getAnnotationBox(this.#editorHTMLElement).innerHTML = ''
-  }
-
   reset(rawData, config) {
     console.assert(rawData.text, 'This is not a json file of annotations.')
 
@@ -208,7 +196,7 @@ export default class AnnotationModel {
     this.#sourceDoc = rawData.text
     this.#textBox.render(this.sourceDoc)
 
-    this.#clearAnnotationModel()
+    this.#clear()
 
     const annotationEvaluator = new AnnotationEvaluator(this, rawData)
     annotationEvaluator.eval()
@@ -428,5 +416,17 @@ export default class AnnotationModel {
         relation.redrawLineConsideringSelection()
       }
     }
+  }
+
+  #clear() {
+    // Clear data models.
+    this.#spanInstanceContainer.clear()
+    this.#entityInstanceContainer.clear()
+    this.#attributeInstanceContainer.clear()
+    this.#relationInstanceContainer.clear()
+    this.#namespaceInstanceContainer.clear()
+
+    // Clear rendered annotations.
+    getAnnotationBox(this.#editorHTMLElement).innerHTML = ''
   }
 }
