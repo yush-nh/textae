@@ -15,7 +15,7 @@ export default class PasteTypesToSelectedDenotationSpansCommand extends Composit
   ) {
     super()
 
-    const selectedSpans = selectionModel.span.all.map((span) => span.id)
+    const selectedSpans = selectionModel.span.all
     this._subCommands = []
 
     for (const newType of newTypes) {
@@ -56,7 +56,11 @@ export default class PasteTypesToSelectedDenotationSpansCommand extends Composit
               new CreateEntityAndAttributesCommand(
                 annotationModel,
                 selectionModel,
-                span,
+                {
+                  spanType: 'denotation',
+                  begin: span.begin,
+                  end: span.end
+                },
                 typeValues.typeName,
                 typeValues.attributes
               )

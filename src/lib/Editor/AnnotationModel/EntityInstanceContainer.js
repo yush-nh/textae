@@ -74,11 +74,21 @@ export default class EntityInstanceContainer extends IdIssueContainer {
       return newValue
     }
 
-    if (!newValue.spanID) {
-      throw new Error(`entity has no spanID! ${JSON.stringify(newValue)}`)
+    if (
+      newValue.spanType === undefined ||
+      newValue.begin === undefined ||
+      newValue.end === undefined
+    ) {
+      throw new Error(
+        `entity has no span information! ${JSON.stringify(newValue)}`
+      )
     }
 
-    const span = this.#spanInstanceContainer.get(newValue.spanID)
+    const span = this.#spanInstanceContainer.find(
+      newValue.spanType,
+      newValue.begin,
+      newValue.end
+    )
     const newEntity = new EntityInstance(
       this.#editorID,
       this.#attributeInstanceContainer,

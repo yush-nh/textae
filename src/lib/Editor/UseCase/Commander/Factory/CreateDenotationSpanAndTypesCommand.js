@@ -32,7 +32,11 @@ export default class CreateDenotationSpanAndTypesCommand extends CompositeComman
           new CreateEntityAndAttributesCommand(
             annotationModel,
             selectionModel,
-            spanID,
+            {
+              spanType: 'denotation',
+              begin,
+              end
+            },
             typeValues.typeName,
             typeValues.attributes
           )

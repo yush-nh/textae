@@ -28,7 +28,7 @@ export default class CreateBlockCommand extends CompositeCommand {
     const createEntityCommand = new CreateEntityAndAttributesCommand(
       annotationModel,
       selectionModel,
-      spanId,
+      { spanType: 'block', begin, end },
       defaultType,
       []
     )
