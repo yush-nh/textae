@@ -175,6 +175,22 @@ export default class SpanInstanceContainer {
     }
   }
 
+  find(type, begin, end) {
+    switch (type) {
+      case 'denotation':
+        return this.#denotations.get(
+          makeDenotationSpanHTMLElementID(this.#editorID, begin, end)
+        )
+      case 'block':
+        return this.#blocks.get(
+          makeBlockSpanHTMLElementID(this.#editorID, begin, end)
+        )
+      default:
+        // Style span has no entity.
+        throw `${type} is unknown type span!`
+    }
+  }
+
   getStyle(spanID) {
     if (this.#styles.has(spanID)) {
       return this.#styles.get(spanID).styles

@@ -1,8 +1,5 @@
 import EntityInstance from '../EntityInstance'
-import {
-  makeDenotationSpanHTMLElementID,
-  makeBlockSpanHTMLElementID
-} from '../idFactory'
+
 import IdIssueContainer from './IdIssueContainer'
 
 export default class EntityInstanceContainer extends IdIssueContainer {
@@ -170,26 +167,11 @@ export default class EntityInstanceContainer extends IdIssueContainer {
   }
 
   #getSpan(type, denotation) {
-    return this.#spanInstanceContainer.get(this.#getSpanId(type, denotation))
-  }
-
-  #getSpanId(type, denotation) {
-    switch (type) {
-      case 'denotation':
-        return makeDenotationSpanHTMLElementID(
-          this.#editorID,
-          denotation.span.begin,
-          denotation.span.end
-        )
-      case 'block':
-        return makeBlockSpanHTMLElementID(
-          this.#editorID,
-          denotation.span.begin,
-          denotation.span.end
-        )
-      default:
-        throw `${type} is unknown type span!`
-    }
+    return this.#spanInstanceContainer.find(
+      type,
+      denotation.span.begin,
+      denotation.span.end
+    )
   }
 
   hasDenotation(denotationID) {
