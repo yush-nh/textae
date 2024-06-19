@@ -2,7 +2,6 @@ import CompositeCommand from './CompositeCommand'
 import CreateSpanAndTypesCommand from './CreateSpanAndTypesCommand'
 import ReplicateSpanCommand from './ReplicateSpanCommand'
 import TypeValues from '../../../../TypeValues'
-import { makeDenotationSpanHTMLElementID } from '../../../idFactory'
 
 const BLOCK_THRESHOLD = 100
 
@@ -20,17 +19,11 @@ export default class CreateSpanAndAutoReplicateCommand extends CompositeCommand 
 
     const typeValuesList = [new TypeValues(defaultType)]
 
-    const spanID = makeDenotationSpanHTMLElementID(
-      editorID,
-      newSpan.begin,
-      newSpan.end
-    )
-
     this._subCommands = [
       new CreateSpanAndTypesCommand(
         annotationModel,
         selectionModel,
-        spanID,
+        editorID,
         newSpan.begin,
         newSpan.end,
         typeValuesList
