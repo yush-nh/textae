@@ -1,4 +1,4 @@
-import CreateSpanAndTypesCommand from './CreateSpanAndTypesCommand'
+import CreateDenotationSpanAndTypesCommand from './CreateDenotationSpanAndTypesCommand'
 import CompositeCommand from './CompositeCommand'
 
 export default class ReplicateSpanCommand extends CompositeCommand {
@@ -17,7 +17,7 @@ export default class ReplicateSpanCommand extends CompositeCommand {
     this._subCommands = annotationModel
       .getReplicationRanges(span, isDelimiterFunc)
       .map(({ begin, end }) => {
-        return new CreateSpanAndTypesCommand(
+        return new CreateDenotationSpanAndTypesCommand(
           annotationModel,
           selectionModel,
           editorID,

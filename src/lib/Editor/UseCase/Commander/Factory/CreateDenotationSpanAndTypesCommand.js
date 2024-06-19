@@ -3,7 +3,7 @@ import { CreateCommand } from './commandTemplate'
 import CompositeCommand from './CompositeCommand'
 import CreateEntityAndAttributesCommand from './CreateEntityAndAttributesCommand'
 
-export default class CreateSpanAndTypesCommand extends CompositeCommand {
+export default class CreateDenotationSpanAndTypesCommand extends CompositeCommand {
   constructor(
     annotationModel,
     selectionModel,

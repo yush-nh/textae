@@ -1,5 +1,5 @@
 import CompositeCommand from './CompositeCommand'
-import CreateSpanAndTypesCommand from './CreateSpanAndTypesCommand'
+import CreateDenotationSpanAndTypesCommand from './CreateDenotationSpanAndTypesCommand'
 import ReplicateSpanCommand from './ReplicateSpanCommand'
 import TypeValues from '../../../../TypeValues'
 
@@ -20,7 +20,7 @@ export default class CreateSpanAndAutoReplicateCommand extends CompositeCommand 
     const typeValuesList = [new TypeValues(defaultType)]
 
     this._subCommands = [
-      new CreateSpanAndTypesCommand(
+      new CreateDenotationSpanAndTypesCommand(
         annotationModel,
         selectionModel,
         editorID,
