@@ -38,7 +38,7 @@ export default class CreateDenotationSpanAndTypesCommand extends CompositeComman
           )
       )
     )
-    this._logMessage = `span: ${spanID}, types: ${typeValuesList
+    this._logMessage = `span: ${begin}:${end}, types: ${typeValuesList
       .map(({ typeName }) => typeName)
       .join(', ')}`
   }
