@@ -237,14 +237,14 @@ export default class Clipboard {
   // but the value definition is missing, add the value definition.
   #getNewSelectionAttributeObjects(typeValuesList, newAttrDefContainer) {
     const newSelectionAttributeObjects = []
-    const selectionAttibutes = typeValuesList.reduce((list, typeValue) => {
+    const selectionAttributes = typeValuesList.reduce((list, typeValue) => {
       return list.concat(
         typeValue.attributes.filter(
           ({ pred }) => newAttrDefContainer.get(pred).valueType === 'selection'
         )
       )
     }, [])
-    for (const { pred, obj } of selectionAttibutes) {
+    for (const { pred, obj } of selectionAttributes) {
       if (this.#attributeDefinitionContainer.get(pred)) {
         if (
           !this.#attributeDefinitionContainer
