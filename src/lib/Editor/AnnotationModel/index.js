@@ -203,7 +203,7 @@ export default class AnnotationModel {
     const annotationEvaluator = new AnnotationEvaluator(this, rawData)
     annotationEvaluator.eval()
 
-    this.#clearAndDrawAllAnnotations()
+    this.#drawAllAnnotations()
 
     this.#eventEmitter.emit(
       'textae-event.annotation-data.all.change',
@@ -391,7 +391,7 @@ export default class AnnotationModel {
     span.focus()
   }
 
-  #clearAndDrawAllAnnotations() {
+  #drawAllAnnotations() {
     this.#textBox.updateLineHeight()
 
     this.#spanInstanceContainer.renderAll()
