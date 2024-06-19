@@ -4,6 +4,15 @@ import EntityInstance from '../../EntityInstance'
 import AttributeDefinitionContainer from '../../AttributeDefinitionContainer'
 
 export default class Clipboard {
+  #eventEmitter
+  #commander
+  #selectionModel
+  #denotationDefinitionContainer
+  #attributeDefinitionContainer
+  #typeDictionary
+  #items
+  #uuid
+
   /**
    * @param {import('../Commander').default} commander
    * @param {import('../../SelectionModel').default} selectionModel
@@ -17,53 +26,53 @@ export default class Clipboard {
     attributeDefinitionContainer,
     typeDictionary
   ) {
-    this._eventEmitter = eventEmitter
-    this._commander = commander
-    this._selectionModel = selectionModel
-    this._denotationDefinitionContainer = denotationDefinitionContainer
-    this._attributeDefinitionContainer = attributeDefinitionContainer
-    this._typeDictionary = typeDictionary
+    this.#eventEmitter = eventEmitter
+    this.#commander = commander
+    this.#selectionModel = selectionModel
+    this.#denotationDefinitionContainer = denotationDefinitionContainer
+    this.#attributeDefinitionContainer = attributeDefinitionContainer
+    this.#typeDictionary = typeDictionary
 
     // This list stores two types of things: type for copy and entity for cut.
     // Only one type is stored at a time.
     // Use one list.
-    this._items = []
-    this._uuid = uuidv4()
+    this.#items = []
+    this.#uuid = uuidv4()
 
     eventEmitter
       .on('textae-event.annotation-data.entity.remove', (entity) => {
         if (this.hasCuttingItem) {
-          this._updateItems(this._items.filter((e) => e != entity))
+          this.#updateItems(this.#items.filter((e) => e != entity))
         }
       })
-      .on('textae-event.edit-mode.transition', () => this._updateItems())
+      .on('textae-event.edit-mode.transition', () => this.#updateItems())
   }
 
   get hasCopyingItem() {
-    return this._items[0] instanceof TypeValues
+    return this.#items[0] instanceof TypeValues
   }
 
   get hasCuttingItem() {
-    return this._items[0] instanceof EntityInstance
+    return this.#items[0] instanceof EntityInstance
   }
 
   copyEntitiesToLocalClipboard() {
-    this._updateItems(this._selectionModel.copyingTargets)
+    this.#updateItems(this.#selectionModel.copyingTargets)
   }
 
   copyEntitiesToSystemClipboard(clipboardEvent) {
-    if (this._selectionModel.span.contains((s) => s.isBlock)) {
+    if (this.#selectionModel.span.contains((s) => s.isBlock)) {
       return
     }
 
-    const { copyingTargets } = this._selectionModel
+    const { copyingTargets } = this.#selectionModel
 
     if (copyingTargets.length > 0) {
-      const entityTypes = this._denotationDefinitionContainer.config.filter(
+      const entityTypes = this.#denotationDefinitionContainer.config.filter(
         ({ id }) => copyingTargets.some(({ typeName }) => typeName === id)
       )
 
-      const attributeTypes = this._attributeDefinitionContainer.config.filter(
+      const attributeTypes = this.#attributeDefinitionContainer.config.filter(
         ({ pred }) =>
           copyingTargets.some(({ attributes }) =>
             attributes.some((a) => a.pred === pred)
@@ -88,22 +97,22 @@ export default class Clipboard {
   }
 
   cutEntitiesToLocalClipboard() {
-    const { cuttingTargets } = this._selectionModel
+    const { cuttingTargets } = this.#selectionModel
 
     //  When exactly the same entities that are being cut are selected, the cut is canceled.
     if (
-      this._cuttingItems.length &&
-      this._cuttingItems.every((item) => cuttingTargets.has(item)) &&
-      [...cuttingTargets].every((item) => this._cuttingItems.includes(item))
+      this.#cuttingItems.length &&
+      this.#cuttingItems.every((item) => cuttingTargets.has(item)) &&
+      [...cuttingTargets].every((item) => this.#cuttingItems.includes(item))
     ) {
-      this._updateItems()
+      this.#updateItems()
     } else {
-      this._updateItems([...cuttingTargets])
+      this.#updateItems([...cuttingTargets])
     }
   }
 
   cutEntitiesToSystemClipboard(clipboardEvent) {
-    if (this._selectionModel.span.contains((s) => s.isBlock)) {
+    if (this.#selectionModel.span.contains((s) => s.isBlock)) {
       return
     }
 
@@ -111,7 +120,7 @@ export default class Clipboard {
 
     clipboardEvent.clipboardData.setData(
       'application/x-textae-editor-uuid',
-      this._uuid
+      this.#uuid
     )
 
     this.copyEntitiesToSystemClipboard(clipboardEvent)
@@ -119,23 +128,23 @@ export default class Clipboard {
 
   pasteEntitiesFromLocalClipboard() {
     if (
-      this._itemsWillBeCutAndPaste.length &&
-      this._selectionModel.span.single
+      this.#itemsWillBeCutAndPaste.length &&
+      this.#selectionModel.span.single
     ) {
-      this._moveEntities()
+      this.#moveEntities()
       return
     }
 
     if (this.hasCopyingItem) {
-      const command = this._commander.factory.pasteTypesToSelectedSpansCommand(
-        this._items
+      const command = this.#commander.factory.pasteTypesToSelectedSpansCommand(
+        this.#items
       )
-      this._commander.invoke(command)
+      this.#commander.invoke(command)
     }
   }
 
   pasteEntitiesFromSystemClipboard(clipboardEvent) {
-    if (this._selectionModel.span.contains((s) => s.isBlock)) {
+    if (this.#selectionModel.span.contains((s) => s.isBlock)) {
       return
     }
 
@@ -143,11 +152,11 @@ export default class Clipboard {
       'application/x-textae-editor-uuid'
     )
     if (
-      uuid === this._uuid &&
-      this._itemsWillBeCutAndPaste.length &&
-      this._selectionModel.span.single
+      uuid === this.#uuid &&
+      this.#itemsWillBeCutAndPaste.length &&
+      this.#selectionModel.span.single
     ) {
-      this._moveEntities()
+      this.#moveEntities()
       return
     }
 
@@ -160,25 +169,25 @@ export default class Clipboard {
       const newAttrDefContainer = new AttributeDefinitionContainer()
       newAttrDefContainer.definedTypes = data.config['attribute types']
 
-      if (this._typeDictionary.isLock) {
+      if (this.#typeDictionary.isLock) {
         const typeValuesList = data.typeValues.map(
           ({ obj, attributes }) =>
             new TypeValues(
               obj,
               attributes.filter(
                 ({ pred }) =>
-                  this._attributeDefinitionContainer.get(pred) &&
-                  this._attributeDefinitionContainer.get(pred).valueType ===
+                  this.#attributeDefinitionContainer.get(pred) &&
+                  this.#attributeDefinitionContainer.get(pred).valueType ===
                     newAttrDefContainer.get(pred).valueType
               )
             )
         )
 
         const command =
-          this._commander.factory.pasteTypesToSelectedSpansCommand(
+          this.#commander.factory.pasteTypesToSelectedSpansCommand(
             typeValuesList
           )
-        this._commander.invoke(command)
+        this.#commander.invoke(command)
       } else {
         const typeValuesList = data.typeValues.map(
           ({ obj, attributes }) =>
@@ -186,8 +195,8 @@ export default class Clipboard {
               obj,
               attributes.filter(
                 ({ pred }) =>
-                  !this._attributeDefinitionContainer.get(pred) ||
-                  this._attributeDefinitionContainer.get(pred).valueType ===
+                  !this.#attributeDefinitionContainer.get(pred) ||
+                  this.#attributeDefinitionContainer.get(pred).valueType ===
                     newAttrDefContainer.get(pred).valueType
               )
             )
@@ -195,29 +204,29 @@ export default class Clipboard {
 
         const newTypes = data.config['entity types'].filter(
           ({ id }) =>
-            !this._denotationDefinitionContainer.config.some(
+            !this.#denotationDefinitionContainer.config.some(
               (type) => type.id === id
             )
         )
         const attrDefs = data.config['attribute types'].filter(
-          ({ pred }) => !this._attributeDefinitionContainer.get(pred)
+          ({ pred }) => !this.#attributeDefinitionContainer.get(pred)
         )
 
         const command =
-          this._commander.factory.pasteTypesToSelectedSpansCommand(
+          this.#commander.factory.pasteTypesToSelectedSpansCommand(
             typeValuesList,
             newTypes,
             attrDefs,
-            this._getNewSelectionAttributeObjects(
+            this.#getNewSelectionAttributeObjects(
               typeValuesList,
               newAttrDefContainer
             )
           )
-        this._commander.invoke(command)
+        this.#commander.invoke(command)
       }
 
       if (this.hasCuttingItem) {
-        this._updateItems()
+        this.#updateItems()
       }
 
       return
@@ -226,7 +235,7 @@ export default class Clipboard {
 
   // If there is an attribute definition for the selection attribute to be added
   // but the value definition is missing, add the value definition.
-  _getNewSelectionAttributeObjects(typeValuesList, newAttrDefContainer) {
+  #getNewSelectionAttributeObjects(typeValuesList, newAttrDefContainer) {
     const newSelectionAttributeObjects = []
     const selectionAttibutes = typeValuesList.reduce((list, typeValue) => {
       return list.concat(
@@ -236,9 +245,9 @@ export default class Clipboard {
       )
     }, [])
     for (const { pred, obj } of selectionAttibutes) {
-      if (this._attributeDefinitionContainer.get(pred)) {
+      if (this.#attributeDefinitionContainer.get(pred)) {
         if (
-          !this._attributeDefinitionContainer
+          !this.#attributeDefinitionContainer
             .get(pred)
             .values.some(({ id }) => id === obj)
         ) {
@@ -256,23 +265,23 @@ export default class Clipboard {
     return newSelectionAttributeObjects
   }
 
-  _moveEntities() {
-    const command = this._commander.factory.moveEntitiesToSelectedSpanCommand(
-      this._itemsWillBeCutAndPaste
+  #moveEntities() {
+    const command = this.#commander.factory.moveEntitiesToSelectedSpanCommand(
+      this.#itemsWillBeCutAndPaste
     )
-    this._commander.invoke(command)
-    this._updateItems()
+    this.#commander.invoke(command)
+    this.#updateItems()
   }
 
   // Notify items that are cutting and items that are no longer cutting
   // in order to switch between highlighting entities that are cutting.
-  _updateItems(newItems = []) {
-    const oldItems = this._cuttingItems.filter((i) => !newItems.includes(i))
-    this._items = newItems
+  #updateItems(newItems = []) {
+    const oldItems = this.#cuttingItems.filter((i) => !newItems.includes(i))
+    this.#items = newItems
 
-    this._eventEmitter.emit(
+    this.#eventEmitter.emit(
       'textae-event.clip-board.change',
-      this._cuttingItems,
+      this.#cuttingItems,
       oldItems
     )
   }
@@ -284,16 +293,16 @@ export default class Clipboard {
   // there is no change in the model.
   // In order to cause no change in the command history,
   // if the span of the entity being cut is the same as the span being selected, the entity is not pasted.
-  get _itemsWillBeCutAndPaste() {
-    return this._cuttingItems.filter(
+  get #itemsWillBeCutAndPaste() {
+    return this.#cuttingItems.filter(
       (i) =>
         i.span.id !==
-        (this._selectionModel.span.single &&
-          this._selectionModel.span.single.id)
+        (this.#selectionModel.span.single &&
+          this.#selectionModel.span.single.id)
     )
   }
 
-  get _cuttingItems() {
-    return this.hasCuttingItem ? this._items : []
+  get #cuttingItems() {
+    return this.hasCuttingItem ? this.#items : []
   }
 }
