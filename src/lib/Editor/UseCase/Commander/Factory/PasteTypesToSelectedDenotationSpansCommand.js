@@ -56,11 +56,9 @@ export default class PasteTypesToSelectedDenotationSpansCommand extends Composit
               new CreateEntityAndAttributesCommand(
                 annotationModel,
                 selectionModel,
-                {
-                  spanType: 'denotation',
-                  begin: span.begin,
-                  end: span.end
-                },
+                'denotation',
+                span.begin,
+                span.end,
                 typeValues.typeName,
                 typeValues.attributes
               )

@@ -3,14 +3,22 @@ import CompositeCommand from '../CompositeCommand'
 import CreateAttributeToTheLatestEntityCommand from './CreateAttributeToTheLatestEntityCommand'
 
 export default class CreateEntityAndAttributesCommand extends CompositeCommand {
-  constructor(annotationModel, selectionModel, span, typeName, attributes) {
+  constructor(
+    annotationModel,
+    selectionModel,
+    spanType,
+    begin,
+    end,
+    typeName,
+    attributes
+  ) {
     super()
 
     this._subCommands = [
       new CreateCommand(
         annotationModel,
         'entity',
-        { ...span, typeName },
+        { spanType, begin, end, typeName },
         selectionModel
       )
     ].concat(
@@ -25,7 +33,7 @@ export default class CreateEntityAndAttributesCommand extends CompositeCommand {
       )
     )
 
-    this._logMessage = `span: ${span.id || `${span.begin}:${span.end}`}, type: ${typeName}${
+    this._logMessage = `span: ${begin}:${end}, type: ${typeName}${
       attributes.length
         ? `, attributes: ${attributes.map(({ pred }) => pred).join(', ')}`
         : ''
