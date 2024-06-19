@@ -390,11 +390,9 @@ export default class AnnotationModel {
   }
 
   #drawAllAnnotations() {
-    this.#textBox.updateLineHeight()
-
     this.#spanInstanceContainer.renderAll()
-    // Reflects the addition and deletion of line breaks by span.
-    this.#textBox.forceUpdate()
+
+    this.#textBox.updateLineHeight()
 
     this.drawGridsInSight()
   }
