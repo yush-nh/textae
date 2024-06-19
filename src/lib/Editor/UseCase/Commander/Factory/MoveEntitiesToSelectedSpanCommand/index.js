@@ -1,5 +1,5 @@
 import CompositeCommand from '../CompositeCommand'
-import areAllEntitiesOfSpan from '../areAllEntitiesOfSpan'
+import areAllEntitiesOfSpan from './areAllEntitiesOfSpan'
 import { RemoveCommand } from '../commandTemplate'
 import MoveEntitiesToSpanCommand from './MoveEntitiesToSpanCommand'
 
