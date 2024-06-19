@@ -4,7 +4,7 @@ import CreateAttributeDefinitionCommand from './CreateAttributeDefinitionCommand
 import CreateEntityAndAttributesCommand from './CreateEntityAndAttributesCommand'
 import CreateTypeDefinitionCommand from './CreateTypeDefinitionCommand'
 
-export default class PasteTypesToSelectedSpansCommand extends CompositeCommand {
+export default class PasteTypesToSelectedDenotationSpansCommand extends CompositeCommand {
   constructor(
     annotationModel,
     selectionModel,

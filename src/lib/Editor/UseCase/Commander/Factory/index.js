@@ -18,7 +18,7 @@ import MoveAttributeDefinitionCommand from './MoveAttributeDefinitionCommand'
 import MoveBlockSpanCommand from './MoveBlockSpanCommand'
 import MoveDenotationSpanCommand from './MoveDenotationSpanCommand'
 import MoveEntitiesToSelectedSpanCommand from './MoveEntitiesToSelectedSpanCommand'
-import PasteTypesToSelectedSpansCommand from './PasteTypesToSelectedSpansCommand'
+import PasteTypesToSelectedDenotationSpansCommand from './PasteTypesToSelectedDenotationSpansCommand'
 import ReplicateSpanCommand from './ReplicateSpanCommand'
 import RemoveAttributesFromItemsByPredCommand from './RemoveAttributesFromItemsByPredCommand'
 import RemoveSelectedCommand from './RemoveSelectedCommand'
@@ -238,7 +238,7 @@ export default class Factory {
     attrDefs = [],
     newSelectionAttributeObjects = []
   ) {
-    return new PasteTypesToSelectedSpansCommand(
+    return new PasteTypesToSelectedDenotationSpansCommand(
       this.#annotationModel,
       this.#selectionModel,
       typeValuesList,
