@@ -6,7 +6,7 @@ export default class CreateSpanAndTypesCommand extends CompositeCommand {
   constructor(
     annotationModel,
     selectionModel,
-    spanId,
+    spanID,
     begin,
     end,
     typeValuesList
@@ -29,13 +29,13 @@ export default class CreateSpanAndTypesCommand extends CompositeCommand {
           new CreateEntityAndAttributesCommand(
             annotationModel,
             selectionModel,
-            spanId,
+            spanID,
             typeValues.typeName,
             typeValues.attributes
           )
       )
     )
-    this._logMessage = `span: ${spanId}, types: ${typeValuesList
+    this._logMessage = `span: ${spanID}, types: ${typeValuesList
       .map(({ typeName }) => typeName)
       .join(', ')}`
   }
