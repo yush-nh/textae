@@ -1,4 +1,3 @@
-import { makeDenotationSpanHTMLElementID } from '../../../idFactory'
 import { CreateCommand } from './commandTemplate'
 import CompositeCommand from './CompositeCommand'
 import CreateEntityAndAttributesCommand from './CreateEntityAndAttributesCommand'
@@ -13,8 +12,6 @@ export default class CreateDenotationSpanAndTypesCommand extends CompositeComman
     typeValuesList
   ) {
     super()
-
-    const spanID = makeDenotationSpanHTMLElementID(editorID, begin, end)
 
     this._subCommands = [
       new CreateCommand(
