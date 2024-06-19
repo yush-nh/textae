@@ -2,7 +2,7 @@ import { CreateCommand } from './commandTemplate'
 import CompositeCommand from './CompositeCommand'
 import CreateEntityAndAttributesCommand from './CreateEntityAndAttributesCommand'
 
-export default class CreateBlockCommand extends CompositeCommand {
+export default class CreateBlockSpanCommand extends CompositeCommand {
   constructor(
     editorID,
     annotationModel,
