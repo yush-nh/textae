@@ -111,11 +111,6 @@ export default class SpanInstanceContainer {
     return true
   }
 
-  hasBlockSpan(begin, end) {
-    const spanID = makeBlockSpanHTMLElementID(this.#editorID, begin, end)
-    return this.#blocks.has(spanID)
-  }
-
   validateNewBlockSpan(begin, end, spanID) {
     // The span cross exists spans.
     if (this.isBoundaryCrossingWithOtherSpans(begin, end)) {
