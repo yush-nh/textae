@@ -4,7 +4,7 @@ import spanComparator from './spanComparator'
 import {
   makeBlockSpanHTMLElementID,
   makeDenotationSpanHTMLElementID
-} from '../../idFactory'
+} from './idFactory'
 import DenotationSpanInstance from './DenotationSpanInstance'
 import StyleSpanInstance from './StyleSpanInstance'
 import BlockSpanInstance from './BlockSpanInstance'

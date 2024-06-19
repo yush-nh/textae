@@ -1,4 +1,4 @@
-import { makeStyleSpanHTMLElementID } from '../../idFactory'
+import { makeStyleSpanHTMLElementID } from './idFactory'
 import SpanInstance from './SpanInstance'
 
 export default class StyleSpanInstance extends SpanInstance {

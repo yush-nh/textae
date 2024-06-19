@@ -3,7 +3,7 @@ import getGridHeightIncludeDescendantGrids from './getGridHeightIncludeDescendan
 import round from '../../../round'
 import SpanInstance from '../SpanInstance'
 import isTouchable from '../../../isTouchable'
-import { makeDenotationSpanHTMLElementID } from '../../../idFactory'
+import { makeDenotationSpanHTMLElementID } from '../idFactory'
 
 const TEXT_HEIGHT = 23
 const MARGIN_TOP = 5

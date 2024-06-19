@@ -1,4 +1,4 @@
-import { makeBlockSpanHTMLElementID } from '../../../idFactory'
+import { makeBlockSpanHTMLElementID } from '../idFactory'
 import SELECTED from '../SELECTED'
 import renderBackground from './renderBackground'
 import setPosition from './setPosition'
