@@ -34,6 +34,6 @@ export default class CreateBlockCommand extends CompositeCommand {
     )
 
     this._subCommands = [createSpanCommand, createEntityCommand]
-    this._logMessage = `create a span ${spanId}`
+    this._logMessage = `create a span ${begin}:${end} with type ${defaultType}`
   }
 }
