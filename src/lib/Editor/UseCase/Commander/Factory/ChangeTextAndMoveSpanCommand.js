@@ -6,6 +6,8 @@ export default class ChangeTextAndMoveSpanCommand extends CompositeCommand {
   constructor(annotationModel, begin, end, newText) {
     super()
 
+    this._isExecuteSubCommandsInReverseOrderWhenRevert = false
+
     this._subCommands = [
       new ChangeTextCommand(annotationModel, { begin, end }, newText)
     ]

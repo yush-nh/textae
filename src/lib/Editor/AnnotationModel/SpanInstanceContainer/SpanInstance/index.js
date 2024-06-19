@@ -145,6 +145,12 @@ export default class SpanInstance {
 
   destroyElement() {
     const spanElement = this.element
+
+    // HTML element for span is deleted when text is edited.
+    if (!spanElement) {
+      return
+    }
+
     const parent = spanElement.parentNode
 
     // Move the textNode wrapped this span in front of this span.

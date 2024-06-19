@@ -287,8 +287,8 @@ export default class AnnotationModel {
 
   changeTextBetween(begin, end, newText) {
     this.#sourceDoc = `${this.#sourceDoc.slice(0, begin)}${newText}${this.#sourceDoc.slice(end)}`
-
     this.#textBox.render(this.sourceDoc)
+    this.#spanInstanceContainer.renderAll()
   }
 
   get #selectedText() {
