@@ -28,7 +28,7 @@ export default function (
     return false
   }
 
-  const doesExists = spanInstanceContainer.hasDenotationSpan(begin, end)
+  const doesExists = spanInstanceContainer.find('denotation', begin, end)
 
   if (begin < end && !doesExists) {
     moveHandler(begin, end)

@@ -133,7 +133,7 @@ export default class SpanEditor {
       }
 
       // A span cannot be expanded a span to the same as an existing span.
-      if (this.#spanInstanceContainer.hasDenotationSpan(begin, end)) {
+      if (this.#spanInstanceContainer.find('denotation', begin, end)) {
         return
       }
 
@@ -159,7 +159,8 @@ export default class SpanEditor {
         return
       }
 
-      const doesExists = this.#spanInstanceContainer.hasDenotationSpan(
+      const doesExists = this.#spanInstanceContainer.find(
+        'denotation',
         begin,
         end
       )

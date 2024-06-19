@@ -64,7 +64,7 @@ export default class SpanInstanceContainer {
       return this.#addBlock(blockSpan)
     } else {
       console.assert(
-        !this.hasDenotationSpan(newValue.begin, newValue.end),
+        !this.find('denotation', newValue.begin, newValue.end),
         'There is already a span.'
       )
       const denotationSpan = new DenotationSpanInstance(
@@ -89,11 +89,6 @@ export default class SpanInstanceContainer {
     this.#updateSpanTree()
   }
 
-  hasDenotationSpan(begin, end) {
-    const spanID = makeDenotationSpanHTMLElementID(this.#editorID, begin, end)
-    return this.#denotations.has(spanID)
-  }
-
   validateNewDenotationSpan(begin, end) {
     // The span cross exists spans.
     if (this.isBoundaryCrossingWithOtherSpans(begin, end)) {
@@ -104,7 +99,7 @@ export default class SpanInstanceContainer {
     }
 
     // The span exists already.
-    if (this.hasDenotationSpan(begin, end)) {
+    if (this.find('denotation', begin, end)) {
       return false
     }
 
