@@ -395,7 +395,7 @@ export default class AnnotationModel {
 
     this.#textBox.updateLineHeight()
 
-    for (const span of this.#spanInstanceContainer.topLevel) {
+    for (const span of this.#spanInstanceContainer.children) {
       span.render()
     }
 

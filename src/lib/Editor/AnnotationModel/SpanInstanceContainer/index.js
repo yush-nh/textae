@@ -197,12 +197,12 @@ export default class SpanInstanceContainer {
     return rangeFrom(this.#blocks, firstID, secondID)
   }
 
-  get topLevel() {
+  get #topLevel() {
     return this.all.filter((span) => span.parent === this).sort(spanComparator)
   }
 
   get children() {
-    return this.topLevel
+    return this.#topLevel
   }
 
   clear() {
