@@ -394,24 +394,12 @@ export default class AnnotationModel {
     getAnnotationBox(this.#editorHTMLElement).innerHTML = ''
 
     this.#textBox.updateLineHeight()
-    this.#spanInstanceContainer.renderAll()
 
+    this.#spanInstanceContainer.renderAll()
     // Reflects the addition and deletion of line breaks by span.
     this.#textBox.forceUpdate()
 
-    const { clientHeight, clientWidth } = document.documentElement
-
-    for (const span of this.#spanInstanceContainer.allDenotationSpans) {
-      span.drawGrid(clientHeight, clientWidth)
-    }
-
-    for (const span of this.#spanInstanceContainer.allBlockSpans) {
-      span.drawGrid(clientHeight, clientWidth)
-    }
-
-    for (const relation of this.#relationInstanceContainer.all) {
-      relation.render(clientHeight, clientWidth)
-    }
+    this.drawGridsInSight()
   }
 
   #rearrangeAllAnnotations() {
