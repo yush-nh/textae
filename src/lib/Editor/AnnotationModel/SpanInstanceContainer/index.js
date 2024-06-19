@@ -1,10 +1,6 @@
 import alertifyjs from 'alertifyjs'
 import updateSpanTree from './updateSpanTree'
 import spanComparator from './spanComparator'
-import {
-  makeBlockSpanHTMLElementID,
-  makeDenotationSpanHTMLElementID
-} from './idFactory'
 import DenotationSpanInstance from './DenotationSpanInstance'
 import StyleSpanInstance from './StyleSpanInstance'
 import BlockSpanInstance from './BlockSpanInstance'
@@ -168,13 +164,13 @@ export default class SpanInstanceContainer {
   find(type, begin, end) {
     switch (type) {
       case 'denotation':
-        return this.#denotations.get(
-          makeDenotationSpanHTMLElementID(this.#editorID, begin, end)
-        )
+        return this.#denotations
+          .values()
+          .find((span) => span.begin === begin && span.end === end)
       case 'block':
-        return this.#blocks.get(
-          makeBlockSpanHTMLElementID(this.#editorID, begin, end)
-        )
+        return this.#blocks
+          .values()
+          .find((span) => span.begin === begin && span.end === end)
       default:
         // Style span has no entity.
         throw `${type} is unknown type span!`
