@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidV4 } from 'uuid'
 import TypeValues from '../../../TypeValues'
 import EntityInstance from '../../EntityInstance'
 import AttributeDefinitionContainer from '../../AttributeDefinitionContainer'
@@ -37,7 +37,7 @@ export default class Clipboard {
     // Only one type is stored at a time.
     // Use one list.
     this.#items = []
-    this.#uuid = uuidv4()
+    this.#uuid = uuidV4()
 
     eventEmitter
       .on('textae-event.annotation-data.entity.remove', (entity) => {
