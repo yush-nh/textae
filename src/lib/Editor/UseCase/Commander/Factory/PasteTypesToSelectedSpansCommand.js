@@ -15,7 +15,7 @@ export default class PasteTypesToSelectedSpansCommand extends CompositeCommand {
   ) {
     super()
 
-    const selecteedSpans = selectionModel.span.all.map((span) => span.id)
+    const selectedSpans = selectionModel.span.all.map((span) => span.id)
     this._subCommands = []
 
     for (const newType of newTypes) {
@@ -49,7 +49,7 @@ export default class PasteTypesToSelectedSpansCommand extends CompositeCommand {
     }
 
     this._subCommands = this._subCommands.concat(
-      selecteedSpans
+      selectedSpans
         .map((span) =>
           typeValuesList.map(
             (typeValues) =>
@@ -70,6 +70,6 @@ export default class PasteTypesToSelectedSpansCommand extends CompositeCommand {
         [`{type:${typeName}}`].concat(
           attributes.map(({ pred, obj }) => `{${pred}:${obj}}`)
         )
-    )}] to ${selecteedSpans}`
+    )}] to ${selectedSpans}`
   }
 }
