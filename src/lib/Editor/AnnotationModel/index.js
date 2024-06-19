@@ -4,7 +4,6 @@ import AttributeInstanceContainer from './AttributeInstanceContainer'
 import RelationInstanceContainer from './RelationInstanceContainer'
 import EntityInstanceContainer from './EntityInstanceContainer'
 import AnnotationEvaluator from './AnnotationEvaluator'
-import clearAnnotationModel from './clearAnnotationModel'
 import toDenotations from './toDenotations'
 import toRelations from './toRelations'
 import toBlocks from './toBlocks'
@@ -190,6 +189,18 @@ export default class AnnotationModel {
     this.#eventEmitter = eventEmitter
   }
 
+  #clearAnnotationModel() {
+    // Clear data models.
+    this.#spanInstanceContainer.clear()
+    this.#entityInstanceContainer.clear()
+    this.#attributeInstanceContainer.clear()
+    this.#relationInstanceContainer.clear()
+    this.#namespaceInstanceContainer.clear()
+
+    // Clear rendered annotations.
+    getAnnotationBox(this.#editorHTMLElement).innerHTML = ''
+  }
+
   reset(rawData, config) {
     console.assert(rawData.text, 'This is not a json file of annotations.')
 
@@ -197,8 +208,7 @@ export default class AnnotationModel {
     this.#sourceDoc = rawData.text
     this.#textBox.render(this.sourceDoc)
 
-    clearAnnotationModel(this)
-    getAnnotationBox(this.#editorHTMLElement).innerHTML = ''
+    this.#clearAnnotationModel()
 
     const annotationEvaluator = new AnnotationEvaluator(this, rawData)
     annotationEvaluator.eval()
