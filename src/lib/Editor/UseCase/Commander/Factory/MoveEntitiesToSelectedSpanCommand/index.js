@@ -1,5 +1,5 @@
 import CompositeCommand from '../CompositeCommand'
-import areAllEntiesOfSpan from '../areAllEntiesOfSpan'
+import areAllEntitiesOfSpan from '../areAllEntitiesOfSpan'
 import { RemoveCommand } from '../commandTemplate'
 import MoveEntitiesToSpanCommand from './MoveEntitiesToSpanCommand'
 
@@ -29,7 +29,7 @@ export default class MoveEntitiesToSelectedSpanCommand extends CompositeCommand 
         return acc
       }, new Set())
       .values()) {
-      if (areAllEntiesOfSpan(span, entities)) {
+      if (areAllEntitiesOfSpan(span, entities)) {
         commands.push(new RemoveCommand(annotationModel, 'span', span))
       }
     }
