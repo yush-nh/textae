@@ -11,7 +11,7 @@ export default class CreateEntityAndAttributesCommand extends CompositeCommand {
         annotationModel,
         'entity',
         {
-          span: spanID,
+          spanID,
           typeName
         },
         selectionModel

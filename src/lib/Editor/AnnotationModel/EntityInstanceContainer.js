@@ -62,18 +62,23 @@ export default class EntityInstanceContainer extends IdIssueContainer {
   }
 
   add(newValue) {
-    if (!newValue.span)
-      throw new Error(`entity has no span! ${JSON.stringify(newValue)}`)
-
     // When redoing, the newValue is instance of the EntityInstance already.
     if (newValue instanceof EntityInstance) {
+      if (!newValue.span) {
+        throw new Error(`entity has no span! ${JSON.stringify(newValue)}`)
+      }
+
       super.add(newValue)
       newValue.span.add(newValue)
       newValue.render()
       return newValue
     }
 
-    const span = this.#spanInstanceContainer.get(newValue.span)
+    if (!newValue.spanID) {
+      throw new Error(`entity has no spanID! ${JSON.stringify(newValue)}`)
+    }
+
+    const span = this.#spanInstanceContainer.get(newValue.spanID)
     const newEntity = new EntityInstance(
       this.#editorID,
       this.#attributeInstanceContainer,

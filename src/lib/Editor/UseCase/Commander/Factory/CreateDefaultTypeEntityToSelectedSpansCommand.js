@@ -15,7 +15,7 @@ export default class CreateDefaultTypeEntityToSelectedSpansCommand extends Compo
           annotationModel,
           'entity',
           {
-            span: spanID,
+            spanID,
             typeName
           },
           selectionModel
