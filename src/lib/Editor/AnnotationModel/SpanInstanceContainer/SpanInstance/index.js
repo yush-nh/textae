@@ -1,4 +1,5 @@
 import dohtml from 'dohtml'
+import { v4 as uuidV4 } from 'uuid'
 import createGridHtml from './createGridHtml'
 import updateGridPosition from './updateGridPosition'
 import getAnnotationBox from '../../getAnnotationBox'
@@ -13,6 +14,7 @@ export default class SpanInstance {
    * @type {Set<import('../../../EntityInstance').EntityInstance>}
    */
   #entities = new Set()
+  #surrogateKey = `span_${uuidV4().replace(/-/g, '_')}`
 
   constructor(editorID, editorHTMLElement, begin, end, spanInstanceContainer) {
     this._editorID = editorID
@@ -22,6 +24,10 @@ export default class SpanInstance {
     this._spanInstanceContainer = spanInstanceContainer
 
     this.severTies()
+  }
+
+  get id() {
+    return this.#surrogateKey
   }
 
   get begin() {

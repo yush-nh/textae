@@ -1,4 +1,3 @@
-import { makeBlockSpanHTMLElementID } from '../idFactory'
 import SELECTED from '../SELECTED'
 import renderBackground from './renderBackground'
 import setPosition from './setPosition'
@@ -35,10 +34,6 @@ export default class BlockSpanInstance extends SpanInstance {
     for (const entity of this.entities) {
       entity.span = newSpan
     }
-  }
-
-  get id() {
-    return makeBlockSpanHTMLElementID(this._editorID, this._begin, this._end)
   }
 
   select() {

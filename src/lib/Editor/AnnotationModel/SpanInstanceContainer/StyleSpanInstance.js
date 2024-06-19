@@ -1,4 +1,3 @@
-import { makeStyleSpanHTMLElementID } from './idFactory'
 import SpanInstance from './SpanInstance'
 
 export default class StyleSpanInstance extends SpanInstance {
@@ -12,10 +11,6 @@ export default class StyleSpanInstance extends SpanInstance {
   ) {
     super(editorID, editorHTMLElement, begin, end, spanInstanceContainer, style)
     this.styles = new Set([style])
-  }
-
-  get id() {
-    return makeStyleSpanHTMLElementID(this._editorID, this._begin, this._end)
   }
 
   // Mark it not to be rendered as a span.
