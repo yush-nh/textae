@@ -53,7 +53,7 @@ export default class UseCase {
       commander,
       selectionModel,
       annotationModel.denotationDefinitionContainer,
-      annotationModel.attributeInstanceContainerDefinitionContainer,
+      annotationModel.attributeDefinitionContainer,
       annotationModel.typeDictionary
     )
     const originalData = new OriginalData(
