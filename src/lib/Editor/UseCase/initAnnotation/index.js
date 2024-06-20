@@ -1,6 +1,6 @@
 import DataSource from '../../DataSource.js'
 import { RESOURCE_TYPE } from '../../RESOURCE_TYPE.js'
-import setDefault from './setDefault.js'
+import setAnnotationAndConfiguration from '../setAnnotationAndConfiguration.js'
 import setLoadedAnnotation from './setLoadedAnnotation.js'
 
 /**
@@ -49,11 +49,12 @@ export default function (
       if (startUpOptions.config) {
         remoteResource.loadConfiguration(startUpOptions.config)
       } else {
-        setDefault(
-          originalData,
+        setAnnotationAndConfiguration(
+          originalData.defaultConfiguration,
           menuState,
           spanConfig,
           annotationModel,
+          originalData.defaultAnnotation,
           functionAvailability
         )
       }
