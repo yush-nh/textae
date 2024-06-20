@@ -1,6 +1,66 @@
 import delegate from 'delegate'
 import EditMode from './EditMode'
 import isRangeInTextBox from './isRangeInTextBox'
+import anemone from '../../../../component/anemone'
+
+class TextEditDialog {
+  #dialog
+
+  constructor(editorHTMLElement, submitHandler) {
+    const dialog = document.createElement('dialog')
+    editorHTMLElement.appendChild(dialog)
+    dialog.addEventListener('close', (event) => {
+      const dialog = event.target
+      const { returnValue } = dialog
+      if (returnValue === 'OK') {
+        const form = dialog.querySelector('form')
+        const begin = form.begin.value
+        const end = form.end.value
+        const text = form.text.value
+        submitHandler(begin, end, text)
+      }
+    })
+
+    delegate(dialog, '.text-edit-dialog__close-button', 'click', (e) => {
+      dialog.close()
+    })
+    delegate(dialog, '.text-edit-dialog__text-box', 'keyup', (e) => {
+      e.stopPropagation()
+    })
+
+    this.#dialog = dialog
+  }
+
+  open(begin, end, text) {
+    this.#dialog.innerHTML = this.#template({ begin, end, text })
+    this.#dialog.showModal()
+  }
+
+  #template(context) {
+    const { text, begin, end } = context
+    return anemone`
+      <div class="title-bar">
+        <span>Edit text dialog</span>
+        <button class="text-edit-dialog__close-button">X</button>
+      </div>
+      <h3>Original Text</h3>
+      <div>${text}</div>
+      <h3>Edit text</h3>
+      <form method="dialog">
+        <input type="hidden" name="begin" value="${begin}">
+        <input type="hidden" name="end" value="${end}">
+        <textarea class="text-edit-dialog__text-box"
+          name="text"
+          cols="50"
+          rows="10">${text}</textarea>
+        <br>
+        <div style="display: flex; justify-content: flex-end;">
+          <button value="OK">OK</button>
+        </div>
+      </form>
+    `
+  }
+}
 
 export default class TextEditMode extends EditMode {
   #editorHTMLElement
@@ -8,6 +68,7 @@ export default class TextEditMode extends EditMode {
   #spanConfig
   #menuState
   #commander
+  #dialog
 
   constructor(
     editorHTMLElement,
@@ -22,6 +83,14 @@ export default class TextEditMode extends EditMode {
     this.#spanConfig = spanConfig
     this.#menuState = menuState
     this.#commander = commander
+    this.#dialog = new TextEditDialog(editorHTMLElement, (begin, end, text) => {
+      const command = this.#commander.factory.changeTextAndMoveSpanCommand(
+        begin,
+        end,
+        text
+      )
+      this.#commander.invoke(command)
+    })
   }
 
   bindMouseEvents() {
@@ -51,15 +120,8 @@ export default class TextEditMode extends EditMode {
                   begin,
                   end
                 )
-                alert(`selection: ${targetText}`)
 
-                const command =
-                  this.#commander.factory.changeTextAndMoveSpanCommand(
-                    begin,
-                    end,
-                    'foo bar baz'
-                  )
-                this.#commander.invoke(command)
+                this.#dialog.open(begin, end, targetText)
               }
             }
           }
