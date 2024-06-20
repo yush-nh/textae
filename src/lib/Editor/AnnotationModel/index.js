@@ -330,6 +330,10 @@ export default class AnnotationModel {
     return this.#spanInstanceContainer.validateNewBlockSpan(begin, end, spanID)
   }
 
+  validateEditableText(begin, end) {
+    return this.#spanInstanceContainer.validateEditableText(begin, end)
+  }
+
   getInstanceContainerFor(annotationType) {
     switch (annotationType) {
       case 'span':

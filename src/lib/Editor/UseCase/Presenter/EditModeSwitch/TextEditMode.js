@@ -43,6 +43,10 @@ export default class TextEditMode extends EditMode {
                   this.#spanConfig,
                   this.#menuState.textSelectionAdjuster
                 )
+                if (!this.#annotationModel.validateEditableText(begin, end)) {
+                  return
+                }
+
                 const targetText = this.#annotationModel.getTextBetween(
                   begin,
                   end

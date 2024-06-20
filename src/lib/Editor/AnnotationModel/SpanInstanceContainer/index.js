@@ -132,6 +132,23 @@ export default class SpanInstanceContainer {
     return true
   }
 
+  validateEditableText(begin, end) {
+    // The begin and end must not contain the begin or end of all spans.
+    if (
+      this.all.find(
+        (span) =>
+          (begin < span.begin && span.begin.end) ||
+          (begin < span.end && span.end < end)
+      )
+    ) {
+      alertifyjs.warning(
+        'Text that contains any part of a span cannot be edited.'
+      )
+      return false
+    }
+    return true
+  }
+
   hasParentOf(begin, end, spanID) {
     for (const parent of this.all) {
       if (parent.id === spanID) {
