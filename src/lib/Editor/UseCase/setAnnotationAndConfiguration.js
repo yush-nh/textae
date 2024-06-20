@@ -3,7 +3,7 @@
  * @param {import('./MenuState').MenuState} menuState
  * @param {import('../AnnotationModel').AnnotationModel} annotationModel
  */
-export default function (
+export default function setAnnotationAndConfiguration(
   validConfig,
   menuState,
   spanConfig,
