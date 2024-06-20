@@ -1,6 +1,6 @@
 import setAnnotationAndConfiguration from '../setAnnotationAndConfiguration'
 
-export default function (
+export default function setDefault(
   originalData,
   menuState,
   spanConfig,
