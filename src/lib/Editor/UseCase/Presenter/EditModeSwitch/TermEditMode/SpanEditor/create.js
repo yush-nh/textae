@@ -6,7 +6,7 @@ export default function create(
   spanConfig,
   isDelimiterFunc
 ) {
-  const { begin, end } = annotationModel.getNewSpan(
+  const { begin, end } = annotationModel.getTextSelection(
     spanConfig,
     textSelectionAdjuster
   )

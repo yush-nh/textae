@@ -4,7 +4,7 @@ export default function (
   textSelectionAdjuster,
   spanConfig
 ) {
-  const { begin, end } = annotationModel.getNewSpan(
+  const { begin, end } = annotationModel.getTextSelection(
     spanConfig,
     textSelectionAdjuster
   )

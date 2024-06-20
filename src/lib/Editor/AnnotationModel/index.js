@@ -304,7 +304,7 @@ export default class AnnotationModel {
     return spanConfig.removeBlankCharacters(this.#selectedText).length > 0
   }
 
-  getNewSpan(spanConfig, textSelectionAdjuster) {
+  getTextSelection(spanConfig, textSelectionAdjuster) {
     const { begin, end } = this.textSelection
 
     return {

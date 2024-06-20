@@ -39,7 +39,7 @@ export default class TextEditMode extends EditMode {
 
             if (isRangeInTextBox(selection, textBox)) {
               if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
-                const { begin, end } = this.#annotationModel.getNewSpan(
+                const { begin, end } = this.#annotationModel.getTextSelection(
                   this.#spanConfig,
                   this.#menuState.textSelectionAdjuster
                 )
