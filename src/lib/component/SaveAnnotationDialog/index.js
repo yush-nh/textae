@@ -8,11 +8,11 @@ function template(context) {
 <div class="textae-editor__save-dialog__container">
   <div class="textae-editor__save-dialog__row">
     <label>URL</label>
-    <input 
+    <input
       type="text"
       value="${url}"
       class="textae-editor__save-dialog__url-text">
-    <input 
+    <input
       type="button"
       class="textae-editor__save-dialog__url-button"
       ${url ? '' : `disabled="disabled"`}
@@ -22,7 +22,7 @@ function template(context) {
     <label>Local</label>
     <input
       type="text"
-      value="${filename}"
+      value="${filename || ''}"
       >
     <a class="textae-editor__save-dialog__download-link" href="#">Download</a>
   </div>
