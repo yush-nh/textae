@@ -270,11 +270,11 @@
             </div>`;
             document.body.insertAdjacentHTML('afterbegin', html);
 
-            // The initializeTextAEEditor function may initialize multiple TextAE editors.
-            // It returns an array of initialized editors.
-            // It has the ID of the HTML element in the id property.
-            const editor = window.initializeTextAEEditor()
-                .find((editor) => editor.id === 'my_text-ae_editor')
+// The initializeTextAEEditor function may initialize multiple TextAE editors.
+// It returns an array of initialized editors.
+// It has the ID of the HTML element in the id property.
+const editor = window.initializeTextAEEditor()
+    .find((editor) => editor.id === 'my_text-ae_editor')
 
             // The TextAE editor displays the annotation set in the annotation property.
             editor.annotation = {
