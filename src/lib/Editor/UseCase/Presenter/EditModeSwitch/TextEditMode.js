@@ -8,6 +8,7 @@ class TextEditDialog {
 
   constructor(editorHTMLElement, submitHandler) {
     const dialog = document.createElement('dialog')
+    dialog.classList.add('textae-editor__text-edit-dialog')
     editorHTMLElement.appendChild(dialog)
     dialog.addEventListener('close', (event) => {
       const dialog = event.target
@@ -21,12 +22,22 @@ class TextEditDialog {
       }
     })
 
-    delegate(dialog, '.text-edit-dialog__close-button', 'click', (e) => {
-      dialog.close()
-    })
-    delegate(dialog, '.text-edit-dialog__text-box', 'keyup', (e) => {
-      e.stopPropagation()
-    })
+    delegate(
+      dialog,
+      '.textae-editor__text-edit-dialog__close-button',
+      'click',
+      (e) => {
+        dialog.close()
+      }
+    )
+    delegate(
+      dialog,
+      '.textae-editor__text-edit-dialog__text-box',
+      'keyup',
+      (e) => {
+        e.stopPropagation()
+      }
+    )
 
     this.#dialog = dialog
   }
@@ -39,9 +50,9 @@ class TextEditDialog {
   #template(context) {
     const { text, begin, end } = context
     return anemone`
-      <div class="title-bar">
-        <span>Edit text dialog</span>
-        <button class="text-edit-dialog__close-button">X</button>
+      <div class="textae-editor__text-edit-dialog__title-bar">
+        <h1>Edit text dialog</h1>
+        <button class="textae-editor__text-edit-dialog__close-button">X</button>
       </div>
       <h3>Original Text</h3>
       <div>${text}</div>
@@ -49,12 +60,9 @@ class TextEditDialog {
       <form method="dialog">
         <input type="hidden" name="begin" value="${begin}">
         <input type="hidden" name="end" value="${end}">
-        <textarea class="text-edit-dialog__text-box"
-          name="text"
-          cols="50"
-          rows="10">${text}</textarea>
+        <textarea class="textae-editor__text-edit-dialog__text-box" name="text">${text}</textarea>
         <br>
-        <div style="display: flex; justify-content: flex-end;">
+        <div class="textae-editor__text-edit-dialog__button-bar">
           <button value="OK">OK</button>
         </div>
       </form>
