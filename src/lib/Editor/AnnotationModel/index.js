@@ -218,6 +218,7 @@ export default class AnnotationModel {
 
   get externalFormat() {
     return {
+      text: this.#sourceDoc,
       denotations: toDenotations(this),
       attributes: this.#attributeInstanceContainer.all.map(
         ({ externalFormat }) => externalFormat
