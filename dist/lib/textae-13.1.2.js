@@ -50674,39 +50674,43 @@
 
     // The tool manages interactions between components.
     class Tool {
+      #editorContainer
+      #veil
+      #mousePoint
+
       constructor() {
-        this._editorContainer = new EditorContainer()
-        this._veil = new Veil()
-        this._mousePoint = getMousePoint()
+        this.#editorContainer = new EditorContainer()
+        this.#veil = new Veil()
+        this.#mousePoint = getMousePoint()
 
         // When the DOMContentLoaded event occurs, document.body may not have been initialized yet.
         // When the load event occurs, bind the event handler of document.body.
         window.addEventListener('load', () =>
-          observeBodyEvents(this._editorContainer)
+          observeBodyEvents(this.#editorContainer)
         )
 
         // Observe window-resize event and redraw all editors.
         window.addEventListener(
           'resize',
           throttleit_default()(() => {
-            this._editorContainer.reLayout()
-            this._editorContainer.drawGridsInSight()
-            this._editorContainer.updateDenotationEntitiesWidth()
+            this.#editorContainer.reLayout()
+            this.#editorContainer.drawGridsInSight()
+            this.#editorContainer.updateDenotationEntitiesWidth()
           }, 500)
         )
       }
 
       get nextID() {
-        return this._editorContainer.nextID
+        return this.#editorContainer.nextID
       }
 
       get mousePoint() {
-        return this._mousePoint
+        return this.#mousePoint
       }
 
       registerEditor(element, editor) {
-        this._veil.setObserver(element)
-        this._editorContainer.set(element, editor)
+        this.#veil.setObserver(element)
+        this.#editorContainer.set(element, editor)
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/InstanceContainer/index.js
 
@@ -50848,19 +50852,6 @@
           span.beChildOf(root)
         }
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/idFactory.js
-
-    // The ID of spans has editorID and begin and end, like 'editor1__S0_15'.
-    function makeDenotationSpanHTMLElementID(editorID, begin, end) {
-      return `${editorID}__D${begin}_${end}`
-    }
-
-    function makeStyleSpanHTMLElementID(editorID, begin, end) {
-      return `${editorID}__S${begin}_${end}`
-    }
-
-    function makeBlockSpanHTMLElementID(editorID, begin, end) {
-      return `${editorID}__B${begin}_${end}`
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SELECTED.js
 
     const SELECTED = 'ui-selected'
@@ -50895,8 +50886,110 @@
     // which is below the rounding accuracy of Google Chrome and Firefox.
     /* harmony default export */ function round(val) {
       return Math.round(val * 100) / 100
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/createGridHtml.js
+    } // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/native.js
 
+    var randomUUID =
+      typeof crypto !== 'undefined' &&
+      crypto.randomUUID &&
+      crypto.randomUUID.bind(crypto)
+    /* harmony default export */ const esm_browser_native = {
+      randomUUID
+    } // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/rng.js
+    // Unique ID creation requires a high quality random # generator. In the browser we therefore
+    // require the crypto API and do not support built-in fallback to lower quality random number
+    // generators (like Math.random()).
+
+    var getRandomValues
+    var rnds8 = new Uint8Array(16)
+    function rng() {
+      // lazy load so that environments that need to polyfill have a chance to do so
+      if (!getRandomValues) {
+        // getRandomValues needs to be invoked in a context where "this" is a Crypto implementation.
+        getRandomValues =
+          typeof crypto !== 'undefined' &&
+          crypto.getRandomValues &&
+          crypto.getRandomValues.bind(crypto)
+        if (!getRandomValues) {
+          throw new Error(
+            'crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported'
+          )
+        }
+      }
+      return getRandomValues(rnds8)
+    } // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/stringify.js
+    /**
+     * Convert array of 16 byte values to UUID string format of the form:
+     * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+     */
+    var byteToHex = []
+    for (var i = 0; i < 256; ++i) {
+      byteToHex.push((i + 0x100).toString(16).slice(1))
+    }
+    function unsafeStringify(arr, offset = 0) {
+      // Note: Be careful editing this code!  It's been tuned for performance
+      // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
+      //
+      // Note to future-self: No, you can't remove the `toLowerCase()` call.
+      // REF: https://github.com/uuidjs/uuid/pull/677#issuecomment-1757351351
+      return (
+        byteToHex[arr[offset + 0]] +
+        byteToHex[arr[offset + 1]] +
+        byteToHex[arr[offset + 2]] +
+        byteToHex[arr[offset + 3]] +
+        '-' +
+        byteToHex[arr[offset + 4]] +
+        byteToHex[arr[offset + 5]] +
+        '-' +
+        byteToHex[arr[offset + 6]] +
+        byteToHex[arr[offset + 7]] +
+        '-' +
+        byteToHex[arr[offset + 8]] +
+        byteToHex[arr[offset + 9]] +
+        '-' +
+        byteToHex[arr[offset + 10]] +
+        byteToHex[arr[offset + 11]] +
+        byteToHex[arr[offset + 12]] +
+        byteToHex[arr[offset + 13]] +
+        byteToHex[arr[offset + 14]] +
+        byteToHex[arr[offset + 15]]
+      ).toLowerCase()
+    }
+    function stringify(arr, offset = 0) {
+      var uuid = unsafeStringify(arr, offset)
+      // Consistency check for valid UUID.  If this throws, it's likely due to one
+      // of the following:
+      // - One or more input array values don't map to a hex octet (leading to
+      // "undefined" in the uuid)
+      // - Invalid input values for the RFC `version` or `variant` fields
+      if (!validate(uuid)) {
+        throw TypeError('Stringified UUID is invalid')
+      }
+      return uuid
+    }
+    /* harmony default export */ const esm_browser_stringify =
+      /* unused pure expression or super */ null && stringify // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/v4.js
+    function v4(options, buf, offset) {
+      if (esm_browser_native.randomUUID && !buf && !options) {
+        return esm_browser_native.randomUUID()
+      }
+      options = options || {}
+      var rnds = options.random || (options.rng || rng)()
+
+      // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+      rnds[6] = (rnds[6] & 0x0f) | 0x40
+      rnds[8] = (rnds[8] & 0x3f) | 0x80
+
+      // Copy bytes to buffer, if provided
+      if (buf) {
+        offset = offset || 0
+        for (var i = 0; i < 16; ++i) {
+          buf[offset + i] = rnds[i]
+        }
+        return buf
+      }
+      return unsafeStringify(rnds)
+    }
+    /* harmony default export */ const esm_browser_v4 = v4 // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/createGridHtml.js
     /* harmony default export */ function createGridHtml(
       spanId,
       top,
@@ -51105,6 +51198,7 @@
        * @type {Set<import('../../../EntityInstance').EntityInstance>}
        */
       #entities = new Set()
+      #surrogateKey = `span_${esm_browser_v4().replace(/-/g, '_')}`
 
       constructor(
         editorID,
@@ -51120,6 +51214,10 @@
         this._spanInstanceContainer = spanInstanceContainer
 
         this.severTies()
+      }
+
+      get id() {
+        return this.#surrogateKey
       }
 
       get begin() {
@@ -51184,6 +51282,11 @@
         this.#entities.delete(entity)
       }
 
+      offset(begin, end) {
+        this._begin += begin
+        this._end += end
+      }
+
       severTies() {
         // Reset parent
         this._parent = null
@@ -51243,6 +51346,12 @@
 
       destroyElement() {
         const spanElement = this.element
+
+        // HTML element for span is deleted when text is edited.
+        if (!spanElement) {
+          return
+        }
+
         const parent = spanElement.parentNode
 
         // Move the textNode wrapped this span in front of this span.
@@ -51543,14 +51652,6 @@
         super(editorID, editorHTMLElement, begin, end, spanInstanceContainer)
       }
 
-      get id() {
-        return makeDenotationSpanHTMLElementID(
-          this._editorID,
-          this._begin,
-          this._end
-        )
-      }
-
       passesAllEntitiesTo(newSpan) {
         for (const entity of this.entities) {
           entity.span = newSpan
@@ -51737,14 +51838,6 @@
         this.styles = new Set([style])
       }
 
-      get id() {
-        return makeStyleSpanHTMLElementID(
-          this._editorID,
-          this._begin,
-          this._end
-        )
-      }
-
       // Mark it not to be rendered as a span.
       get styleOnly() {
         return true
@@ -51818,14 +51911,6 @@
         for (const entity of this.entities) {
           entity.span = newSpan
         }
-      }
-
-      get id() {
-        return makeBlockSpanHTMLElementID(
-          this._editorID,
-          this._begin,
-          this._end
-        )
       }
 
       select() {
@@ -52206,7 +52291,7 @@
           return this.#addBlock(blockSpan)
         } else {
           console.assert(
-            !this.hasDenotationSpan(newValue.begin, newValue.end),
+            !this.find('denotation', newValue.begin, newValue.end),
             'There is already a span.'
           )
           const denotationSpan = new DenotationSpanInstance(
@@ -52231,15 +52316,6 @@
         this.#updateSpanTree()
       }
 
-      hasDenotationSpan(begin, end) {
-        const spanID = makeDenotationSpanHTMLElementID(
-          this.#editorID,
-          begin,
-          end
-        )
-        return this.#denotations.has(spanID)
-      }
-
       validateNewDenotationSpan(begin, end) {
         // The span cross exists spans.
         if (this.isBoundaryCrossingWithOtherSpans(begin, end)) {
@@ -52250,7 +52326,7 @@
         }
 
         // The span exists already.
-        if (this.hasDenotationSpan(begin, end)) {
+        if (this.find('denotation', begin, end)) {
           return false
         }
 
@@ -52260,11 +52336,6 @@
         }
 
         return true
-      }
-
-      hasBlockSpan(begin, end) {
-        const spanID = makeBlockSpanHTMLElementID(this.#editorID, begin, end)
-        return this.#blocks.has(spanID)
       }
 
       validateNewBlockSpan(begin, end, spanID) {
@@ -52289,6 +52360,23 @@
           return false
         }
 
+        return true
+      }
+
+      validateEditableText(begin, end) {
+        // The begin and end must not contain the begin or end of all spans.
+        if (
+          this.all.find(
+            (span) =>
+              (begin < span.begin && span.begin.end) ||
+              (begin < span.end && span.end < end)
+          )
+        ) {
+          alertify_default().warning(
+            'Text that contains any part of a span cannot be edited.'
+          )
+          return false
+        }
         return true
       }
 
@@ -52321,6 +52409,22 @@
         }
       }
 
+      find(type, begin, end) {
+        switch (type) {
+          case 'denotation':
+            return this.#denotations
+              .values()
+              .find((span) => span.begin === begin && span.end === end)
+          case 'block':
+            return this.#blocks
+              .values()
+              .find((span) => span.begin === begin && span.end === end)
+          default:
+            // Style span has no entity.
+            throw `${type} is unknown type span!`
+        }
+      }
+
       getStyle(spanID) {
         if (this.#styles.has(spanID)) {
           return this.#styles.get(spanID).styles
@@ -52343,14 +52447,12 @@
         return rangeFrom(this.#blocks, firstID, secondID)
       }
 
-      get topLevel() {
+      // Return top level spans in the span tree.
+      // The method name should be children together with SpanInstance.
+      get children() {
         return this.all
           .filter((span) => span.parent === this)
           .sort(spanComparator)
-      }
-
-      get children() {
-        return this.topLevel
       }
 
       clear() {
@@ -52386,13 +52488,12 @@
       // Since moving a span is deleting and adding span tags,
       // we will delete and add the instance as well.
       moveDenotationSpan(id, begin, end) {
-        console.assert(
-          id !== makeDenotationSpanHTMLElementID(this.#editorID, begin, end),
-          `Do not need move span:  ${id} ${begin} ${end}`
-        )
-
         const oldSpan = this.#denotations.get(id)
         console.assert(oldSpan, `There is no target for move for ${id}!`)
+        console.assert(
+          oldSpan.begin !== begin || oldSpan.end !== end,
+          `Do not need move span:  ${id} ${begin} ${end}`
+        )
 
         this.#removeDenotation(oldSpan)
 
@@ -52414,12 +52515,12 @@
       }
 
       moveBlockSpan(id, begin, end) {
+        const oldSpan = this.#blocks.get(id)
         console.assert(
-          id !== makeBlockSpanHTMLElementID(this.#editorID, begin, end),
+          oldSpan.begin !== begin || oldSpan.end !== end,
           `Do not need move span:  ${id} ${begin} ${end}`
         )
 
-        const oldSpan = this.#blocks.get(id)
         this.#removeBlock(oldSpan)
 
         const newOne = new BlockSpanInstance(
@@ -52511,6 +52612,30 @@
           return getCurrentMaxHeight(spans)
         } else {
           return null
+        }
+      }
+
+      renderAll() {
+        for (const span of this.children) {
+          span.render()
+        }
+      }
+
+      offsetSpans(begin, end, offset) {
+        for (const span of this.all) {
+          if (span.end <= begin) {
+            // No effect on the span of this section.
+            continue
+          } else if (span.end <= end) {
+            // Span movement in this section is prohibited.
+            continue
+          } else if (end < span.begin) {
+            // Change both the begin and end of the span
+            span.offset(offset, offset)
+          } else {
+            // Change the end of the span
+            span.offset(0, offset)
+          }
         }
       }
 
@@ -55076,7 +55201,7 @@
       #relationInstanceContainer
       #namespaceInstanceContainer
       #typeGap
-      #typeDefinition
+      #typeDictionary
       #toolBarHeight
       #isSelected = false
       #isHovered = false
@@ -55097,7 +55222,7 @@
         relationInstanceContainer,
         namespaceInstanceContainer,
         typeGap,
-        typeDefinition,
+        typeDictionary,
         span,
         typeName,
         toolBarHeight,
@@ -55108,7 +55233,7 @@
         this.#attributeInstanceContainer = attributeInstanceContainer
         this.#relationInstanceContainer = relationInstanceContainer
         this.#typeGap = typeGap
-        this.#typeDefinition = typeDefinition
+        this.#typeDictionary = typeDictionary
         this.#namespaceInstanceContainer = namespaceInstanceContainer
         this.#toolBarHeight = toolBarHeight
 
@@ -55498,9 +55623,9 @@
       /** @return {import('./AnnotationModel/DefinitionContainer/index.js').default} */
       get #definitionContainer() {
         if (this.isDenotation) {
-          return this.#typeDefinition.denotation
+          return this.#typeDictionary.denotation
         } else if (this.isBlock) {
-          return this.#typeDefinition.block
+          return this.#typeDictionary.block
         } else {
           throw 'unknown entity type'
         }
@@ -55593,7 +55718,7 @@
           this.#relationInstanceContainer,
           this.#namespaceInstanceContainer,
           this.#typeGap,
-          this.#annotationModel.typeDefinition,
+          this.#annotationModel.typeDictionary,
           span,
           denotation.obj,
           this.#toolBarHeight,
@@ -55604,25 +55729,40 @@
       }
 
       add(newValue) {
-        if (!newValue.span)
-          throw new Error(`entity has no span! ${JSON.stringify(newValue)}`)
-
         // When redoing, the newValue is instance of the EntityInstance already.
         if (newValue instanceof EntityInstance) {
+          if (!newValue.span) {
+            throw new Error(`entity has no span! ${JSON.stringify(newValue)}`)
+          }
+
           super.add(newValue)
           newValue.span.add(newValue)
           newValue.render()
           return newValue
         }
 
-        const span = this.#spanInstanceContainer.get(newValue.span)
+        if (
+          newValue.spanType === undefined ||
+          newValue.begin === undefined ||
+          newValue.end === undefined
+        ) {
+          throw new Error(
+            `entity has no span information! ${JSON.stringify(newValue)}`
+          )
+        }
+
+        const span = this.#spanInstanceContainer.find(
+          newValue.spanType,
+          newValue.begin,
+          newValue.end
+        )
         const newEntity = new EntityInstance(
           this.#editorID,
           this.#attributeInstanceContainer,
           this.#relationInstanceContainer,
           this.#namespaceInstanceContainer,
           this.#typeGap,
-          this.#annotationModel.typeDefinition,
+          this.#annotationModel.typeDictionary,
           span,
           newValue.typeName,
           this.#toolBarHeight
@@ -55709,28 +55849,11 @@
       }
 
       #getSpan(type, denotation) {
-        return this.#spanInstanceContainer.get(
-          this.#getSpanId(type, denotation)
+        return this.#spanInstanceContainer.find(
+          type,
+          denotation.span.begin,
+          denotation.span.end
         )
-      }
-
-      #getSpanId(type, denotation) {
-        switch (type) {
-          case 'denotation':
-            return makeDenotationSpanHTMLElementID(
-              this.#editorID,
-              denotation.span.begin,
-              denotation.span.end
-            )
-          case 'block':
-            return makeBlockSpanHTMLElementID(
-              this.#editorID,
-              denotation.span.begin,
-              denotation.span.end
-            )
-          default:
-            throw `${type} is unknown type span!`
-        }
       }
 
       hasDenotation(denotationID) {
@@ -56368,16 +56491,6 @@
       get #spans() {
         return getAllSpansOf(this.#rowData)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/clearAnnotationModel.js
-
-    /* harmony default export */ function clearAnnotationModel(
-      annotationModel
-    ) {
-      annotationModel.spanInstanceContainer.clear()
-      annotationModel.entityInstanceContainer.clear()
-      annotationModel.attributeInstanceContainer.clear()
-      annotationModel.relationInstanceContainer.clear()
-      annotationModel.namespaceInstanceContainer.clear()
     } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/toDenotations.js
 
     /* harmony default export */ function toDenotations(annotationModel) {
@@ -56474,7 +56587,7 @@
         .filter(({ begin, end }) =>
           isWord(sourceDoc, begin, end, isDelimiterFunc)
         )
-        .filter(({ begin, end }) => !span.hasDenotationSpan(begin, end))
+        .filter(({ begin, end }) => !span.find('denotation', begin, end))
         .filter(
           ({ begin, end }) => !span.isBoundaryCrossingWithOtherSpans(begin, end)
         )
@@ -56701,8 +56814,8 @@
 
     // EXTERNAL MODULE: ./node_modules/observ/index.js
     var observ = __webpack_require__(504)
-    var observ_default = /*#__PURE__*/ __webpack_require__.n(observ) // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/TypeDefinition.js
-    class TypeDefinition {
+    var observ_default = /*#__PURE__*/ __webpack_require__.n(observ) // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/TypeDictionary.js
+    class TypeDictionary {
       /**
        *
        * @param {import('../AttributeDefinitionContainer').default} attribute
@@ -57704,7 +57817,7 @@
       #entityInstanceContainer
       #relationInstanceContainer
       #attributeInstanceContainer
-      #typeDefinition
+      #typeDictionary
       #editorHTMLElement
       #eventEmitter
 
@@ -57801,7 +57914,7 @@
           () => this.#entityInstanceContainer.blocks,
           '#77DDDD'
         )
-        this.#typeDefinition = new TypeDefinition(
+        this.#typeDictionary = new TypeDictionary(
           eventEmitter,
           this.denotationDefinitionContainer,
           blockDefinitionContainer,
@@ -57878,16 +57991,16 @@
       reset(rawData, config) {
         console.assert(rawData.text, 'This is not a json file of annotations.')
 
-        this.#typeDefinition.setTypeConfig(config)
+        this.#typeDictionary.setTypeConfig(config)
         this.#sourceDoc = rawData.text
         this.#textBox.render(this.sourceDoc)
 
-        clearAnnotationModel(this)
+        this.#clear()
 
         const annotationEvaluator = new AnnotationEvaluator(this, rawData)
         annotationEvaluator.eval()
 
-        this.#clearAndDrawAllAnnotations()
+        this.#drawAllAnnotations()
 
         this.#eventEmitter.emit(
           'textae-event.annotation-data.all.change',
@@ -57904,6 +58017,7 @@
 
       get externalFormat() {
         return {
+          text: this.#sourceDoc,
           denotations: toDenotations(this),
           attributes: this.#attributeInstanceContainer.all.map(
             ({ externalFormat }) => externalFormat
@@ -57939,8 +58053,8 @@
         return this.#sourceDoc.replaceAll(/\r\n/g, ' \n')
       }
 
-      get typeDefinition() {
-        return this.#typeDefinition
+      get typeDictionary() {
+        return this.#typeDictionary
       }
 
       get spanInstanceContainer() {
@@ -57973,9 +58087,11 @@
 
       changeTextBetween(begin, end, newText) {
         this.#sourceDoc = `${this.#sourceDoc.slice(0, begin)}${newText}${this.#sourceDoc.slice(end)}`
+        const offset = newText.length - (end - begin)
+        this.#spanInstanceContainer.offsetSpans(begin, end, offset)
 
         this.#textBox.render(this.sourceDoc)
-        this.#eventEmitter.emit('textae-event.annotation-data.all.change')
+        this.#drawAllAnnotations()
       }
 
       get #selectedText() {
@@ -57987,7 +58103,7 @@
         return spanConfig.removeBlankCharacters(this.#selectedText).length > 0
       }
 
-      getNewSpan(spanConfig, textSelectionAdjuster) {
+      getTextSelection(spanConfig, textSelectionAdjuster) {
         const { begin, end } = this.textSelection
 
         return {
@@ -58015,6 +58131,10 @@
           end,
           spanID
         )
+      }
+
+      validateEditableText(begin, end) {
+        return this.#spanInstanceContainer.validateEditableText(begin, end)
       }
 
       getInstanceContainerFor(annotationType) {
@@ -58080,31 +58200,12 @@
         span.focus()
       }
 
-      #clearAndDrawAllAnnotations() {
-        getAnnotationBox(this.#editorHTMLElement).innerHTML = ''
+      #drawAllAnnotations() {
+        this.#spanInstanceContainer.renderAll()
 
         this.#textBox.updateLineHeight()
 
-        for (const span of this.#spanInstanceContainer.topLevel) {
-          span.render()
-        }
-
-        // Reflects the addition and deletion of line breaks by span.
-        this.#textBox.forceUpdate()
-
-        const { clientHeight, clientWidth } = document.documentElement
-
-        for (const span of this.#spanInstanceContainer.allDenotationSpans) {
-          span.drawGrid(clientHeight, clientWidth)
-        }
-
-        for (const span of this.#spanInstanceContainer.allBlockSpans) {
-          span.drawGrid(clientHeight, clientWidth)
-        }
-
-        for (const relation of this.#relationInstanceContainer.all) {
-          relation.render(clientHeight, clientWidth)
-        }
+        this.drawGridsInSight()
       }
 
       #rearrangeAllAnnotations() {
@@ -58124,6 +58225,18 @@
             relation.redrawLineConsideringSelection()
           }
         }
+      }
+
+      #clear() {
+        // Clear data models.
+        this.#spanInstanceContainer.clear()
+        this.#entityInstanceContainer.clear()
+        this.#attributeInstanceContainer.clear()
+        this.#relationInstanceContainer.clear()
+        this.#namespaceInstanceContainer.clear()
+
+        // Clear rendered annotations.
+        getAnnotationBox(this.#editorHTMLElement).innerHTML = ''
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/SpanConfig.js
 
@@ -58559,7 +58672,7 @@
       get isEmpty() {
         return !this._subCommands || this._subCommands.length === 0
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndRefectInstancesCommand/ChangeAttributeDefinitionCommand/applyChangedProperties.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndReflectInstancesCommand/ChangeAttributeDefinitionCommand/applyChangedProperties.js
 
     /* harmony default export */ function applyChangedProperties(
       oldAttrDef,
@@ -58581,7 +58694,7 @@
         }
       }
       return [newAttrDef, revertChangedProperties]
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndRefectInstancesCommand/ChangeAttributeDefinitionCommand/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndReflectInstancesCommand/ChangeAttributeDefinitionCommand/index.js
 
     class ChangeAttributeDefinitionCommand extends ConfigurationCommand {
       /**
@@ -58666,9 +58779,9 @@
           this.#oldObj
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndRefectInstancesCommand/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndReflectInstancesCommand/index.js
 
-    class ChangeAttributeDefinitionAndRefectInstancesCommand extends CompositeCommand {
+    class ChangeAttributeDefinitionAndReflectInstancesCommand extends CompositeCommand {
       constructor(
         eventEmitter,
         annotationModel,
@@ -58965,7 +59078,7 @@
         )
 
         for (const { pred, obj, label } of attributes) {
-          const definitionContainer = annotationModel.typeDefinition.attribute
+          const definitionContainer = annotationModel.typeDictionary.attribute
           const attrDef = definitionContainer.get(pred)
           const commnad = getAddPatternToStringAttributeDefinitionCommand(
             definitionContainer,
@@ -59135,8 +59248,8 @@
       annotationModel,
       changedProperties
     ) {
-      // The palette also displays instance types other than type in the typeDefinition,
-      // so modified type may not be in the typeDefinition.
+      // The palette also displays instance types other than type in the typeDictionary,
+      // so modified type may not be in the typeDictionary.
       if (definitionContainer.has(id)) {
         return new ChangeTypeDefinitionCommand(
           annotationModel,
@@ -59200,7 +59313,7 @@
             : ``
         }`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionAndRefectInstancesCommand/createChangeAnnotationCommands.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionAndReflectInstancesCommand/createChangeAnnotationCommands.js
 
     /* harmony default export */ function createChangeAnnotationCommands(
       annotationModel,
@@ -59219,9 +59332,9 @@
             newTypeName
           )
         })
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionAndRefectInstancesCommand/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionAndReflectInstancesCommand/index.js
 
-    class ChangeTypeDefinitionAndRefectInstancesCommand extends CompositeCommand {
+    class ChangeTypeDefinitionAndReflectInstancesCommand extends CompositeCommand {
       constructor(
         annotationModel,
         definitionContainer,
@@ -59232,7 +59345,7 @@
         super()
 
         // change config
-        const changeConfigcommands = [
+        const changeConfigCommands = [
           createChangeConfigCommand(
             definitionContainer,
             id,
@@ -59252,7 +59365,7 @@
           )
         }
 
-        this._subCommands = changeConfigcommands.concat(changAnnotationCommands)
+        this._subCommands = changeConfigCommands.concat(changAnnotationCommands)
         this._logMessage = `set ${[...changedProperties.entries()].map(
           ([id, val]) => `${id}:${val}`
         )} to type definition ${id}`
@@ -59544,17 +59657,22 @@
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateEntityAndAttributesCommand/index.js
 
     class CreateEntityAndAttributesCommand extends CompositeCommand {
-      constructor(annotationModel, selectionModel, span, typeName, attributes) {
+      constructor(
+        annotationModel,
+        selectionModel,
+        spanType,
+        begin,
+        end,
+        typeName,
+        attributes
+      ) {
         super()
 
         this._subCommands = [
           new CreateCommand(
             annotationModel,
             'entity',
-            {
-              span,
-              typeName
-            },
+            { spanType, begin, end, typeName },
             selectionModel
           )
         ].concat(
@@ -59569,7 +59687,7 @@
           )
         )
 
-        this._logMessage = `span: ${span}, type: ${typeName}${
+        this._logMessage = `span: ${begin}:${end}, type: ${typeName}${
           attributes.length
             ? `, attributes: ${attributes.map(({ pred }) => pred).join(', ')}`
             : ''
@@ -59577,7 +59695,7 @@
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateBlockSpanCommand.js
 
-    class CreateBlockCommand extends CompositeCommand {
+    class CreateBlockSpanCommand extends CompositeCommand {
       constructor(
         editorID,
         annotationModel,
@@ -59588,7 +59706,6 @@
       ) {
         super()
 
-        const spanId = makeBlockSpanHTMLElementID(editorID, begin, end)
         const createSpanCommand = new CreateCommand(
           annotationModel,
           'span',
@@ -59602,13 +59719,15 @@
         const createEntityCommand = new CreateEntityAndAttributesCommand(
           annotationModel,
           selectionModel,
-          spanId,
+          'block',
+          begin,
+          end,
           defaultType,
           []
         )
 
         this._subCommands = [createSpanCommand, createEntityCommand]
-        this._logMessage = `create a span ${spanId}`
+        this._logMessage = `create a span ${begin}:${end} with type ${defaultType}`
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateDefaultTypeEntityToSelectedSpansCommand.js
 
@@ -59619,13 +59738,14 @@
         const selectedSpans = selectionModel.span.all
           .filter((span) => span.isDenotation)
           .map((span) => span.id)
+
         this._subCommands = selectedSpans.map(
-          (span) =>
+          (spanID) =>
             new CreateCommand(
               annotationModel,
               'entity',
               {
-                span,
+                spanID,
                 typeName
               },
               selectionModel
@@ -59634,13 +59754,13 @@
 
         this._logMessage = `create a ${typeName} type entity to ${selectedSpans}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateSpanAndTypesCommand.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateDenotationSpanAndTypesCommand.js
 
-    class CreateSpanAndTypesCommand extends CompositeCommand {
+    class CreateDenotationSpanAndTypesCommand extends CompositeCommand {
       constructor(
         annotationModel,
         selectionModel,
-        spanId,
+        editorID,
         begin,
         end,
         typeValuesList
@@ -59663,13 +59783,15 @@
               new CreateEntityAndAttributesCommand(
                 annotationModel,
                 selectionModel,
-                spanId,
+                'denotation',
+                begin,
+                end,
                 typeValues.typeName,
                 typeValues.attributes
               )
           )
         )
-        this._logMessage = `span: ${spanId}, types: ${typeValuesList
+        this._logMessage = `span: ${begin}:${end}, types: ${typeValuesList
           .map(({ typeName }) => typeName)
           .join(', ')}`
       }
@@ -59686,25 +59808,21 @@
       ) {
         super()
 
+        console.log(span)
+
         this._subCommands = annotationModel
           .getReplicationRanges(span, isDelimiterFunc)
           .map(({ begin, end }) => {
-            const spanId = makeDenotationSpanHTMLElementID(editorID, begin, end)
-
-            return new CreateSpanAndTypesCommand(
+            return new CreateDenotationSpanAndTypesCommand(
               annotationModel,
               selectionModel,
-              spanId,
+              editorID,
               begin,
               end,
               typeValuesList
             )
           })
-        this._logMessage = `from span: ${makeDenotationSpanHTMLElementID(
-          editorID,
-          span.begin,
-          span.end
-        )}`
+        this._logMessage = `from span: ${span.id}`
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateSpanAndAutoReplicateCommand.js
 
@@ -59724,17 +59842,11 @@
 
         const typeValuesList = [new TypeValues(defaultType)]
 
-        const spanID = makeDenotationSpanHTMLElementID(
-          editorID,
-          newSpan.begin,
-          newSpan.end
-        )
-
         this._subCommands = [
-          new CreateSpanAndTypesCommand(
+          new CreateDenotationSpanAndTypesCommand(
             annotationModel,
             selectionModel,
-            spanID,
+            editorID,
             newSpan.begin,
             newSpan.end,
             typeValuesList
@@ -59877,11 +59989,11 @@
           this.#endBeforeMove
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/areAllEntiesOfSpan.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/areAllEntitiesOfSpan.js
 
-    /* harmony default export */ function areAllEntiesOfSpan(span, entities) {
+    /* harmony default export */ function areAllEntitiesOfSpan(span, entities) {
       return span.entities.every((entity) => entities.includes(entity))
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedSpanCommand/MoveEntitiesToSpanCommand/RevertMoveEntitiesCommand.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/MoveEntitiesToSpanCommand/RevertMoveEntitiesCommand.js
 
     class RevertMoveEntitiesCommand extends CompositeCommand {
       constructor(annotationModel, moveMap) {
@@ -59899,7 +60011,7 @@
           .map((e) => e.id)
           .join(', ')}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedSpanCommand/MoveEntitiesToSpanCommand/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/MoveEntitiesToSpanCommand/index.js
 
     class MoveEntitiesToSpanCommand extends AnnotationCommand {
       constructor(annotationModel, span, entities) {
@@ -59943,9 +60055,9 @@
           this._moveMap
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedSpanCommand/index.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/index.js
 
-    class MoveEntitiesToSelectedSpanCommand extends CompositeCommand {
+    class MoveEntitiesToSelectedDenotationSpanCommand extends CompositeCommand {
       constructor(annotationModel, selectionModel, entities) {
         console.assert(
           selectionModel.span.single,
@@ -59971,7 +60083,7 @@
             return acc
           }, new Set())
           .values()) {
-          if (areAllEntiesOfSpan(span, entities)) {
+          if (areAllEntitiesOfSpan(span, entities)) {
             commands.push(new RemoveCommand(annotationModel, 'span', span))
           }
         }
@@ -59980,9 +60092,9 @@
 
         this._logMessage = `paste cut entities`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/PasteTypesToSelectedSpansCommand.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/PasteTypesToSelectedDenotationSpansCommand.js
 
-    class PasteTypesToSelectedSpansCommand extends CompositeCommand {
+    class PasteTypesToSelectedDenotationSpansCommand extends CompositeCommand {
       constructor(
         annotationModel,
         selectionModel,
@@ -59993,7 +60105,7 @@
       ) {
         super()
 
-        const selecteedSpans = selectionModel.span.all.map((span) => span.id)
+        const selectedSpans = selectionModel.span.all
         this._subCommands = []
 
         for (const newType of newTypes) {
@@ -60027,14 +60139,16 @@
         }
 
         this._subCommands = this._subCommands.concat(
-          selecteedSpans
+          selectedSpans
             .map((span) =>
               typeValuesList.map(
                 (typeValues) =>
                   new CreateEntityAndAttributesCommand(
                     annotationModel,
                     selectionModel,
-                    span,
+                    'denotation',
+                    span.begin,
+                    span.end,
                     typeValues.typeName,
                     typeValues.attributes
                   )
@@ -60048,7 +60162,7 @@
             [`{type:${typeName}}`].concat(
               attributes.map(({ pred, obj }) => `{${pred}:${obj}}`)
             )
-        )}] to ${selecteedSpans}`
+        )}] to ${selectedSpans}`
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/getRemoveAttributesByPredCommands.js
 
@@ -60265,29 +60379,93 @@
           attributeDefinition.pred
         } to item ${items.map(({ id }) => id).join(', ')}`
       }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTextCommand.js
+
+    class ChangeTextCommand extends AnnotationCommand {
+      #annotationModel
+      #begin
+      #end
+      #newText
+      #endAfterChange
+      #textBeforeChange
+
+      constructor(annotationModel, targetTextSelection, newText) {
+        super()
+
+        this.#annotationModel = annotationModel
+        this.#begin = targetTextSelection.begin
+        this.#end = targetTextSelection.end
+        this.#newText = newText
+      }
+
+      execute() {
+        this.#endAfterChange = this.#begin + this.#newText.length
+        this.#textBeforeChange = this.#annotationModel.getTextBetween(
+          this.#begin,
+          this.#end
+        )
+
+        this.#annotationModel.changeTextBetween(
+          this.#begin,
+          this.#end,
+          this.#newText
+        )
+
+        commandLog(
+          this,
+          `change text at ${this.#begin}:${this.#end} to ${this.#newText}`
+        )
+      }
+
+      revert() {
+        return new ChangeTextCommand(
+          this.#annotationModel,
+          { begin: this.#begin, end: this.#endAfterChange },
+          this.#textBeforeChange
+        )
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTextAndMoveSpanCommand.js
+
+    class ChangeTextAndMoveSpanCommand extends CompositeCommand {
+      constructor(annotationModel, begin, end, newText) {
+        super()
+
+        this._isExecuteSubCommandsInReverseOrderWhenRevert = false
+
+        this._subCommands = [
+          new ChangeTextCommand(annotationModel, { begin, end }, newText)
+        ]
+
+        this._logMessage = `change text from ${begin} to ${end} to ${newText}`
+      }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/index.js
 
     class Factory {
+      #editorID
+      #eventEmitter
+      #annotationModel
+      #selectionModel
+
       constructor(editorID, eventEmitter, annotationModel, selectionModel) {
-        this._editorID = editorID
-        this._eventEmitter = eventEmitter
-        this._annotationModel = annotationModel
-        this._selectionModel = selectionModel
+        this.#editorID = editorID
+        this.#eventEmitter = eventEmitter
+        this.#annotationModel = annotationModel
+        this.#selectionModel = selectionModel
       }
 
       addValueToAttributeDefinitionCommand(attributeDefinition, value) {
         return new AddValueToAttributeDefinitionCommand(
-          this._annotationModel.typeDefinition.attribute,
+          this.#annotationModel.typeDictionary.attribute,
           attributeDefinition,
           value
         )
       }
 
       changeAttributeDefinitionCommand(attributeDefinition, changedProperties) {
-        return new ChangeAttributeDefinitionAndRefectInstancesCommand(
-          this._eventEmitter,
-          this._annotationModel,
-          this._annotationModel.typeDefinition.attribute,
+        return new ChangeAttributeDefinitionAndReflectInstancesCommand(
+          this.#eventEmitter,
+          this.#annotationModel,
+          this.#annotationModel.typeDictionary.attribute,
           attributeDefinition,
           changedProperties
         )
@@ -60295,8 +60473,8 @@
 
       changeAttributeObjOfItemsCommand(items, attributeDefinition, newObj) {
         return new ChangeAttributeObjOfItemsCommand(
-          this._eventEmitter,
-          this._annotationModel,
+          this.#eventEmitter,
+          this.#annotationModel,
           items,
           attributeDefinition,
           newObj
@@ -60310,9 +60488,9 @@
         newLabel
       ) {
         return new ChangeStringAttributeObjOfItemsCommand(
-          this._eventEmitter,
-          this._annotationModel,
-          this._annotationModel.typeDefinition.attribute,
+          this.#eventEmitter,
+          this.#annotationModel,
+          this.#annotationModel.typeDictionary.attribute,
           items,
           attributeDefinition,
           newObj,
@@ -60322,8 +60500,8 @@
 
       changeTypeValuesCommand(label, value, definitionContainer, attributes) {
         return new ChangeTypeValuesCommand(
-          this._annotationModel,
-          this._selectionModel,
+          this.#annotationModel,
+          this.#selectionModel,
           label,
           value,
           definitionContainer,
@@ -60337,8 +60515,8 @@
         id,
         changedProperties
       ) {
-        return new ChangeTypeDefinitionAndRefectInstancesCommand(
-          this._annotationModel,
+        return new ChangeTypeDefinitionAndReflectInstancesCommand(
+          this.#annotationModel,
           definitionContainer,
           annotationType,
           id,
@@ -60348,8 +60526,8 @@
 
       changeTypeOfSelectedItemsCommand(annotationType, newType) {
         return new ChangeTypeOfSelectedItemsCommand(
-          this._annotationModel,
-          this._selectionModel,
+          this.#annotationModel,
+          this.#selectionModel,
           annotationType,
           newType
         )
@@ -60361,9 +60539,9 @@
         value
       ) {
         return new ChangeValueOfAttributeDefinitionAndObjectOfAttributeCommand(
-          this._eventEmitter,
-          this._annotationModel,
-          this._annotationModel.typeDefinition.attribute,
+          this.#eventEmitter,
+          this.#annotationModel,
+          this.#annotationModel.typeDictionary.attribute,
           attributeDefinition,
           index,
           value
@@ -60372,14 +60550,14 @@
 
       createAttributeDefinitionCommand(attributeDefinition) {
         return new CreateAttributeDefinitionCommand(
-          this._annotationModel.typeDefinition.attribute,
+          this.#annotationModel.typeDictionary.attribute,
           attributeDefinition
         )
       }
 
       createAttributeToItemsCommand(items, attributeDefinition, obj = null) {
         return new CreateAttributeToItemsCommand(
-          this._annotationModel,
+          this.#annotationModel,
           items,
           attributeDefinition,
           obj
@@ -60387,30 +60565,30 @@
       }
 
       createBlockSpanCommand(newSpan) {
-        return new CreateBlockCommand(
-          this._editorID,
-          this._annotationModel,
-          this._selectionModel,
+        return new CreateBlockSpanCommand(
+          this.#editorID,
+          this.#annotationModel,
+          this.#selectionModel,
           newSpan.begin,
           newSpan.end,
-          this._annotationModel.typeDefinition.block.defaultType
+          this.#annotationModel.typeDictionary.block.defaultType
         )
       }
 
       createDefaultTypeEntityToSelectedSpansCommand(typeName) {
         return new CreateDefaultTypeEntityToSelectedSpansCommand(
-          this._annotationModel,
-          this._selectionModel,
+          this.#annotationModel,
+          this.#selectionModel,
           typeName
         )
       }
 
       createRelationCommand(relation) {
         return new CreateCommand(
-          this._annotationModel,
+          this.#annotationModel,
           'relation',
           relation,
-          this._selectionModel
+          this.#selectionModel
         )
       }
 
@@ -60420,11 +60598,11 @@
         isDelimiterFunc
       ) {
         return new CreateSpanAndAutoReplicateCommand(
-          this._editorID,
-          this._annotationModel,
-          this._selectionModel,
+          this.#editorID,
+          this.#annotationModel,
+          this.#selectionModel,
           newSpan,
-          this._annotationModel.typeDefinition.denotation.defaultType,
+          this.#annotationModel.typeDictionary.denotation.defaultType,
           isReplicateAuto,
           isDelimiterFunc
         )
@@ -60436,14 +60614,14 @@
 
       deleteAttributeDefinitionCommand(attributeDefinition) {
         return new DeleteAttributeDefinitionCommand(
-          this._annotationModel.typeDefinition.attribute,
+          this.#annotationModel.typeDictionary.attribute,
           attributeDefinition
         )
       }
 
-      moveAttributeDefintionComannd(oldIndex, newIndex) {
+      moveAttributeDefinitionCommand(oldIndex, newIndex) {
         return new MoveAttributeDefinitionCommand(
-          this._annotationModel.typeDefinition.attribute,
+          this.#annotationModel.typeDictionary.attribute,
           oldIndex,
           newIndex
         )
@@ -60451,7 +60629,7 @@
 
       moveBlockSpanCommand(spanId, begin, end) {
         return new MoveBlockSpanCommand(
-          this._annotationModel,
+          this.#annotationModel,
           spanId,
           begin,
           end
@@ -60460,7 +60638,7 @@
 
       moveDenotationSpanCommand(spanId, begin, end) {
         return new MoveDenotationSpanCommand(
-          this._annotationModel,
+          this.#annotationModel,
           spanId,
           begin,
           end
@@ -60468,9 +60646,9 @@
       }
 
       moveEntitiesToSelectedSpanCommand(entities) {
-        return new MoveEntitiesToSelectedSpanCommand(
-          this._annotationModel,
-          this._selectionModel,
+        return new MoveEntitiesToSelectedDenotationSpanCommand(
+          this.#annotationModel,
+          this.#selectionModel,
           entities
         )
       }
@@ -60481,9 +60659,9 @@
         attrDefs = [],
         newSelectionAttributeObjects = []
       ) {
-        return new PasteTypesToSelectedSpansCommand(
-          this._annotationModel,
-          this._selectionModel,
+        return new PasteTypesToSelectedDenotationSpansCommand(
+          this.#annotationModel,
+          this.#selectionModel,
           typeValuesList,
           newTypes,
           attrDefs,
@@ -60493,9 +60671,9 @@
 
       replicateSpanCommand(span, typeValuesList, isDelimiterFunc) {
         return new ReplicateSpanCommand(
-          this._editorID,
-          this._annotationModel,
-          this._selectionModel,
+          this.#editorID,
+          this.#annotationModel,
+          this.#selectionModel,
           span,
           typeValuesList,
           isDelimiterFunc
@@ -60504,20 +60682,20 @@
 
       removeAttributesFromItemsByPredCommand(items, attributeDefinition) {
         return new RemoveAttributesFromItemsByPredCommand(
-          this._annotationModel,
+          this.#annotationModel,
           items,
           attributeDefinition
         )
       }
 
       removeSpanCommand(id) {
-        return new RemoveSpanCommand(this._annotationModel, id)
+        return new RemoveSpanCommand(this.#annotationModel, id)
       }
 
       removeSelectedCommand() {
         return new RemoveSelectedCommand(
-          this._annotationModel,
-          this._selectionModel
+          this.#annotationModel,
+          this.#selectionModel
         )
       }
 
@@ -60527,7 +60705,7 @@
 
       removeValueFromAttributeDefinitionCommand(attributeDefinition, index) {
         return new RemoveValueFromAttributeDefinitionCommand(
-          this._annotationModel.typeDefinition.attribute,
+          this.#annotationModel.typeDictionary.attribute,
           attributeDefinition,
           index
         )
@@ -60535,9 +60713,18 @@
 
       toggleFlagAttributeToItemsCommand(items, attributeDefinition) {
         return new ToggleFlagAttributeToItemsCommand(
-          this._annotationModel,
+          this.#annotationModel,
           items,
           attributeDefinition
+        )
+      }
+
+      changeTextAndMoveSpanCommand(begin, end, newText) {
+        return new ChangeTextAndMoveSpanCommand(
+          this.#annotationModel,
+          begin,
+          end,
+          newText
         )
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/index.js
@@ -60605,7 +60792,7 @@
           this._eventEmitter,
           this._annotationModel,
           this._selectionModel,
-          this._annotationModel.typeDefinition
+          this._annotationModel.typeDictionary
         )
       }
     } // CONCATENATED MODULE: ./src/lib/MODE.js
@@ -61079,7 +61266,7 @@
       spanConfig,
       isDelimiterFunc
     ) {
-      const { begin, end } = annotationModel.getNewSpan(
+      const { begin, end } = annotationModel.getTextSelection(
         spanConfig,
         textSelectionAdjuster
       )
@@ -61124,7 +61311,7 @@
         return false
       }
 
-      const doesExists = spanInstanceContainer.hasDenotationSpan(begin, end)
+      const doesExists = spanInstanceContainer.find('denotation', begin, end)
 
       if (begin < end && !doesExists) {
         moveHandler(begin, end)
@@ -61423,7 +61610,7 @@
           }
 
           // A span cannot be expanded a span to the same as an existing span.
-          if (this.#spanInstanceContainer.hasDenotationSpan(begin, end)) {
+          if (this.#spanInstanceContainer.find('denotation', begin, end)) {
             return
           }
 
@@ -61456,7 +61643,8 @@
             return
           }
 
-          const doesExists = this.#spanInstanceContainer.hasDenotationSpan(
+          const doesExists = this.#spanInstanceContainer.find(
+            'denotation',
             begin,
             end
           )
@@ -61968,27 +62156,22 @@
       get #isReplicateAuto() {
         return this.#menuState.isPushed('auto replicate')
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/forwardMethods.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/index.js
 
-    /* harmony default export */ function forwardMethods(
-      delegator,
-      getTargetFunction,
-      methods
-    ) {
-      for (const method of methods) {
-        delegator[method] = (...args) => {
-          const target = getTargetFunction()
-          console.assert(
-            target[method],
-            `No ${method} method to forward`,
-            target
-          )
-
-          return target[method].apply(target, args)
-        }
+    class EditMode {
+      // Interface methods
+      createSpanWithTouchDevice() {}
+      expandSpanWithTouchDevice() {}
+      shrinkSpanWithTouchDevice() {}
+      editProperties() {}
+      relationClicked() {}
+      relationBollardClicked() {}
+      applyTextSelectionWithTouchDevice() {}
+      manipulateAttribute() {}
+      hidePallet() {}
+      get isPalletShown() {
+        return false
       }
-
-      return delegator
     } // CONCATENATED MODULE: ./src/lib/component/PromiseDialog.js
 
     class PromiseDialog extends Dialog {
@@ -62026,33 +62209,185 @@
         super.open()
         return new Promise((resolveFunc) => (this.resolveFunc = resolveFunc))
       }
+    } // CONCATENATED MODULE: ./src/lib/component/EditNumericAttributeDialog.js
+
+    function template(context) {
+      const { subjects, pred, min, max, step, value } = context
+      return anemone`
+<div class="textae-editor__edit-numeric-attribute-dialog__container">
+  <div class="textae-editor__edit-numeric-attribute-dialog__row">
+    <label>Subject</label>
+    <div class="textae-editor__edit-numeric-attribute-dialog__subject-row">
+      <input
+      class="textae-editor__edit-numeric-attribute-dialog__subject-input"
+        value="${subjects}"
+        disabled="disabled">
+      <button
+        class="textae-editor__edit-numeric-attribute-dialog__subject-edit-button"
+        title="properties">...</button>
+    </div>
+  </div>
+  <div class="textae-editor__edit-numeric-attribute-dialog__row">
+    <label>Predicate</label>
+    <input
+      value="${pred}"
+      disabled="disabled">
+  </div>
+  <div class="textae-editor__edit-numeric-attribute-dialog__row ui-front">
+    <label>Object</label>
+    <input
+      class="textae-editor__edit-numeric-attribute-dialog__value textae-editor__promise-dialog__observable-element"
+      type="number"
+      ${typeof min === 'number' ? `min="${min}"` : ''}
+      ${typeof max === 'number' ? `max="${max}"` : ''}
+      step="${step}"
+      value="${value}"
+      autofocus>
+  </div>
+</div>`
     }
 
-    // EXTERNAL MODULE: ./node_modules/jquery-ui/ui/widgets/autocomplete.js
-    var autocomplete = __webpack_require__(97) // CONCATENATED MODULE: ./src/lib/component/customize-jquery-ui-autocomplete.js
-    /* eslint no-underscore-dangle: 0 */
-    // Customize jQuery-ui autocomplete
-    /* harmony default export */ function customize_jquery_ui_autocomplete() {
-      // Replace @ to font awesome icon
-      jquery_default().ui.autocomplete.prototype._renderItem = (
-        $ul,
-        { id, label }
-      ) => {
-        const $li = jquery_default()(anemone`
-      <li>
-        <div>
-          ${label}
-          <i class="fa fa-globe"></i>
-          ${id}
-        </div>
-      </li>`)
+    class EditNumericAttributeDialog extends PromiseDialog {
+      constructor(
+        attrDef,
+        attribute,
+        targetAttributes,
+        deletable,
+        editProperties,
+        pallet
+      ) {
+        const buttons = []
 
-        $ul.append($li)
+        if (deletable) {
+          buttons.unshift({
+            class:
+              'textae-editor__edit-numeric-attribute-dialog__remove-attribute',
+            click: () => {
+              this.close()
+              this.resolveFunc({ newObj: null })
+            }
+          })
+        }
 
-        return $li
+        if (pallet) {
+          buttons.unshift({
+            text: '...',
+            title: 'configuration',
+            click: () => {
+              this.close()
+              pallet.show()
+              pallet.showAttribute(attribute.pred)
+            }
+          })
+        }
+
+        super(
+          `Attribute [${targetAttributes.map(({ id }) => id || '-').join(',')}]`,
+          template({
+            subjects: `${targetAttributes
+              .map(({ subj }) => subj || '-')
+              .join(', ')}`,
+            pred: attribute.pred,
+            value: attribute.obj,
+            min: attrDef.min,
+            max: attrDef.max,
+            step: attrDef.step
+          }),
+          { buttons },
+          () => {
+            const input = super.el.querySelector(
+              '.textae-editor__edit-numeric-attribute-dialog__value'
+            )
+
+            // Numeric attribute obj value type must be Number type.
+            return { newObj: input.value }
+          }
+        )
+
+        if (editProperties) {
+          delegate_default()(
+            super.el,
+            '.textae-editor__edit-numeric-attribute-dialog__subject-edit-button',
+            'click',
+            () => {
+              this.close()
+              editProperties()
+            }
+          )
+        }
       }
-      jquery_default().ui.autocomplete.prototype._resizeMenu = () => {
-        // Prepend resize menu
+    } // CONCATENATED MODULE: ./src/lib/openEditNumericAttributeDialog.js
+
+    /* harmony default export */ function openEditNumericAttributeDialog(
+      selectionModelEntity,
+      attrDef,
+      attribute,
+      commander,
+      editProperties,
+      pallet
+    ) {
+      new EditNumericAttributeDialog(
+        attrDef,
+        attribute,
+        selectionModelEntity.all.reduce((attrs, entity) => {
+          attrs.push(entity.attributes.find((a) => a.pred == attribute.pred))
+          return attrs
+        }, []),
+        true,
+        editProperties,
+        pallet
+      )
+        .open()
+        .then(({ newObj }) => {
+          const command = newObj
+            ? commander.factory.changeAttributeObjOfItemsCommand(
+                selectionModelEntity.all,
+                attrDef,
+                newObj
+              )
+            : commander.factory.removeAttributesFromItemsByPredCommand(
+                selectionModelEntity.all,
+                attrDef
+              )
+
+          commander.invoke(command)
+        })
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/createNumericAttributeOrShowEditNumericAttributeDialog.js
+
+    /* harmony default export */ function createNumericAttributeOrShowEditNumericAttributeDialog(
+      selectionModelItems,
+      attrDef,
+      commander,
+      pallet,
+      editProperties
+    ) {
+      const attribute =
+        selectionModelItems.findSelectedAttributeWithSamePredicate(attrDef.pred)
+
+      if (attribute) {
+        const isOnlyEntityWithJsutOneSamePredSelected =
+          selectionModelItems.onlySelectedWithJustOneAttributeOf(attrDef.pred)
+
+        if (isOnlyEntityWithJsutOneSamePredSelected) {
+          openEditNumericAttributeDialog(
+            selectionModelItems,
+            attrDef,
+            attribute,
+            commander,
+            pallet,
+            editProperties
+          )
+        } else {
+          alertify_default().warning(
+            'Some selected items has zero or multi this attribute.'
+          )
+        }
+      } else {
+        const command = commander.factory.createAttributeToItemsCommand(
+          selectionModelItems.all,
+          attrDef
+        )
+        commander.invoke(command)
       }
     } // CONCATENATED MODULE: ./src/lib/component/searchTerm.js
 
@@ -62089,398 +62424,452 @@
       }
 
       request.send()
-    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/select.js
+    }
 
-    /* harmony default export */ function TypeDefinitionDialog_select(
-      inputId,
-      inputLabel,
-      { item }
-    ) {
-      inputId.value = item.id
-      inputLabel.value = item.label
-      return false
-    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/setSourceOfAutoComplete.js
+    // EXTERNAL MODULE: ./node_modules/jquery-ui/ui/widgets/autocomplete.js
+    var autocomplete = __webpack_require__(97) // CONCATENATED MODULE: ./src/lib/component/customize-jquery-ui-autocomplete.js
+    /* eslint no-underscore-dangle: 0 */
+    // Customize jQuery-ui autocomplete
+    /* harmony default export */ function customize_jquery_ui_autocomplete() {
+      // Replace @ to font awesome icon
+      jquery_default().ui.autocomplete.prototype._renderItem = (
+        $ul,
+        { id, label }
+      ) => {
+        const $li = jquery_default()(anemone`
+      <li>
+        <div>
+          ${label}
+          <i class="fa fa-globe"></i>
+          ${id}
+        </div>
+      </li>`)
+
+        $ul.append($li)
+
+        return $li
+      }
+      jquery_default().ui.autocomplete.prototype._resizeMenu = () => {
+        // Prepend resize menu
+      }
+    } // CONCATENATED MODULE: ./src/lib/component/setSourceOfAutoComplete.js
 
     customize_jquery_ui_autocomplete()
 
     /* harmony default export */ function setSourceOfAutoComplete(
-      el,
+      inputElement,
+      labelSpan,
       autocompletionWs,
       getLocalData
     ) {
-      const inputs = el.querySelectorAll('input')
+      jquery_default()(inputElement).autocomplete({
+        source: (request, response) => {
+          if (labelSpan) {
+            if (labelSpan instanceof HTMLInputElement) {
+              labelSpan.value = ''
+            } else {
+              labelSpan.innerText = ''
+            }
+          }
 
-      // Update the source
-      jquery_default()(inputs[0]).autocomplete({
-        source: (request, response) =>
           searchTerm(
             autocompletionWs,
             getLocalData(request.term),
             request.term,
             response
-          ),
+          )
+        },
         minLength: 3,
-        select: (_, ui) => TypeDefinitionDialog_select(inputs[0], inputs[1], ui)
-      })
+        select: (_, { item }) => {
+          inputElement.value = item.id
 
-      jquery_default()(inputs[1]).autocomplete({
-        source: (request, response) =>
-          searchTerm(
-            autocompletionWs,
-            getLocalData(request.term),
-            request.term,
-            response
-          ),
-        minLength: 3,
-        select: (_, ui) => TypeDefinitionDialog_select(inputs[0], inputs[1], ui)
-      })
-    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/template.js
+          console.log(123)
+          if (labelSpan) {
+            if (labelSpan instanceof HTMLInputElement) {
+              labelSpan.value = item.label
+            } else {
+              labelSpan.innerText = item.label
+            }
+          }
 
-    function template(context) {
-      const { id, label, color, isDefault } = context
+          return false
+        }
+      })
+    } // CONCATENATED MODULE: ./src/lib/component/EditStringAttributeDialog.js
+
+    function EditStringAttributeDialog_template(context) {
+      const { subjects, pred, value } = context
+
       return anemone`
-<div class="textae-editor__type-definition-dialog__container">
-  <div class="textae-editor__type-definition-dialog__row ui-front">
-    <label>Id</label>
+<div class="textae-editor__edit-string-attribute-dialog__container">
+  <div class="textae-editor__edit-numeric-attribute-dialog__row">
+    <label>Subject</label>
+    <div class="textae-editor__edit-numeric-attribute-dialog__subject-row">
+      <input
+      class="textae-editor__edit-numeric-attribute-dialog__subject-input"
+        value="${subjects}"
+        disabled="disabled">
+      <button
+        class="textae-editor__edit-numeric-attribute-dialog__subject-edit-button"
+        title="properties">...</button>
+    </div>
+  </div>
+  <div class="textae-editor__edit-string-attribute-dialog__row">
+    <label>Predicate</label>
     <input
-      class="textae-editor__type-definition-dialog--id textae-editor__promise-dialog__observable-element"
-      value="${id || ''}">
+      value="${pred}" disabled="disabled">
   </div>
-  <div class="textae-editor__type-definition-dialog__row ui-front">
-    <label>Label<span></span></label>
-    <input value="${label}">
+  <div class="textae-editor__edit-string-attribute-dialog__row ui-front">
+    <label>Object</label>
+    <input
+      class="textae-editor__edit-string-attribute-dialog__value textae-editor__promise-dialog__observable-element"
+      value="${value}"
+      autofocus>
   </div>
-  <div class="textae-editor__type-definition-dialog__color-picker">
-    <label><input
-      class="textae-editor__type-definition-dialog__color-picker__input"
-      type="color"
-      value="${color}">
-    Color</label>
-  </div>
-  <div class="textae-editor__type-definition-dialog__set-default">
-    <label><input
-      class="textae-editor__type-definition-dialog__set-default__input"
-      type="checkbox" ${
-        isDefault ? 'checked="checked" disabled="disabled"' : ''
-      }>
-    Default type</label>
+  <div class="textae-editor__edit-string-attribute-dialog__row">
+    <label>Label</label>
+    <input
+      class="textae-editor__edit-string-attribute-dialog__label"
+      value="" disabled="disabled">
   </div>
 </div>`
-    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/index.js
+    }
 
-    class TypeDefinitionDialog extends PromiseDialog {
+    class EditStringAttributeDialog extends PromiseDialog {
       constructor(
-        title,
-        content,
-        definitionContainer,
-        autocompletionWs,
-        convertToResultsFunc
+        attrDef,
+        attribute,
+        targetAttributes,
+        deletable,
+        editProperties,
+        pallet
       ) {
-        super(title, template(content), {}, () => {
-          const inputs = super.el.querySelectorAll('input')
-          return convertToResultsFunc(
-            inputs[0].value,
-            inputs[1].value,
-            inputs[2].value,
-            inputs[3].checked
+        const buttons = []
+
+        if (deletable) {
+          buttons.unshift({
+            class:
+              'textae-editor__edit-string-attribute-dialog__remove-attribute',
+            click: () => {
+              this.close()
+              this.resolveFunc({ newObj: null })
+            }
+          })
+        }
+
+        if (pallet) {
+          buttons.unshift({
+            text: '...',
+            title: 'configuration',
+            click: () => {
+              this.close()
+              pallet.show()
+              pallet.showAttribute(attribute.pred)
+            }
+          })
+        }
+
+        super(
+          `Attribute [${targetAttributes.map(({ id }) => id || '-').join(',')}]`,
+          EditStringAttributeDialog_template({
+            subjects: `${targetAttributes
+              .map(({ subj }) => subj || '-')
+              .join(', ')}`,
+            pred: attribute.pred,
+            value: attribute.obj
+          }),
+          { buttons },
+          () => {
+            const input = super.el.querySelector(
+              '.textae-editor__edit-string-attribute-dialog__value'
+            )
+
+            return {
+              newObj: input.value,
+              newLabel: super.el.querySelector(
+                '.textae-editor__edit-string-attribute-dialog__label'
+              ).value
+            }
+          }
+        )
+
+        if (editProperties) {
+          delegate_default()(
+            super.el,
+            '.textae-editor__edit-numeric-attribute-dialog__subject-edit-button',
+            'click',
+            () => {
+              this.close()
+              editProperties()
+            }
           )
-        })
-
-        setSourceOfAutoComplete(super.el, autocompletionWs, (term) =>
-          definitionContainer.findByLabel(term)
-        )
-      }
-    } // CONCATENATED MODULE: ./src/lib/component/CreateTypeDefinitionDialog.js
-
-    class CreateTypeDefinitionDialog extends TypeDefinitionDialog {
-      constructor(definitionContainer, autocompletionWs) {
-        const convertToReseltsFunc = (
-          newId,
-          newLabel,
-          newColor,
-          newDefault
-        ) => {
-          if (newId === '') {
-            return
-          }
-
-          const newType = {
-            id: newId,
-            color: newColor
-          }
-
-          if (newLabel !== '') {
-            newType.label = newLabel
-          }
-
-          if (newDefault) {
-            newType.default = newDefault
-          }
-
-          return { newType }
         }
 
-        super(
-          'New type',
-          {
-            id: null,
-            label: '',
-            color: definitionContainer.defaultColor,
-            isDefault: false
-          },
-          definitionContainer,
-          autocompletionWs,
-          convertToReseltsFunc
+        setSourceOfAutoComplete(
+          super.el.querySelector(
+            '.textae-editor__edit-string-attribute-dialog__value'
+          ),
+          super.el.querySelector(
+            '.textae-editor__edit-string-attribute-dialog__label'
+          ),
+          attrDef.autocompletionWs,
+          () => []
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/component/EditTypeDefinitionDialog/getDifference.js
+    } // CONCATENATED MODULE: ./src/lib/openEditStringAttributeDialog.js
 
-    /* harmony default export */ function getDifference(before, after) {
-      const changedProperties = new Map()
-
-      if (before.id !== after.id) {
-        changedProperties.set('id', after.id)
-      }
-
-      if (before.label !== after.label) {
-        changedProperties.set('label', after.label === '' ? null : after.label)
-      }
-
-      if (before.color !== after.color) {
-        changedProperties.set('color', after.color === '' ? null : after.color)
-      }
-
-      if (before.isDefault !== after.isDefault) {
-        changedProperties.set('default', after.isDefault ? true : null)
-      }
-
-      return changedProperties
-    } // CONCATENATED MODULE: ./src/lib/component/EditTypeDefinitionDialog/index.js
-
-    class EditTypeDefinitionDialog extends TypeDefinitionDialog {
-      constructor(definitionContainer, id, color, isDefault, autocompletionWs) {
-        const label = definitionContainer.getLabel(id) || ''
-
-        const beforeChange = {
-          id,
-          label,
-          color,
-          isDefault
-        }
-
-        const convertToReseltsFunc = (
-          newId,
-          newLabel,
-          newColor,
-          newDefault
-        ) => {
-          const afterChange = {
-            id: newId,
-            label: newLabel,
-            color: newColor,
-            isDefault: newDefault
-          }
-
-          const changedProperties = getDifference(beforeChange, afterChange)
-
-          return {
-            id,
-            changedProperties
-          }
-        }
-
-        super(
-          'Edit type',
-          beforeChange,
-          definitionContainer,
-          autocompletionWs,
-          convertToReseltsFunc
-        )
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/bindPalletEvents/checkButtonEnable.js
-
-    /* harmony default export */ function checkButtonEnable(targetNode) {
-      return !targetNode.classList.contains(
-        'textae-editor__pallet__table-button--disabled'
-      )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/bindPalletEvents/index.js
-
-    /* harmony default export */ function bindPalletEvents(
-      pallet,
+    /* harmony default export */ function openEditStringAttributeDialog(
+      selectionModelEntity,
+      attribute,
       commander,
-      getAutocompletionWs,
-      definitionContainer,
-      annotationType,
-      selectionModel,
-      annotationModel
+      attrDef,
+      editProperties,
+      pallet
     ) {
-      delegate_default()(
-        pallet.el,
-        `.textae-editor__pallet__add-button`,
-        'click',
-        () => {
-          new CreateTypeDefinitionDialog(
-            definitionContainer,
-            getAutocompletionWs()
-          )
-            .open()
-            .then(({ newType }) =>
-              commander.invoke(
-                commander.factory.createTypeDefinitionCommand(
-                  definitionContainer,
-                  newType
-                )
+      new EditStringAttributeDialog(
+        attrDef,
+        attribute,
+        selectionModelEntity.all.reduce((attrs, entity) => {
+          attrs.push(entity.attributes.find((a) => a.pred == attribute.pred))
+          return attrs
+        }, []),
+        true,
+        editProperties,
+        pallet
+      )
+        .open()
+        .then(({ newObj, newLabel }) => {
+          if (newObj) {
+            commander.invoke(
+              commander.factory.changeStringAttributeObjOfItemsCommand(
+                selectionModelEntity.all,
+                attrDef,
+                newObj,
+                newLabel
               )
             )
-        }
-      )
-
-      delegate_default()(
-        pallet.el,
-        '.textae-editor__pallet__label',
-        'click',
-        (e) =>
-          commander.invoke(
-            commander.factory.changeTypeOfSelectedItemsCommand(
-              annotationType,
-              e.delegateTarget.dataset.id
+          } else {
+            commander.invoke(
+              commander.factory.removeAttributesFromItemsByPredCommand(
+                selectionModelEntity.all,
+                attrDef
+              )
             )
+          }
+        })
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/createStringAttributeOrShowEditStringAttributeDialog.js
+
+    /* harmony default export */ function createStringAttributeOrShowEditStringAttributeDialog(
+      selectionModelItems,
+      attrDef,
+      commander,
+      editProperties,
+      pallet
+    ) {
+      const attribute =
+        selectionModelItems.findSelectedAttributeWithSamePredicate(attrDef.pred)
+
+      if (attribute) {
+        const isOnlyEntityWithJustOneSamePredSelected =
+          selectionModelItems.onlySelectedWithJustOneAttributeOf(attrDef.pred)
+
+        if (isOnlyEntityWithJustOneSamePredSelected) {
+          openEditStringAttributeDialog(
+            selectionModelItems,
+            attribute,
+            commander,
+            attrDef,
+            editProperties,
+            pallet
           )
-      )
-
-      delegate_default()(
-        pallet.el,
-        '.textae-editor__pallet__select-all',
-        'click',
-        (e) => {
-          if (!checkButtonEnable(e.target)) {
-            return
-          }
-
-          selectionModel.removeAll()
-          const ids = annotationModel
-            .getInstanceContainerFor(annotationType)
-            .findByType(e.delegateTarget.dataset.id)
-            .map(({ id }) => id)
-          selectionModel.add(annotationType, ids)
-        }
-      )
-
-      delegate_default()(
-        pallet.el,
-        '.textae-editor__pallet__edit-type',
-        'click',
-        (e) => {
-          new EditTypeDefinitionDialog(
-            definitionContainer,
-            e.target.dataset.id,
-            e.target.dataset.color.toLowerCase(),
-            e.target.dataset.isDefault === 'true',
-            getAutocompletionWs()
-          )
-            .open()
-            .then(({ id, changedProperties }) => {
-              if (changedProperties.size) {
-                commander.invoke(
-                  commander.factory.changeTypeDefinitionCommand(
-                    definitionContainer,
-                    annotationType,
-                    id,
-                    changedProperties
-                  )
-                )
-              }
-            })
-        }
-      )
-
-      delegate_default()(
-        pallet.el,
-        '.textae-editor__pallet__remove',
-        'click',
-        (e) => {
-          if (!checkButtonEnable(e.target)) {
-            return
-          }
-          const { id } = e.delegateTarget.dataset
-          const { label } = e.delegateTarget.dataset
-
-          const removeType = {
-            id,
-            label: label || ''
-          }
-
-          if (typeof id === 'undefined') {
-            throw new Error('You must set the type id to remove.')
-          }
-
-          commander.invoke(
-            commander.factory.removeTypeDefinitionCommand(
-              definitionContainer,
-              removeType
-            )
+        } else {
+          alertify_default().warning(
+            'Some selected items has zero or multi this attribute.'
           )
         }
-      )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/index.js
+      } else {
+        const command = commander.factory.createAttributeToItemsCommand(
+          selectionModelItems.all,
+          attrDef
+        )
+        commander.invoke(command)
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/index.js
 
-    class EditMode {
-      #pallet
+    class AttributeEditor {
+      #commander
+      #selectionModelItems
+      #selectionAttributePallet
+      #typeDictionary
+      #editProperties
+      #typeValuesPallet
 
       constructor(
-        editorHTMLElement,
-        annotationModel,
-        selectionModel,
         commander,
-        getAutocompletionWs,
-        definitionContainer,
-        annotationType,
-        pallet = null
+        typeDictionary,
+        selectionModelItems,
+        selectionAttributePallet,
+        editProperties,
+        typeValuesPallet
       ) {
-        if (pallet) {
-          this.#pallet = pallet
+        this.#commander = commander
+        this.#selectionModelItems = selectionModelItems
+        this.#selectionAttributePallet = selectionAttributePallet
+        this.#typeDictionary = typeDictionary
+        this.#editProperties = editProperties
+        this.#typeValuesPallet = typeValuesPallet
+      }
 
-          bindPalletEvents(
-            pallet,
-            commander,
-            getAutocompletionWs,
-            definitionContainer,
-            annotationType,
-            selectionModel,
-            annotationModel
-          )
-
-          editorHTMLElement.appendChild(pallet.el)
-
-          forwardMethods(this, () => pallet, [
-            'showPallet',
-            'selectLeftAttributeTab',
-            'selectRightAttributeTab'
-          ])
+      manipulateAttribute(number, shiftKey) {
+        if (shiftKey) {
+          this.#deleteAt(number)
+        } else {
+          this.#addOrEditAt(number)
         }
       }
 
-      hidePallet() {
-        if (!this.#pallet) return
+      #deleteAt(number) {
+        const attrDef = this.#typeDictionary.attribute.getAttributeAt(number)
 
-        this.#pallet.hide()
+        if (!attrDef) {
+          alertify_default().warning(`Attribute No.${number} is not defined`)
+          return
+        }
+
+        if (this.#selectionModelItems.selectedWithAttributeOf(attrDef.pred)) {
+          const command =
+            this.#commander.factory.removeAttributesFromItemsByPredCommand(
+              this.#selectionModelItems.all,
+              attrDef
+            )
+          this.#commander.invoke(command)
+        } else {
+          alertify_default().warning(
+            'None of the selected items has this attribute.'
+          )
+        }
       }
 
-      get isPalletShown() {
-        if (!this.#pallet) return false
+      #addOrEditAt(number) {
+        this.#selectionAttributePallet.hide()
 
-        return this.#pallet.visibility
+        const attrDef = this.#typeDictionary.attribute.getAttributeAt(number)
+
+        if (!attrDef) {
+          alertify_default().warning(`Attribute No.${number} is not defined`)
+          return
+        }
+
+        switch (attrDef.valueType) {
+          case 'flag':
+            this.#commander.invoke(
+              this.#commander.factory.toggleFlagAttributeToItemsCommand(
+                this.#selectionModelItems.all,
+                attrDef
+              )
+            )
+            break
+          case 'numeric':
+            createNumericAttributeOrShowEditNumericAttributeDialog(
+              this.#selectionModelItems,
+              attrDef,
+              this.#commander,
+              this.#editProperties,
+              this.#typeValuesPallet
+            )
+            break
+          case 'selection':
+            {
+              if (
+                this.#selectionModelItems.selectedWithAttributeOf(attrDef.pred)
+              ) {
+                this.#selectionAttributePallet.show(attrDef).then((newObj) => {
+                  if (
+                    this.#selectionModelItems.isDuplicatedPredAttributeSelected(
+                      attrDef.pred
+                    )
+                  ) {
+                    alertify_default().warning(
+                      'An item among the selected has this attribute multiple times.'
+                    )
+                  } else {
+                    const command =
+                      this.#commander.factory.changeAttributeObjOfItemsCommand(
+                        this.#selectionModelItems.all,
+                        attrDef,
+                        newObj
+                      )
+                    this.#commander.invoke(command)
+                  }
+                })
+              } else {
+                const command =
+                  this.#commander.factory.createAttributeToItemsCommand(
+                    this.#selectionModelItems.all,
+                    attrDef
+                  )
+                this.#commander.invoke(command)
+              }
+            }
+            break
+          case 'string':
+            createStringAttributeOrShowEditStringAttributeDialog(
+              this.#selectionModelItems,
+              attrDef,
+              this.#commander,
+              this.#editProperties,
+              this.#typeValuesPallet
+            )
+            break
+          default:
+            throw `${attrDef.valueType} is unknown attribute`
+        }
       }
+    } // CONCATENATED MODULE: ./src/lib/component/SelectionAttributePallet/toBodyRow.js
 
-      // Dummy functions
-      createSpanWithTouchDevice() {}
-      expandSpanWithTouchDevice() {}
-      shrinkSpanWithTouchDevice() {}
-      editProperties() {}
-      relationClicked() {}
-      relationBollardClicked() {}
-      applyTextSelectionWithTouchDevice() {}
-      manipulateAttribute() {}
+    function toBodyRow(color, id, defaultValue, label) {
+      return () => anemone`
+        <tr class="textae-editor__pallet__row" style="background-color: ${color};">
+          <td class="textae-editor__pallet__selection-attribute-label" data-id="${id}">
+            ${id}
+            ${() =>
+              defaultValue
+                ? '<span class="textae-editor__pallet__default-icon" title="This type is set as a default type."></span>'
+                : ''}
+          </td>
+          <td class="textae-editor__pallet__short-label">
+            ${label}
+          </td>
+          <td class="textae-editor__pallet__short-label">
+            ${color}
+          </td>
+        </tr>
+        `
+    } // CONCATENATED MODULE: ./src/lib/component/SelectionAttributePallet/template.js
+
+    /* harmony default export */ function SelectionAttributePallet_template(
+      context
+    ) {
+      const { values } = context.attrDef
+
+      return anemone`
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>label</th>
+          <th>color</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${values.map(({ color = '', id, default: defaultValue, label = '' }) =>
+          toBodyRow(color, id, defaultValue, label)
+        )}
+      </tbody>
+    </table>
+  </div>
+  `
     }
 
     // EXTERNAL MODULE: ./node_modules/jquery-ui/ui/widgets/draggable.js
@@ -62647,6 +63036,923 @@
       get _maxHeight() {
         return document.documentElement.clientHeight
       }
+    } // CONCATENATED MODULE: ./src/lib/component/SelectionAttributePallet/index.js
+
+    class SelectionAttributePallet extends Pallet {
+      constructor(editorHTMLElement, mousePoint) {
+        super(editorHTMLElement, 'Selection attribute', mousePoint)
+
+        this._veil = dohtml_default().create(
+          `<div style="position: fixed; right: 0; top: 0; bottom:0; left: 0; background-color: rgba(0, 0, 10, 0.3);"></div>`
+        )
+
+        // Close the SelectionAttributePallet with the Esc key.
+        this._el.addEventListener('keydown', (event) => {
+          if (event.code === 'Escape') {
+            event.preventDefault()
+            this.hide()
+          }
+        })
+      }
+
+      show(attrDef, zIndex = 90, opener = null) {
+        this._editorHTMLElement.appendChild(this._veil)
+        this._editorHTMLElement.appendChild(this.el)
+        this._veil.style['z-index'] = zIndex + 1
+        this._el.style['z-index'] = zIndex + 1
+        this._attributeDefinition = attrDef
+        super.show()
+
+        // Focus on the close button to listen keydown events.
+        // Store focusing element to revert focus when closeed.
+        this._el.querySelector('.textae-editor__pallet__close-button').focus()
+        this._opener = opener
+
+        this._show = true
+
+        return new Promise((resolve) => {
+          delegate_default()(
+            this._el,
+            '.textae-editor__pallet__selection-attribute-label',
+            'click',
+            (e) => {
+              this.hide()
+              resolve(e.target.dataset.id)
+            }
+          )
+        })
+      }
+
+      hide() {
+        if (this._show) {
+          this._editorHTMLElement.removeChild(this._veil)
+          this._editorHTMLElement.removeChild(this.el)
+
+          this._show = false
+        }
+
+        // Focus on the button used to open the palette
+        // so that the Entity Edit dialog can be closed with the Esc key.
+        if (this._opner) {
+          this._opener.focus()
+        }
+      }
+
+      get _content() {
+        const values = {
+          attrDef: this._attributeDefinition.externalFormat
+        }
+        return SelectionAttributePallet_template(values)
+      }
+    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/getValues.js
+
+    /* harmony default export */ function getValues(content) {
+      const typeName = content.querySelector(
+        '.textae-editor__edit-type-values-dialog__type-name'
+      ).value
+
+      const label = content.querySelector(
+        '.textae-editor__edit-type-values-dialog__type-label'
+      ).innerText
+
+      const attributes = []
+      for (const attr of content.querySelectorAll(
+        '.textae-editor__edit-type-values-dialog__attribute'
+      )) {
+        attributes.push({
+          id: attr.querySelector(
+            '.textae-editor__edit-type-values-dialog__attribute-value'
+          ).dataset.id,
+          subj: attr.querySelector(
+            '.textae-editor__edit-type-values-dialog__attribute-value'
+          ).dataset.subj,
+          pred: attr.querySelector(
+            '.textae-editor__edit-type-values-dialog__attribute-predicate'
+          ).dataset.pred,
+          obj: attr.querySelector(
+            '.textae-editor__edit-type-values-dialog__attribute-value'
+          ).dataset.obj,
+          label: attr.querySelector(
+            '.textae-editor__edit-type-values-dialog__attribute-value'
+          ).dataset.label
+        })
+      }
+
+      return { typeName, label, attributes }
+    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toEntityHTML.js
+
+    /* harmony default export */ function toEntityHTML(value, entityContainer) {
+      const label = entityContainer.getLabel(value) || ''
+
+      return () => anemone`
+    <tr>
+      <td rowspan="2"></td>
+      <td>
+        <span class="textae-editor__edit-type-values-dialog__type-predicate">type</span>
+      </td>
+      <td class="ui-front">
+        <input class="textae-editor__edit-type-values-dialog__type-name textae-editor__promise-dialog__observable-element" value="${value}">
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <span class="textae-editor__edit-type-values-dialog__type-label">${label}</span>
+      </td>
+    </tr>
+  `
+    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toAttributeHTML/getLabelOf.js
+
+    /* harmony default export */ function getLabelOf(
+      attribute,
+      attributeContainer
+    ) {
+      const { pred, obj } = attribute
+      const { valueType } = attributeContainer.get(pred)
+
+      switch (valueType) {
+        case 'string':
+          // In the case of String attributes,
+          // Labels completed by autocomplete can be reflected in attribute definitions.
+          // We want to keep the label in the attribute hash until we press the OK button.
+          return attribute.label || attributeContainer.getLabel(pred, obj) || ''
+        case 'selection':
+        case 'numeric':
+        case 'flag':
+          // In the case of Selection or Numeric or flag attributes,
+          // we want to refer only to the label of the attribute definition.
+          return attributeContainer.getLabel(pred, obj) || ''
+        default:
+          throw `unknown attribute type: ${valueType}`
+      }
+    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toAttributeHTML/index.js
+
+    /* harmony default export */ function toAttributeHTML(
+      attribute,
+      index,
+      attributeInstances,
+      attributeContainer
+    ) {
+      const { id, subj, pred, obj } = attribute
+      const previousAttribute = attributeInstances[index - 1]
+      const previousPredicate = previousAttribute && previousAttribute.pred
+      const definitionIndex = attributeContainer.getIndexOf(pred)
+      const { valueType } = attributeContainer.get(pred)
+
+      const shortcutKeyColumn = () =>
+        pred === previousPredicate
+          ? `<td class="shortcut-key" rowspan="2"></td>`
+          : `<td class="shortcut-key" rowspan="2">
+          ${
+            definitionIndex < 9
+              ? `<span class="textae-editor__edit-type-values-dialog__shortcut-key" title="Shortcut key for this predicate">${
+                  definitionIndex + 1
+                }</span>`
+              : ''
+          }
+        </td>
+        `
+
+      return () => anemone`
+<tr class="textae-editor__edit-type-values-dialog__attribute">
+  ${shortcutKeyColumn}
+  <td rowspan="2">
+    <span
+      class="textae-editor__edit-type-values-dialog__attribute-predicate ${
+        pred === previousPredicate
+          ? ''
+          : `textae-editor__edit-type-values-dialog__attribute-predicate--${valueType}`
+      }"
+      data-pred="${pred}"
+      title="${valueType} type"
+      >
+      ${pred === previousPredicate ? '' : pred}
+    </span>
+  </td>
+  <td>
+    <span
+      class="textae-editor__edit-type-values-dialog__attribute-value"
+      data-id="${id}"
+      data-subj="${subj || ''}""
+      data-obj="${obj}"
+      data-label="${getLabelOf(attribute, attributeContainer)}"
+      >
+      ${getLabelOf(attribute, attributeContainer) || obj}
+    </span>
+  </td>
+</tr>
+<tr>
+  <td>
+    <button
+      type="button"
+      class="textae-editor__edit-type-values-dialog__edit-attribute"
+      data-pred="${pred}"
+      data-index="${index}"
+      ${valueType === 'flag' ? 'disabled="disabled"' : ''}>
+    </button>
+    <button
+      type="button"
+      class="textae-editor__edit-type-values-dialog__remove-attribute"
+      data-index="${index}">
+    </button>
+  </td>
+</tr>
+`
+    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toAddAttributeButton.js
+
+    function toAddAttributeButton(valueType, pred, isDisabled) {
+      const title = () =>
+        isDisabled
+          ? `disabled="disabled" title="This predicate is already used with its default value."`
+          : anemone`title="${valueType} type"`
+
+      return () => anemone`
+    <button
+     type="button"
+     class="textae-editor__edit-type-values-dialog__add-attribute textae-editor__edit-type-values-dialog__add-attribute--${valueType}"
+     data-pred="${pred}"
+      ${title}> ${pred}</button>`
+    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/index.js
+
+    /* harmony default export */ function createContentHTML(
+      typeName,
+      attributes,
+      entityContainer,
+      attributeContainer,
+      palletName
+    ) {
+      return anemone`
+    <div style="overflow-y: auto; max-height: 36em; overflow-x: hidden;">
+      <table class="textae-editor__edit-type-values-dialog__table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Predicate</th>
+            <th>Value/Label</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${toEntityHTML(typeName, entityContainer)}
+          ${attributes.map((a, index, list) =>
+            toAttributeHTML(a, index, list, attributeContainer)
+          )}
+          </tbody>
+      </table>
+    </div>
+    <fieldset>
+      <legend>
+        <span class="textae-editor__edit-type-values-dialog__open-pallet" title="${palletName} Configuration"></span>
+        Available Predicates:
+      </legend>
+      <div class="textae-editor__edit-type-values-dialog__add-attribute-buttons">
+      ${attributeContainer.attributes.map(({ pred, valueType }) =>
+        toAddAttributeButton(
+          valueType,
+          pred,
+          isAlreadyUsed(attributes, pred, attributeContainer)
+        )
+      )}
+      </div>
+    </fieldset>
+  `
+    }
+
+    function isAlreadyUsed(attributes, pred, attributeContainer) {
+      return attributes.some(
+        (i) =>
+          i.pred === pred &&
+          String(i.obj) === String(attributeContainer.get(pred).default)
+      )
+    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/mergedTypeValuesOf.js
+
+    // When you select multiple entities and display the edit dialog,
+    // this is used to display the merged type name and attributes.
+    /* harmony default export */ function mergedTypeValuesOf(entities) {
+      const { typeName } = entities[entities.length - 1]
+
+      const mergedAttributes = []
+      for (const { attributes } of entities) {
+        for (const attribute of attributes) {
+          if (
+            !mergedAttributes.some((a) =>
+              a.equalsTo(attribute.pred, attribute.obj)
+            )
+          ) {
+            mergedAttributes.push(attribute)
+          }
+        }
+      }
+
+      return new TypeValues(typeName, mergedAttributes)
+    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/index.js
+
+    class EditPropertiesDialog extends PromiseDialog {
+      constructor(
+        editorHTMLElement,
+        annotationType,
+        palletName,
+        entityContainer,
+        attributeContainer,
+        autocompletionWs,
+        selectedItems,
+        typeValuesPallet,
+        mousePoint
+      ) {
+        const { typeName, attributes } = mergedTypeValuesOf(selectedItems)
+        const contentHtml = createContentHTML(
+          typeName,
+          attributes,
+          entityContainer,
+          attributeContainer,
+          palletName
+        )
+
+        super(
+          `${annotationType} [${selectedItems
+            .map(({ id }) => id)
+            .join(',')}] Properties`,
+          contentHtml,
+          {
+            maxWidth: 800
+          },
+          () => getValues(super.el)
+        )
+
+        // Observe edit an attribute button.
+        delegate_default()(
+          super.el,
+          '.textae-editor__edit-type-values-dialog__edit-attribute',
+          'click',
+          (e) => {
+            const { pred } = e.target.dataset
+            const attrDef = attributeContainer.get(pred)
+            const zIndex = parseInt(
+              super.el.closest('.textae-editor__dialog').style['z-index']
+            )
+            const { typeName, attributes } = getValues(super.el)
+
+            switch (attrDef.valueType) {
+              case 'numeric':
+                new EditNumericAttributeDialog(
+                  attrDef,
+                  attributes[e.target.dataset.index],
+                  [attributes[e.target.dataset.index]]
+                )
+                  .open()
+                  .then(({ newObj }) => {
+                    attributes[e.target.dataset.index].obj = newObj
+                    this.#updateDisplay(
+                      typeName,
+                      attributes,
+                      attributeContainer,
+                      entityContainer
+                    )
+                  })
+                break
+              case 'selection':
+                new SelectionAttributePallet(editorHTMLElement, mousePoint)
+                  .show(attrDef, zIndex, e.target)
+                  .then((newObj) => {
+                    attributes[e.target.dataset.index].obj = newObj
+                    this.#updateDisplay(
+                      typeName,
+                      attributes,
+                      attributeContainer,
+                      entityContainer
+                    )
+                  })
+                break
+              case 'string':
+                new EditStringAttributeDialog(
+                  attrDef,
+                  attributes[e.target.dataset.index],
+                  [attributes[e.target.dataset.index]]
+                )
+                  .open()
+                  .then(({ newObj, newLabel }) => {
+                    attributes[e.target.dataset.index].obj = newObj
+                    attributes[e.target.dataset.index].label = newLabel
+                    this.#updateDisplay(
+                      typeName,
+                      attributes,
+                      attributeContainer,
+                      entityContainer
+                    )
+                  })
+                break
+              default:
+                throw `${attrDef.valueType} is unknown attribute.`
+            }
+          }
+        )
+
+        // Observe remove an attribute button.
+        delegate_default()(
+          super.el,
+          '.textae-editor__edit-type-values-dialog__remove-attribute',
+          'click',
+          (e) => {
+            const { index } = e.target.dataset
+            const indexOfAttribute = parseInt(index)
+            const { typeName, attributes } = getValues(super.el)
+            this.#updateDisplay(
+              typeName,
+              attributes.filter((_, i) => i !== indexOfAttribute),
+              attributeContainer,
+              entityContainer
+            )
+          }
+        )
+
+        // Observe open pallet button.
+        delegate_default()(
+          super.el,
+          '.textae-editor__edit-type-values-dialog__open-pallet',
+          'click',
+          () => {
+            super.close()
+            typeValuesPallet.show()
+          }
+        )
+
+        // Observe add an attribute button.
+        delegate_default()(
+          super.el,
+          '.textae-editor__edit-type-values-dialog__add-attribute',
+          'click',
+          (e) => {
+            const { pred } = e.target.dataset
+            const defaultValue = attributeContainer.get(pred).default
+
+            const { typeName, attributes } = getValues(super.el)
+            this.#updateDisplay(
+              typeName,
+              attributes
+                .concat({ pred, obj: defaultValue, id: '' })
+                .sort((a, b) =>
+                  attributeContainer.attributeCompareFunction(a, b)
+                ),
+              attributeContainer,
+              entityContainer
+            )
+          }
+        )
+
+        // Setup autocomplete
+        const typeNameElement = super.el.querySelector(
+          '.textae-editor__edit-type-values-dialog__type-name'
+        )
+        const typeLabelElement = super.el.querySelector(
+          '.textae-editor__edit-type-values-dialog__type-label'
+        )
+        setSourceOfAutoComplete(
+          typeNameElement,
+          typeLabelElement,
+          autocompletionWs,
+          (term) => entityContainer.findByLabel(term)
+        )
+      }
+
+      #updateDisplay(
+        typeName,
+        attributes,
+        attributeContainer,
+        entityContainer
+      ) {
+        const contentHtml = createContentHTML(
+          typeName,
+          attributes,
+          entityContainer,
+          attributeContainer
+        )
+        super.el.closest('.ui-dialog-content').innerHTML = contentHtml
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/PropertyEditor.js
+
+    class PropertyEditor {
+      #editorHTMLElement
+      #commander
+      #pallet
+      #palletName
+      #mousePoint
+      #definitionContainer
+      #annotationModel
+      #annotationType
+      #getAutocompletionWs
+
+      constructor(
+        editorHTMLElement,
+        commander,
+        pallet,
+        palletName,
+        mousePoint,
+        definitionContainer,
+        annotationModel,
+        annotationType,
+
+        getAutocompletionWs
+      ) {
+        this.#editorHTMLElement = editorHTMLElement
+        this.#commander = commander
+        this.#pallet = pallet
+        this.#palletName = palletName
+        this.#mousePoint = mousePoint
+        this.#definitionContainer = definitionContainer
+        this.#annotationModel = annotationModel
+        this.#annotationType = annotationType
+        this.#getAutocompletionWs = getAutocompletionWs
+      }
+
+      startEditing(selectionModel) {
+        if (selectionModel.some) {
+          this.#createEditPropertiesDialog(selectionModel.all)
+            .open()
+            .then((values) => this.#typeValuesChanged(values))
+        }
+      }
+
+      #typeValuesChanged({ typeName, label, attributes = [] }) {
+        const commands = this.#commander.factory.changeTypeValuesCommand(
+          label,
+          typeName,
+          this.#definitionContainer,
+          attributes
+        )
+
+        if (typeName) {
+          this.#commander.invoke(commands)
+        }
+      }
+
+      #createEditPropertiesDialog(selectedItems) {
+        return new EditPropertiesDialog(
+          this.#editorHTMLElement,
+          this.#annotationType,
+          this.#palletName,
+          this.#definitionContainer,
+          this.#annotationModel.typeDictionary.attribute,
+          this.#getAutocompletionWs(),
+          selectedItems,
+          this.#pallet,
+          this.#mousePoint
+        )
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/forwardMethods.js
+
+    /* harmony default export */ function forwardMethods(
+      delegator,
+      getTargetFunction,
+      methods
+    ) {
+      for (const method of methods) {
+        delegator[method] = (...args) => {
+          const target = getTargetFunction()
+          console.assert(
+            target[method],
+            `No ${method} method to forward`,
+            target
+          )
+
+          return target[method].apply(target, args)
+        }
+      }
+
+      return delegator
+    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/select.js
+
+    /* harmony default export */ function TypeDefinitionDialog_select(
+      inputId,
+      inputLabel,
+      { item }
+    ) {
+      inputId.value = item.id
+      inputLabel.value = item.label
+      return false
+    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/setSourceOfAutoComplete.js
+
+    customize_jquery_ui_autocomplete()
+
+    /* harmony default export */ function TypeDefinitionDialog_setSourceOfAutoComplete(
+      el,
+      autocompletionWs,
+      getLocalData
+    ) {
+      const inputs = el.querySelectorAll('input')
+
+      // Update the source
+      jquery_default()(inputs[0]).autocomplete({
+        source: (request, response) =>
+          searchTerm(
+            autocompletionWs,
+            getLocalData(request.term),
+            request.term,
+            response
+          ),
+        minLength: 3,
+        select: (_, ui) => TypeDefinitionDialog_select(inputs[0], inputs[1], ui)
+      })
+
+      jquery_default()(inputs[1]).autocomplete({
+        source: (request, response) =>
+          searchTerm(
+            autocompletionWs,
+            getLocalData(request.term),
+            request.term,
+            response
+          ),
+        minLength: 3,
+        select: (_, ui) => TypeDefinitionDialog_select(inputs[0], inputs[1], ui)
+      })
+    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/template.js
+
+    function template_template(context) {
+      const { id, label, color, isDefault } = context
+      return anemone`
+<div class="textae-editor__type-definition-dialog__container">
+  <div class="textae-editor__type-definition-dialog__row ui-front">
+    <label>Id</label>
+    <input
+      class="textae-editor__type-definition-dialog--id textae-editor__promise-dialog__observable-element"
+      value="${id || ''}">
+  </div>
+  <div class="textae-editor__type-definition-dialog__row ui-front">
+    <label>Label<span></span></label>
+    <input value="${label}">
+  </div>
+  <div class="textae-editor__type-definition-dialog__color-picker">
+    <label><input
+      class="textae-editor__type-definition-dialog__color-picker__input"
+      type="color"
+      value="${color}">
+    Color</label>
+  </div>
+  <div class="textae-editor__type-definition-dialog__set-default">
+    <label><input
+      class="textae-editor__type-definition-dialog__set-default__input"
+      type="checkbox" ${
+        isDefault ? 'checked="checked" disabled="disabled"' : ''
+      }>
+    Default type</label>
+  </div>
+</div>`
+    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/index.js
+
+    class TypeDefinitionDialog extends PromiseDialog {
+      constructor(
+        title,
+        content,
+        definitionContainer,
+        autocompletionWs,
+        convertToResultsFunc
+      ) {
+        super(title, template_template(content), {}, () => {
+          const inputs = super.el.querySelectorAll('input')
+          return convertToResultsFunc(
+            inputs[0].value,
+            inputs[1].value,
+            inputs[2].value,
+            inputs[3].checked
+          )
+        })
+
+        TypeDefinitionDialog_setSourceOfAutoComplete(
+          super.el,
+          autocompletionWs,
+          (term) => definitionContainer.findByLabel(term)
+        )
+      }
+    } // CONCATENATED MODULE: ./src/lib/component/CreateTypeDefinitionDialog.js
+
+    class CreateTypeDefinitionDialog extends TypeDefinitionDialog {
+      constructor(definitionContainer, autocompletionWs) {
+        const convertToReseltsFunc = (
+          newId,
+          newLabel,
+          newColor,
+          newDefault
+        ) => {
+          if (newId === '') {
+            return
+          }
+
+          const newType = {
+            id: newId,
+            color: newColor
+          }
+
+          if (newLabel !== '') {
+            newType.label = newLabel
+          }
+
+          if (newDefault) {
+            newType.default = newDefault
+          }
+
+          return { newType }
+        }
+
+        super(
+          'New type',
+          {
+            id: null,
+            label: '',
+            color: definitionContainer.defaultColor,
+            isDefault: false
+          },
+          definitionContainer,
+          autocompletionWs,
+          convertToReseltsFunc
+        )
+      }
+    } // CONCATENATED MODULE: ./src/lib/component/EditTypeDefinitionDialog/getDifference.js
+
+    /* harmony default export */ function getDifference(before, after) {
+      const changedProperties = new Map()
+
+      if (before.id !== after.id) {
+        changedProperties.set('id', after.id)
+      }
+
+      if (before.label !== after.label) {
+        changedProperties.set('label', after.label === '' ? null : after.label)
+      }
+
+      if (before.color !== after.color) {
+        changedProperties.set('color', after.color === '' ? null : after.color)
+      }
+
+      if (before.isDefault !== after.isDefault) {
+        changedProperties.set('default', after.isDefault ? true : null)
+      }
+
+      return changedProperties
+    } // CONCATENATED MODULE: ./src/lib/component/EditTypeDefinitionDialog/index.js
+
+    class EditTypeDefinitionDialog extends TypeDefinitionDialog {
+      constructor(definitionContainer, id, color, isDefault, autocompletionWs) {
+        const label = definitionContainer.getLabel(id) || ''
+
+        const beforeChange = {
+          id,
+          label,
+          color,
+          isDefault
+        }
+
+        const convertToReseltsFunc = (
+          newId,
+          newLabel,
+          newColor,
+          newDefault
+        ) => {
+          const afterChange = {
+            id: newId,
+            label: newLabel,
+            color: newColor,
+            isDefault: newDefault
+          }
+
+          const changedProperties = getDifference(beforeChange, afterChange)
+
+          return {
+            id,
+            changedProperties
+          }
+        }
+
+        super(
+          'Edit type',
+          beforeChange,
+          definitionContainer,
+          autocompletionWs,
+          convertToReseltsFunc
+        )
+      }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/PalletFactory/bindPalletEvents/checkButtonEnable.js
+
+    /* harmony default export */ function checkButtonEnable(targetNode) {
+      return !targetNode.classList.contains(
+        'textae-editor__pallet__table-button--disabled'
+      )
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/PalletFactory/bindPalletEvents/index.js
+
+    /* harmony default export */ function bindPalletEvents(
+      pallet,
+      commander,
+      getAutocompletionWs,
+      definitionContainer,
+      annotationType,
+      selectionModel,
+      annotationModel
+    ) {
+      delegate_default()(
+        pallet.el,
+        `.textae-editor__pallet__add-button`,
+        'click',
+        () => {
+          new CreateTypeDefinitionDialog(
+            definitionContainer,
+            getAutocompletionWs()
+          )
+            .open()
+            .then(({ newType }) =>
+              commander.invoke(
+                commander.factory.createTypeDefinitionCommand(
+                  definitionContainer,
+                  newType
+                )
+              )
+            )
+        }
+      )
+
+      delegate_default()(
+        pallet.el,
+        '.textae-editor__pallet__label',
+        'click',
+        (e) =>
+          commander.invoke(
+            commander.factory.changeTypeOfSelectedItemsCommand(
+              annotationType,
+              e.delegateTarget.dataset.id
+            )
+          )
+      )
+
+      delegate_default()(
+        pallet.el,
+        '.textae-editor__pallet__select-all',
+        'click',
+        (e) => {
+          if (!checkButtonEnable(e.target)) {
+            return
+          }
+
+          selectionModel.removeAll()
+          const ids = annotationModel
+            .getInstanceContainerFor(annotationType)
+            .findByType(e.delegateTarget.dataset.id)
+            .map(({ id }) => id)
+          selectionModel.add(annotationType, ids)
+        }
+      )
+
+      delegate_default()(
+        pallet.el,
+        '.textae-editor__pallet__edit-type',
+        'click',
+        (e) => {
+          new EditTypeDefinitionDialog(
+            definitionContainer,
+            e.target.dataset.id,
+            e.target.dataset.color.toLowerCase(),
+            e.target.dataset.isDefault === 'true',
+            getAutocompletionWs()
+          )
+            .open()
+            .then(({ id, changedProperties }) => {
+              if (changedProperties.size) {
+                commander.invoke(
+                  commander.factory.changeTypeDefinitionCommand(
+                    definitionContainer,
+                    annotationType,
+                    id,
+                    changedProperties
+                  )
+                )
+              }
+            })
+        }
+      )
+
+      delegate_default()(
+        pallet.el,
+        '.textae-editor__pallet__remove',
+        'click',
+        (e) => {
+          if (!checkButtonEnable(e.target)) {
+            return
+          }
+          const { id } = e.delegateTarget.dataset
+          const { label } = e.delegateTarget.dataset
+
+          const removeType = {
+            id,
+            label: label || ''
+          }
+
+          if (typeof id === 'undefined') {
+            throw new Error('You must set the type id to remove.')
+          }
+
+          commander.invoke(
+            commander.factory.removeTypeDefinitionCommand(
+              definitionContainer,
+              removeType
+            )
+          )
+        }
+      )
     } // CONCATENATED MODULE: ./src/lib/component/getInputElementValue.js
 
     /* harmony default export */ function getInputElementValue(el, selector) {
@@ -63327,361 +64633,13 @@
           const newIndex = parseInt(e.target.dataset.index)
 
           commander.invoke(
-            commander.factory.moveAttributeDefintionComannd(
+            commander.factory.moveAttributeDefinitionCommand(
               oldIndex,
               oldIndex < newIndex ? newIndex - 1 : newIndex
             )
           )
         }
       )
-    } // CONCATENATED MODULE: ./src/lib/component/EditNumericAttributeDialog.js
-
-    function EditNumericAttributeDialog_template(context) {
-      const { subjects, pred, min, max, step, value } = context
-      return anemone`
-<div class="textae-editor__edit-numeric-attribute-dialog__container">
-  <div class="textae-editor__edit-numeric-attribute-dialog__row">
-    <label>Subject</label>
-    <div class="textae-editor__edit-numeric-attribute-dialog__subject-row">
-      <input
-      class="textae-editor__edit-numeric-attribute-dialog__subject-input"
-        value="${subjects}"
-        disabled="disabled">
-      <button
-        class="textae-editor__edit-numeric-attribute-dialog__subject-edit-button"
-        title="properties">...</button>
-    </div>
-  </div>
-  <div class="textae-editor__edit-numeric-attribute-dialog__row">
-    <label>Predicate</label>
-    <input
-      value="${pred}"
-      disabled="disabled">
-  </div>
-  <div class="textae-editor__edit-numeric-attribute-dialog__row ui-front">
-    <label>Object</label>
-    <input
-      class="textae-editor__edit-numeric-attribute-dialog__value textae-editor__promise-dialog__observable-element"
-      type="number"
-      ${typeof min === 'number' ? `min="${min}"` : ''}
-      ${typeof max === 'number' ? `max="${max}"` : ''}
-      step="${step}"
-      value="${value}"
-      autofocus>
-  </div>
-</div>`
-    }
-
-    class EditNumericAttributeDialog extends PromiseDialog {
-      constructor(
-        attrDef,
-        attribute,
-        targetAttributes,
-        deletable,
-        editProperties,
-        pallet
-      ) {
-        const buttons = []
-
-        if (deletable) {
-          buttons.unshift({
-            class:
-              'textae-editor__edit-numeric-attribute-dialog__remove-attribute',
-            click: () => {
-              this.close()
-              this.resolveFunc({ newObj: null })
-            }
-          })
-        }
-
-        if (pallet) {
-          buttons.unshift({
-            text: '...',
-            title: 'configuration',
-            click: () => {
-              this.close()
-              pallet.show()
-              pallet.showAttribute(attribute.pred)
-            }
-          })
-        }
-
-        super(
-          `Attribute [${targetAttributes.map(({ id }) => id || '-').join(',')}]`,
-          EditNumericAttributeDialog_template({
-            subjects: `${targetAttributes
-              .map(({ subj }) => subj || '-')
-              .join(', ')}`,
-            pred: attribute.pred,
-            value: attribute.obj,
-            min: attrDef.min,
-            max: attrDef.max,
-            step: attrDef.step
-          }),
-          { buttons },
-          () => {
-            const input = super.el.querySelector(
-              '.textae-editor__edit-numeric-attribute-dialog__value'
-            )
-
-            // Numeric attribute obj value type must be Number type.
-            return { newObj: input.value }
-          }
-        )
-
-        if (editProperties) {
-          delegate_default()(
-            super.el,
-            '.textae-editor__edit-numeric-attribute-dialog__subject-edit-button',
-            'click',
-            () => {
-              this.close()
-              editProperties()
-            }
-          )
-        }
-      }
-    } // CONCATENATED MODULE: ./src/lib/openEditNumericAttributeDialog.js
-
-    /* harmony default export */ function openEditNumericAttributeDialog(
-      selectionModelEntity,
-      attrDef,
-      attribute,
-      commander,
-      editProperties,
-      pallet
-    ) {
-      new EditNumericAttributeDialog(
-        attrDef,
-        attribute,
-        selectionModelEntity.all.reduce((attrs, entity) => {
-          attrs.push(entity.attributes.find((a) => a.pred == attribute.pred))
-          return attrs
-        }, []),
-        true,
-        editProperties,
-        pallet
-      )
-        .open()
-        .then(({ newObj }) => {
-          const command = newObj
-            ? commander.factory.changeAttributeObjOfItemsCommand(
-                selectionModelEntity.all,
-                attrDef,
-                newObj
-              )
-            : commander.factory.removeAttributesFromItemsByPredCommand(
-                selectionModelEntity.all,
-                attrDef
-              )
-
-          commander.invoke(command)
-        })
-    } // CONCATENATED MODULE: ./src/lib/component/setSourceOfAutoComplete.js
-
-    customize_jquery_ui_autocomplete()
-
-    /* harmony default export */ function component_setSourceOfAutoComplete(
-      inputElement,
-      labelSpan,
-      autocompletionWs,
-      getLocalData
-    ) {
-      jquery_default()(inputElement).autocomplete({
-        source: (request, response) => {
-          if (labelSpan) {
-            if (labelSpan instanceof HTMLInputElement) {
-              labelSpan.value = ''
-            } else {
-              labelSpan.innerText = ''
-            }
-          }
-
-          searchTerm(
-            autocompletionWs,
-            getLocalData(request.term),
-            request.term,
-            response
-          )
-        },
-        minLength: 3,
-        select: (_, { item }) => {
-          inputElement.value = item.id
-
-          console.log(123)
-          if (labelSpan) {
-            if (labelSpan instanceof HTMLInputElement) {
-              labelSpan.value = item.label
-            } else {
-              labelSpan.innerText = item.label
-            }
-          }
-
-          return false
-        }
-      })
-    } // CONCATENATED MODULE: ./src/lib/component/EditStringAttributeDialog.js
-
-    function EditStringAttributeDialog_template(context) {
-      const { subjects, pred, value } = context
-
-      return anemone`
-<div class="textae-editor__edit-string-attribute-dialog__container">
-  <div class="textae-editor__edit-numeric-attribute-dialog__row">
-    <label>Subject</label>
-    <div class="textae-editor__edit-numeric-attribute-dialog__subject-row">
-      <input
-      class="textae-editor__edit-numeric-attribute-dialog__subject-input"
-        value="${subjects}"
-        disabled="disabled">
-      <button
-        class="textae-editor__edit-numeric-attribute-dialog__subject-edit-button"
-        title="properties">...</button>
-    </div>
-  </div>
-  <div class="textae-editor__edit-string-attribute-dialog__row">
-    <label>Predicate</label>
-    <input
-      value="${pred}" disabled="disabled">
-  </div>
-  <div class="textae-editor__edit-string-attribute-dialog__row ui-front">
-    <label>Object</label>
-    <input
-      class="textae-editor__edit-string-attribute-dialog__value textae-editor__promise-dialog__observable-element"
-      value="${value}"
-      autofocus>
-  </div>
-  <div class="textae-editor__edit-string-attribute-dialog__row">
-    <label>Label</label>
-    <input
-      class="textae-editor__edit-string-attribute-dialog__label"
-      value="" disabled="disabled">
-  </div>
-</div>`
-    }
-
-    class EditStringAttributeDialog extends PromiseDialog {
-      constructor(
-        attrDef,
-        attribute,
-        targetAttributes,
-        deletable,
-        editProperties,
-        pallet
-      ) {
-        const buttons = []
-
-        if (deletable) {
-          buttons.unshift({
-            class:
-              'textae-editor__edit-string-attribute-dialog__remove-attribute',
-            click: () => {
-              this.close()
-              this.resolveFunc({ newObj: null })
-            }
-          })
-        }
-
-        if (pallet) {
-          buttons.unshift({
-            text: '...',
-            title: 'configuration',
-            click: () => {
-              this.close()
-              pallet.show()
-              pallet.showAttribute(attribute.pred)
-            }
-          })
-        }
-
-        super(
-          `Attribute [${targetAttributes.map(({ id }) => id || '-').join(',')}]`,
-          EditStringAttributeDialog_template({
-            subjects: `${targetAttributes
-              .map(({ subj }) => subj || '-')
-              .join(', ')}`,
-            pred: attribute.pred,
-            value: attribute.obj
-          }),
-          { buttons },
-          () => {
-            const input = super.el.querySelector(
-              '.textae-editor__edit-string-attribute-dialog__value'
-            )
-
-            return {
-              newObj: input.value,
-              newLabel: super.el.querySelector(
-                '.textae-editor__edit-string-attribute-dialog__label'
-              ).value
-            }
-          }
-        )
-
-        if (editProperties) {
-          delegate_default()(
-            super.el,
-            '.textae-editor__edit-numeric-attribute-dialog__subject-edit-button',
-            'click',
-            () => {
-              this.close()
-              editProperties()
-            }
-          )
-        }
-
-        component_setSourceOfAutoComplete(
-          super.el.querySelector(
-            '.textae-editor__edit-string-attribute-dialog__value'
-          ),
-          super.el.querySelector(
-            '.textae-editor__edit-string-attribute-dialog__label'
-          ),
-          attrDef.autocompletionWs,
-          () => []
-        )
-      }
-    } // CONCATENATED MODULE: ./src/lib/openEditStringAttributeDialog.js
-
-    /* harmony default export */ function openEditStringAttributeDialog(
-      selectionModelEntity,
-      attribute,
-      commander,
-      attrDef,
-      editProperties,
-      pallet
-    ) {
-      new EditStringAttributeDialog(
-        attrDef,
-        attribute,
-        selectionModelEntity.all.reduce((attrs, entity) => {
-          attrs.push(entity.attributes.find((a) => a.pred == attribute.pred))
-          return attrs
-        }, []),
-        true,
-        editProperties,
-        pallet
-      )
-        .open()
-        .then(({ newObj, newLabel }) => {
-          if (newObj) {
-            commander.invoke(
-              commander.factory.changeStringAttributeObjOfItemsCommand(
-                selectionModelEntity.all,
-                attrDef,
-                newObj,
-                newLabel
-              )
-            )
-          } else {
-            commander.invoke(
-              commander.factory.removeAttributesFromItemsByPredCommand(
-                selectionModelEntity.all,
-                attrDef
-              )
-            )
-          }
-        })
     } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/bindAttributeEvent/index.js
 
     /**
@@ -64350,7 +65308,14 @@
   `
     } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/numericAttributeTemplate/toBodyRow.js
 
-    function toBodyRow(color, range, label, isLock, index, indelible) {
+    function toBodyRow_toBodyRow(
+      color,
+      range,
+      label,
+      isLock,
+      index,
+      indelible
+    ) {
       return () => anemone`
     <tr class="textae-editor__pallet__row" style="background-color: ${color};">
       <td class="textae-editor__pallet__attribute-label">
@@ -64393,7 +65358,7 @@
       </thead>
       <tbody>
         ${values.map(({ color = '', range, label = '', indelible }, index) =>
-          toBodyRow(color, range, label, isLock, index, indelible)
+          toBodyRow_toBodyRow(color, range, label, isLock, index, indelible)
         )}
       </tbody>
     </table>
@@ -64401,7 +65366,7 @@
   `
     } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/selectionAttributeTemplate/toBodyRow.js
 
-    function toBodyRow_toBodyRow(
+    function selectionAttributeTemplate_toBodyRow_toBodyRow(
       color,
       id,
       defaultValue,
@@ -64465,7 +65430,7 @@
       <tbody>
         ${values.map(
           ({ color = '', id, default: defaultValue, label = '' }, index) =>
-            toBodyRow_toBodyRow(
+            selectionAttributeTemplate_toBodyRow_toBodyRow(
               color,
               id,
               defaultValue,
@@ -64621,15 +65586,22 @@
     } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/index.js
 
     class TypeValuesPallet extends Pallet {
+      #typeDictionary
+      #attributeInstanceContainer
+      #definitionContainer
+      #selectionModelItems
+      #menuState
+      #selectedPred
+
       /**
        *
-       * @param {import('../../Editor/AnnotationModel/TypeDefinition').default} typeDefinition
+       * @param {import('../../Editor/AnnotationModel/TypeDictionary').TypeDictionayr} typeDictionary
        * @param {import('../../Editor/AttributeDefinitionContainer').default} attributeInstanceContainer
        */
       constructor(
         editorHTMLElement,
         eventEmitter,
-        typeDefinition,
+        typeDictionary,
         attributeInstanceContainer,
         definitionContainer,
         selectionModelEntity,
@@ -64640,12 +65612,11 @@
       ) {
         super(editorHTMLElement, title, mousePoint)
 
-        this._eventEmitter = eventEmitter
-        this._typeDefinition = typeDefinition
-        this._attributeInstanceContainer = attributeInstanceContainer
-        this._definitionContainer = definitionContainer
-        this._selectionModelItems = selectionModelEntity
-        this._menuState = menuState
+        this.#typeDictionary = typeDictionary
+        this.#attributeInstanceContainer = attributeInstanceContainer
+        this.#definitionContainer = definitionContainer
+        this.#selectionModelItems = selectionModelEntity
+        this.#menuState = menuState
 
         delegate_default()(
           this._el,
@@ -64729,894 +65700,135 @@
         this.show()
       }
 
+      hidePallet() {
+        this.hide()
+      }
+
       show() {
-        this._selectedPred = null
+        this.#selectedPred = null
         super.show()
         enableDrag(this._el, this)
       }
 
       showAttribute(pred) {
-        this._selectedPred = pred
+        this.#selectedPred = pred
         this.updateDisplay()
       }
 
       selectLeftAttributeTab() {
-        // Ignore when type is seleceted.
-        if (this._selectedPred) {
+        // Ignore when type is selected.
+        if (this.#selectedPred) {
           // Select type when the first attribute selected.
-          if (this._selectedIndex === 0) {
+          if (this.#selectedIndex === 0) {
             this.showAttribute()
           } else {
             this.showAttribute(
-              this._attributeDefinitions[this._selectedIndex - 1].pred
+              this.#attributeDefinitions[this.#selectedIndex - 1].pred
             )
           }
         }
       }
 
       selectRightAttributeTab() {
-        if (this._selectedPred) {
+        if (this.#selectedPred) {
           // Ignore when the last attribute is selected.
-          if (this._selectedIndex === this._attributeDefinitions.length - 1) {
+          if (this.#selectedIndex === this.#attributeDefinitions.length - 1) {
             return
           }
 
           this.showAttribute(
-            this._attributeDefinitions[this._selectedIndex + 1].pred
+            this.#attributeDefinitions[this.#selectedIndex + 1].pred
           )
         } else {
           // Select the first attribute when type selected.
-          if (this._attributeDefinitions.length) {
-            this.showAttribute(this._attributeDefinitions[0].pred)
+          if (this.#attributeDefinitions.length) {
+            this.showAttribute(this.#attributeDefinitions[0].pred)
           }
         }
       }
 
-      get _selectedIndex() {
-        return this._attributeDefinitions.findIndex(
-          (attribute) => attribute.pred === this._selectedPred
+      get #selectedIndex() {
+        return this.#attributeDefinitions.findIndex(
+          (attribute) => attribute.pred === this.#selectedPred
         )
       }
 
       get _content() {
         return createContentHtml(
-          this._definitionContainer.pallet,
-          this._menuState.diffOfConfiguration,
-          this._selectedPred,
-          this._selectionModelItems,
-          this._typeDefinition.attribute,
-          this._attributeInstanceContainer.all,
-          this._typeDefinition.isLock
+          this.#definitionContainer.pallet,
+          this.#menuState.diffOfConfiguration,
+          this.#selectedPred,
+          this.#selectionModelItems,
+          this.#typeDictionary.attribute,
+          this.#attributeInstanceContainer.all,
+          this.#typeDictionary.isLock
         )
       }
 
       get attrDef() {
-        return this._typeDefinition.attribute.get(this._selectedPred)
+        return this.#typeDictionary.attribute.get(this.#selectedPred)
       }
 
-      get _attributeDefinitions() {
-        return this._typeDefinition.attribute.attributes
+      get #attributeDefinitions() {
+        return this.#typeDictionary.attribute.attributes
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/createNumericAttributeOrShowEditNumericAttributeDialog.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/PalletFactory/index.js
 
-    /* harmony default export */ function createNumericAttributeOrShowEditNumericAttributeDialog(
-      selectionModelItems,
-      attrDef,
-      commander,
-      pallet,
-      editProperties
-    ) {
-      const attribute =
-        selectionModelItems.findSelectedAttributeWithSamePredicate(attrDef.pred)
-
-      if (attribute) {
-        const isOnlyEntityWithJsutOneSamePredSelected =
-          selectionModelItems.onlySelectedWithJustOneAttributeOf(attrDef.pred)
-
-        if (isOnlyEntityWithJsutOneSamePredSelected) {
-          openEditNumericAttributeDialog(
-            selectionModelItems,
-            attrDef,
-            attribute,
-            commander,
-            pallet,
-            editProperties
-          )
-        } else {
-          alertify_default().warning(
-            'Some selected items has zero or multi this attribute.'
-          )
-        }
-      } else {
-        const command = commander.factory.createAttributeToItemsCommand(
-          selectionModelItems.all,
-          attrDef
-        )
-        commander.invoke(command)
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/createStringAttributeOrShowEditStringAttributeDialog.js
-
-    /* harmony default export */ function createStringAttributeOrShowEditStringAttributeDialog(
-      selectionModelItems,
-      attrDef,
-      commander,
-      editProperties,
-      pallet
-    ) {
-      const attribute =
-        selectionModelItems.findSelectedAttributeWithSamePredicate(attrDef.pred)
-
-      if (attribute) {
-        const isOnlyEntityWithJsutOneSamePredSelected =
-          selectionModelItems.onlySelectedWithJustOneAttributeOf(attrDef.pred)
-
-        if (isOnlyEntityWithJsutOneSamePredSelected) {
-          openEditStringAttributeDialog(
-            selectionModelItems,
-            attribute,
-            commander,
-            attrDef,
-            editProperties,
-            pallet
-          )
-        } else {
-          alertify_default().warning(
-            'Some selected items has zero or multi this attribute.'
-          )
-        }
-      } else {
-        const command = commander.factory.createAttributeToItemsCommand(
-          selectionModelItems.all,
-          attrDef
-        )
-        commander.invoke(command)
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/index.js
-
-    class AttributeEditor {
-      #commander
-      #selectionModelItems
-      #selectionAttributePallet
-      #typeDefinition
-      #editProperties
-      #typeValuesPallet
-
-      constructor(
-        commander,
-        typeDefinition,
-        selectionModelItems,
-        selectionAttributePallet,
-        editProperties,
-        typeValuesPallet
-      ) {
-        this.#commander = commander
-        this.#selectionModelItems = selectionModelItems
-        this.#selectionAttributePallet = selectionAttributePallet
-        this.#typeDefinition = typeDefinition
-        this.#editProperties = editProperties
-        this.#typeValuesPallet = typeValuesPallet
-      }
-
-      manipulateAttribute(number, shiftKey) {
-        if (shiftKey) {
-          this.#deleteAt(number)
-        } else {
-          this.#addOrEditAt(number)
-        }
-      }
-
-      #deleteAt(number) {
-        const attrDef = this.#typeDefinition.attribute.getAttributeAt(number)
-
-        if (!attrDef) {
-          alertify_default().warning(`Attribute No.${number} is not defined`)
-          return
-        }
-
-        if (this.#selectionModelItems.selectedWithAttributeOf(attrDef.pred)) {
-          const command =
-            this.#commander.factory.removeAttributesFromItemsByPredCommand(
-              this.#selectionModelItems.all,
-              attrDef
-            )
-          this.#commander.invoke(command)
-        } else {
-          alertify_default().warning(
-            'None of the selected items has this attribute.'
-          )
-        }
-      }
-
-      #addOrEditAt(number) {
-        this.#selectionAttributePallet.hide()
-
-        const attrDef = this.#typeDefinition.attribute.getAttributeAt(number)
-
-        if (!attrDef) {
-          alertify_default().warning(`Attribute No.${number} is not defined`)
-          return
-        }
-
-        switch (attrDef.valueType) {
-          case 'flag':
-            this.#commander.invoke(
-              this.#commander.factory.toggleFlagAttributeToItemsCommand(
-                this.#selectionModelItems.all,
-                attrDef
-              )
-            )
-            break
-          case 'numeric':
-            createNumericAttributeOrShowEditNumericAttributeDialog(
-              this.#selectionModelItems,
-              attrDef,
-              this.#commander,
-              this.#editProperties,
-              this.#typeValuesPallet
-            )
-            break
-          case 'selection':
-            {
-              if (
-                this.#selectionModelItems.selectedWithAttributeOf(attrDef.pred)
-              ) {
-                this.#selectionAttributePallet.show(attrDef).then((newObj) => {
-                  if (
-                    this.#selectionModelItems.isDuplicatedPredAttributeSelected(
-                      attrDef.pred
-                    )
-                  ) {
-                    alertify_default().warning(
-                      'An item among the selected has this attribute multiple times.'
-                    )
-                  } else {
-                    const command =
-                      this.#commander.factory.changeAttributeObjOfItemsCommand(
-                        this.#selectionModelItems.all,
-                        attrDef,
-                        newObj
-                      )
-                    this.#commander.invoke(command)
-                  }
-                })
-              } else {
-                const command =
-                  this.#commander.factory.createAttributeToItemsCommand(
-                    this.#selectionModelItems.all,
-                    attrDef
-                  )
-                this.#commander.invoke(command)
-              }
-            }
-            break
-          case 'string':
-            createStringAttributeOrShowEditStringAttributeDialog(
-              this.#selectionModelItems,
-              attrDef,
-              this.#commander,
-              this.#editProperties,
-              this.#typeValuesPallet
-            )
-            break
-          default:
-            throw `${attrDef.valueType} is unknown attribute`
-        }
-      }
-    } // CONCATENATED MODULE: ./src/lib/component/SelectionAttributePallet/toBodyRow.js
-
-    function SelectionAttributePallet_toBodyRow_toBodyRow(
-      color,
-      id,
-      defaultValue,
-      label
-    ) {
-      return () => anemone`
-        <tr class="textae-editor__pallet__row" style="background-color: ${color};">
-          <td class="textae-editor__pallet__selection-attribute-label" data-id="${id}">
-            ${id}
-            ${() =>
-              defaultValue
-                ? '<span class="textae-editor__pallet__default-icon" title="This type is set as a default type."></span>'
-                : ''}
-          </td>
-          <td class="textae-editor__pallet__short-label">
-            ${label}
-          </td>
-          <td class="textae-editor__pallet__short-label">
-            ${color}
-          </td>
-        </tr>
-        `
-    } // CONCATENATED MODULE: ./src/lib/component/SelectionAttributePallet/template.js
-
-    /* harmony default export */ function SelectionAttributePallet_template(
-      context
-    ) {
-      const { values } = context.attrDef
-
-      return anemone`
-  <div>
-    <table>
-      <thead>
-        <tr>
-          <th>id</th>
-          <th>label</th>
-          <th>color</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${values.map(({ color = '', id, default: defaultValue, label = '' }) =>
-          SelectionAttributePallet_toBodyRow_toBodyRow(
-            color,
-            id,
-            defaultValue,
-            label
-          )
-        )}
-      </tbody>
-    </table>
-  </div>
-  `
-    } // CONCATENATED MODULE: ./src/lib/component/SelectionAttributePallet/index.js
-
-    class SelectionAttributePallet extends Pallet {
-      constructor(editorHTMLElement, mousePoint) {
-        super(editorHTMLElement, 'Selection attribute', mousePoint)
-
-        this._veil = dohtml_default().create(
-          `<div style="position: fixed; right: 0; top: 0; bottom:0; left: 0; background-color: rgba(0, 0, 10, 0.3);"></div>`
-        )
-
-        // Close the SelectionAttributePallet with the Esc key.
-        this._el.addEventListener('keydown', (event) => {
-          if (event.code === 'Escape') {
-            event.preventDefault()
-            this.hide()
-          }
-        })
-      }
-
-      show(attrDef, zIndex = 90, opener = null) {
-        this._editorHTMLElement.appendChild(this._veil)
-        this._editorHTMLElement.appendChild(this.el)
-        this._veil.style['z-index'] = zIndex + 1
-        this._el.style['z-index'] = zIndex + 1
-        this._attributeDefinition = attrDef
-        super.show()
-
-        // Focus on the close button to listen keydown events.
-        // Store focusing element to revert focus when closeed.
-        this._el.querySelector('.textae-editor__pallet__close-button').focus()
-        this._opener = opener
-
-        this._show = true
-
-        return new Promise((resolve) => {
-          delegate_default()(
-            this._el,
-            '.textae-editor__pallet__selection-attribute-label',
-            'click',
-            (e) => {
-              this.hide()
-              resolve(e.target.dataset.id)
-            }
-          )
-        })
-      }
-
-      hide() {
-        if (this._show) {
-          this._editorHTMLElement.removeChild(this._veil)
-          this._editorHTMLElement.removeChild(this.el)
-
-          this._show = false
-        }
-
-        // Focus on the button used to open the palette
-        // so that the Entity Edit dialog can be closed with the Esc key.
-        if (this._opner) {
-          this._opener.focus()
-        }
-      }
-
-      get _content() {
-        const values = {
-          attrDef: this._attributeDefinition.externalFormat
-        }
-        return SelectionAttributePallet_template(values)
-      }
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/getValues.js
-
-    /* harmony default export */ function getValues(content) {
-      const typeName = content.querySelector(
-        '.textae-editor__edit-type-values-dialog__type-name'
-      ).value
-
-      const label = content.querySelector(
-        '.textae-editor__edit-type-values-dialog__type-label'
-      ).innerText
-
-      const attributes = []
-      for (const attr of content.querySelectorAll(
-        '.textae-editor__edit-type-values-dialog__attribute'
-      )) {
-        attributes.push({
-          id: attr.querySelector(
-            '.textae-editor__edit-type-values-dialog__attribute-value'
-          ).dataset.id,
-          subj: attr.querySelector(
-            '.textae-editor__edit-type-values-dialog__attribute-value'
-          ).dataset.subj,
-          pred: attr.querySelector(
-            '.textae-editor__edit-type-values-dialog__attribute-predicate'
-          ).dataset.pred,
-          obj: attr.querySelector(
-            '.textae-editor__edit-type-values-dialog__attribute-value'
-          ).dataset.obj,
-          label: attr.querySelector(
-            '.textae-editor__edit-type-values-dialog__attribute-value'
-          ).dataset.label
-        })
-      }
-
-      return { typeName, label, attributes }
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toEntityHTML.js
-
-    /* harmony default export */ function toEntityHTML(value, entityContainer) {
-      const label = entityContainer.getLabel(value) || ''
-
-      return () => anemone`
-    <tr>
-      <td rowspan="2"></td>
-      <td>
-        <span class="textae-editor__edit-type-values-dialog__type-predicate">type</span>
-      </td>
-      <td class="ui-front">
-        <input class="textae-editor__edit-type-values-dialog__type-name textae-editor__promise-dialog__observable-element" value="${value}">
-      </td>
-    </tr>
-    <tr>
-      <td></td>
-      <td>
-        <span class="textae-editor__edit-type-values-dialog__type-label">${label}</span>
-      </td>
-    </tr>
-  `
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toAttributeHTML/getLabelOf.js
-
-    /* harmony default export */ function getLabelOf(
-      attribute,
-      attributeContainer
-    ) {
-      const { pred, obj } = attribute
-      const { valueType } = attributeContainer.get(pred)
-
-      switch (valueType) {
-        case 'string':
-          // In the case of String attributes,
-          // Labels completed by autocomplete can be reflected in attribute definitions.
-          // We want to keep the label in the attribute hash until we press the OK button.
-          return attribute.label || attributeContainer.getLabel(pred, obj) || ''
-        case 'selection':
-        case 'numeric':
-        case 'flag':
-          // In the case of Selection or Numeric or flag attributes,
-          // we want to refer only to the label of the attribute definition.
-          return attributeContainer.getLabel(pred, obj) || ''
-        default:
-          throw `unknown attribute type: ${valueType}`
-      }
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toAttributeHTML/index.js
-
-    /* harmony default export */ function toAttributeHTML(
-      attribute,
-      index,
-      attributeInstances,
-      attributeContainer
-    ) {
-      const { id, subj, pred, obj } = attribute
-      const previousAttribute = attributeInstances[index - 1]
-      const previousPredicate = previousAttribute && previousAttribute.pred
-      const definitionIndex = attributeContainer.getIndexOf(pred)
-      const { valueType } = attributeContainer.get(pred)
-
-      const shortcutKeyColumn = () =>
-        pred === previousPredicate
-          ? `<td class="shortcut-key" rowspan="2"></td>`
-          : `<td class="shortcut-key" rowspan="2">
-          ${
-            definitionIndex < 9
-              ? `<span class="textae-editor__edit-type-values-dialog__shortcut-key" title="Shortcut key for this predicate">${
-                  definitionIndex + 1
-                }</span>`
-              : ''
-          }
-        </td>
-        `
-
-      return () => anemone`
-<tr class="textae-editor__edit-type-values-dialog__attribute">
-  ${shortcutKeyColumn}
-  <td rowspan="2">
-    <span
-      class="textae-editor__edit-type-values-dialog__attribute-predicate ${
-        pred === previousPredicate
-          ? ''
-          : `textae-editor__edit-type-values-dialog__attribute-predicate--${valueType}`
-      }"
-      data-pred="${pred}"
-      title="${valueType} type"
-      >
-      ${pred === previousPredicate ? '' : pred}
-    </span>
-  </td>
-  <td>
-    <span
-      class="textae-editor__edit-type-values-dialog__attribute-value"
-      data-id="${id}"
-      data-subj="${subj || ''}""
-      data-obj="${obj}"
-      data-label="${getLabelOf(attribute, attributeContainer)}"
-      >
-      ${getLabelOf(attribute, attributeContainer) || obj}
-    </span>
-  </td>
-</tr>
-<tr>
-  <td>
-    <button
-      type="button"
-      class="textae-editor__edit-type-values-dialog__edit-attribute"
-      data-pred="${pred}"
-      data-index="${index}"
-      ${valueType === 'flag' ? 'disabled="disabled"' : ''}>
-    </button>
-    <button
-      type="button"
-      class="textae-editor__edit-type-values-dialog__remove-attribute"
-      data-index="${index}">
-    </button>
-  </td>
-</tr>
-`
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toAddAttributeButton.js
-
-    function toAddAttributeButton(valueType, pred, isDisabled) {
-      const title = () =>
-        isDisabled
-          ? `disabled="disabled" title="This predicate is already used with its default value."`
-          : anemone`title="${valueType} type"`
-
-      return () => anemone`
-    <button
-     type="button"
-     class="textae-editor__edit-type-values-dialog__add-attribute textae-editor__edit-type-values-dialog__add-attribute--${valueType}"
-     data-pred="${pred}"
-      ${title}> ${pred}</button>`
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/index.js
-
-    /* harmony default export */ function createContentHTML(
-      typeName,
-      attributes,
-      entityContainer,
-      attributeContainer,
-      palletName
-    ) {
-      return anemone`
-    <div style="overflow-y: auto; max-height: 36em; overflow-x: hidden;">
-      <table class="textae-editor__edit-type-values-dialog__table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Predicate</th>
-            <th>Value/Label</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${toEntityHTML(typeName, entityContainer)}
-          ${attributes.map((a, index, list) =>
-            toAttributeHTML(a, index, list, attributeContainer)
-          )}
-          </tbody>
-      </table>
-    </div>
-    <fieldset>
-      <legend>
-        <span class="textae-editor__edit-type-values-dialog__open-pallet" title="${palletName} Configuration"></span>
-        Available Predicates:
-      </legend>
-      <div class="textae-editor__edit-type-values-dialog__add-attribute-buttons">
-      ${attributeContainer.attributes.map(({ pred, valueType }) =>
-        toAddAttributeButton(
-          valueType,
-          pred,
-          isAlreadyUsed(attributes, pred, attributeContainer)
-        )
-      )}
-      </div>
-    </fieldset>
-  `
-    }
-
-    function isAlreadyUsed(attributes, pred, attributeContainer) {
-      return attributes.some(
-        (i) =>
-          i.pred === pred &&
-          String(i.obj) === String(attributeContainer.get(pred).default)
-      )
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/mergedTypeValuesOf.js
-
-    // When you select multiple entities and display the edit dialog,
-    // this is used to display the merged type name and attributes.
-    /* harmony default export */ function mergedTypeValuesOf(entities) {
-      const { typeName } = entities[entities.length - 1]
-
-      const mergedAttributes = []
-      for (const { attributes } of entities) {
-        for (const attribute of attributes) {
-          if (
-            !mergedAttributes.some((a) =>
-              a.equalsTo(attribute.pred, attribute.obj)
-            )
-          ) {
-            mergedAttributes.push(attribute)
-          }
-        }
-      }
-
-      return new TypeValues(typeName, mergedAttributes)
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/index.js
-
-    class EditPropertiesDialog extends PromiseDialog {
-      constructor(
+    class PalletWrapper {
+      static create(
         editorHTMLElement,
-        annotationType,
-        palletName,
-        entityContainer,
-        attributeContainer,
-        autocompletionWs,
-        selectedItems,
-        typeValuesPallet,
-        mousePoint
-      ) {
-        const { typeName, attributes } = mergedTypeValuesOf(selectedItems)
-        const contentHtml = createContentHTML(
-          typeName,
-          attributes,
-          entityContainer,
-          attributeContainer,
-          palletName
-        )
-
-        super(
-          `${annotationType} [${selectedItems
-            .map(({ id }) => id)
-            .join(',')}] Properties`,
-          contentHtml,
-          {
-            maxWidth: 800
-          },
-          () => getValues(super.el)
-        )
-
-        // Observe edit an attribute button.
-        delegate_default()(
-          super.el,
-          '.textae-editor__edit-type-values-dialog__edit-attribute',
-          'click',
-          (e) => {
-            const { pred } = e.target.dataset
-            const attrDef = attributeContainer.get(pred)
-            const zIndex = parseInt(
-              super.el.closest('.textae-editor__dialog').style['z-index']
-            )
-            const { typeName, attributes } = getValues(super.el)
-
-            switch (attrDef.valueType) {
-              case 'numeric':
-                new EditNumericAttributeDialog(
-                  attrDef,
-                  attributes[e.target.dataset.index],
-                  [attributes[e.target.dataset.index]]
-                )
-                  .open()
-                  .then(({ newObj }) => {
-                    attributes[e.target.dataset.index].obj = newObj
-                    this.#updateDisplay(
-                      typeName,
-                      attributes,
-                      attributeContainer,
-                      entityContainer
-                    )
-                  })
-                break
-              case 'selection':
-                new SelectionAttributePallet(editorHTMLElement, mousePoint)
-                  .show(attrDef, zIndex, e.target)
-                  .then((newObj) => {
-                    attributes[e.target.dataset.index].obj = newObj
-                    this.#updateDisplay(
-                      typeName,
-                      attributes,
-                      attributeContainer,
-                      entityContainer
-                    )
-                  })
-                break
-              case 'string':
-                new EditStringAttributeDialog(
-                  attrDef,
-                  attributes[e.target.dataset.index],
-                  [attributes[e.target.dataset.index]]
-                )
-                  .open()
-                  .then(({ newObj, newLabel }) => {
-                    attributes[e.target.dataset.index].obj = newObj
-                    attributes[e.target.dataset.index].label = newLabel
-                    this.#updateDisplay(
-                      typeName,
-                      attributes,
-                      attributeContainer,
-                      entityContainer
-                    )
-                  })
-                break
-              default:
-                throw `${attrDef.valueType} is unknown attribute.`
-            }
-          }
-        )
-
-        // Observe remove an attribute button.
-        delegate_default()(
-          super.el,
-          '.textae-editor__edit-type-values-dialog__remove-attribute',
-          'click',
-          (e) => {
-            const { index } = e.target.dataset
-            const indexOfAttribute = parseInt(index)
-            const { typeName, attributes } = getValues(super.el)
-            this.#updateDisplay(
-              typeName,
-              attributes.filter((_, i) => i !== indexOfAttribute),
-              attributeContainer,
-              entityContainer
-            )
-          }
-        )
-
-        // Observe open pallet button.
-        delegate_default()(
-          super.el,
-          '.textae-editor__edit-type-values-dialog__open-pallet',
-          'click',
-          () => {
-            super.close()
-            typeValuesPallet.show()
-          }
-        )
-
-        // Observe add an attribute button.
-        delegate_default()(
-          super.el,
-          '.textae-editor__edit-type-values-dialog__add-attribute',
-          'click',
-          (e) => {
-            const { pred } = e.target.dataset
-            const defaultValue = attributeContainer.get(pred).default
-
-            const { typeName, attributes } = getValues(super.el)
-            this.#updateDisplay(
-              typeName,
-              attributes
-                .concat({ pred, obj: defaultValue, id: '' })
-                .sort((a, b) =>
-                  attributeContainer.attributeCompareFunction(a, b)
-                ),
-              attributeContainer,
-              entityContainer
-            )
-          }
-        )
-
-        // Setup autocomplete
-        const typeNameElement = super.el.querySelector(
-          '.textae-editor__edit-type-values-dialog__type-name'
-        )
-        const typeLabelElement = super.el.querySelector(
-          '.textae-editor__edit-type-values-dialog__type-label'
-        )
-        component_setSourceOfAutoComplete(
-          typeNameElement,
-          typeLabelElement,
-          autocompletionWs,
-          (term) => entityContainer.findByLabel(term)
-        )
-      }
-
-      #updateDisplay(
-        typeName,
-        attributes,
-        attributeContainer,
-        entityContainer
-      ) {
-        const contentHtml = createContentHTML(
-          typeName,
-          attributes,
-          entityContainer,
-          attributeContainer
-        )
-        super.el.closest('.ui-dialog-content').innerHTML = contentHtml
-      }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/PropertyEditor.js
-
-    class PropertyEditor {
-      #editorHTMLElement
-      #commander
-      #pallet
-      #palletName
-      #mousePoint
-      #definitionContainer
-      #annotationModel
-      #annotationType
-      #getAutocompletionWs
-
-      constructor(
-        editorHTMLElement,
-        commander,
-        pallet,
-        palletName,
-        mousePoint,
+        eventEmitter,
+        typeDictionary,
+        attributeInstanceContainer,
         definitionContainer,
-        annotationModel,
+        selectionModelEntity,
+        commander,
+        title,
+        menuState,
+        mousePoint,
+        getAutocompletionWs,
         annotationType,
-
-        getAutocompletionWs
+        selectionModel,
+        annotationModel,
+        delegator
       ) {
-        this.#editorHTMLElement = editorHTMLElement
-        this.#commander = commander
-        this.#pallet = pallet
-        this.#palletName = palletName
-        this.#mousePoint = mousePoint
-        this.#definitionContainer = definitionContainer
-        this.#annotationModel = annotationModel
-        this.#annotationType = annotationType
-        this.#getAutocompletionWs = getAutocompletionWs
-      }
-
-      startEditing(selectionModel) {
-        if (selectionModel.some) {
-          this.#createEditPropertiesDialog(selectionModel.all)
-            .open()
-            .then((values) => this.#typeValuesChanged(values))
-        }
-      }
-
-      #typeValuesChanged({ typeName, label, attributes = [] }) {
-        const commands = this.#commander.factory.changeTypeValuesCommand(
-          label,
-          typeName,
-          this.#definitionContainer,
-          attributes
+        const pallet = new TypeValuesPallet(
+          editorHTMLElement,
+          eventEmitter,
+          typeDictionary,
+          attributeInstanceContainer,
+          definitionContainer,
+          selectionModelEntity,
+          commander,
+          title,
+          menuState,
+          mousePoint
         )
 
-        if (typeName) {
-          this.#commander.invoke(commands)
-        }
+        bindPalletEvents(
+          pallet,
+          commander,
+          getAutocompletionWs,
+          definitionContainer,
+          annotationType,
+          selectionModel,
+          annotationModel
+        )
+
+        forwardMethods(delegator, () => pallet, [
+          'showPallet',
+          'hidePallet',
+          'selectLeftAttributeTab',
+          'selectRightAttributeTab'
+        ])
+
+        this.#appendTo(editorHTMLElement, pallet)
+
+        return pallet
       }
 
-      #createEditPropertiesDialog(selectedItems) {
-        return new EditPropertiesDialog(
-          this.#editorHTMLElement,
-          this.#annotationType,
-          this.#palletName,
-          this.#definitionContainer,
-          this.#annotationModel.typeDefinition.attribute,
-          this.#getAutocompletionWs(),
-          selectedItems,
-          this.#pallet,
-          this.#mousePoint
-        )
+      static #appendTo(editorHTMLElement, pallet) {
+        editorHTMLElement.appendChild(pallet.el)
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/index.js
 
@@ -65628,6 +65840,7 @@
       #propertyEditor
       #selectionModel
       #menuState
+      #pallet
 
       constructor(
         editorHTMLElement,
@@ -65640,31 +65853,27 @@
         autocompletionWs,
         mousePoint
       ) {
-        const denotationPallet = new TypeValuesPallet(
+        super()
+
+        const getAutocompletionWs = () =>
+          autocompletionWs || annotationModel.typeDictionary.autocompletionWs
+
+        this.#pallet = PalletWrapper.create(
           editorHTMLElement,
           eventEmitter,
-          annotationModel.typeDefinition,
+          annotationModel.typeDictionary,
           annotationModel.attributeInstanceContainer,
-          annotationModel.typeDefinition.denotation,
+          annotationModel.typeDictionary.denotation,
           selectionModel.entity,
           commander,
           'Term configuration',
           menuState,
-          mousePoint
-        )
-
-        const getAutocompletionWs = () =>
-          autocompletionWs || annotationModel.typeDefinition.autocompletionWs
-
-        super(
-          editorHTMLElement,
-          annotationModel,
-          selectionModel,
-          commander,
+          mousePoint,
           getAutocompletionWs,
-          annotationModel.typeDefinition.denotation,
           'entity',
-          denotationPallet
+          selectionModel,
+          annotationModel,
+          this
         )
 
         const spanEditor = new SpanEditor(
@@ -65680,17 +65889,17 @@
           editorHTMLElement,
           annotationModel,
           selectionModel,
-          denotationPallet,
+          this.#pallet,
           spanEditor
         )
 
         this.#propertyEditor = new PropertyEditor(
           editorHTMLElement,
           commander,
-          denotationPallet,
+          this.#pallet,
           'Entity',
           mousePoint,
-          annotationModel.typeDefinition.denotation,
+          annotationModel.typeDictionary.denotation,
           annotationModel,
           'Denotation',
           getAutocompletionWs
@@ -65707,17 +65916,25 @@
 
         const attributeEditor = new AttributeEditor(
           commander,
-          annotationModel.typeDefinition,
+          annotationModel.typeDictionary,
           selectionModel.entity,
           new SelectionAttributePallet(editorHTMLElement, mousePoint),
           () => this.editProperties(),
-          denotationPallet
+          this.#pallet
         )
         forwardMethods(this, () => attributeEditor, ['manipulateAttribute'])
       }
 
       bindMouseEvents() {
         return this.#mouseEventHandler.bind()
+      }
+
+      editProperties() {
+        this.#propertyEditor.startEditing(this.#selectionModel.entity)
+      }
+
+      get isPalletShown() {
+        return this.#pallet.visibility
       }
 
       createSpanWithTouchDevice() {
@@ -65755,10 +65972,6 @@
           )
         }
       }
-
-      editProperties() {
-        this.#propertyEditor.startEditing(this.#selectionModel.entity)
-      }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/create.js
 
     /* harmony default export */ function BlockEditMode_create(
@@ -65767,7 +65980,7 @@
       textSelectionAdjuster,
       spanConfig
     ) {
-      const { begin, end } = annotationModel.getNewSpan(
+      const { begin, end } = annotationModel.getTextSelection(
         spanConfig,
         textSelectionAdjuster
       )
@@ -65981,8 +66194,11 @@
             return
           }
 
-          const doesExists =
-            this.#annotationModel.spanInstanceContainer.hasBlockSpan(begin, end)
+          const doesExists = this.#annotationModel.spanInstanceContainer.find(
+            'block',
+            begin,
+            end
+          )
           if (begin < end && !doesExists) {
             this.#commander.invoke(
               this.#commander.factory.moveBlockSpanCommand(spanID, begin, end)
@@ -66469,7 +66685,7 @@
       #propertyEditor
       #selectionModel
       #menuState
-      #attributeEditor
+      #pallet
 
       constructor(
         editorHTMLElement,
@@ -66482,31 +66698,27 @@
         autocompletionWs,
         mousePoint
       ) {
-        const blockPallet = new TypeValuesPallet(
+        super()
+
+        const getAutocompletionWs = () =>
+          autocompletionWs || annotationModel.typeDictionary.autocompletionWs
+
+        this.#pallet = PalletWrapper.create(
           editorHTMLElement,
           eventEmitter,
-          annotationModel.typeDefinition,
+          annotationModel.typeDictionary,
           annotationModel.attributeInstanceContainer,
-          annotationModel.typeDefinition.block,
+          annotationModel.typeDictionary.block,
           selectionModel.entity,
           commander,
           'Block configuration',
           menuState,
-          mousePoint
-        )
-
-        const getAutocompletionWs = () =>
-          autocompletionWs || annotationModel.typeDefinition.autocompletionWs
-
-        super(
-          editorHTMLElement,
-          annotationModel,
-          selectionModel,
-          commander,
+          mousePoint,
           getAutocompletionWs,
-          annotationModel.typeDefinition.block,
           'entity',
-          blockPallet
+          selectionModel,
+          annotationModel,
+          this
         )
 
         const spanEditor = new SpanEditor_SpanEditor(
@@ -66523,16 +66735,16 @@
           annotationModel,
           selectionModel,
           spanEditor,
-          blockPallet
+          this.#pallet
         )
 
         this.#propertyEditor = new PropertyEditor(
           editorHTMLElement,
           commander,
-          blockPallet,
+          this.#pallet,
           'Block',
           mousePoint,
-          annotationModel.typeDefinition.block,
+          annotationModel.typeDictionary.block,
           annotationModel,
           'Entity',
           getAutocompletionWs
@@ -66549,17 +66761,25 @@
 
         const attributeEditor = new AttributeEditor(
           commander,
-          annotationModel.typeDefinition,
+          annotationModel.typeDictionary,
           selectionModel.entity,
           new SelectionAttributePallet(editorHTMLElement, mousePoint),
           () => this.editProperties(),
-          blockPallet
+          this.#pallet
         )
         forwardMethods(this, () => attributeEditor, ['manipulateAttribute'])
       }
 
       bindMouseEvents() {
         return this.#mouseEventHandler.bind()
+      }
+
+      editProperties() {
+        this.#propertyEditor.startEditing(this.#selectionModel.entity)
+      }
+
+      get isPalletShown() {
+        return this.#pallet.visibility
       }
 
       createSpanWithTouchDevice() {
@@ -66596,10 +66816,6 @@
             false
           )
         }
-      }
-
-      editProperties() {
-        this.#propertyEditor.startEditing(this.#selectionModel.entity)
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/MouseEventHandler/typeValuesClicked/updateSelectionOfEntity.js
 
@@ -66660,20 +66876,20 @@
       #editorHTMLElement
       #selectionModel
       #commander
-      #typeDefinition
+      #typeDictionary
       #pallet
 
       constructor(
         editorHTMLElement,
         selectionModel,
         commander,
-        typeDefinition,
+        typeDictionary,
         pallet
       ) {
         this.#editorHTMLElement = editorHTMLElement
         this.#selectionModel = selectionModel
         this.#commander = commander
-        this.#typeDefinition = typeDefinition
+        this.#typeDictionary = typeDictionary
         this.#pallet = pallet
       }
 
@@ -66746,7 +66962,7 @@
         typeValuesClicked(
           this.#selectionModel,
           this.#commander,
-          this.#typeDefinition.relation,
+          this.#typeDictionary.relation,
           event,
           entityID
         )
@@ -66757,6 +66973,7 @@
       #mouseEventHandler
       #propertyEditor
       #selectionModel
+      #pallet
 
       constructor(
         editorHTMLElement,
@@ -66768,31 +66985,27 @@
         menuState,
         mousePoint
       ) {
-        const relationPallet = new TypeValuesPallet(
+        super()
+
+        const getAutocompletionWs = () =>
+          autocompletionWs || annotationModel.typeDictionary.autocompletionWs
+
+        this.#pallet = PalletWrapper.create(
           editorHTMLElement,
           eventEmitter,
-          annotationModel.typeDefinition,
+          annotationModel.typeDictionary,
           annotationModel.attributeInstanceContainer,
-          annotationModel.typeDefinition.relation,
+          annotationModel.typeDictionary.relation,
           selectionModel.relation,
           commander,
           'Relation configuration',
           menuState,
-          mousePoint
-        )
-
-        const getAutocompletionWs = () =>
-          autocompletionWs || annotationModel.typeDefinition.autocompletionWs
-
-        super(
-          editorHTMLElement,
-          annotationModel,
-          selectionModel,
-          commander,
+          mousePoint,
           getAutocompletionWs,
-          annotationModel.typeDefinition.relation,
           'relation',
-          relationPallet
+          selectionModel,
+          annotationModel,
+          this
         )
 
         this.#mouseEventHandler =
@@ -66800,17 +67013,17 @@
             editorHTMLElement,
             selectionModel,
             commander,
-            annotationModel.typeDefinition,
-            relationPallet
+            annotationModel.typeDictionary,
+            this.#pallet
           )
 
         this.#propertyEditor = new PropertyEditor(
           editorHTMLElement,
           commander,
-          relationPallet,
+          this.#pallet,
           'Relation',
           mousePoint,
-          annotationModel.typeDefinition.relation,
+          annotationModel.typeDictionary.relation,
           annotationModel,
           'Relation',
           getAutocompletionWs
@@ -66819,11 +67032,11 @@
 
         const attributeEditor = new AttributeEditor(
           commander,
-          annotationModel.typeDefinition,
+          annotationModel.typeDictionary,
           selectionModel.relation,
           new SelectionAttributePallet(editorHTMLElement, mousePoint),
           () => this.editProperties(),
-          relationPallet
+          this.#pallet
         )
         forwardMethods(this, () => attributeEditor, ['manipulateAttribute'])
       }
@@ -66834,6 +67047,10 @@
 
       editProperties() {
         this.#propertyEditor.startEditing(this.#selectionModel.relation)
+      }
+
+      get isPalletShown() {
+        return this.#pallet.visibility
       }
 
       relationClicked(event, relation) {
@@ -66945,18 +67162,106 @@
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TextEditMode.js
 
+    class TextEditDialog {
+      #dialog
+
+      constructor(editorHTMLElement, submitHandler) {
+        const dialog = document.createElement('dialog')
+        dialog.classList.add('textae-editor__text-edit-dialog')
+        editorHTMLElement.appendChild(dialog)
+        dialog.addEventListener('close', (event) => {
+          const dialog = event.target
+          const { returnValue } = dialog
+          if (returnValue === 'OK') {
+            const form = dialog.querySelector('form')
+            const begin = form.begin.value
+            const end = form.end.value
+            const text = form.text.value
+            submitHandler(begin, end, text)
+          }
+        })
+
+        delegate_default()(
+          dialog,
+          '.textae-editor__text-edit-dialog__close-button',
+          'click',
+          (e) => {
+            dialog.close()
+          }
+        )
+        delegate_default()(
+          dialog,
+          '.textae-editor__text-edit-dialog__text-box',
+          'keyup',
+          (e) => {
+            e.stopPropagation()
+          }
+        )
+
+        this.#dialog = dialog
+      }
+
+      open(begin, end, text) {
+        this.#dialog.innerHTML = this.#template({ begin, end, text })
+        this.#dialog.showModal()
+      }
+
+      #template(context) {
+        const { text, begin, end } = context
+        return anemone`
+      <div class="textae-editor__text-edit-dialog__title-bar">
+        <h1>Edit text dialog</h1>
+        <button class="textae-editor__text-edit-dialog__close-button">X</button>
+      </div>
+      <h3>Original Text</h3>
+      <div>${text}</div>
+      <h3>Edit text</h3>
+      <form method="dialog">
+        <input type="hidden" name="begin" value="${begin}">
+        <input type="hidden" name="end" value="${end}">
+        <textarea class="textae-editor__text-edit-dialog__text-box" name="text">${text}</textarea>
+        <br>
+        <div class="textae-editor__text-edit-dialog__button-bar">
+          <button value="OK">OK</button>
+        </div>
+      </form>
+    `
+      }
+    }
+
     class TextEditMode extends EditMode {
       #editorHTMLElement
       #annotationModel
       #spanConfig
       #menuState
+      #commander
+      #dialog
 
-      constructor(editorHTMLElement, annotationModel, spanConfig, menuState) {
+      constructor(
+        editorHTMLElement,
+        annotationModel,
+        spanConfig,
+        menuState,
+        commander
+      ) {
         super()
         this.#editorHTMLElement = editorHTMLElement
         this.#annotationModel = annotationModel
         this.#spanConfig = spanConfig
         this.#menuState = menuState
+        this.#commander = commander
+        this.#dialog = new TextEditDialog(
+          editorHTMLElement,
+          (begin, end, text) => {
+            const command =
+              this.#commander.factory.changeTextAndMoveSpanCommand(
+                begin,
+                end,
+                text
+              )
+            this.#commander.invoke(command)
+          }
+        )
       }
 
       bindMouseEvents() {
@@ -66974,15 +67279,23 @@
 
                 if (isRangeInTextBox(selection, textBox)) {
                   if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
-                    const { begin, end } = this.#annotationModel.getNewSpan(
-                      this.#spanConfig,
-                      this.#menuState.textSelectionAdjuster
-                    )
+                    const { begin, end } =
+                      this.#annotationModel.getTextSelection(
+                        this.#spanConfig,
+                        this.#menuState.textSelectionAdjuster
+                      )
+                    if (
+                      !this.#annotationModel.validateEditableText(begin, end)
+                    ) {
+                      return
+                    }
+
                     const targetText = this.#annotationModel.getTextBetween(
                       begin,
                       end
                     )
-                    alert(`selection: ${targetText}`)
+
+                    this.#dialog.open(begin, end, targetText)
                   }
                 }
               }
@@ -67058,7 +67371,8 @@
           editorHTMLElement,
           annotationModel,
           spanConfig,
-          menuState
+          menuState,
+          commander
         )
 
         new ModeTransitionReactor(
@@ -67320,7 +67634,7 @@
 
     /* harmony default export */ function bindChangeLockConfig(
       content,
-      typeDefinition
+      typeDictionary
     ) {
       delegate_default()(
         content,
@@ -67328,9 +67642,9 @@
         'change',
         debounce300((e) => {
           if (e.target.checked) {
-            typeDefinition.lockEdit()
+            typeDictionary.lockEdit()
           } else {
-            typeDefinition.unlockEdit()
+            typeDictionary.unlockEdit()
           }
         })
       )
@@ -67378,21 +67692,21 @@
     /* harmony default export */ function reflectImmediately(
       content,
       typeGap,
-      typeDefinition,
+      typeDictionary,
       textBox
     ) {
       bindChangeTypeGap(content, typeGap, textBox)
       bindChangeLineHeight(content, textBox)
-      bindChangeLockConfig(content, typeDefinition)
+      bindChangeLockConfig(content, typeDictionary)
     } // CONCATENATED MODULE: ./package.json
 
-    const package_namespaceObject = { rE: '13.1.1' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
-    function template_template(context) {
+    const package_namespaceObject = { rE: '13.1.2' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
+    function SettingDialog_template_template(context) {
       const {
         typeGap,
         typeGapDisabled,
         lineHeight,
-        typeDefinitionLocked,
+        typeDictionaryLocked,
         version
       } = context
 
@@ -67422,7 +67736,7 @@
       <input
         type="checkbox"
         class="textae-editor__setting-dialog__lock-config-text"
-        ${typeDefinitionLocked ? `checked="checked"` : ''}>
+        ${typeDictionaryLocked ? `checked="checked"` : ''}>
       Lock Edit Config
     </label>
   </div>
@@ -67434,19 +67748,19 @@
     } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/index.js
 
     class SettingDialog extends Dialog {
-      constructor(typeDefinition, typeGap, textBox) {
-        const contentHtml = template_template({
+      constructor(typeDictionary, typeGap, textBox) {
+        const contentHtml = SettingDialog_template_template({
           typeGapDisabled: !typeGap.show,
           typeGap: typeGap.value,
           lineHeight: textBox.lineHeight,
-          typeDefinitionLocked: typeDefinition.isLock,
+          typeDictionaryLocked: typeDictionary.isLock,
           version: package_namespaceObject.rE
         })
 
         super('Setting', contentHtml)
 
         // Reflects configuration changes in real time.
-        reflectImmediately(super.el, typeGap, typeDefinition, textBox)
+        reflectImmediately(super.el, typeGap, typeDictionary, textBox)
 
         // Observe enter key press
         delegate_default()(super.el, `.textae-editor__dialog`, 'keyup', (e) => {
@@ -67578,7 +67892,7 @@
       createEntity() {
         const command =
           this.#commander.factory.createDefaultTypeEntityToSelectedSpansCommand(
-            this.#annotationModel.typeDefinition.denotation.defaultType
+            this.#annotationModel.typeDictionary.denotation.defaultType
           )
 
         if (!command.isEmpty) {
@@ -67618,7 +67932,7 @@
 
       showSettingDialog() {
         new SettingDialog(
-          this.#annotationModel.typeDefinition,
+          this.#annotationModel.typeDictionary,
           this.#annotationModel.typeGap,
           this.#annotationModel.textBox
         ).open()
@@ -72576,15 +72890,18 @@ situation.
       /MSIE \d|Trident\/(?:[7-9]|\d{2,})\..*rv:(\d+)/.exec(navigator.userAgent)
 
     // Fill in the digit keys
-    for (var i = 0; i < 10; i++) base[48 + i] = base[96 + i] = String(i)
+    for (var w3c_keyname_i = 0; w3c_keyname_i < 10; w3c_keyname_i++)
+      base[48 + w3c_keyname_i] = base[96 + w3c_keyname_i] =
+        String(w3c_keyname_i)
 
     // The function keys
-    for (var i = 1; i <= 24; i++) base[i + 111] = 'F' + i
+    for (var w3c_keyname_i = 1; w3c_keyname_i <= 24; w3c_keyname_i++)
+      base[w3c_keyname_i + 111] = 'F' + w3c_keyname_i
 
     // And the alphabetic keys
-    for (var i = 65; i <= 90; i++) {
-      base[i] = String.fromCharCode(i + 32)
-      shift[i] = String.fromCharCode(i)
+    for (var w3c_keyname_i = 65; w3c_keyname_i <= 90; w3c_keyname_i++) {
+      base[w3c_keyname_i] = String.fromCharCode(w3c_keyname_i + 32)
+      shift[w3c_keyname_i] = String.fromCharCode(w3c_keyname_i)
     }
 
     // For each code that doesn't have a shift-equivalent, copy the base name
@@ -104269,11 +104586,11 @@ package may help with that (see
 <div class="textae-editor__save-dialog__container">
   <div class="textae-editor__save-dialog__row">
     <label>URL</label>
-    <input 
+    <input
       type="text"
       value="${url}"
       class="textae-editor__save-dialog__url-text">
-    <input 
+    <input
       type="button"
       class="textae-editor__save-dialog__url-button"
       ${url ? '' : `disabled="disabled"`}
@@ -104283,7 +104600,7 @@ package may help with that (see
     <label>Local</label>
     <input
       type="text"
-      value="${filename}"
+      value="${filename || ''}"
       >
     <a class="textae-editor__save-dialog__download-link" href="#">Download</a>
   </div>
@@ -106621,7 +106938,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         // Merge with the original config and save the value unchanged in the editor.
         const editedConfig = {
           ...this.#getOriginalConfig(),
-          ...this.#annotationModel.typeDefinition.config
+          ...this.#annotationModel.typeDictionary.config
         }
 
         new SaveConfigurationDialog(
@@ -106639,7 +106956,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           ...this.#getOriginalAnnotation(),
           ...this.#annotationModel.externalFormat,
           ...{
-            config: this.#annotationModel.typeDefinition.config
+            config: this.#annotationModel.typeDictionary.config
           }
         }
 
@@ -106655,7 +106972,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
      * @param {import('./MenuState').MenuState} menuState
      * @param {import('../AnnotationModel').AnnotationModel} annotationModel
      */
-    /* harmony default export */ function setAnnotationAndConfiguration(
+    function setAnnotationAndConfiguration(
       validConfig,
       menuState,
       spanConfig,
@@ -106667,23 +106984,6 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       spanConfig.set(validConfig)
       annotationModel.reset(annotation, validConfig)
       functionAvailability.availability = validConfig['function availability']
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/initAnnotation/setDefault.js
-
-    /* harmony default export */ function setDefault(
-      originalData,
-      menuState,
-      spanConfig,
-      annotationModel,
-      functionAvailability
-    ) {
-      setAnnotationAndConfiguration(
-        originalData.defaultConfiguration,
-        menuState,
-        spanConfig,
-        annotationModel,
-        originalData.defaultAnnotation,
-        functionAvailability
-      )
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillInferDefinitionFromAnnotation/fill.js
 
     // Complement the config with the generated Attribute definition.
@@ -107214,11 +107514,12 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           if (startUpOptions.config) {
             remoteResource.loadConfiguration(startUpOptions.config)
           } else {
-            setDefault(
-              originalData,
+            setAnnotationAndConfiguration(
+              originalData.defaultConfiguration,
               menuState,
               spanConfig,
               annotationModel,
+              originalData.defaultAnnotation,
               functionAvailability
             )
           }
@@ -108101,7 +108402,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       #pushButtons
       #annotationModelEventsObserver
       #originalData
-      #typeDefinition
+      #typeDictionary
       #functionAvailability
       #mode
 
@@ -108111,7 +108412,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         clipBoard,
         annotationModelEventsObserver,
         originalData,
-        typeDefinition,
+        typeDictionary,
         functionAvailability
       ) {
         this.#enableState = new EnableState(
@@ -108126,7 +108427,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
         this.#originalData = originalData
 
-        this.#typeDefinition = typeDefinition
+        this.#typeDictionary = typeDictionary
 
         this.#functionAvailability = functionAvailability
 
@@ -108238,7 +108539,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       get diffOfConfiguration() {
         return lib_diff(this.#originalData.configuration, {
           ...this.#originalData.configuration,
-          ...this.#typeDefinition.config
+          ...this.#typeDictionary.config
         })
       }
 
@@ -108283,111 +108584,18 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           transit: this.getState(type, 'transit')
         }
       }
-    } // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/native.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Clipboard/index.js
 
-    var randomUUID =
-      typeof crypto !== 'undefined' &&
-      crypto.randomUUID &&
-      crypto.randomUUID.bind(crypto)
-    /* harmony default export */ const esm_browser_native = {
-      randomUUID
-    } // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/rng.js
-    // Unique ID creation requires a high quality random # generator. In the browser we therefore
-    // require the crypto API and do not support built-in fallback to lower quality random number
-    // generators (like Math.random()).
-
-    var getRandomValues
-    var rnds8 = new Uint8Array(16)
-    function rng() {
-      // lazy load so that environments that need to polyfill have a chance to do so
-      if (!getRandomValues) {
-        // getRandomValues needs to be invoked in a context where "this" is a Crypto implementation.
-        getRandomValues =
-          typeof crypto !== 'undefined' &&
-          crypto.getRandomValues &&
-          crypto.getRandomValues.bind(crypto)
-        if (!getRandomValues) {
-          throw new Error(
-            'crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported'
-          )
-        }
-      }
-      return getRandomValues(rnds8)
-    } // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/stringify.js
-    /**
-     * Convert array of 16 byte values to UUID string format of the form:
-     * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-     */
-    var byteToHex = []
-    for (var stringify_i = 0; stringify_i < 256; ++stringify_i) {
-      byteToHex.push((stringify_i + 0x100).toString(16).slice(1))
-    }
-    function unsafeStringify(arr, offset = 0) {
-      // Note: Be careful editing this code!  It's been tuned for performance
-      // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
-      //
-      // Note to future-self: No, you can't remove the `toLowerCase()` call.
-      // REF: https://github.com/uuidjs/uuid/pull/677#issuecomment-1757351351
-      return (
-        byteToHex[arr[offset + 0]] +
-        byteToHex[arr[offset + 1]] +
-        byteToHex[arr[offset + 2]] +
-        byteToHex[arr[offset + 3]] +
-        '-' +
-        byteToHex[arr[offset + 4]] +
-        byteToHex[arr[offset + 5]] +
-        '-' +
-        byteToHex[arr[offset + 6]] +
-        byteToHex[arr[offset + 7]] +
-        '-' +
-        byteToHex[arr[offset + 8]] +
-        byteToHex[arr[offset + 9]] +
-        '-' +
-        byteToHex[arr[offset + 10]] +
-        byteToHex[arr[offset + 11]] +
-        byteToHex[arr[offset + 12]] +
-        byteToHex[arr[offset + 13]] +
-        byteToHex[arr[offset + 14]] +
-        byteToHex[arr[offset + 15]]
-      ).toLowerCase()
-    }
-    function stringify(arr, offset = 0) {
-      var uuid = unsafeStringify(arr, offset)
-      // Consistency check for valid UUID.  If this throws, it's likely due to one
-      // of the following:
-      // - One or more input array values don't map to a hex octet (leading to
-      // "undefined" in the uuid)
-      // - Invalid input values for the RFC `version` or `variant` fields
-      if (!validate(uuid)) {
-        throw TypeError('Stringified UUID is invalid')
-      }
-      return uuid
-    }
-    /* harmony default export */ const esm_browser_stringify =
-      /* unused pure expression or super */ null && stringify // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/v4.js
-    function v4(options, buf, offset) {
-      if (esm_browser_native.randomUUID && !buf && !options) {
-        return esm_browser_native.randomUUID()
-      }
-      options = options || {}
-      var rnds = options.random || (options.rng || rng)()
-
-      // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-      rnds[6] = (rnds[6] & 0x0f) | 0x40
-      rnds[8] = (rnds[8] & 0x3f) | 0x80
-
-      // Copy bytes to buffer, if provided
-      if (buf) {
-        offset = offset || 0
-        for (var i = 0; i < 16; ++i) {
-          buf[offset + i] = rnds[i]
-        }
-        return buf
-      }
-      return unsafeStringify(rnds)
-    }
-    /* harmony default export */ const esm_browser_v4 = v4 // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Clipboard/index.js
     class Clipboard {
+      #eventEmitter
+      #commander
+      #selectionModel
+      #denotationDefinitionContainer
+      #attributeDefinitionContainer
+      #typeDictionary
+      #items
+      #uuid
+
       /**
        * @param {import('../Commander').default} commander
        * @param {import('../../SelectionModel').default} selectionModel
@@ -108399,56 +108607,56 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         selectionModel,
         denotationDefinitionContainer,
         attributeDefinitionContainer,
-        typeDefinition
+        typeDictionary
       ) {
-        this._eventEmitter = eventEmitter
-        this._commander = commander
-        this._selectionModel = selectionModel
-        this._denotationDefinitionContainer = denotationDefinitionContainer
-        this._attributeDefinitionContainer = attributeDefinitionContainer
-        this._typeDefinition = typeDefinition
+        this.#eventEmitter = eventEmitter
+        this.#commander = commander
+        this.#selectionModel = selectionModel
+        this.#denotationDefinitionContainer = denotationDefinitionContainer
+        this.#attributeDefinitionContainer = attributeDefinitionContainer
+        this.#typeDictionary = typeDictionary
 
         // This list stores two types of things: type for copy and entity for cut.
         // Only one type is stored at a time.
         // Use one list.
-        this._items = []
-        this._uuid = esm_browser_v4()
+        this.#items = []
+        this.#uuid = esm_browser_v4()
 
         eventEmitter
           .on('textae-event.annotation-data.entity.remove', (entity) => {
             if (this.hasCuttingItem) {
-              this._updateItems(this._items.filter((e) => e != entity))
+              this.#updateItems(this.#items.filter((e) => e != entity))
             }
           })
-          .on('textae-event.edit-mode.transition', () => this._updateItems())
+          .on('textae-event.edit-mode.transition', () => this.#updateItems())
       }
 
       get hasCopyingItem() {
-        return this._items[0] instanceof TypeValues
+        return this.#items[0] instanceof TypeValues
       }
 
       get hasCuttingItem() {
-        return this._items[0] instanceof EntityInstance
+        return this.#items[0] instanceof EntityInstance
       }
 
       copyEntitiesToLocalClipboard() {
-        this._updateItems(this._selectionModel.copyingTargets)
+        this.#updateItems(this.#selectionModel.copyingTargets)
       }
 
       copyEntitiesToSystemClipboard(clipboardEvent) {
-        if (this._selectionModel.span.contains((s) => s.isBlock)) {
+        if (this.#selectionModel.span.contains((s) => s.isBlock)) {
           return
         }
 
-        const { copyingTargets } = this._selectionModel
+        const { copyingTargets } = this.#selectionModel
 
         if (copyingTargets.length > 0) {
-          const entityTypes = this._denotationDefinitionContainer.config.filter(
+          const entityTypes = this.#denotationDefinitionContainer.config.filter(
             ({ id }) => copyingTargets.some(({ typeName }) => typeName === id)
           )
 
           const attributeTypes =
-            this._attributeDefinitionContainer.config.filter(({ pred }) =>
+            this.#attributeDefinitionContainer.config.filter(({ pred }) =>
               copyingTargets.some(({ attributes }) =>
                 attributes.some((a) => a.pred === pred)
               )
@@ -108474,22 +108682,22 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       cutEntitiesToLocalClipboard() {
-        const { cuttingTargets } = this._selectionModel
+        const { cuttingTargets } = this.#selectionModel
 
         //  When exactly the same entities that are being cut are selected, the cut is canceled.
         if (
-          this._cuttingItems.length &&
-          this._cuttingItems.every((item) => cuttingTargets.has(item)) &&
-          [...cuttingTargets].every((item) => this._cuttingItems.includes(item))
+          this.#cuttingItems.length &&
+          this.#cuttingItems.every((item) => cuttingTargets.has(item)) &&
+          [...cuttingTargets].every((item) => this.#cuttingItems.includes(item))
         ) {
-          this._updateItems()
+          this.#updateItems()
         } else {
-          this._updateItems([...cuttingTargets])
+          this.#updateItems([...cuttingTargets])
         }
       }
 
       cutEntitiesToSystemClipboard(clipboardEvent) {
-        if (this._selectionModel.span.contains((s) => s.isBlock)) {
+        if (this.#selectionModel.span.contains((s) => s.isBlock)) {
           return
         }
 
@@ -108497,7 +108705,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
         clipboardEvent.clipboardData.setData(
           'application/x-textae-editor-uuid',
-          this._uuid
+          this.#uuid
         )
 
         this.copyEntitiesToSystemClipboard(clipboardEvent)
@@ -108505,24 +108713,24 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
       pasteEntitiesFromLocalClipboard() {
         if (
-          this._itemsWillBeCutAndPaste.length &&
-          this._selectionModel.span.single
+          this.#itemsWillBeCutAndPaste.length &&
+          this.#selectionModel.span.single
         ) {
-          this._moveEntities()
+          this.#moveEntities()
           return
         }
 
         if (this.hasCopyingItem) {
           const command =
-            this._commander.factory.pasteTypesToSelectedSpansCommand(
-              this._items
+            this.#commander.factory.pasteTypesToSelectedSpansCommand(
+              this.#items
             )
-          this._commander.invoke(command)
+          this.#commander.invoke(command)
         }
       }
 
       pasteEntitiesFromSystemClipboard(clipboardEvent) {
-        if (this._selectionModel.span.contains((s) => s.isBlock)) {
+        if (this.#selectionModel.span.contains((s) => s.isBlock)) {
           return
         }
 
@@ -108530,11 +108738,11 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           'application/x-textae-editor-uuid'
         )
         if (
-          uuid === this._uuid &&
-          this._itemsWillBeCutAndPaste.length &&
-          this._selectionModel.span.single
+          uuid === this.#uuid &&
+          this.#itemsWillBeCutAndPaste.length &&
+          this.#selectionModel.span.single
         ) {
-          this._moveEntities()
+          this.#moveEntities()
           return
         }
 
@@ -108547,25 +108755,25 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           const newAttrDefContainer = new AttributeDefinitionContainer()
           newAttrDefContainer.definedTypes = data.config['attribute types']
 
-          if (this._typeDefinition.isLock) {
+          if (this.#typeDictionary.isLock) {
             const typeValuesList = data.typeValues.map(
               ({ obj, attributes }) =>
                 new TypeValues(
                   obj,
                   attributes.filter(
                     ({ pred }) =>
-                      this._attributeDefinitionContainer.get(pred) &&
-                      this._attributeDefinitionContainer.get(pred).valueType ===
+                      this.#attributeDefinitionContainer.get(pred) &&
+                      this.#attributeDefinitionContainer.get(pred).valueType ===
                         newAttrDefContainer.get(pred).valueType
                   )
                 )
             )
 
             const command =
-              this._commander.factory.pasteTypesToSelectedSpansCommand(
+              this.#commander.factory.pasteTypesToSelectedSpansCommand(
                 typeValuesList
               )
-            this._commander.invoke(command)
+            this.#commander.invoke(command)
           } else {
             const typeValuesList = data.typeValues.map(
               ({ obj, attributes }) =>
@@ -108573,8 +108781,8 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
                   obj,
                   attributes.filter(
                     ({ pred }) =>
-                      !this._attributeDefinitionContainer.get(pred) ||
-                      this._attributeDefinitionContainer.get(pred).valueType ===
+                      !this.#attributeDefinitionContainer.get(pred) ||
+                      this.#attributeDefinitionContainer.get(pred).valueType ===
                         newAttrDefContainer.get(pred).valueType
                   )
                 )
@@ -108582,29 +108790,29 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
             const newTypes = data.config['entity types'].filter(
               ({ id }) =>
-                !this._denotationDefinitionContainer.config.some(
+                !this.#denotationDefinitionContainer.config.some(
                   (type) => type.id === id
                 )
             )
             const attrDefs = data.config['attribute types'].filter(
-              ({ pred }) => !this._attributeDefinitionContainer.get(pred)
+              ({ pred }) => !this.#attributeDefinitionContainer.get(pred)
             )
 
             const command =
-              this._commander.factory.pasteTypesToSelectedSpansCommand(
+              this.#commander.factory.pasteTypesToSelectedSpansCommand(
                 typeValuesList,
                 newTypes,
                 attrDefs,
-                this._getNewSelectionAttributeObjects(
+                this.#getNewSelectionAttributeObjects(
                   typeValuesList,
                   newAttrDefContainer
                 )
               )
-            this._commander.invoke(command)
+            this.#commander.invoke(command)
           }
 
           if (this.hasCuttingItem) {
-            this._updateItems()
+            this.#updateItems()
           }
 
           return
@@ -108613,9 +108821,9 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
       // If there is an attribute definition for the selection attribute to be added
       // but the value definition is missing, add the value definition.
-      _getNewSelectionAttributeObjects(typeValuesList, newAttrDefContainer) {
+      #getNewSelectionAttributeObjects(typeValuesList, newAttrDefContainer) {
         const newSelectionAttributeObjects = []
-        const selectionAttibutes = typeValuesList.reduce((list, typeValue) => {
+        const selectionAttributes = typeValuesList.reduce((list, typeValue) => {
           return list.concat(
             typeValue.attributes.filter(
               ({ pred }) =>
@@ -108623,10 +108831,10 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             )
           )
         }, [])
-        for (const { pred, obj } of selectionAttibutes) {
-          if (this._attributeDefinitionContainer.get(pred)) {
+        for (const { pred, obj } of selectionAttributes) {
+          if (this.#attributeDefinitionContainer.get(pred)) {
             if (
-              !this._attributeDefinitionContainer
+              !this.#attributeDefinitionContainer
                 .get(pred)
                 .values.some(({ id }) => id === obj)
             ) {
@@ -108644,24 +108852,24 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         return newSelectionAttributeObjects
       }
 
-      _moveEntities() {
+      #moveEntities() {
         const command =
-          this._commander.factory.moveEntitiesToSelectedSpanCommand(
-            this._itemsWillBeCutAndPaste
+          this.#commander.factory.moveEntitiesToSelectedSpanCommand(
+            this.#itemsWillBeCutAndPaste
           )
-        this._commander.invoke(command)
-        this._updateItems()
+        this.#commander.invoke(command)
+        this.#updateItems()
       }
 
       // Notify items that are cutting and items that are no longer cutting
       // in order to switch between highlighting entities that are cutting.
-      _updateItems(newItems = []) {
-        const oldItems = this._cuttingItems.filter((i) => !newItems.includes(i))
-        this._items = newItems
+      #updateItems(newItems = []) {
+        const oldItems = this.#cuttingItems.filter((i) => !newItems.includes(i))
+        this.#items = newItems
 
-        this._eventEmitter.emit(
+        this.#eventEmitter.emit(
           'textae-event.clip-board.change',
-          this._cuttingItems,
+          this.#cuttingItems,
           oldItems
         )
       }
@@ -108673,17 +108881,17 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       // there is no change in the model.
       // In order to cause no change in the command history,
       // if the span of the entity being cut is the same as the span being selected, the entity is not pasted.
-      get _itemsWillBeCutAndPaste() {
-        return this._cuttingItems.filter(
+      get #itemsWillBeCutAndPaste() {
+        return this.#cuttingItems.filter(
           (i) =>
             i.span.id !==
-            (this._selectionModel.span.single &&
-              this._selectionModel.span.single.id)
+            (this.#selectionModel.span.single &&
+              this.#selectionModel.span.single.id)
         )
       }
 
-      get _cuttingItems() {
-        return this.hasCuttingItem ? this._items : []
+      get #cuttingItems() {
+        return this.hasCuttingItem ? this.#items : []
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/AnnotationAutoSaver.js
 
@@ -108960,7 +109168,7 @@ data-button-type="${type}">
             const button = super._querySelector(`.textae-control-pallet-button`)
             button.title = title
           })
-          .on('textae-event.original-data.configuration.reset', () =>
+          .on('textae-event.configuration.reset', () =>
             this.#redrawAllButtons()
           )
           .on('textae-event.type-definition.entity.change', () =>
@@ -109869,8 +110077,8 @@ data-button-type="${type}">
           commander,
           selectionModel,
           annotationModel.denotationDefinitionContainer,
-          annotationModel.attributeInstanceContainerDefinitionContainer,
-          annotationModel.typeDefinition
+          annotationModel.attributeDefinitionContainer,
+          annotationModel.typeDictionary
         )
         const originalData = new OriginalData(
           eventEmitter,
@@ -109890,7 +110098,7 @@ data-button-type="${type}">
           clipBoard,
           annotationModelEventsObserver,
           originalData,
-          annotationModel.typeDefinition,
+          annotationModel.typeDictionary,
           functionAvailability
         )
         const presenter = new Presenter(
@@ -109965,6 +110173,7 @@ data-button-type="${type}">
                   dataSource.data,
                   functionAvailability
                 )
+                eventEmitter.emit('textae-event.configuration.reset')
 
                 if (startUpOptions.isFocusFirstDenotation) {
                   const firstDenotation =
@@ -110023,6 +110232,7 @@ data-button-type="${type}">
                 annotation,
                 functionAvailability
               )
+              eventEmitter.emit('textae-event.configuration.reset')
 
               if (annotationDataSource) {
                 originalData.annotation = annotationDataSource

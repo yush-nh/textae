@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.1.2](https://github.com/pubannotation/textae/compare/v13.1.1...v13.1.2) (2024-06-20)
+
+
+### Bug Fixes
+
+* Availability of the function in the annotation file is not reflected ([b66f237](https://github.com/pubannotation/textae/commit/b66f23725634587e0eb3a72af5d38b162269d979))
+* Error occurs when copying ([8b4466e](https://github.com/pubannotation/textae/commit/8b4466edc3d93b2bdd2ad0402da89aaa12f5a5d0))
+* Show undefined as filename in the SaveAnnotationDialog ([12b4fab](https://github.com/pubannotation/textae/commit/12b4fabadb5f86c7eb83c3a62dc50fd2cc9df3b5))
+
 ### [13.1.1](https://github.com/pubannotation/textae/compare/v13.1.0...v13.1.1) (2024-06-18)
 
 
