@@ -84,9 +84,7 @@ export default class ToolBar extends Menu {
         const button = super._querySelector(`.textae-control-pallet-button`)
         button.title = title
       })
-      .on('textae-event.original-data.configuration.reset', () =>
-        this.#redrawAllButtons()
-      )
+      .on('textae-event.configuration.reset', () => this.#redrawAllButtons())
       .on('textae-event.type-definition.entity.change', () =>
         this.#updateButton('pallet', 'transit')
       )

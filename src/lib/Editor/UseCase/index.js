@@ -144,6 +144,7 @@ export default class UseCase {
               dataSource.data,
               functionAvailability
             )
+            eventEmitter.emit('textae-event.configuration.reset')
 
             if (startUpOptions.isFocusFirstDenotation) {
               const firstDenotation =
@@ -200,6 +201,7 @@ export default class UseCase {
             annotation,
             functionAvailability
           )
+          eventEmitter.emit('textae-event.configuration.reset')
 
           if (annotationDataSource) {
             originalData.annotation = annotationDataSource
