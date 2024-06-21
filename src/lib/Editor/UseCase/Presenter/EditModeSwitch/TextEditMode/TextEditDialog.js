@@ -13,8 +13,8 @@ export default class TextEditDialog {
       const { returnValue } = dialog
       if (returnValue === 'OK') {
         const form = dialog.querySelector('form')
-        const begin = form.begin.value
-        const end = form.end.value
+        const begin = parseInt(form.begin.value)
+        const end = parseInt(form.end.value)
         const originalText = form.originalText.value
         const editedText = form.editedText.value
         submitHandler(begin, end, originalText, editedText)
