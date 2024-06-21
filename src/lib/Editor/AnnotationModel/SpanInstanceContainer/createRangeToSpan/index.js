@@ -7,11 +7,15 @@ export default function (span) {
   const { textNode, start, end } = getRenderingPosition(span)
 
   if (!textNode) {
-    throw new Error(`The textNode on to create a span is not found. ${span.id}`)
+    throw new Error(
+      `The textNode on to create a span ${span.begin}:${span.end} is not found. `
+    )
   }
 
   if (start < 0) {
-    throw new Error(`start must be positive, but ${start} for ${span.id}.`)
+    throw new Error(
+      `start must be positive, but ${start} for ${span.begin}:${span.end}.`
+    )
   }
 
   if (textNode.length < end) {
