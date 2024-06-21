@@ -50,6 +50,7 @@ export default class AnnotationModelEventsObserver {
       .on('textae-event.annotation-data.attribute.remove', () =>
         this._updateState()
       )
+      .on('textae-event.annotation-data.text.change', () => this._updateState())
 
     this._observable(() =>
       eventEmitter.emit(

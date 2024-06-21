@@ -293,6 +293,8 @@ export default class AnnotationModel {
 
     this.#textBox.render(this.sourceDoc)
     this.#drawAllAnnotations()
+
+    this.#eventEmitter.emit('textae-event.annotation-data.text.change')
   }
 
   get #selectedText() {
