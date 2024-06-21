@@ -7,7 +7,6 @@ export default class AnnotationModelEventsObserver {
   #originalData
   #annotationModel
   #observable = new Observable(false)
-  #loadedAnnotationIsModified = false
 
   /**
    *
@@ -22,7 +21,6 @@ export default class AnnotationModelEventsObserver {
     eventEmitter
       .on('textae-event.resource.annotation.save', () => {
         this.#observable.set(false)
-        this.#loadedAnnotationIsModified = false
         this.#notifyChange()
       })
       .on('textae-event.annotation-data.all.change', () => {
