@@ -51115,7 +51115,9 @@
       bigBrotherSpan
     ) {
       if (isBoundaryCrossing(span.begin, span.end, bigBrotherSpan)) {
-        throw new Error(`span ${span.id} is corrisng with ${bigBrotherSpan.id}`)
+        throw new Error(
+          `span ${span.begin}:${span.end} is crossing with ${bigBrotherSpan.begin}:${bigBrotherSpan.end}`
+        )
       }
 
       let { start, end } = getOffset(span, bigBrotherSpan.end)
@@ -51142,12 +51144,12 @@
       const bigBrotherSpan = span.bigBrother
 
       if (bigBrotherSpan) {
-        // The target text arrounded by span is in a textNode after the bigBrotherSpan
+        // The target text enclosed by span is in a textNode after the bigBrotherSpan
         // if bigBrotherSpan exists.
         return getRenderingPositionFromBigBrother(span, bigBrotherSpan)
       } else {
         // There is no big brother if the span is first in the text.
-        // The target text arrounded by span is the first child of parent
+        // The target text enclosed by span is the first child of parent
         // unless bigBrotherSpan exists.
         return getRenderingPositionFromParent(span)
       }
@@ -51169,17 +51171,19 @@
 
       if (!textNode) {
         throw new Error(
-          `The textNode on to create a span is not found. ${span.id}`
+          `The textNode on to create a span ${span.begin}:${span.end} is not found. `
         )
       }
 
       if (start < 0) {
-        throw new Error(`start must be positive, but ${start} for ${span.id}.`)
+        throw new Error(
+          `start must be positive, but ${start} for ${span.begin}:${span.end}.`
+        )
       }
 
       if (textNode.length < end) {
         throw new Error(
-          `oh my god! I cannot render ${span.id}. "${textNode.textContent.slice(
+          `oh my god! I cannot render span. "${textNode.textContent.slice(
             start,
             end
           )}" at ${start}~${end} of text(${textNode.textContent.length}) as "${
@@ -52626,7 +52630,7 @@
           if (span.end <= begin) {
             // No effect on the span of this section.
             continue
-          } else if (span.end <= end) {
+          } else if (span.end < end) {
             // Span movement in this section is prohibited.
             continue
           } else if (end < span.begin) {
@@ -58092,6 +58096,8 @@
 
         this.#textBox.render(this.sourceDoc)
         this.#drawAllAnnotations()
+
+        this.#eventEmitter.emit('textae-event.annotation-data.text.change')
       }
 
       get #selectedText() {
@@ -60971,12 +60977,10 @@
       }
 
       selectionModel.selectSpan(spanID)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/isRangeInTextBox.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/isTextSelectionInTextBox.js
 
-    /* harmony default export */ function isRangeInTextBox(
-      selection,
-      textBoxHTMLElement
-    ) {
+    function isTextSelectionInTextBox(textBoxHTMLElement) {
+      const selection = window.getSelection()
       return (
         selection.type === 'Range' &&
         textBoxHTMLElement.contains(selection.anchorNode) &&
@@ -61014,7 +61018,7 @@
       bind() {
         const listeners = []
 
-        // In Friefox, the text box click event fires when you shrink and erase a span.
+        // In Firefox, the text box click event fires when you shrink and erase a span.
         // To do this, the span mouse-up event selects the span to the right of the erased span,
         // and then the text box click event deselects it.
         // To prevent this, we set a flag to indicate that it is immediately after the span's mouse-up event.
@@ -61136,8 +61140,7 @@
         const selection = window.getSelection()
 
         if (
-          isRangeInTextBox(
-            selection,
+          isTextSelectionInTextBox(
             this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
@@ -61165,8 +61168,7 @@
         }
 
         if (
-          isRangeInTextBox(
-            selection,
+          isTextSelectionInTextBox(
             this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
@@ -61189,8 +61191,7 @@
         }
 
         if (
-          isRangeInTextBox(
-            selection,
+          isTextSelectionInTextBox(
             this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
@@ -61218,8 +61219,7 @@
         }
 
         if (
-          isRangeInTextBox(
-            selection,
+          isTextSelectionInTextBox(
             this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
@@ -65950,7 +65950,7 @@
       }
 
       applyTextSelectionWithTouchDevice() {
-        if (isRangeInTextBox(window.getSelection(), this.#textBox)) {
+        if (isTextSelectionInTextBox(this.#textBox)) {
           const { begin, end } = this.#spanInstanceContainer.textSelection
           const isSelectionTextCrossingAnySpan =
             this.#spanInstanceContainer.isBoundaryCrossingWithOtherSpans(
@@ -66548,8 +66548,7 @@
         }
 
         if (
-          isRangeInTextBox(
-            selection,
+          isTextSelectionInTextBox(
             this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
@@ -66567,8 +66566,7 @@
         }
 
         if (
-          isRangeInTextBox(
-            selection,
+          isTextSelectionInTextBox(
             this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
@@ -66605,8 +66603,7 @@
         }
 
         if (
-          isRangeInTextBox(
-            selection,
+          isTextSelectionInTextBox(
             this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
@@ -66622,8 +66619,7 @@
         }
 
         if (
-          isRangeInTextBox(
-            selection,
+          isTextSelectionInTextBox(
             this.#editorHTMLElement.querySelector('.textae-editor__text-box')
           )
         ) {
@@ -66795,7 +66791,7 @@
       }
 
       applyTextSelectionWithTouchDevice() {
-        if (isRangeInTextBox(window.getSelection(), this.#textBox)) {
+        if (isTextSelectionInTextBox(this.#textBox)) {
           const { begin, end } = this.#spanInstanceContainer.textSelection
           const isSelectionTextCrossingAnySpan =
             this.#spanInstanceContainer.isBoundaryCrossingWithOtherSpans(
@@ -67160,7 +67156,7 @@
         }
         this.#listeners = []
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TextEditMode.js
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TextEditMode/TextEditDialog.js
 
     class TextEditDialog {
       #dialog
@@ -67174,10 +67170,11 @@
           const { returnValue } = dialog
           if (returnValue === 'OK') {
             const form = dialog.querySelector('form')
-            const begin = form.begin.value
-            const end = form.end.value
-            const text = form.text.value
-            submitHandler(begin, end, text)
+            const begin = parseInt(form.begin.value)
+            const end = parseInt(form.end.value)
+            const originalText = form.originalText.value
+            const editedText = form.editedText.value
+            submitHandler(begin, end, originalText, editedText)
           }
         })
 
@@ -67189,6 +67186,7 @@
             dialog.close()
           }
         )
+        // Disable shortcut key
         delegate_default()(
           dialog,
           '.textae-editor__text-edit-dialog__text-box',
@@ -67219,7 +67217,8 @@
       <form method="dialog">
         <input type="hidden" name="begin" value="${begin}">
         <input type="hidden" name="end" value="${end}">
-        <textarea class="textae-editor__text-edit-dialog__text-box" name="text">${text}</textarea>
+        <input type="hidden" name="originalText" value="${text}">
+        <textarea class="textae-editor__text-edit-dialog__text-box" name="editedText">${text}</textarea>
         <br>
         <div class="textae-editor__text-edit-dialog__button-bar">
           <button value="OK">OK</button>
@@ -67227,7 +67226,7 @@
       </form>
     `
       }
-    }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TextEditMode/index.js
 
     class TextEditMode extends EditMode {
       #editorHTMLElement
@@ -67252,12 +67251,16 @@
         this.#commander = commander
         this.#dialog = new TextEditDialog(
           editorHTMLElement,
-          (begin, end, text) => {
+          (begin, end, originalText, editedText) => {
+            if (originalText === editedText) {
+              return
+            }
+
             const command =
               this.#commander.factory.changeTextAndMoveSpanCommand(
                 begin,
                 end,
-                text
+                editedText
               )
             this.#commander.invoke(command)
           }
@@ -67272,38 +67275,35 @@
             this.#editorHTMLElement,
             '.textae-editor__text-box',
             'click',
-            (e) => {
-              if (e.target.classList.contains('textae-editor__text-box')) {
-                const textBox = e.target
-                const selection = window.getSelection()
-
-                if (isRangeInTextBox(selection, textBox)) {
-                  if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
-                    const { begin, end } =
-                      this.#annotationModel.getTextSelection(
-                        this.#spanConfig,
-                        this.#menuState.textSelectionAdjuster
-                      )
-                    if (
-                      !this.#annotationModel.validateEditableText(begin, end)
-                    ) {
-                      return
-                    }
-
-                    const targetText = this.#annotationModel.getTextBetween(
-                      begin,
-                      end
-                    )
-
-                    this.#dialog.open(begin, end, targetText)
-                  }
-                }
-              }
-            }
+            () => this.#handleTexSelection()
           )
         )
 
         return listeners
+      }
+
+      #handleTexSelection() {
+        if (!isTextSelectionInTextBox(this.#textBox)) {
+          return
+        }
+
+        if (!this.#annotationModel.hasCharacters(this.#spanConfig)) {
+          return
+        }
+
+        const { begin, end } = this.#annotationModel.getTextSelection(
+          this.#spanConfig,
+          this.#menuState.textSelectionAdjuster
+        )
+
+        if (this.#annotationModel.validateEditableText(begin, end)) {
+          const targetText = this.#annotationModel.getTextBetween(begin, end)
+          this.#dialog.open(begin, end, targetText)
+        }
+      }
+
+      get #textBox() {
+        return this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/index.js
 
@@ -67700,7 +67700,7 @@
       bindChangeLockConfig(content, typeDictionary)
     } // CONCATENATED MODULE: ./package.json
 
-    const package_namespaceObject = { rE: '13.1.2' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
+    const package_namespaceObject = { rE: '13.1.3' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
     function SettingDialog_template_template(context) {
       const {
         typeGap,
@@ -98356,7 +98356,11 @@ selection range that has the same text in front of it.
         return this.open ? this.open.tooltip : null
       }
       get attrs() {
-        return this.open ? this.open.attrs : baseAttrs
+        return this.open
+          ? this.open.attrs
+          : this.active.length
+            ? baseAttrs
+            : dist_noAttrs
       }
     }
     function sameResults(a, b) {
@@ -98373,6 +98377,7 @@ selection range that has the same text in front of it.
     const baseAttrs = {
       'aria-autocomplete': 'list'
     }
+    const dist_noAttrs = {}
     function makeAttrs(id, selected) {
       let result = {
         'aria-autocomplete': 'list',
@@ -99976,8 +99981,7 @@ the currently selected completion.
                       d.severity +
                       (d.markClass ? ' ' + d.markClass : '')
                   },
-                  diagnostic: d,
-                  inclusive: true
+                  diagnostic: d
                 }).range(d.from, d.to)
           }),
           true
@@ -100079,8 +100083,7 @@ Returns the number of active lint diagnostics in the given state.
       return lint ? lint.diagnostics.size : 0
     }
     const activeMark = /*@__PURE__*/ Decoration.mark({
-      class: 'cm-lintRange cm-lintRange-active',
-      inclusive: true
+      class: 'cm-lintRange cm-lintRange-active'
     })
     function lintTooltip(view, pos, side) {
       let { diagnostics } = view.state.field(lintState)
@@ -109501,12 +109504,14 @@ data-button-type="${type}">
     } // CONCATENATED MODULE: ./src/lib/Editor/diffOfAnnotation/sortByID.js
 
     function sortByID({
+      text,
       denotations = [],
       attributes = [],
       relations = [],
       blocks = []
     }) {
       return {
+        text,
         denotations: denotations.sort(byID),
         attributes: attributes.sort(byID),
         relations: relations.sort(byID),
@@ -109521,90 +109526,96 @@ data-button-type="${type}">
     // Maintenance a state of which the save button is able to be push.
 
     class AnnotationModelEventsObserver {
+      #eventEmitter
+      #originalData
+      #annotationModel
+      #observable = new (observ_default())(false)
+
       /**
        *
        * @param {import('./UseCase/OriginalData').default} originalData
        * @param {import('./AnnotationModel').AnnotationModel} annotationModel
        */
       constructor(eventEmitter, originalData, annotationModel) {
-        this._eventEmitter = eventEmitter
-        this._originalData = originalData
-        this._annotationModel = annotationModel
-        this._observable = new (observ_default())(false)
+        this.#eventEmitter = eventEmitter
+        this.#originalData = originalData
+        this.#annotationModel = annotationModel
 
         eventEmitter
           .on('textae-event.resource.annotation.save', () => {
-            this._observable.set(false)
-            this._loadedAnnotationIsModified = false
-            this._notifyChange()
+            this.#observable.set(false)
+            this.#notifyChange()
           })
           .on('textae-event.annotation-data.all.change', () => {
-            this._observable.set(false)
-            this._notifyChange()
+            this.#observable.set(false)
+            this.#notifyChange()
           })
           .on('textae-event.annotation-data.span.add', () =>
-            this._updateState()
+            this.#updateState()
           )
           .on('textae-event.annotation-data.span.change', () =>
-            this._updateState()
+            this.#updateState()
           )
           .on('textae-event.annotation-data.span.remove', () =>
-            this._updateState()
+            this.#updateState()
           )
           .on('textae-event.annotation-data.entity.add', () =>
-            this._updateState()
+            this.#updateState()
           )
           .on('textae-event.annotation-data.entity.change', () =>
-            this._updateState()
+            this.#updateState()
           )
           .on('textae-event.annotation-data.entity.remove', () =>
-            this._updateState()
+            this.#updateState()
           )
           .on('textae-event.annotation-data.entity.move', () =>
-            this._updateState()
+            this.#updateState()
           )
           .on('textae-event.annotation-data.relation.add', () =>
-            this._updateState()
+            this.#updateState()
           )
           .on('textae-event.annotation-data.relation.change', () =>
-            this._updateState()
+            this.#updateState()
           )
           .on('textae-event.annotation-data.relation.remove', () =>
-            this._updateState()
+            this.#updateState()
           )
           .on('textae-event.annotation-data.attribute.add', () =>
-            this._updateState()
+            this.#updateState()
           )
           .on('textae-event.annotation-data.attribute.remove', () =>
-            this._updateState()
+            this.#updateState()
+          )
+          .on('textae-event.annotation-data.text.change', () =>
+            this.#updateState()
           )
 
-        this._observable(() =>
+        this.#observable(() =>
           eventEmitter.emit(
             'textae-event.annotation-data.events-observer.unsaved-change',
-            this._observable()
+            this.#observable()
           )
         )
       }
 
       get hasChange() {
-        return this._observable()
+        return this.#observable()
       }
 
-      _updateState() {
-        this._observable.set(
+      #updateState() {
+        this.#observable.set(
           diffOfAnnotation(
-            this._originalData.annotation,
-            this._annotationModel.externalFormat
+            this.#originalData.annotation,
+            this.#annotationModel.externalFormat
           )
         )
-        this._notifyChange()
+        this.#notifyChange()
       }
 
-      _notifyChange() {
-        this._eventEmitter.emit(
+      #notifyChange() {
+        this.#eventEmitter.emit(
           'textae-event.annotation-data.events-observer.change',
-          this._annotationModel
+          this.#annotationModel
         )
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/RemoteResource/isServerAuthRequired.js
@@ -111456,10 +111467,7 @@ data-button-type="${type}">
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/filterIfModelModified.js
 
-    /* harmony default export */ function filterIfModelModified(
-      annotationModel,
-      callback
-    ) {
+    function filterIfModelModified(annotationModel, callback) {
       let previous = annotationModel.externalFormat
 
       return function (annotationModel) {
