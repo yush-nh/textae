@@ -28,6 +28,7 @@ export default class TextEditDialog {
         dialog.close()
       }
     )
+    // Disable shortcut key
     delegate(
       dialog,
       '.textae-editor__text-edit-dialog__text-box',
