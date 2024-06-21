@@ -42,34 +42,33 @@ export default class TextEditMode extends EditMode {
         this.#editorHTMLElement,
         '.textae-editor__text-box',
         'click',
-        (e) => {
-          if (e.target.classList.contains('textae-editor__text-box')) {
-            const textBox = e.target
-            const selection = window.getSelection()
-
-            if (isRangeInTextBox(selection, textBox)) {
-              if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
-                const { begin, end } = this.#annotationModel.getTextSelection(
-                  this.#spanConfig,
-                  this.#menuState.textSelectionAdjuster
-                )
-                if (!this.#annotationModel.validateEditableText(begin, end)) {
-                  return
-                }
-
-                const targetText = this.#annotationModel.getTextBetween(
-                  begin,
-                  end
-                )
-
-                this.#dialog.open(begin, end, targetText)
-              }
-            }
-          }
-        }
+        (event) => this.#handleTexSelection(event)
       )
     )
 
     return listeners
+  }
+
+  #handleTexSelection(event) {
+    if (event.target.classList.contains('textae-editor__text-box')) {
+      const textBox = event.target
+      const selection = window.getSelection()
+
+      if (isRangeInTextBox(selection, textBox)) {
+        if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
+          const { begin, end } = this.#annotationModel.getTextSelection(
+            this.#spanConfig,
+            this.#menuState.textSelectionAdjuster
+          )
+          if (!this.#annotationModel.validateEditableText(begin, end)) {
+            return
+          }
+
+          const targetText = this.#annotationModel.getTextBetween(begin, end)
+
+          this.#dialog.open(begin, end, targetText)
+        }
+      }
+    }
   }
 }
