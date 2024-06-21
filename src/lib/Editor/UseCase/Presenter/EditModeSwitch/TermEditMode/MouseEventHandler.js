@@ -1,6 +1,6 @@
 import clearTextSelection from '../clearTextSelection'
 import selectSpan from '../selectSpan'
-import isRangeInTextBox from '../isRangeInTextBox'
+import isTextSelectionInTextBox from '../isTextSelectionInTextBox'
 import delegate from 'delegate'
 import getEntityHTMLelementFromChild from '../../../getEntityHTMLelementFromChild'
 
@@ -145,7 +145,7 @@ export default class MouseEventHandler {
     const selection = window.getSelection()
 
     if (
-      isRangeInTextBox(
+      isTextSelectionInTextBox(
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
@@ -173,7 +173,7 @@ export default class MouseEventHandler {
     }
 
     if (
-      isRangeInTextBox(
+      isTextSelectionInTextBox(
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
@@ -196,7 +196,7 @@ export default class MouseEventHandler {
     }
 
     if (
-      isRangeInTextBox(
+      isTextSelectionInTextBox(
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
@@ -224,7 +224,7 @@ export default class MouseEventHandler {
     }
 
     if (
-      isRangeInTextBox(
+      isTextSelectionInTextBox(
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {

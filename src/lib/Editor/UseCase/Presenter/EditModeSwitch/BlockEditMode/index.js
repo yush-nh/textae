@@ -1,7 +1,7 @@
 import SpanEditor from './SpanEditor'
 import MouseEventHandler from './MouseEventHandler'
 import EditMode from '../EditMode'
-import isRangeInTextBox from '../isRangeInTextBox'
+import isTextSelectionInTextBox from '../isTextSelectionInTextBox'
 import SelectionWrapper from '../SelectionWrapper'
 import AttributeEditor from '../AttributeEditor'
 import SelectionAttributePallet from '../../../../../component/SelectionAttributePallet'
@@ -125,7 +125,7 @@ export default class BlockEditMode extends EditMode {
   }
 
   applyTextSelectionWithTouchDevice() {
-    if (isRangeInTextBox(this.#textBox)) {
+    if (isTextSelectionInTextBox(this.#textBox)) {
       const { begin, end } = this.#spanInstanceContainer.textSelection
       const isSelectionTextCrossingAnySpan =
         this.#spanInstanceContainer.isBoundaryCrossingWithOtherSpans(begin, end)

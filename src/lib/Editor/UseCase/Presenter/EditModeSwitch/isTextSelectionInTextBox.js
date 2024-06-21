@@ -1,4 +1,4 @@
-export default function (textBoxHTMLElement) {
+export default function isTextSelectionInTextBox(textBoxHTMLElement) {
   const selection = window.getSelection()
   return (
     selection.type === 'Range' &&

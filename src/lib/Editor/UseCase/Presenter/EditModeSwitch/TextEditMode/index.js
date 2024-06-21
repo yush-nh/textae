@@ -1,6 +1,6 @@
 import delegate from 'delegate'
 import EditMode from '../EditMode'
-import isRangeInTextBox from '../isRangeInTextBox'
+import isTextSelectionInTextBox from '../isTextSelectionInTextBox'
 import TextEditDialog from './TextEditDialog'
 
 export default class TextEditMode extends EditMode {
@@ -54,7 +54,7 @@ export default class TextEditMode extends EditMode {
       const textBox = event.target
       const selection = window.getSelection()
 
-      if (!isRangeInTextBox(textBox)) {
+      if (!isTextSelectionInTextBox(textBox)) {
         return
       }
 
