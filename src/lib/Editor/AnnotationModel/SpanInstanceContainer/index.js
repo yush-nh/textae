@@ -390,7 +390,7 @@ export default class SpanInstanceContainer {
       if (span.end <= begin) {
         // No effect on the span of this section.
         continue
-      } else if (span.end <= end) {
+      } else if (span.end < end) {
         // Span movement in this section is prohibited.
         continue
       } else if (end < span.begin) {
