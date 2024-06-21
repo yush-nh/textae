@@ -51,10 +51,7 @@ export default class TextEditMode extends EditMode {
 
   #handleTexSelection(event) {
     if (event.target.classList.contains('textae-editor__text-box')) {
-      const textBox = event.target
-      const selection = window.getSelection()
-
-      if (!isTextSelectionInTextBox(textBox)) {
+      if (!isTextSelectionInTextBox(this.#textBox)) {
         return
       }
 
@@ -72,5 +69,9 @@ export default class TextEditMode extends EditMode {
         this.#dialog.open(begin, end, targetText)
       }
     }
+  }
+
+  get #textBox() {
+    return this.#editorHTMLElement.querySelector('.textae-editor__text-box')
   }
 }
