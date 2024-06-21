@@ -1,6 +1,6 @@
 import diffOfAnnotation from './diffOfAnnotation'
 
-export default function (annotationModel, callback) {
+export default function filterIfModelModified(annotationModel, callback) {
   let previous = annotationModel.externalFormat
 
   return function (annotationModel) {
