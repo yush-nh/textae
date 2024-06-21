@@ -16,7 +16,7 @@ export default function (span) {
 
   if (textNode.length < end) {
     throw new Error(
-      `oh my god! I cannot render ${span.id}. "${textNode.textContent.slice(
+      `oh my god! I cannot render span. "${textNode.textContent.slice(
         start,
         end
       )}" at ${start}~${end} of text(${textNode.textContent.length}) as "${
