@@ -54,20 +54,22 @@ export default class TextEditMode extends EditMode {
       const textBox = event.target
       const selection = window.getSelection()
 
-      if (isRangeInTextBox(selection, textBox)) {
-        if (this.#annotationModel.hasCharacters(this.#spanConfig)) {
-          const { begin, end } = this.#annotationModel.getTextSelection(
-            this.#spanConfig,
-            this.#menuState.textSelectionAdjuster
-          )
-          if (!this.#annotationModel.validateEditableText(begin, end)) {
-            return
-          }
+      if (!isRangeInTextBox(selection, textBox)) {
+        return
+      }
 
-          const targetText = this.#annotationModel.getTextBetween(begin, end)
+      if (!this.#annotationModel.hasCharacters(this.#spanConfig)) {
+        return
+      }
 
-          this.#dialog.open(begin, end, targetText)
-        }
+      const { begin, end } = this.#annotationModel.getTextSelection(
+        this.#spanConfig,
+        this.#menuState.textSelectionAdjuster
+      )
+
+      if (this.#annotationModel.validateEditableText(begin, end)) {
+        const targetText = this.#annotationModel.getTextBetween(begin, end)
+        this.#dialog.open(begin, end, targetText)
       }
     }
   }
