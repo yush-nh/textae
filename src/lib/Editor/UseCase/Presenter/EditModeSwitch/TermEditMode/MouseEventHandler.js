@@ -28,7 +28,7 @@ export default class MouseEventHandler {
   bind() {
     const listeners = []
 
-    // In Friefox, the text box click event fires when you shrink and erase a span.
+    // In Firefox, the text box click event fires when you shrink and erase a span.
     // To do this, the span mouse-up event selects the span to the right of the erased span,
     // and then the text box click event deselects it.
     // To prevent this, we set a flag to indicate that it is immediately after the span's mouse-up event.
