@@ -24,14 +24,21 @@ export default class TextEditMode extends EditMode {
     this.#spanConfig = spanConfig
     this.#menuState = menuState
     this.#commander = commander
-    this.#dialog = new TextEditDialog(editorHTMLElement, (begin, end, text) => {
-      const command = this.#commander.factory.changeTextAndMoveSpanCommand(
-        begin,
-        end,
-        text
-      )
-      this.#commander.invoke(command)
-    })
+    this.#dialog = new TextEditDialog(
+      editorHTMLElement,
+      (begin, end, originalText, editedText) => {
+        if (originalText === editedText) {
+          return
+        }
+
+        const command = this.#commander.factory.changeTextAndMoveSpanCommand(
+          begin,
+          end,
+          editedText
+        )
+        this.#commander.invoke(command)
+      }
+    )
   }
 
   bindMouseEvents() {

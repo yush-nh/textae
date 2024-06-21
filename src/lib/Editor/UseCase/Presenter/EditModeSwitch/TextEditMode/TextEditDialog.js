@@ -15,8 +15,9 @@ export default class TextEditDialog {
         const form = dialog.querySelector('form')
         const begin = form.begin.value
         const end = form.end.value
-        const text = form.text.value
-        submitHandler(begin, end, text)
+        const originalText = form.originalText.value
+        const editedText = form.editedText.value
+        submitHandler(begin, end, originalText, editedText)
       }
     })
 
@@ -59,7 +60,8 @@ export default class TextEditDialog {
       <form method="dialog">
         <input type="hidden" name="begin" value="${begin}">
         <input type="hidden" name="end" value="${end}">
-        <textarea class="textae-editor__text-edit-dialog__text-box" name="text">${text}</textarea>
+        <input type="hidden" name="originalText" value="${text}">
+        <textarea class="textae-editor__text-edit-dialog__text-box" name="editedText">${text}</textarea>
         <br>
         <div class="textae-editor__text-edit-dialog__button-bar">
           <button value="OK">OK</button>
