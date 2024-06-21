@@ -3,7 +3,7 @@ import getOffset from './getOffset'
 
 export default function (span, bigBrotherSpan) {
   if (isBoundaryCrossing(span.begin, span.end, bigBrotherSpan)) {
-    throw new Error(`span ${span.id} is corrisng with ${bigBrotherSpan.id}`)
+    throw new Error(`span ${span.id} is crossing with ${bigBrotherSpan.id}`)
   }
 
   let { start, end } = getOffset(span, bigBrotherSpan.end)
