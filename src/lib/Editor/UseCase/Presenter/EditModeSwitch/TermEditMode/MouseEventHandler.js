@@ -146,7 +146,6 @@ export default class MouseEventHandler {
 
     if (
       isRangeInTextBox(
-        selection,
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
@@ -175,7 +174,6 @@ export default class MouseEventHandler {
 
     if (
       isRangeInTextBox(
-        selection,
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
@@ -199,7 +197,6 @@ export default class MouseEventHandler {
 
     if (
       isRangeInTextBox(
-        selection,
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {
@@ -228,7 +225,6 @@ export default class MouseEventHandler {
 
     if (
       isRangeInTextBox(
-        selection,
         this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       )
     ) {

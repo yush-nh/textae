@@ -54,7 +54,7 @@ export default class TextEditMode extends EditMode {
       const textBox = event.target
       const selection = window.getSelection()
 
-      if (!isRangeInTextBox(selection, textBox)) {
+      if (!isRangeInTextBox(textBox)) {
         return
       }
 
