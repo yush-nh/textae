@@ -5,7 +5,9 @@ export default class EditMode {
   shrinkSpanWithTouchDevice() {}
   editProperties() {}
   relationClicked() {}
-  relationBollardClicked() {}
+  relationBollardClicked(entity) {
+    entity.focus()
+  }
   applyTextSelectionWithTouchDevice() {}
   manipulateAttribute() {}
   hidePallet() {}

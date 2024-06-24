@@ -5,6 +5,7 @@ import BlockEditMode from './BlockEditMode'
 import RelationEditMode from './RelationEditMode'
 import ModeTransitionReactor from './ModeTransitionReactor'
 import TextEditMode from './TextEditMode'
+import EditMode from './EditMode'
 
 export default class EditModeSwitch {
   #termEditMode
@@ -194,22 +195,7 @@ export default class EditModeSwitch {
       case MODE.EDIT_TEXT:
         return this.#textEditMode
       default:
-        return {
-          showPallet() {},
-          selectLeftAttributeTab() {},
-          selectRightAttributeTab() {},
-          editProperties() {},
-          manipulateAttribute() {},
-          relationClicked() {},
-          relationBollardClicked(entity) {
-            entity.focus()
-          },
-          applyTextSelectionWithTouchDevice() {},
-          hidePallet() {},
-          get isPalletShown() {
-            return false
-          }
-        }
+        return new EditMode()
     }
   }
 }
