@@ -1,5 +1,4 @@
 import { MODE } from '../../../../MODE'
-import EditModeState from './EditModeState'
 import TermEditMode from './TermEditMode'
 import BlockEditMode from './BlockEditMode'
 import RelationEditMode from './RelationEditMode'
@@ -12,7 +11,7 @@ export default class EditModeSwitch {
   #blockEditMode
   #relationEditMode
   #textEditMode
-  #state
+  #editModeState
   #annotationModel
   #startUpOptions
 
@@ -30,7 +29,8 @@ export default class EditModeSwitch {
     menuState,
     startUpOptions,
     functionAvailability,
-    mousePoint
+    mousePoint,
+    editModeState
   ) {
     this.#termEditMode = new TermEditMode(
       editorHTMLElement,
@@ -85,13 +85,7 @@ export default class EditModeSwitch {
       this.#textEditMode
     )
 
-    this.#state = new EditModeState(
-      annotationModel.relationInstanceContainer,
-      eventEmitter,
-      functionAvailability
-    )
-    menuState.editModeState = this.#state
-
+    this.#editModeState = editModeState
     this.#annotationModel = annotationModel
     this.#startUpOptions = startUpOptions
 
@@ -106,41 +100,41 @@ export default class EditModeSwitch {
 
   toViewMode() {
     this.hidePallet()
-    this.#state.toViewMode(this.#state.nextShowRelation)
+    this.#editModeState.toViewMode(this.#editModeState.nextShowRelation)
   }
 
   toTermEditMode() {
     this.hidePallet()
-    this.#state.toTermEditMode(this.#state.nextShowRelation)
+    this.#editModeState.toTermEditMode(this.#editModeState.nextShowRelation)
   }
 
   toBlockEditMode() {
     this.hidePallet()
-    this.#state.toBlockEditMode(this.#state.nextShowRelation)
+    this.#editModeState.toBlockEditMode(this.#editModeState.nextShowRelation)
   }
 
   toRelationEditMode() {
     this.hidePallet()
-    this.#state.toRelationEditMode()
+    this.#editModeState.toRelationEditMode()
   }
 
   toTextEditMode() {
     this.hidePallet()
-    this.#state.toTextEditMode(this.#state.nextShowRelation)
+    this.#editModeState.toTextEditMode(this.#editModeState.nextShowRelation)
   }
 
   toggleSimpleMode() {
     this.hidePallet()
-    this.#state.toggleSimpleMode()
+    this.#editModeState.toggleSimpleMode()
   }
 
   changeModeByShortcut() {
     this.hidePallet()
-    this.#state.changeModeByShortcut()
+    this.#editModeState.changeModeByShortcut()
   }
 
   get isEditDenotation() {
-    return this.#state.currentState === MODE.EDIT_DENOTATION
+    return this.#editModeState.currentState === MODE.EDIT_DENOTATION
   }
 
   /**
@@ -148,25 +142,27 @@ export default class EditModeSwitch {
    */
   reset() {
     if (this.#startUpOptions.isEditTermMode) {
-      this.#state.toTermEditMode(
+      this.#editModeState.toTermEditMode(
         this.#annotationModel.relationInstanceContainer.some
       )
       return
     }
 
     if (this.#startUpOptions.isEditBlockMode) {
-      this.#state.toBlockEditMode(
+      this.#editModeState.toBlockEditMode(
         this.#annotationModel.relationInstanceContainer.some
       )
       return
     }
 
     if (this.#startUpOptions.isEditRelationMode) {
-      this.#state.toRelationEditMode()
+      this.#editModeState.toRelationEditMode()
       return
     }
 
-    this.#state.toViewMode(this.#annotationModel.relationInstanceContainer.some)
+    this.#editModeState.toViewMode(
+      this.#annotationModel.relationInstanceContainer.some
+    )
   }
 
   hidePallet() {
@@ -186,7 +182,7 @@ export default class EditModeSwitch {
   }
 
   get currentMode() {
-    switch (this.#state.currentState) {
+    switch (this.#editModeState.currentState) {
       case MODE.EDIT_DENOTATION:
         return this.#termEditMode
       case MODE.EDIT_BLOCK:

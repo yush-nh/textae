@@ -19,6 +19,7 @@ import setAnnotationAndConfiguration from './setAnnotationAndConfiguration'
 import RemoteResource from '../RemoteResource'
 import forwardMethods from '../forwardMethods'
 import FunctionAvailability from './FunctionAvailability'
+import EditModeState from './Presenter/EditModeSwitch/EditModeState'
 
 export default class UseCase {
   #contextMenu
@@ -68,6 +69,11 @@ export default class UseCase {
       annotationModel
     )
     const functionAvailability = new FunctionAvailability()
+    const editModeState = new EditModeState(
+      annotationModel.relationInstanceContainer,
+      eventEmitter,
+      functionAvailability
+    )
     const menuState = new MenuState(
       eventEmitter,
       selectionModel,
@@ -75,7 +81,8 @@ export default class UseCase {
       annotationModelEventsObserver,
       originalData,
       annotationModel.typeDictionary,
-      functionAvailability
+      functionAvailability,
+      editModeState
     )
     const presenter = new Presenter(
       editorHTMLElement,
@@ -88,7 +95,8 @@ export default class UseCase {
       menuState,
       startUpOptions,
       functionAvailability,
-      mousePoint
+      mousePoint,
+      editModeState
     )
     this.#presenter = presenter
     this.#annotationModel = annotationModel

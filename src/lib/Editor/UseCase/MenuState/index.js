@@ -23,19 +23,18 @@ export default class MenuState {
     annotationModelEventsObserver,
     originalData,
     typeDictionary,
-    functionAvailability
+    functionAvailability,
+    editModeState
   ) {
     this.#enableState = new EnableState(eventEmitter, selectionModel, clipBoard)
     // Save state of push control buttons.
     this.#pushButtons = new PushButtons(eventEmitter)
 
     this.#annotationModelEventsObserver = annotationModelEventsObserver
-
     this.#originalData = originalData
-
     this.#typeDictionary = typeDictionary
-
     this.#functionAvailability = functionAvailability
+    this.#editModeState = editModeState
   }
 
   get pushButtonNames() {
@@ -138,10 +137,6 @@ export default class MenuState {
       ...this.#originalData.configuration,
       ...this.#typeDictionary.config
     })
-  }
-
-  set editModeState(editModeState) {
-    this.#editModeState = editModeState
   }
 
   setPushButtons(configuration) {
