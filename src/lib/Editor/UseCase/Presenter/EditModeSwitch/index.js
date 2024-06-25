@@ -101,6 +101,10 @@ export default class EditModeSwitch {
       .on('textae-event.editor.relation-bollard.click', (event, entity) =>
         this.currentMode.relationBollardClicked(entity)
       )
+      .on('textae-event.edit-mode.transition', (mode) => {
+        // Change the title of the palette button to match the edit mode.
+        menuState.mode = mode
+      })
   }
 
   toViewMode() {

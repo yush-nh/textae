@@ -36,11 +36,6 @@ export default class MenuState {
     this.#typeDictionary = typeDictionary
 
     this.#functionAvailability = functionAvailability
-
-    // Change the title of the palette button to match the edit mode.
-    eventEmitter.on('textae-event.edit-mode.transition', (mode) => {
-      this.#mode = mode
-    })
   }
 
   get pushButtonNames() {
@@ -143,6 +138,10 @@ export default class MenuState {
       ...this.#originalData.configuration,
       ...this.#typeDictionary.config
     })
+  }
+
+  set mode(mode) {
+    this.#mode = mode
   }
 
   setPushButtons(configuration) {
