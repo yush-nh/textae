@@ -1,4 +1,4 @@
-import { MODE } from '../../../../MODE'
+import { MODE } from '../../MODE'
 
 export default class EditModeState {
   #currentShowRelation
@@ -9,9 +9,9 @@ export default class EditModeState {
 
   /**
    *
-   * @param {import('../../../AnnotationModel/RelationInstanceContainer').RelationInstanceContainer} relationContainer
+   * @param {import('../AnnotationModel/RelationInstanceContainer').RelationInstanceContainer} relationContainer
    * @param {import('./Transition').default} transition
-   * @param {import('../../FunctionAvailability').default} functionAvailability
+   * @param {import('./FunctionAvailability').default} functionAvailability
    */
   constructor(relationContainer, eventEmitter, functionAvailability) {
     this.#currentShowRelation = false

@@ -19,7 +19,7 @@ import setAnnotationAndConfiguration from './setAnnotationAndConfiguration'
 import RemoteResource from '../RemoteResource'
 import forwardMethods from '../forwardMethods'
 import FunctionAvailability from './FunctionAvailability'
-import EditModeState from './Presenter/EditModeSwitch/EditModeState'
+import EditModeState from './EditModeState'
 
 export default class UseCase {
   #contextMenu
