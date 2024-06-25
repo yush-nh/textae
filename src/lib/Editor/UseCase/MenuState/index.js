@@ -14,7 +14,7 @@ export default class MenuState {
   #originalData
   #typeDictionary
   #functionAvailability
-  #mode
+  #editModeState
 
   constructor(
     eventEmitter,
@@ -140,8 +140,8 @@ export default class MenuState {
     })
   }
 
-  set mode(mode) {
-    this.#mode = mode
+  set editModeState(editModeState) {
+    this.#editModeState = editModeState
   }
 
   setPushButtons(configuration) {
@@ -172,7 +172,10 @@ export default class MenuState {
 
   #getPalletButtonTitle(type, title) {
     return type == 'pallet'
-      ? { type, title: getPalletButtonTitleFor(this.#mode) }
+      ? {
+          type,
+          title: getPalletButtonTitleFor(this.#editModeState.currentState)
+        }
       : { type, title }
   }
 
