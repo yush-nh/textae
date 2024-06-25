@@ -1,5 +1,5 @@
 import { MODE } from '../../../../MODE'
-import State from './State'
+import EditModeState from './EditModeState'
 import TermEditMode from './TermEditMode'
 import BlockEditMode from './BlockEditMode'
 import RelationEditMode from './RelationEditMode'
@@ -85,7 +85,7 @@ export default class EditModeSwitch {
       this.#textEditMode
     )
 
-    this.#state = new State(
+    this.#state = new EditModeState(
       annotationModel.relationInstanceContainer,
       eventEmitter,
       functionAvailability

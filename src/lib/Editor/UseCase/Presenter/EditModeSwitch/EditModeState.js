@@ -1,6 +1,6 @@
 import { MODE } from '../../../../MODE'
 
-export default class State {
+export default class EditModeState {
   #currentShowRelation
   #currentState
   #relationContainer
