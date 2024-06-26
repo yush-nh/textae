@@ -386,6 +386,8 @@ export default class SpanInstanceContainer {
   }
 
   offsetSpans(begin, end, offset) {
+    const effected = []
+
     for (const span of this.all) {
       if (span.end <= begin) {
         // No effect on the span of this section.
@@ -396,11 +398,15 @@ export default class SpanInstanceContainer {
       } else if (end < span.begin) {
         // Change both the begin and end of the span
         span.offset(offset, offset)
+        effected.push(span)
       } else {
         // Change the end of the span
         span.offset(0, offset)
+        effected.push(span)
       }
     }
+
+    return effected.sort(spanComparator)
   }
 
   #hasBlockSpanBetween(begin, end, option = {}) {

@@ -25,7 +25,7 @@ export default class ChangeTextCommand extends AnnotationCommand {
       this.#end
     )
 
-    this.#annotationModel.changeTextBetween(
+    const effectedSpans = this.#annotationModel.changeTextBetween(
       this.#begin,
       this.#end,
       this.#newText
@@ -33,7 +33,7 @@ export default class ChangeTextCommand extends AnnotationCommand {
 
     commandLog(
       this,
-      `change text at ${this.#begin}:${this.#end} to ${this.#newText}`
+      `change text at ${this.#begin}:${this.#end} to ${this.#newText} and spans [${effectedSpans.map(({ begin, end }) => `${begin}:${end}`).join(', ')}] are effected.`
     )
   }
 
