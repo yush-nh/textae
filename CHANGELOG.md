@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.3.0](https://github.com/pubannotation/textae/compare/v13.2.1...v13.3.0) (2024-06-26)
+
+
+### Features
+
+* Enable to edit text to annotate ([80fe12e](https://github.com/pubannotation/textae/commit/80fe12e121809d96f4ff3e82f972b13b41cb7367))
+
 ### [13.2.1](https://github.com/pubannotation/textae/compare/v13.2.0...v13.2.1) (2024-06-26)
 
 

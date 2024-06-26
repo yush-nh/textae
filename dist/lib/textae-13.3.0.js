@@ -52380,7 +52380,7 @@
         if (
           this.all.find(
             (span) =>
-              (begin < span.begin && span.begin.end) ||
+              (begin < span.begin && span.begin < end) ||
               (begin < span.end && span.end < end)
           )
         ) {
@@ -52634,6 +52634,8 @@
       }
 
       offsetSpans(begin, end, offset) {
+        const effected = []
+
         for (const span of this.all) {
           if (span.end <= begin) {
             // No effect on the span of this section.
@@ -52644,11 +52646,15 @@
           } else if (end < span.begin) {
             // Change both the begin and end of the span
             span.offset(offset, offset)
+            effected.push(span)
           } else {
             // Change the end of the span
             span.offset(0, offset)
+            effected.push(span)
           }
         }
+
+        return effected.sort(spanComparator)
       }
 
       #hasBlockSpanBetween(begin, end, option = {}) {
@@ -58100,12 +58106,18 @@
       changeTextBetween(begin, end, newText) {
         this.#sourceDoc = `${this.#sourceDoc.slice(0, begin)}${newText}${this.#sourceDoc.slice(end)}`
         const offset = newText.length - (end - begin)
-        this.#spanInstanceContainer.offsetSpans(begin, end, offset)
+        const effectedSpans = this.#spanInstanceContainer.offsetSpans(
+          begin,
+          end,
+          offset
+        )
 
         this.#textBox.render(this.sourceDoc)
         this.#drawAllAnnotations()
 
         this.#eventEmitter.emit('textae-event.annotation-data.text.change')
+
+        return effectedSpans
       }
 
       get #selectedText() {
@@ -60419,7 +60431,7 @@
           this.#end
         )
 
-        this.#annotationModel.changeTextBetween(
+        const effectedSpans = this.#annotationModel.changeTextBetween(
           this.#begin,
           this.#end,
           this.#newText
@@ -60427,7 +60439,7 @@
 
         commandLog(
           this,
-          `change text at ${this.#begin}:${this.#end} to ${this.#newText}`
+          `change text at ${this.#begin}:${this.#end} to ${this.#newText} and spans [${effectedSpans.map(({ begin, end }) => `${begin}:${end}`).join(', ')}] are effected.`
         )
       }
 
@@ -62027,6 +62039,7 @@
       createSpanWithTouchDevice() {}
       expandSpanWithTouchDevice() {}
       shrinkSpanWithTouchDevice() {}
+      editTextWithTouchDevice() {}
       editProperties() {}
       relationClicked() {}
       relationBollardClicked(entity) {
@@ -65828,10 +65841,12 @@
           this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
             isParentOfBothNodesSame,
             isSelectionTextCrossingAnySpan,
-            isSelectionTextCrossingAnySpan
+            isSelectionTextCrossingAnySpan,
+            false
           )
         } else {
           this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+            false,
             false,
             false,
             false
@@ -66645,6 +66660,7 @@
       }
 
       createSpanWithTouchDevice() {
+        console.log('createSpanWithTouchDevice')
         this.#spanEditor.cerateSpanForTouchDevice()
       }
 
@@ -66669,10 +66685,12 @@
           this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
             isParentOfBothNodesTextBox,
             isSelectionTextCrossingAnySpan,
-            isSelectionTextCrossingAnySpan
+            isSelectionTextCrossingAnySpan,
+            false
           )
         } else {
           this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+            false,
             false,
             false,
             false
@@ -67084,7 +67102,7 @@
         <input type="hidden" name="begin" value="${begin}">
         <input type="hidden" name="end" value="${end}">
         <input type="hidden" name="originalText" value="${text}">
-        <textarea class="textae-editor__text-edit-dialog__text-box" name="editedText">${text}</textarea>
+        <textarea class="textae-editor__text-edit-dialog__text-box" name="editedText" autofocus>${text}</textarea>
         <br>
         <div class="textae-editor__text-edit-dialog__button-bar">
           <button value="OK">OK</button>
@@ -67148,12 +67166,21 @@
         return listeners
       }
 
-      #handleTexSelection() {
-        if (!isTextSelectionInTextBox(this.#textBox)) {
-          return
-        }
+      applyTextSelectionWithTouchDevice() {
+        this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+          false,
+          false,
+          false,
+          this.#is_editable
+        )
+      }
 
-        if (!this.#annotationModel.hasCharacters(this.#spanConfig)) {
+      editTextWithTouchDevice() {
+        this.#handleTexSelection()
+      }
+
+      #handleTexSelection() {
+        if (!this.#is_editable) {
           return
         }
 
@@ -67162,10 +67189,24 @@
           this.#menuState.textSelectionAdjuster
         )
 
-        if (this.#annotationModel.validateEditableText(begin, end)) {
-          const targetText = this.#annotationModel.getTextBetween(begin, end)
-          this.#dialog.open(begin, end, targetText)
+        if (!this.#annotationModel.validateEditableText(begin, end)) {
+          return false
         }
+
+        const targetText = this.#annotationModel.getTextBetween(begin, end)
+        this.#dialog.open(begin, end, targetText)
+      }
+
+      get #is_editable() {
+        if (!isTextSelectionInTextBox(this.#textBox)) {
+          return false
+        }
+
+        if (!this.#annotationModel.hasCharacters(this.#spanConfig)) {
+          return false
+        }
+
+        return true
       }
 
       get #textBox() {
@@ -67549,7 +67590,7 @@
       bindChangeLockConfig(content, typeDictionary)
     } // CONCATENATED MODULE: ./package.json
 
-    const package_namespaceObject = { rE: '13.2.1' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
+    const package_namespaceObject = { rE: '13.3.0' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
     function SettingDialog_template_template(context) {
       const {
         typeGap,
@@ -67714,6 +67755,7 @@
           'createSpanWithTouchDevice',
           'expandSpanWithTouchDevice',
           'shrinkSpanWithTouchDevice',
+          'editTextWithTouchDevice',
           'showPallet',
           'selectLeftAttributeTab',
           'selectRightAttributeTab',
@@ -107650,6 +107692,11 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             type: 'shrink span by touch',
             title: 'Shrink span',
             availableModes: [MODE.EDIT_DENOTATION, MODE.EDIT_BLOCK]
+          },
+          {
+            type: 'edit text by touch',
+            title: 'Edit text',
+            availableModes: [MODE.EDIT_TEXT]
           }
         ]
       },
@@ -108068,11 +108115,13 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       updateButtonsToOperateSpanWithTouchDevice(
         enableToCreate,
         enableToExpand,
-        enableToShrink
+        enableToShrink,
+        enableToEditText
       ) {
         this.#states.set('create span by touch', enableToCreate)
         this.#states.set('expand span by touch', enableToExpand)
         this.#states.set('shrink span by touch', enableToShrink)
+        this.#states.set('edit text by touch', enableToEditText)
         this.#propagate()
       }
 
@@ -108461,6 +108510,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
               )
               .map(({ type, title }) => this.#getPalletButtonTitle(type, title))
               .reduce((acc, { type, title }) => {
+                // Do not show menus that are not available in the context menu for desktop.
                 if (!isTouchable() && this.getState(type, 'disabled')) {
                   return acc
                 }
@@ -108496,12 +108546,14 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       updateButtonsToOperateSpanWithTouchDevice(
         enableToCreate,
         enableToExpand,
-        enableToShrink
+        enableToShrink,
+        enableToEditText
       ) {
         this.#enableState.updateButtonsToOperateSpanWithTouchDevice(
           enableToCreate,
           enableToExpand,
-          enableToShrink
+          enableToShrink,
+          enableToEditText
         )
       }
 
@@ -108943,6 +108995,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             case 'create span by touch':
             case 'expand span by touch':
             case 'shrink span by touch':
+            case 'edit text by touch':
               iconEventMap.handle(buttonType)
               break
             default:
@@ -108965,6 +109018,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           case 'create span by touch':
           case 'expand span by touch':
           case 'shrink span by touch':
+          case 'edit text by touch':
             // Monitor the mousedown event to get the currently selected text.
             break
           default:
@@ -109438,6 +109492,7 @@ data-button-type="${type}">
           ['create span by touch', () => presenter.createSpanWithTouchDevice()],
           ['expand span by touch', () => presenter.expandSpanWithTouchDevice()],
           ['shrink span by touch', () => presenter.shrinkSpanWithTouchDevice()],
+          ['edit text by touch', () => presenter.editTextWithTouchDevice()],
           ['new entity', () => presenter.createEntity()],
           ['edit properties', () => presenter.editProperties()],
           ['pallet', () => presenter.showPallet()],
@@ -109931,8 +109986,7 @@ data-button-type="${type}">
           ['block-edit', { alias: 'block' }],
           ['relation', { name: 'relation edit mode', enabled: true }],
           ['relation-edit', { alias: 'relation' }],
-          // Text edit mode is disabled by default because it is under development.
-          ['text-edit', { name: 'text edit mode', enabled: false }],
+          ['text-edit', { name: 'text edit mode', enabled: true }],
           ['simple', { name: 'simple view', enabled: true }],
           ['line-height', { name: 'adjust lineheight', enabled: true }],
           [
@@ -109956,6 +110010,7 @@ data-button-type="${type}">
             'shrink-span-by-touch',
             { name: 'shrink span by touch', enabled: true }
           ],
+          ['edit-text-by-touch', { name: 'edit text by touch', enabled: true }],
           ['entity', { name: 'new entity', enabled: true }],
           ['pallet', { name: 'pallet', enabled: true }],
           ['edit-properties', { name: 'edit properties', enabled: true }],
