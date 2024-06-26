@@ -66,7 +66,6 @@ export default class TextEditMode extends EditMode {
   }
 
   editTextWithTouchDevice() {
-    console.log('editTextWithTouchDevice')
     this.#handleTexSelection()
   }
 

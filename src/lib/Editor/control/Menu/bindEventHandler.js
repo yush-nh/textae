@@ -21,6 +21,7 @@ export default function (el, iconEventMap) {
         case 'create span by touch':
         case 'expand span by touch':
         case 'shrink span by touch':
+        case 'edit text by touch':
           iconEventMap.handle(buttonType)
           break
         default:
@@ -43,6 +44,7 @@ export default function (el, iconEventMap) {
       case 'create span by touch':
       case 'expand span by touch':
       case 'shrink span by touch':
+      case 'edit text by touch':
         // Monitor the mousedown event to get the currently selected text.
         break
       default:
