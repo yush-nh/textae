@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.2.1](https://github.com/pubannotation/textae/compare/v13.2.0...v13.2.1) (2024-06-26)
+
+
+### Bug Fixes
+
+* Error occurs when left button of mouse pushed ([8c28839](https://github.com/pubannotation/textae/commit/8c28839303a806961d3c86a3720d235fd9a5f4a9))
+
 ## [13.2.0](https://github.com/pubannotation/textae/compare/v13.1.3...v13.2.0) (2024-06-26)
 
 
