@@ -1,8 +1,5 @@
 {
   "config": {
-    "function availability": {
-      "text-edit": true
-    },
     "autocompletion_ws": "aabc/dev/autocomplete?order=desc",
     "autosave": true,
     "autolineheight": false,

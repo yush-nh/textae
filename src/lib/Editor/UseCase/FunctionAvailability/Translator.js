@@ -22,8 +22,7 @@ export default class Translator {
       ['block-edit', { alias: 'block' }],
       ['relation', { name: 'relation edit mode', enabled: true }],
       ['relation-edit', { alias: 'relation' }],
-      // Text edit mode is disabled by default because it is under development.
-      ['text-edit', { name: 'text edit mode', enabled: false }],
+      ['text-edit', { name: 'text edit mode', enabled: true }],
       ['simple', { name: 'simple view', enabled: true }],
       ['line-height', { name: 'adjust lineheight', enabled: true }],
       ['line-height-auto', { name: 'auto adjust lineheight', enabled: true }],
