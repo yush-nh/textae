@@ -137,7 +137,7 @@ export default class SpanInstanceContainer {
     if (
       this.all.find(
         (span) =>
-          (begin < span.begin && span.begin.end) ||
+          (begin < span.begin && span.begin < end) ||
           (begin < span.end && span.end < end)
       )
     ) {
