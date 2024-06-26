@@ -45,6 +45,8 @@ export default class Buttons {
       .map(({ list }) => {
         list = list
           .filter(({ availableModes }) => {
+            if (!availableModes) return true
+
             return availableModes.includes(mode)
           })
           .map(({ type, title }) => ({
