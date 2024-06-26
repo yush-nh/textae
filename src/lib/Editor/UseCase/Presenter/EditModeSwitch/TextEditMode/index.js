@@ -79,6 +79,10 @@ export default class TextEditMode extends EditMode {
       this.#menuState.textSelectionAdjuster
     )
 
+    if (!this.#annotationModel.validateEditableText(begin, end)) {
+      return false
+    }
+
     const targetText = this.#annotationModel.getTextBetween(begin, end)
     this.#dialog.open(begin, end, targetText)
   }
@@ -89,15 +93,6 @@ export default class TextEditMode extends EditMode {
     }
 
     if (!this.#annotationModel.hasCharacters(this.#spanConfig)) {
-      return false
-    }
-
-    const { begin, end } = this.#annotationModel.getTextSelection(
-      this.#spanConfig,
-      this.#menuState.textSelectionAdjuster
-    )
-
-    if (!this.#annotationModel.validateEditableText(begin, end)) {
       return false
     }
 
