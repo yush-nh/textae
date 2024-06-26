@@ -61,7 +61,7 @@ export default class TextEditDialog {
         <input type="hidden" name="begin" value="${begin}">
         <input type="hidden" name="end" value="${end}">
         <input type="hidden" name="originalText" value="${text}">
-        <textarea class="textae-editor__text-edit-dialog__text-box" name="editedText">${text}</textarea>
+        <textarea class="textae-editor__text-edit-dialog__text-box" name="editedText" autofocus>${text}</textarea>
         <br>
         <div class="textae-editor__text-edit-dialog__button-bar">
           <button value="OK">OK</button>
