@@ -125,12 +125,14 @@ export default class MenuState {
   updateButtonsToOperateSpanWithTouchDevice(
     enableToCreate,
     enableToExpand,
-    enableToShrink
+    enableToShrink,
+    enableToEditText
   ) {
     this.#enableState.updateButtonsToOperateSpanWithTouchDevice(
       enableToCreate,
       enableToExpand,
-      enableToShrink
+      enableToShrink,
+      enableToEditText
     )
   }
 

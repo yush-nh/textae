@@ -101,6 +101,7 @@ export default class Presenter {
       'createSpanWithTouchDevice',
       'expandSpanWithTouchDevice',
       'shrinkSpanWithTouchDevice',
+      'editTextWithTouchDevice',
       'showPallet',
       'selectLeftAttributeTab',
       'selectRightAttributeTab',

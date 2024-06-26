@@ -113,6 +113,7 @@ export default class BlockEditMode extends EditMode {
   }
 
   createSpanWithTouchDevice() {
+    console.log('createSpanWithTouchDevice')
     this.#spanEditor.cerateSpanForTouchDevice()
   }
 
@@ -134,10 +135,12 @@ export default class BlockEditMode extends EditMode {
       this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
         isParentOfBothNodesTextBox,
         isSelectionTextCrossingAnySpan,
-        isSelectionTextCrossingAnySpan
+        isSelectionTextCrossingAnySpan,
+        false
       )
     } else {
       this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+        false,
         false,
         false,
         false

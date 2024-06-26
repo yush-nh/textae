@@ -35,6 +35,7 @@ export default class Translator {
       ['create-span-by-touch', { name: 'create span by touch', enabled: true }],
       ['expand-span-by-touch', { name: 'expand span by touch', enabled: true }],
       ['shrink-span-by-touch', { name: 'shrink span by touch', enabled: true }],
+      ['edit-text-by-touch', { name: 'edit text by touch', enabled: true }],
       ['entity', { name: 'new entity', enabled: true }],
       ['pallet', { name: 'pallet', enabled: true }],
       ['edit-properties', { name: 'edit properties', enabled: true }],

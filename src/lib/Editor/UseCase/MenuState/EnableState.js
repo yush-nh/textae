@@ -54,11 +54,13 @@ export default class EnableState {
   updateButtonsToOperateSpanWithTouchDevice(
     enableToCreate,
     enableToExpand,
-    enableToShrink
+    enableToShrink,
+    enableToEditText
   ) {
     this.#states.set('create span by touch', enableToCreate)
     this.#states.set('expand span by touch', enableToExpand)
     this.#states.set('shrink span by touch', enableToShrink)
+    this.#states.set('edit text by touch', enableToEditText)
     this.#propagate()
   }
 

@@ -137,6 +137,11 @@ export const definition = [
         type: 'shrink span by touch',
         title: 'Shrink span',
         availableModes: [MODE.EDIT_DENOTATION, MODE.EDIT_BLOCK]
+      },
+      {
+        type: 'edit text by touch',
+        title: 'Edit text',
+        availableModes: [MODE.EDIT_TEXT]
       }
     ]
   },

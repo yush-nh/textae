@@ -134,10 +134,12 @@ export default class TermEditMode extends EditMode {
       this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
         isParentOfBothNodesSame,
         isSelectionTextCrossingAnySpan,
-        isSelectionTextCrossingAnySpan
+        isSelectionTextCrossingAnySpan,
+        false
       )
     } else {
       this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+        false,
         false,
         false,
         false

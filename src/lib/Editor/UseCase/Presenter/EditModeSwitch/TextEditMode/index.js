@@ -56,6 +56,20 @@ export default class TextEditMode extends EditMode {
     return listeners
   }
 
+  applyTextSelectionWithTouchDevice() {
+    this.#menuState.updateButtonsToOperateSpanWithTouchDevice(
+      false,
+      false,
+      false,
+      this.#is_editable
+    )
+  }
+
+  editTextWithTouchDevice() {
+    console.log('editTextWithTouchDevice')
+    this.#handleTexSelection()
+  }
+
   #handleTexSelection() {
     if (!this.#is_editable) {
       return

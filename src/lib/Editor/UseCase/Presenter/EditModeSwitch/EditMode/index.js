@@ -3,6 +3,7 @@ export default class EditMode {
   createSpanWithTouchDevice() {}
   expandSpanWithTouchDevice() {}
   shrinkSpanWithTouchDevice() {}
+  editTextWithTouchDevice() {}
   editProperties() {}
   relationClicked() {}
   relationBollardClicked(entity) {
