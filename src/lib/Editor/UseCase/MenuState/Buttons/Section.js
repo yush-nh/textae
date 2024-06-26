@@ -37,11 +37,9 @@ export default class Section {
   }
 
   getButtonsFor(mode) {
-    const buttonList = this.#buttonList.filter(({ availableModes }) => {
-      console.log('availableModes:', availableModes, mode)
-      return availableModes.includes(mode)
-    })
-
+    const buttonList = this.#buttonList.filter(({ availableModes }) =>
+      availableModes.includes(mode)
+    )
     return new Section(this.#usage, buttonList)
   }
 
