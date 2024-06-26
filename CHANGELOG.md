@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.2.0](https://github.com/pubannotation/textae/compare/v13.1.3...v13.2.0) (2024-06-26)
+
+
+### Features
+
+* Do not show context menu for touch device in relation edit mode ([a21594a](https://github.com/pubannotation/textae/commit/a21594ae42f5da363ac02d66ca0b4ee690a2229c))
+
 ### [13.1.3](https://github.com/pubannotation/textae/compare/v13.1.2...v13.1.3) (2024-06-21)
 
 ### [13.1.2](https://github.com/pubannotation/textae/compare/v13.1.1...v13.1.2) (2024-06-20)

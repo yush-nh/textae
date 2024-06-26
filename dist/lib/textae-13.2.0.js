@@ -47985,6 +47985,14 @@
 
     /***/ 5408: /***/ (module) => {
       function throttle(function_, wait) {
+        if (typeof function_ !== 'function') {
+          throw new TypeError(
+            `Expected the first argument to be a \`function\`, got \`${typeof function_}\`.`
+          )
+        }
+
+        // TODO: Add `wait` validation too in the next major version.
+
         let timeoutId
         let lastCallTime = 0
 
@@ -60810,150 +60818,6 @@
       EDIT_BLOCK: 'Block',
       EDIT_RELATION: 'Relation',
       EDIT_TEXT: 'Text'
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/State.js
-
-    class State {
-      #currentShowRelation
-      #currentState
-      #relationContainer
-      #eventEmitter
-      #functionAvailability
-
-      /**
-       *
-       * @param {import('../../../AnnotationModel/RelationInstanceContainer').RelationInstanceContainer} relationContainer
-       * @param {import('./Transition').default} transition
-       * @param {import('../../FunctionAvailability').default} functionAvailability
-       */
-      constructor(relationContainer, eventEmitter, functionAvailability) {
-        this.#currentShowRelation = false
-        this.#currentState = MODE.INIT
-
-        this.#relationContainer = relationContainer
-        this.#eventEmitter = eventEmitter
-        this.#functionAvailability = functionAvailability
-      }
-
-      get currentState() {
-        return this.#currentState
-      }
-
-      toViewMode(showRelation) {
-        this.#currentShowRelation = showRelation
-        this.#currentState = MODE.VIEW
-        this.#emit()
-      }
-
-      toTermEditMode(showRelation) {
-        this.#currentShowRelation = showRelation
-        this.#currentState = MODE.EDIT_DENOTATION
-        this.#emit()
-      }
-
-      toBlockEditMode(showRelation) {
-        this.#currentShowRelation = showRelation
-        this.#currentState = MODE.EDIT_BLOCK
-        this.#emit()
-      }
-
-      toRelationEditMode() {
-        this.#currentShowRelation = true
-        this.#currentState = MODE.EDIT_RELATION
-        this.#emit()
-      }
-
-      toTextEditMode(showRelation) {
-        this.#currentShowRelation = showRelation
-        this.#currentState = MODE.EDIT_TEXT
-        this.#emit()
-      }
-
-      toggleSimpleMode() {
-        switch (this.currentState) {
-          case MODE.EDIT_DENOTATION:
-            this.toTermEditMode(!this.#currentShowRelation)
-            break
-          case MODE.EDIT_BLOCK:
-            this.toBlockEditMode(!this.#currentShowRelation)
-            break
-          case MODE.EDIT_TEXT:
-            this.toTextEditMode(!this.#currentShowRelation)
-            break
-          case MODE.VIEW:
-            this.toViewMode(!this.#currentShowRelation)
-            break
-          default:
-            throw new Error(`Invalid state: ${this.currentState}`)
-        }
-      }
-
-      changeModeByShortcut() {
-        const modes = this.#modesCanBeTransitionedByShortcutKey
-
-        // No mode to change.
-        if (modes.length <= 1) {
-          return
-        }
-
-        const currentIndex = modes.findIndex(
-          (mode) => mode.name === this.currentState
-        )
-
-        if (currentIndex < modes.length - 1) {
-          // Change to the next mode.
-          this[modes[currentIndex + 1].funcName](this.nextShowRelation)
-        } else {
-          // Change to the first mode.
-          this[modes[0].funcName](this.nextShowRelation)
-        }
-      }
-
-      get nextShowRelation() {
-        if (this.#currentState === MODE.EDIT_RELATION) {
-          return this.#relationContainer.some
-        } else {
-          return this.#currentShowRelation
-        }
-      }
-
-      #emit() {
-        this.#eventEmitter.emit(
-          'textae-event.edit-mode.transition',
-          this.#currentState,
-          this.#currentShowRelation
-        )
-      }
-
-      get #modesCanBeTransitionedByShortcutKey() {
-        // Shortcut keys do not transition to text edit mode.
-        const all = [
-          {
-            name: MODE.VIEW,
-            availabilityName: 'view mode',
-            funcName: 'toViewMode'
-          },
-          {
-            name: MODE.EDIT_DENOTATION,
-            availabilityName: 'term edit mode',
-            funcName: 'toTermEditMode'
-          },
-          {
-            name: MODE.EDIT_BLOCK,
-            availabilityName: 'block edit mode',
-            funcName: 'toBlockEditMode'
-          },
-          {
-            name: MODE.EDIT_RELATION,
-            availabilityName: 'relation edit mode',
-            funcName: 'toRelationEditMode'
-          }
-        ]
-
-        // Look at Function Availability and return the possible transition modes.
-        return all.filter((mode) =>
-          this.#functionAvailability.isAvailable(mode.availabilityName)
-        )
-      }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/clearTextSelection.js
 
     /* harmony default export */ function clearTextSelection() {
@@ -62165,7 +62029,9 @@
       shrinkSpanWithTouchDevice() {}
       editProperties() {}
       relationClicked() {}
-      relationBollardClicked() {}
+      relationBollardClicked(entity) {
+        entity.focus()
+      }
       applyTextSelectionWithTouchDevice() {}
       manipulateAttribute() {}
       hidePallet() {}
@@ -67312,7 +67178,7 @@
       #blockEditMode
       #relationEditMode
       #textEditMode
-      #state
+      #editModeState
       #annotationModel
       #startUpOptions
 
@@ -67330,7 +67196,8 @@
         menuState,
         startUpOptions,
         functionAvailability,
-        mousePoint
+        mousePoint,
+        editModeState
       ) {
         this.#termEditMode = new TermEditMode(
           editorHTMLElement,
@@ -67385,12 +67252,7 @@
           this.#textEditMode
         )
 
-        this.#state = new State(
-          annotationModel.relationInstanceContainer,
-          eventEmitter,
-          functionAvailability
-        )
-
+        this.#editModeState = editModeState
         this.#annotationModel = annotationModel
         this.#startUpOptions = startUpOptions
 
@@ -67405,41 +67267,43 @@
 
       toViewMode() {
         this.hidePallet()
-        this.#state.toViewMode(this.#state.nextShowRelation)
+        this.#editModeState.toViewMode(this.#editModeState.nextShowRelation)
       }
 
       toTermEditMode() {
         this.hidePallet()
-        this.#state.toTermEditMode(this.#state.nextShowRelation)
+        this.#editModeState.toTermEditMode(this.#editModeState.nextShowRelation)
       }
 
       toBlockEditMode() {
         this.hidePallet()
-        this.#state.toBlockEditMode(this.#state.nextShowRelation)
+        this.#editModeState.toBlockEditMode(
+          this.#editModeState.nextShowRelation
+        )
       }
 
       toRelationEditMode() {
         this.hidePallet()
-        this.#state.toRelationEditMode()
+        this.#editModeState.toRelationEditMode()
       }
 
       toTextEditMode() {
         this.hidePallet()
-        this.#state.toTextEditMode(this.#state.nextShowRelation)
+        this.#editModeState.toTextEditMode(this.#editModeState.nextShowRelation)
       }
 
       toggleSimpleMode() {
         this.hidePallet()
-        this.#state.toggleSimpleMode()
+        this.#editModeState.toggleSimpleMode()
       }
 
       changeModeByShortcut() {
         this.hidePallet()
-        this.#state.changeModeByShortcut()
+        this.#editModeState.changeModeByShortcut()
       }
 
       get isEditDenotation() {
-        return this.#state.currentState === MODE.EDIT_DENOTATION
+        return this.#editModeState.currentState === MODE.EDIT_DENOTATION
       }
 
       /**
@@ -67447,25 +67311,25 @@
        */
       reset() {
         if (this.#startUpOptions.isEditTermMode) {
-          this.#state.toTermEditMode(
+          this.#editModeState.toTermEditMode(
             this.#annotationModel.relationInstanceContainer.some
           )
           return
         }
 
         if (this.#startUpOptions.isEditBlockMode) {
-          this.#state.toBlockEditMode(
+          this.#editModeState.toBlockEditMode(
             this.#annotationModel.relationInstanceContainer.some
           )
           return
         }
 
         if (this.#startUpOptions.isEditRelationMode) {
-          this.#state.toRelationEditMode()
+          this.#editModeState.toRelationEditMode()
           return
         }
 
-        this.#state.toViewMode(
+        this.#editModeState.toViewMode(
           this.#annotationModel.relationInstanceContainer.some
         )
       }
@@ -67487,7 +67351,7 @@
       }
 
       get currentMode() {
-        switch (this.#state.currentState) {
+        switch (this.#editModeState.currentState) {
           case MODE.EDIT_DENOTATION:
             return this.#termEditMode
           case MODE.EDIT_BLOCK:
@@ -67497,22 +67361,7 @@
           case MODE.EDIT_TEXT:
             return this.#textEditMode
           default:
-            return {
-              showPallet() {},
-              selectLeftAttributeTab() {},
-              selectRightAttributeTab() {},
-              editProperties() {},
-              manipulateAttribute() {},
-              relationClicked() {},
-              relationBollardClicked(entity) {
-                entity.focus()
-              },
-              applyTextSelectionWithTouchDevice() {},
-              hidePallet() {},
-              get isPalletShown() {
-                return false
-              }
-            }
+            return new EditMode()
         }
       }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/Horizontal.js
@@ -67700,7 +67549,7 @@
       bindChangeLockConfig(content, typeDictionary)
     } // CONCATENATED MODULE: ./package.json
 
-    const package_namespaceObject = { rE: '13.1.3' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
+    const package_namespaceObject = { rE: '13.2.0' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
     function SettingDialog_template_template(context) {
       const {
         typeGap,
@@ -67800,7 +67649,8 @@
         menuState,
         startUpOptions,
         functionAvailability,
-        mousePoint
+        mousePoint,
+        editModeState
       ) {
         const editModeSwitch = new EditModeSwitch(
           editorHTMLElement,
@@ -67812,7 +67662,8 @@
           menuState,
           startUpOptions,
           functionAvailability,
-          mousePoint
+          mousePoint,
+          editModeState
         )
 
         eventEmitter
@@ -74487,8 +74338,14 @@ situation.
         }
         return rect
       }
-      become(_other) {
-        return false
+      become(other) {
+        return (
+          other instanceof LineView &&
+          this.children.length == 0 &&
+          other.children.length == 0 &&
+          attrsEq(this.attrs, other.attrs) &&
+          this.breakAfter == other.breakAfter
+        )
       }
       covers() {
         return true
@@ -81253,7 +81110,12 @@ in the editor view.
             this.flushSoon()
           else this.flush()
         })
-        if (window.EditContext && view.constructor.EDIT_CONTEXT === true) {
+        if (
+          window.EditContext &&
+          view.constructor.EDIT_CONTEXT !== false &&
+          // Chrome <126 doesn't support inverted selections in edit context (#1392)
+          !(browser.chrome && browser.chrome_version < 126)
+        ) {
           this.editContext = new EditContextManager(view)
           if (view.state.facet(editable))
             view.contentDOM.editContext = this.editContext.editContext
@@ -107774,9 +107636,21 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           'touch device': ['control bar', 'context menu']
         },
         list: [
-          { type: 'create span by touch', title: 'Create span' },
-          { type: 'expand span by touch', title: 'Expand span' },
-          { type: 'shrink span by touch', title: 'Shrink span' }
+          {
+            type: 'create span by touch',
+            title: 'Create span',
+            availableModes: [MODE.EDIT_DENOTATION, MODE.EDIT_BLOCK]
+          },
+          {
+            type: 'expand span by touch',
+            title: 'Expand span',
+            availableModes: [MODE.EDIT_DENOTATION, MODE.EDIT_BLOCK]
+          },
+          {
+            type: 'shrink span by touch',
+            title: 'Shrink span',
+            availableModes: [MODE.EDIT_DENOTATION, MODE.EDIT_BLOCK]
+          }
         ]
       },
       {
@@ -107903,7 +107777,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       // Buttons to display on the context menu.
-      get contextMenu() {
+      getContextMenuFor(mode) {
         return definition
           .filter(({ usage }) => {
             if (isTouchable()) {
@@ -107912,12 +107786,20 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
               return usage['keyboard device'].includes('context menu')
             }
           })
-          .map(({ list }) => ({
-            list: list.map(({ type, title }) => ({
-              type,
-              title
-            }))
-          }))
+          .map(({ list }) => {
+            list = list
+              .filter(({ availableModes }) => {
+                return availableModes.includes(mode)
+              })
+              .map(({ type, title }) => ({
+                type,
+                title
+              }))
+
+            return {
+              list
+            }
+          })
       }
 
       get pasteButton() {
@@ -108407,7 +108289,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       #originalData
       #typeDictionary
       #functionAvailability
-      #mode
+      #editModeState
 
       constructor(
         eventEmitter,
@@ -108416,7 +108298,8 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         annotationModelEventsObserver,
         originalData,
         typeDictionary,
-        functionAvailability
+        functionAvailability,
+        editModeState
       ) {
         this.#enableState = new EnableState(
           eventEmitter,
@@ -108427,17 +108310,10 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         this.#pushButtons = new PushButtons(eventEmitter)
 
         this.#annotationModelEventsObserver = annotationModelEventsObserver
-
         this.#originalData = originalData
-
         this.#typeDictionary = typeDictionary
-
         this.#functionAvailability = functionAvailability
-
-        // Change the title of the palette button to match the edit mode.
-        eventEmitter.on('textae-event.edit-mode.transition', (mode) => {
-          this.#mode = mode
-        })
+        this.#editModeState = editModeState
       }
 
       get pushButtonNames() {
@@ -108487,7 +108363,8 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       get contextMenuButton() {
-        return new Buttons().contextMenu
+        return new Buttons()
+          .getContextMenuFor(this.#editModeState.currentState)
           .map(({ list }) =>
             list
               .filter(({ type }) =>
@@ -108574,7 +108451,10 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
       #getPalletButtonTitle(type, title) {
         return type == 'pallet'
-          ? { type, title: getPalletButtonTitleFor(this.#mode) }
+          ? {
+              type,
+              title: getPalletButtonTitleFor(this.#editModeState.currentState)
+            }
           : { type, title }
       }
 
@@ -109318,6 +109198,11 @@ data-button-type="${type}">
 
       #show() {
         const context = classify(this.#menuState.contextMenuButton)
+        if (context.length === 0) {
+          // No context menu items to show.
+          return
+        }
+
         const html = `
     <div">
       ${context
@@ -110053,6 +109938,150 @@ data-button-type="${type}">
 
         this.#availabilities = availabilities
       }
+    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/EditModeState.js
+
+    class EditModeState {
+      #currentShowRelation
+      #currentState
+      #relationContainer
+      #eventEmitter
+      #functionAvailability
+
+      /**
+       *
+       * @param {import('../AnnotationModel/RelationInstanceContainer').RelationInstanceContainer} relationContainer
+       * @param {import('./Transition').default} transition
+       * @param {import('./FunctionAvailability').default} functionAvailability
+       */
+      constructor(relationContainer, eventEmitter, functionAvailability) {
+        this.#currentShowRelation = false
+        this.#currentState = MODE.INIT
+
+        this.#relationContainer = relationContainer
+        this.#eventEmitter = eventEmitter
+        this.#functionAvailability = functionAvailability
+      }
+
+      get currentState() {
+        return this.#currentState
+      }
+
+      toViewMode(showRelation) {
+        this.#currentShowRelation = showRelation
+        this.#currentState = MODE.VIEW
+        this.#emit()
+      }
+
+      toTermEditMode(showRelation) {
+        this.#currentShowRelation = showRelation
+        this.#currentState = MODE.EDIT_DENOTATION
+        this.#emit()
+      }
+
+      toBlockEditMode(showRelation) {
+        this.#currentShowRelation = showRelation
+        this.#currentState = MODE.EDIT_BLOCK
+        this.#emit()
+      }
+
+      toRelationEditMode() {
+        this.#currentShowRelation = true
+        this.#currentState = MODE.EDIT_RELATION
+        this.#emit()
+      }
+
+      toTextEditMode(showRelation) {
+        this.#currentShowRelation = showRelation
+        this.#currentState = MODE.EDIT_TEXT
+        this.#emit()
+      }
+
+      toggleSimpleMode() {
+        switch (this.currentState) {
+          case MODE.EDIT_DENOTATION:
+            this.toTermEditMode(!this.#currentShowRelation)
+            break
+          case MODE.EDIT_BLOCK:
+            this.toBlockEditMode(!this.#currentShowRelation)
+            break
+          case MODE.EDIT_TEXT:
+            this.toTextEditMode(!this.#currentShowRelation)
+            break
+          case MODE.VIEW:
+            this.toViewMode(!this.#currentShowRelation)
+            break
+          default:
+            throw new Error(`Invalid state: ${this.currentState}`)
+        }
+      }
+
+      changeModeByShortcut() {
+        const modes = this.#modesCanBeTransitionedByShortcutKey
+
+        // No mode to change.
+        if (modes.length <= 1) {
+          return
+        }
+
+        const currentIndex = modes.findIndex(
+          (mode) => mode.name === this.currentState
+        )
+
+        if (currentIndex < modes.length - 1) {
+          // Change to the next mode.
+          this[modes[currentIndex + 1].funcName](this.nextShowRelation)
+        } else {
+          // Change to the first mode.
+          this[modes[0].funcName](this.nextShowRelation)
+        }
+      }
+
+      get nextShowRelation() {
+        if (this.#currentState === MODE.EDIT_RELATION) {
+          return this.#relationContainer.some
+        } else {
+          return this.#currentShowRelation
+        }
+      }
+
+      #emit() {
+        this.#eventEmitter.emit(
+          'textae-event.edit-mode.transition',
+          this.#currentState,
+          this.#currentShowRelation
+        )
+      }
+
+      get #modesCanBeTransitionedByShortcutKey() {
+        // Shortcut keys do not transition to text edit mode.
+        const all = [
+          {
+            name: MODE.VIEW,
+            availabilityName: 'view mode',
+            funcName: 'toViewMode'
+          },
+          {
+            name: MODE.EDIT_DENOTATION,
+            availabilityName: 'term edit mode',
+            funcName: 'toTermEditMode'
+          },
+          {
+            name: MODE.EDIT_BLOCK,
+            availabilityName: 'block edit mode',
+            funcName: 'toBlockEditMode'
+          },
+          {
+            name: MODE.EDIT_RELATION,
+            availabilityName: 'relation edit mode',
+            funcName: 'toRelationEditMode'
+          }
+        ]
+
+        // Look at Function Availability and return the possible transition modes.
+        return all.filter((mode) =>
+          this.#functionAvailability.isAvailable(mode.availabilityName)
+        )
+      }
     } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/index.js
 
     class UseCase {
@@ -110103,6 +110132,11 @@ data-button-type="${type}">
           annotationModel
         )
         const functionAvailability = new FunctionAvailability()
+        const editModeState = new EditModeState(
+          annotationModel.relationInstanceContainer,
+          eventEmitter,
+          functionAvailability
+        )
         const menuState = new MenuState(
           eventEmitter,
           selectionModel,
@@ -110110,7 +110144,8 @@ data-button-type="${type}">
           annotationModelEventsObserver,
           originalData,
           annotationModel.typeDictionary,
-          functionAvailability
+          functionAvailability,
+          editModeState
         )
         const presenter = new Presenter(
           editorHTMLElement,
@@ -110123,7 +110158,8 @@ data-button-type="${type}">
           menuState,
           startUpOptions,
           functionAvailability,
-          mousePoint
+          mousePoint,
+          editModeState
         )
         this.#presenter = presenter
         this.#annotationModel = annotationModel
