@@ -57,11 +57,7 @@ export default class TextEditMode extends EditMode {
   }
 
   #handleTexSelection() {
-    if (!isTextSelectionInTextBox(this.#textBox)) {
-      return
-    }
-
-    if (!this.#annotationModel.hasCharacters(this.#spanConfig)) {
+    if (!this.#is_editable) {
       return
     }
 
@@ -70,10 +66,29 @@ export default class TextEditMode extends EditMode {
       this.#menuState.textSelectionAdjuster
     )
 
-    if (this.#annotationModel.validateEditableText(begin, end)) {
-      const targetText = this.#annotationModel.getTextBetween(begin, end)
-      this.#dialog.open(begin, end, targetText)
+    const targetText = this.#annotationModel.getTextBetween(begin, end)
+    this.#dialog.open(begin, end, targetText)
+  }
+
+  get #is_editable() {
+    if (!isTextSelectionInTextBox(this.#textBox)) {
+      return false
     }
+
+    if (!this.#annotationModel.hasCharacters(this.#spanConfig)) {
+      return false
+    }
+
+    const { begin, end } = this.#annotationModel.getTextSelection(
+      this.#spanConfig,
+      this.#menuState.textSelectionAdjuster
+    )
+
+    if (!this.#annotationModel.validateEditableText(begin, end)) {
+      return false
+    }
+
+    return true
   }
 
   get #textBox() {
