@@ -33,7 +33,7 @@ export default class Buttons {
   }
 
   // Buttons to display on the context menu.
-  get contextMenu() {
+  getContextMenuFor(mode) {
     return definition
       .filter(({ usage }) => {
         if (isTouchable()) {
@@ -42,12 +42,20 @@ export default class Buttons {
           return usage['keyboard device'].includes('context menu')
         }
       })
-      .map(({ list }) => ({
-        list: list.map(({ type, title }) => ({
-          type,
-          title
-        }))
-      }))
+      .map(({ list }) => {
+        list = list
+          .filter(({ availableModes }) => {
+            return availableModes.includes(mode)
+          })
+          .map(({ type, title }) => ({
+            type,
+            title
+          }))
+
+        return {
+          list
+        }
+      })
   }
 
   get pasteButton() {

@@ -82,7 +82,8 @@ export default class MenuState {
   }
 
   get contextMenuButton() {
-    return new Buttons().contextMenu
+    return new Buttons()
+      .getContextMenuFor(this.#editModeState.currentState)
       .map(({ list }) =>
         list
           .filter(({ type }) => this.#functionAvailability.isAvailable(type))

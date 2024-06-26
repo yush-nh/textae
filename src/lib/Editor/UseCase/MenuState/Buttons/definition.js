@@ -1,3 +1,5 @@
+import { MODE } from '../../../../MODE'
+
 export const definition = [
   {
     usage: {
@@ -121,9 +123,21 @@ export const definition = [
       'touch device': ['control bar', 'context menu']
     },
     list: [
-      { type: 'create span by touch', title: 'Create span' },
-      { type: 'expand span by touch', title: 'Expand span' },
-      { type: 'shrink span by touch', title: 'Shrink span' }
+      {
+        type: 'create span by touch',
+        title: 'Create span',
+        availableModes: [MODE.EDIT_DENOTATION, MODE.EDIT_BLOCK]
+      },
+      {
+        type: 'expand span by touch',
+        title: 'Expand span',
+        availableModes: [MODE.EDIT_DENOTATION, MODE.EDIT_BLOCK]
+      },
+      {
+        type: 'shrink span by touch',
+        title: 'Shrink span',
+        availableModes: [MODE.EDIT_DENOTATION, MODE.EDIT_BLOCK]
+      }
     ]
   },
   {

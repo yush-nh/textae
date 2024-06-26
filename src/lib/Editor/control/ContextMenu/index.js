@@ -78,6 +78,11 @@ export default class ContextMenu extends Menu {
 
   #show() {
     const context = classify(this.#menuState.contextMenuButton)
+    if (context.length === 0) {
+      // No context menu items to show.
+      return
+    }
+
     const html = `
     <div">
       ${context
