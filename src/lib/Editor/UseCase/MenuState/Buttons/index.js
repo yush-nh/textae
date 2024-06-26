@@ -142,14 +142,6 @@ export default class Buttons {
 
   // Buttons to display on the context menu.
   getContextMenuFor(mode) {
-    console.log(
-      'mode:',
-      mode,
-      this.#sections
-        .filter((section) => section.isShowOnContextMenu())
-        .map((section) => section.getButtonsFor(mode))
-    )
-
     return this.#sections
       .filter((section) => section.isShowOnContextMenu())
       .map((section) => section.getButtonsFor(mode))
