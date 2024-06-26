@@ -89,6 +89,7 @@ export default class MenuState {
           .filter(({ type }) => this.#functionAvailability.isAvailable(type))
           .map(({ type, title }) => this.#getPalletButtonTitle(type, title))
           .reduce((acc, { type, title }) => {
+            // Do not show menus that are not available in the context menu for desktop.
             if (!isTouchable() && this.getState(type, 'disabled')) {
               return acc
             }
