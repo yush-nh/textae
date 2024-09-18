@@ -9,7 +9,6 @@
     "prefer-destructuring": ["warn", {"object": true, "array": false}],
     "prefer-object-spread": "error",
     "prefer-template": "error",
-    "import/no-unresolved": "error",
     "unused-imports/no-unused-imports": "error"
   },
   "env": {
@@ -28,10 +27,9 @@
     "ecmaVersion":  2022
   },
   "plugins": [
-    "import",
     "unused-imports"
   ],
   "settings": {
-    "import/resolver": ["node", "webpack"]
+    "import/resolver": ["node"]
   }
 }

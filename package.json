@@ -37,8 +37,6 @@
     "cpx2": "^7.0.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-import-resolver-webpack": "^0.13.8",
-    "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-unused-imports": "^3.2.0",
     "husky": "^9.1.6",
     "less": "^4.2.0",
