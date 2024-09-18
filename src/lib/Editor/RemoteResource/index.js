@@ -11,7 +11,7 @@ class AnnotationLoader {
     this.#eventEmitter = eventEmitter
   }
 
-  loadAnnotation(url) {
+  loadFrom(url) {
     console.assert(url, 'url is necessary!')
 
     this.#eventEmitter.emit('textae-event.resource.startLoad')
@@ -26,12 +26,12 @@ class AnnotationLoader {
       timeout: 30000,
       dataType: 'json'
     })
-      .done((annotation) => this.#annotationLoaded(url, annotation))
-      .fail((jqXHR) => this.#annotationLoadFirstFailed(jqXHR, url))
+      .done((annotation) => this.#loaded(url, annotation))
+      .fail((jqXHR) => this.#loadFirstFailed(jqXHR, url))
       .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
-  #annotationLoaded(url, annotation) {
+  #loaded(url, annotation) {
     const dataSource = DataSource.createURLSource(url, annotation)
     if (annotation && annotation.text) {
       this.#eventEmitter.emit(
@@ -50,9 +50,9 @@ class AnnotationLoader {
     }
   }
 
-  #annotationLoadFirstFailed(jqXHR, url) {
+  #loadFirstFailed(jqXHR, url) {
     if (jqXHR.status !== 401) {
-      return this.#annotationLoadFinalFailed(url)
+      return this.#loadFinalFailed(url)
     }
 
     // When authentication is requested, give credential and try again.
@@ -66,12 +66,12 @@ class AnnotationLoader {
       timeout: 30000,
       dataType: 'json'
     })
-      .done((annotation) => this.#annotationLoaded(url, annotation))
-      .fail(() => this.#annotationLoadFinalFailed(url))
+      .done((annotation) => this.#loaded(url, annotation))
+      .fail(() => this.#loadFinalFailed(url))
       .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
-  #annotationLoadFinalFailed(url) {
+  #loadFinalFailed(url) {
     alertifyjs.error(
       `Could not load the file from the location you specified.: ${url}`
     )
@@ -90,7 +90,7 @@ class ConfigurationLoader {
   // when the configuration loading is complete.
   // This is supposed to be used when reading an annotation that does not contain a configuration
   // and then reading the configuration set by the attribute value of the textae-event.
-  loadConfiguration(url, annotationModelSource) {
+  loadFrom(url, annotationModelSource) {
     console.assert(url, 'url is necessary!')
 
     this.#eventEmitter.emit('textae-event.resource.startLoad')
@@ -105,12 +105,12 @@ class ConfigurationLoader {
       timeout: 30000,
       dataType: 'json'
     })
-      .done((config) => this.#configLoaded(url, config, annotationModelSource))
-      .fail(() => this.#configLoadFailed(url))
+      .done((config) => this.#loaded(url, config, annotationModelSource))
+      .fail(() => this.#loadFailed(url))
       .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
-  #configLoaded(url, config, annotationModelSource) {
+  #loaded(url, config, annotationModelSource) {
     this.#eventEmitter.emit(
       'textae-event.resource.configuration.load.success',
       DataSource.createURLSource(url, config),
@@ -118,7 +118,7 @@ class ConfigurationLoader {
     )
   }
 
-  #configLoadFailed(url) {
+  #loadFailed(url) {
     alertifyjs.error(
       `Could not load the file from the location you specified.: ${url}`
     )
@@ -138,11 +138,11 @@ export default class RemoteSource {
   }
 
   loadAnnotation(url) {
-    new AnnotationLoader(this.#eventEmitter).loadAnnotation(url)
+    new AnnotationLoader(this.#eventEmitter).loadFrom(url)
   }
 
   loadConfiguration(url, annotationModelSource = null) {
-    new ConfigurationLoader(this.#eventEmitter).loadConfiguration(
+    new ConfigurationLoader(this.#eventEmitter).loadFrom(
       url,
       annotationModelSource
     )
