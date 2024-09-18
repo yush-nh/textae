@@ -79,23 +79,18 @@ class AnnotationLoader {
   }
 }
 
-// A sub component to save and load data.
-export default class RemoteSource {
+class ConfigurationLoader {
   #eventEmitter
 
   constructor(eventEmitter) {
     this.#eventEmitter = eventEmitter
   }
 
-  loadAnnotation(url) {
-    new AnnotationLoader(this.#eventEmitter).loadAnnotation(url)
-  }
-
   // The second argument is the annotation you want to be notified of
   // when the configuration loading is complete.
   // This is supposed to be used when reading an annotation that does not contain a configuration
   // and then reading the configuration set by the attribute value of the textae-event.
-  loadConfiguration(url, annotationModelSource = null) {
+  loadConfiguration(url, annotationModelSource) {
     console.assert(url, 'url is necessary!')
 
     this.#eventEmitter.emit('textae-event.resource.startLoad')
@@ -113,6 +108,44 @@ export default class RemoteSource {
       .done((config) => this.#configLoaded(url, config, annotationModelSource))
       .fail(() => this.#configLoadFailed(url))
       .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
+  }
+
+  #configLoaded(url, config, annotationModelSource) {
+    this.#eventEmitter.emit(
+      'textae-event.resource.configuration.load.success',
+      DataSource.createURLSource(url, config),
+      annotationModelSource
+    )
+  }
+
+  #configLoadFailed(url) {
+    alertifyjs.error(
+      `Could not load the file from the location you specified.: ${url}`
+    )
+    this.#eventEmitter.emit(
+      'textae-event.resource.configuration.load.error',
+      url
+    )
+  }
+}
+
+// A sub component to save and load data.
+export default class RemoteSource {
+  #eventEmitter
+
+  constructor(eventEmitter) {
+    this.#eventEmitter = eventEmitter
+  }
+
+  loadAnnotation(url) {
+    new AnnotationLoader(this.#eventEmitter).loadAnnotation(url)
+  }
+
+  loadConfiguration(url, annotationModelSource = null) {
+    new ConfigurationLoader(this.#eventEmitter).loadConfiguration(
+      url,
+      annotationModelSource
+    )
   }
 
   saveAnnotation(url, editedData) {
@@ -161,24 +194,6 @@ export default class RemoteSource {
         .fail(() => this.#configSaveFirstFailed(url, editedData))
         .always(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
     }
-  }
-
-  #configLoaded(url, config, annotationModelSource) {
-    this.#eventEmitter.emit(
-      'textae-event.resource.configuration.load.success',
-      DataSource.createURLSource(url, config),
-      annotationModelSource
-    )
-  }
-
-  #configLoadFailed(url) {
-    alertifyjs.error(
-      `Could not load the file from the location you specified.: ${url}`
-    )
-    this.#eventEmitter.emit(
-      'textae-event.resource.configuration.load.error',
-      url
-    )
   }
 
   #annotationSaved(editedData) {
