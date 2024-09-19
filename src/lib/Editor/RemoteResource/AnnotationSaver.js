@@ -3,7 +3,7 @@ import alertifyjs from 'alertifyjs'
 import isServerAuthRequired from './isServerAuthRequired'
 import openPopUp from './openPopUp'
 
-class AnnotationSaver {
+export default class AnnotationSaver {
   #eventEmitter
 
   constructor(eventEmitter) {
