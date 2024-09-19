@@ -25,7 +25,7 @@ export default class AnnotationLoader {
       dataType: 'json'
     })
       .done((annotation) => this.#loaded(url, annotation))
-      .fail((jqXHR) => this.#loadFirstFailed(jqXHR, url))
+      .fail((jqXHR) => this.#firstFailed(jqXHR, url))
       .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
@@ -48,9 +48,9 @@ export default class AnnotationLoader {
     }
   }
 
-  #loadFirstFailed(jqXHR, url) {
+  #firstFailed(jqXHR, url) {
     if (jqXHR.status !== 401) {
-      return this.#loadFinalFailed(url)
+      return this.#finalFailed(url)
     }
 
     // When authentication is requested, give credential and try again.
@@ -65,11 +65,11 @@ export default class AnnotationLoader {
       dataType: 'json'
     })
       .done((annotation) => this.#loaded(url, annotation))
-      .fail(() => this.#loadFinalFailed(url))
+      .fail(() => this.#finalFailed(url))
       .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
-  #loadFinalFailed(url) {
+  #finalFailed(url) {
     alertifyjs.error(
       `Could not load the file from the location you specified.: ${url}`
     )

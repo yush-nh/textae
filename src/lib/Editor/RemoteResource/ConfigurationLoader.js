@@ -29,7 +29,7 @@ export default class ConfigurationLoader {
       dataType: 'json'
     })
       .done((config) => this.#loaded(url, config, annotationModelSource))
-      .fail(() => this.#loadFailed(url))
+      .fail(() => this.#failed(url))
       .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
@@ -41,7 +41,7 @@ export default class ConfigurationLoader {
     )
   }
 
-  #loadFailed(url) {
+  #failed(url) {
     alertifyjs.error(
       `Could not load the file from the location you specified.: ${url}`
     )
