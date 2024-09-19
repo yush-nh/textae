@@ -1,9 +1,8 @@
 import $ from 'jquery'
 import alertifyjs from 'alertifyjs'
-import isServerAuthRequired from './isServerAuthRequired'
-import openPopUp from './openPopUp'
 import AnnotationLoader from './AnnotationLoader'
 import ConfigurationLoader from './ConfigurationLoader'
+import AnnotationSaver from './AnnotationSaver'
 
 // A sub component to save and load data.
 export default class RemoteSource {
@@ -25,27 +24,7 @@ export default class RemoteSource {
   }
 
   saveAnnotation(url, editedData) {
-    if (url) {
-      this.#eventEmitter.emit('textae-event.resource.startSave')
-
-      const opt = {
-        type: 'post',
-        url,
-        contentType: 'application/json',
-        data: JSON.stringify(editedData),
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true
-        }
-      }
-
-      $.ajax(opt)
-        .done(() => this.#annotationSaved(editedData))
-        .fail((jqXHR) =>
-          this.#annotationSaveFirstFailed(jqXHR, url, editedData)
-        )
-        .always(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
-    }
+    new AnnotationSaver(this.#eventEmitter).saveTo(url, editedData)
   }
 
   saveConfiguration(url, editedData) {
@@ -70,60 +49,6 @@ export default class RemoteSource {
         .fail(() => this.#configSaveFirstFailed(url, editedData))
         .always(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
     }
-  }
-
-  #annotationSaved(editedData) {
-    alertifyjs.success('annotation saved')
-    this.#eventEmitter.emit('textae-event.resource.annotation.save', editedData)
-  }
-
-  #annotationSaveFirstFailed(jqXHR, url, editedData) {
-    // Authenticate in popup window.
-    const location = isServerAuthRequired(
-      jqXHR.status,
-      jqXHR.getResponseHeader('WWW-Authenticate'),
-      jqXHR.getResponseHeader('Location')
-    )
-    if (!location) {
-      return this.#annotationSaveFinalFailed()
-    }
-
-    const window = openPopUp(location)
-    if (!window) {
-      return this.#annotationSaveFinalFailed()
-    }
-
-    // Watching for cross-domain pop-up windows to close.
-    // https://stackoverflow.com/questions/9388380/capture-the-close-event-of-popup-window-in-javascript/48240128#48240128
-    const timer = setInterval(() => {
-      if (window.closed) {
-        clearInterval(timer)
-
-        const opt = {
-          type: 'post',
-          url,
-          contentType: 'application/json',
-          data: JSON.stringify(editedData),
-          crossDomain: true,
-          xhrFields: {
-            withCredentials: true
-          }
-        }
-
-        // Retry after authentication.
-        $.ajax(opt)
-          .done(() => this.#annotationSaved(editedData))
-          .fail(() => this.#annotationSaveFinalFailed)
-          .always(() =>
-            this.#eventEmitter.emit('textae-event.resource.endSave')
-          )
-      }
-    }, 1000)
-  }
-
-  #annotationSaveFinalFailed() {
-    alertifyjs.error('could not save')
-    this.#eventEmitter.emit('textae-event.resource.save.error')
   }
 
   #configSaved(editedData) {
