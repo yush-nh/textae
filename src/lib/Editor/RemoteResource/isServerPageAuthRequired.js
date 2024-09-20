@@ -11,7 +11,11 @@
 // ==============================================================
 // Access-Control-Expose-Headers: WWW-Authenticate,Location
 // ==============================================================
-export default function (statusCode, wwwAuthenticateHeader, locationHeader) {
+export default function isServerPageAuthRequired(
+  statusCode,
+  wwwAuthenticateHeader,
+  locationHeader
+) {
   const required =
     statusCode === 401 &&
     wwwAuthenticateHeader &&

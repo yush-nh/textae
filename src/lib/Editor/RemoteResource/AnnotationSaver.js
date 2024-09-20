@@ -1,5 +1,5 @@
 import alertifyjs from 'alertifyjs'
-import isServerAuthRequired from './isServerAuthRequired'
+import isServerAuthRequired from './isServerPageAuthRequired'
 import openPopUp from './openPopUp'
 
 export default class AnnotationSaver {

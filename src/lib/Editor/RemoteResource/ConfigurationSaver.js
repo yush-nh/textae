@@ -1,5 +1,5 @@
 import alertifyjs from 'alertifyjs'
-import isServerAuthRequired from './isServerAuthRequired'
+import isServerPageAuthRequired from './isServerPageAuthRequired'
 import openPopUp from './openPopUp'
 
 export default class ConfigurationSaver {
@@ -27,7 +27,7 @@ export default class ConfigurationSaver {
           if (response.ok) {
             return this.#saved(editedData)
           } else if (response.status === 401) {
-            const location = isServerAuthRequired(
+            const location = isServerPageAuthRequired(
               response.status,
               response.headers.get('WWW-Authenticate'),
               response.headers.get('Location')
