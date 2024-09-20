@@ -1,4 +1,3 @@
-import $ from 'jquery'
 import alertifyjs from 'alertifyjs'
 import isServerAuthRequired from './isServerAuthRequired'
 import openPopUp from './openPopUp'
@@ -15,20 +14,32 @@ export default class AnnotationSaver {
       this.#eventEmitter.emit('textae-event.resource.startSave')
 
       const opt = {
-        type: 'post',
-        url,
-        contentType: 'application/json',
-        data: JSON.stringify(editedData),
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true
-        }
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editedData),
+        credentials: 'include'
       }
 
-      $.ajax(opt)
-        .done(() => this.#saved(editedData))
-        .fail((jqXHR) => this.#firstFailed(jqXHR, url, editedData))
-        .always(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
+      fetch(url, opt)
+        .then((response) => {
+          if (response.ok) {
+            return this.#saved(editedData)
+          } else if (response.status === 401) {
+            const location = isServerAuthRequired(
+              response.status,
+              response.headers.get('WWW-Authenticate'),
+              response.headers.get('Location')
+            )
+            if (location) {
+              return this.authenticateAt(location, url, editedData)
+            }
+          }
+
+          this.#failed()
+        })
+        .finally(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
     }
   }
 
@@ -37,20 +48,11 @@ export default class AnnotationSaver {
     this.#eventEmitter.emit('textae-event.resource.annotation.save', editedData)
   }
 
-  #firstFailed(jqXHR, url, editedData) {
+  authenticateAt(location, url, editedData) {
     // Authenticate in popup window.
-    const location = isServerAuthRequired(
-      jqXHR.status,
-      jqXHR.getResponseHeader('WWW-Authenticate'),
-      jqXHR.getResponseHeader('Location')
-    )
-    if (!location) {
-      return this.#finalFailed()
-    }
-
     const window = openPopUp(location)
     if (!window) {
-      return this.#finalFailed()
+      return this.#failed()
     }
 
     // Watching for cross-domain pop-up windows to close.
@@ -69,22 +71,18 @@ export default class AnnotationSaver {
         }
 
         // Retry after authentication.
-        fetch(url, opt)
-          .then((response) => {
-            if (response.ok) {
-              response.json().then((annotation) => this.#saved(url, annotation))
-            } else {
-              this.#finalFailed(url)
-            }
-          })
-          .finally(() =>
-            this.#eventEmitter.emit('textae-event.resource.endSave')
-          )
+        fetch(url, opt).then((response) => {
+          if (response.ok) {
+            this.#saved(url, editedData)
+          } else {
+            this.#failed(url)
+          }
+        })
       }
     }, 1000)
   }
 
-  #finalFailed() {
+  #failed() {
     alertifyjs.error('could not save')
     this.#eventEmitter.emit('textae-event.resource.save.error')
   }

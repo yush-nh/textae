@@ -32,6 +32,7 @@ export default class AnnotationLoader {
           this.#failed(url)
         }
       })
+      .catch(() => this.#failed(url))
       .finally(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
@@ -65,16 +66,13 @@ export default class AnnotationLoader {
         'Content-Type': 'application/json'
       },
       signal: AbortSignal.timeout(30000)
+    }).then((response) => {
+      if (response.ok) {
+        response.json().then((annotation) => this.#loaded(url, annotation))
+      } else {
+        this.#failed(url)
+      }
     })
-      .then((response) => {
-        if (response.ok) {
-          response.json().then((annotation) => this.#loaded(url, annotation))
-        } else {
-          this.#failed(url)
-        }
-      })
-      .catch(() => this.#failed(url))
-      .finally(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
   #failed(url) {
