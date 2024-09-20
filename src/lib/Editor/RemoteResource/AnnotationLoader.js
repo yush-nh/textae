@@ -1,4 +1,3 @@
-import $ from 'jquery'
 import alertifyjs from 'alertifyjs'
 import DataSource from '../DataSource'
 
@@ -14,19 +13,26 @@ export default class AnnotationLoader {
 
     this.#eventEmitter.emit('textae-event.resource.startLoad')
 
-    $.ajax({
-      type: 'GET',
-      url,
-      cache: false,
-      xhrFields: {
-        withCredentials: false
+    fetch(url, {
+      method: 'GET',
+      cache: 'no-cache',
+      credentials: 'omit',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
       },
-      timeout: 30000,
-      dataType: 'json'
+      signal: AbortSignal.timeout(30000)
     })
-      .done((annotation) => this.#loaded(url, annotation))
-      .fail((jqXHR) => this.#firstFailed(jqXHR, url))
-      .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((annotation) => this.#loaded(url, annotation))
+        } else if (response.status === 401) {
+          this.#authenticate(url)
+        } else {
+          this.#failed(url)
+        }
+      })
+      .finally(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
   #loaded(url, annotation) {
@@ -48,11 +54,7 @@ export default class AnnotationLoader {
     }
   }
 
-  #firstFailed(jqXHR, url) {
-    if (jqXHR.status !== 401) {
-      return this.#finalFailed(url)
-    }
-
+  #authenticate(url) {
     // When authentication is requested, give credential and try again.
     fetch(url, {
       method: 'GET',
@@ -71,11 +73,11 @@ export default class AnnotationLoader {
         return response.json()
       })
       .then((annotation) => this.#loaded(url, annotation))
-      .catch(() => this.#finalFailed(url))
+      .catch(() => this.#failed(url))
       .finally(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
-  #finalFailed(url) {
+  #failed(url) {
     alertifyjs.error(
       `Could not load the file from the location you specified.: ${url}`
     )
