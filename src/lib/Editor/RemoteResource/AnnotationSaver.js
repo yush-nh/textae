@@ -33,7 +33,7 @@ export default class AnnotationSaver {
               response.headers.get('Location')
             )
             if (location) {
-              return this.authenticateAt(location, url, editedData)
+              return this.#authenticateAt(location, url, editedData)
             }
           }
 
@@ -48,7 +48,7 @@ export default class AnnotationSaver {
     this.#eventEmitter.emit('textae-event.resource.annotation.save', editedData)
   }
 
-  authenticateAt(location, url, editedData) {
+  #authenticateAt(location, url, editedData) {
     // Authenticate in popup window.
     const window = openPopUp(location)
     if (!window) {
@@ -61,25 +61,29 @@ export default class AnnotationSaver {
       if (window.closed) {
         clearInterval(timer)
 
-        const opt = {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(editedData),
-          credentials: 'include'
-        }
-
-        // Retry after authentication.
-        fetch(url, opt).then((response) => {
-          if (response.ok) {
-            this.#saved(url, editedData)
-          } else {
-            this.#failed(url)
-          }
-        })
+        this.#retryPost(editedData, url)
       }
     }, 1000)
+  }
+
+  #retryPost(editedData, url) {
+    const opt = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(editedData),
+      credentials: 'include'
+    }
+
+    // Retry after authentication.
+    fetch(url, opt).then((response) => {
+      if (response.ok) {
+        this.#saved(url, editedData)
+      } else {
+        this.#failed(url)
+      }
+    })
   }
 
   #failed() {
