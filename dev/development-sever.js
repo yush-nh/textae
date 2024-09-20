@@ -108,6 +108,16 @@ app
       return next()
     }
   })
+  .use((req, res, next) => {
+    // Sleep specified time.
+    const { pathname } = req._parsedUrl
+    if (pathname !== '/dev/sleep') return next()
+
+    const { ms } = querystring.parse(req._parsedUrl.query)
+    setTimeout(() => {
+      res.end()
+    }, ms)
+  })
   .use(serveStatic(path.resolve(__dirname, '../')))
 
 http.createServer(app).listen(3001)

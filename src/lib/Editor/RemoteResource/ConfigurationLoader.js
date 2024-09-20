@@ -22,8 +22,10 @@ export default class ConfigurationLoader {
       cache: 'no-cache',
       credentials: 'omit',
       headers: {
+        Accept: 'application/json',
         'Content-Type': 'application/json'
-      }
+      },
+      signal: AbortSignal.timeout(30000)
     })
       .then((response) => {
         if (!response.ok) {
