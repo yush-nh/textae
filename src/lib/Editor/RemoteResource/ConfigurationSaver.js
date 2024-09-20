@@ -41,23 +41,26 @@ export default class ConfigurationSaver {
       // Retry by a post method.
       this.#eventEmitter.emit('textae-event.resource.startSave')
 
-      $.ajax({
-        type: 'post',
-        url,
-        contentType: 'application/json',
-        data: JSON.stringify(editedData),
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true
+      const opt = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editedData),
+        credentials: 'include'
+      }
+
+      fetch(url, opt).then((response) => {
+        if (response.ok) {
+          this.#saved(editedData)
+        } else {
+          this.#failed()
         }
       })
-        .done(() => this.#saved(editedData))
-        .fail(() => this.#finalFailed())
-        .always(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
     }
   }
 
-  #finalFailed() {
+  #failed() {
     alertifyjs.error('could not save')
     this.#eventEmitter.emit('textae-event.resource.save.error')
   }
