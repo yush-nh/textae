@@ -28,12 +28,12 @@ export default class ConfigurationLoader {
       signal: AbortSignal.timeout(30000)
     })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText}`)
+        if (response.ok) {
+          return response
+            .json()
+            .then((config) => this.#loaded(url, config, annotationModelSource))
         }
-        return response.json()
       })
-      .then((config) => this.#loaded(url, config, annotationModelSource))
       .catch(() => this.#failed(url))
       .finally(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
