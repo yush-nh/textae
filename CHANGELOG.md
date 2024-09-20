@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.3.1](https://github.com/pubannotation/textae/compare/v13.3.0...v13.3.1) (2024-09-20)
+
+
+### Bug Fixes
+
+* Autocomplete search request is broken. ([55bbaf5](https://github.com/pubannotation/textae/commit/55bbaf580f8b6a452d244d6529597f79301c4597))
+* ServerPage authentication is not available when saving configuration. ([0dcec71](https://github.com/pubannotation/textae/commit/0dcec71a798cc1d7b2157bd5dbbc0d12c5f0558d))
+
 ## [13.3.0](https://github.com/pubannotation/textae/compare/v13.2.1...v13.3.0) (2024-06-26)
 
 
