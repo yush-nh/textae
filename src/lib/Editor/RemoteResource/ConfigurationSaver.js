@@ -12,7 +12,7 @@ export default class ConfigurationSaver {
       this.#eventEmitter.emit('textae-event.resource.startSave')
 
       const opt = {
-        method: 'PATCH',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
