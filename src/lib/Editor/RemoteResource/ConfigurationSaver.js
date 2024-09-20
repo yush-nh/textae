@@ -1,4 +1,6 @@
 import alertifyjs from 'alertifyjs'
+import isServerAuthRequired from './isServerAuthRequired'
+import openPopUp from './openPopUp'
 
 export default class ConfigurationSaver {
   #eventEmitter
@@ -23,10 +25,19 @@ export default class ConfigurationSaver {
       fetch(url, opt)
         .then((response) => {
           if (response.ok) {
-            this.#saved(editedData)
-          } else {
-            this.#firstFailed()
+            return this.#saved(editedData)
+          } else if (response.status === 401) {
+            const location = isServerAuthRequired(
+              response.status,
+              response.headers.get('WWW-Authenticate'),
+              response.headers.get('Location')
+            )
+            if (location) {
+              return this.#authenticateAt(location, url, editedData)
+            }
           }
+
+          this.#failed()
         })
         .finally(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
     }
@@ -40,11 +51,23 @@ export default class ConfigurationSaver {
     )
   }
 
-  #firstFailed(url, editedData) {
-    {
-      // Retry by a post method.
-      this.#eventEmitter.emit('textae-event.resource.startSave')
+  #authenticateAt(location, url, editedData) {
+    // Authenticate in popup window.
+    const window = openPopUp(location)
+    if (!window) {
+      return this.#failed()
+    }
 
+    // Watching for cross-domain pop-up windows to close.
+    // https://stackoverflow.com/questions/9388380/capture-the-close-event-of-popup-window-in-javascript/48240128#48240128
+    const timer = setInterval(() => {
+      clearInterval(timer)
+      this.#retryPost(editedData, url)
+    }, 1000)
+  }
+
+  #retryPost(editedData, url) {
+    {
       const opt = {
         method: 'POST',
         headers: {
