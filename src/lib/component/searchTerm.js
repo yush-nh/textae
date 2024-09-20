@@ -8,7 +8,7 @@ export default function (autocompletionWs, localData, term, done) {
 
   // Append a term parameter.
   const url = new URL(autocompletionWs, location)
-  url.searchParams.append('term edit mode', term)
+  url.searchParams.append('term', term)
 
   request.open('GET', url.href, true)
   request.onload = () => {
