@@ -60,21 +60,24 @@ export default class AnnotationSaver {
         clearInterval(timer)
 
         const opt = {
-          type: 'post',
-          url,
-          contentType: 'application/json',
-          data: JSON.stringify(editedData),
-          crossDomain: true,
-          xhrFields: {
-            withCredentials: true
-          }
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(editedData),
+          credentials: 'include'
         }
 
         // Retry after authentication.
-        $.ajax(opt)
-          .done(() => this.#saved(editedData))
-          .fail(() => this.#finalFailed)
-          .always(() =>
+        fetch(url, opt)
+          .then((response) => {
+            if (response.ok) {
+              response.json().then((annotation) => this.#saved(url, annotation))
+            } else {
+              this.#finalFailed(url)
+            }
+          })
+          .finally(() =>
             this.#eventEmitter.emit('textae-event.resource.endSave')
           )
       }
