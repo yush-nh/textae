@@ -54,19 +54,25 @@ export default class AnnotationLoader {
     }
 
     // When authentication is requested, give credential and try again.
-    $.ajax({
-      type: 'GET',
-      url,
-      cache: false,
-      xhrFields: {
-        withCredentials: true
+    fetch(url, {
+      method: 'GET',
+      cache: 'no-cache',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
       },
-      timeout: 30000,
-      dataType: 'json'
+      signal: AbortSignal.timeout(30000)
     })
-      .done((annotation) => this.#loaded(url, annotation))
-      .fail(() => this.#finalFailed(url))
-      .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.statusText}`)
+        }
+        return response.json()
+      })
+      .then((annotation) => this.#loaded(url, annotation))
+      .catch(() => this.#finalFailed(url))
+      .finally(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
   #finalFailed(url) {
