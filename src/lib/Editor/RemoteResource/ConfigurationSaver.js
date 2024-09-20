@@ -1,4 +1,3 @@
-import $ from 'jquery'
 import alertifyjs from 'alertifyjs'
 
 export default class ConfigurationSaver {
@@ -12,19 +11,24 @@ export default class ConfigurationSaver {
     if (url) {
       this.#eventEmitter.emit('textae-event.resource.startSave')
 
-      $.ajax({
-        type: 'patch',
-        url,
-        contentType: 'application/json',
-        data: JSON.stringify(editedData),
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true
-        }
-      })
-        .done(() => this.#saved(editedData))
-        .fail(() => this.#firstFailed(url, editedData))
-        .always(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
+      const opt = {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editedData),
+        credentials: 'include'
+      }
+
+      fetch(url, opt)
+        .then((response) => {
+          if (response.ok) {
+            this.#saved(editedData)
+          } else {
+            this.#firstFailed()
+          }
+        })
+        .finally(() => this.#eventEmitter.emit('textae-event.resource.endSave'))
     }
   }
 
