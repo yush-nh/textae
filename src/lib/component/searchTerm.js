@@ -4,26 +4,22 @@ export default function (autocompletionWs, localData, term, done) {
     return
   }
 
-  const request = new XMLHttpRequest()
-
-  // Append a term parameter.
   const url = new URL(autocompletionWs, location)
   url.searchParams.append('term', term)
 
-  request.open('GET', url.href, true)
-  request.onload = () => {
-    if (request.status >= 200 && request.status < 400) {
-      // Success!
-      const data = JSON.parse(request.response)
-
+  fetch(url.href)
+    .then((response) => {
+      if (response.ok) {
+        return response.json()
+      }
+    })
+    .then((data) => {
       // Prior local data if duplicated
       const filteredData = data.filter(
-        (t) => !localData.some((l) => t.id === l.id)
+        (newDatum) =>
+          !localData.some((localDatum) => newDatum.id === localDatum.id)
       )
 
       done(localData.concat(filteredData))
-    }
-  }
-
-  request.send()
+    })
 }
