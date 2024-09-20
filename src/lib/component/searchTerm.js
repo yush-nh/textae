@@ -16,12 +16,12 @@ export default function (autocompletionWs, localData, term, done) {
       // Success!
       const data = JSON.parse(request.response)
 
-      // Prior lacal data if duplicated
-      const filtteredData = data.filter(
+      // Prior local data if duplicated
+      const filteredData = data.filter(
         (t) => !localData.some((l) => t.id === l.id)
       )
 
-      done(localData.concat(filtteredData))
+      done(localData.concat(filteredData))
     }
   }
 
