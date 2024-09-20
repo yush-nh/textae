@@ -1,4 +1,3 @@
-import $ from 'jquery'
 import alertifyjs from 'alertifyjs'
 import DataSource from '../DataSource'
 
@@ -18,19 +17,23 @@ export default class ConfigurationLoader {
 
     this.#eventEmitter.emit('textae-event.resource.startLoad')
 
-    $.ajax({
-      type: 'GET',
-      url,
-      cache: false,
-      xhrFields: {
-        withCredentials: false
-      },
-      timeout: 30000,
-      dataType: 'json'
+    fetch(url, {
+      method: 'GET',
+      cache: 'no-cache',
+      credentials: 'omit',
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
-      .done((config) => this.#loaded(url, config, annotationModelSource))
-      .fail(() => this.#failed(url))
-      .always(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.statusText}`)
+        }
+        return response.json()
+      })
+      .then((config) => this.#loaded(url, config, annotationModelSource))
+      .catch(() => this.#failed(url))
+      .finally(() => this.#eventEmitter.emit('textae-event.resource.endLoad'))
   }
 
   #loaded(url, config, annotationModelSource) {
