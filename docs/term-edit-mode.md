@@ -6,10 +6,10 @@ permalink: /docs/term-edit-mode/
 
 # Term Edit Mode
 
-Here is an instance of TextAE in the "*Term Edit*" mode.
+Below is an instance of TextAE in the "*Text Edit*" mode.
 Feel free to use it to practice the concepts described on this page.
 
-<div class="textae-editor" mode="edit">
+<div class="textae-editor" mode="term-edit">
 	{
 		"text":"Elon Musk is a member of the PayPal Mafia.",
 		"denotations":[

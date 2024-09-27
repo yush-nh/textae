@@ -34,8 +34,9 @@ title: Intro
           "simple": false,
           "replicate": false,
           "replicate-auto": false,
-          "undo": false,
-          "redo": false,
+          "boundary-detection": true,
+          "undo": true,
+          "redo": true,
           "setting": false,
           "help": false
         }
@@ -82,6 +83,7 @@ title: Intro
           "simple": false,
           "replicate": false,
           "replicate-auto": false,
+          "boundary-detection": false,
           "undo": true,
           "redo": true,
           "setting": false,
@@ -96,18 +98,16 @@ title: Intro
 </div>
 
 <div class="textae-example">
-  <div class="textae-editor" mode="block-edit" style="line-height: 10px;">
+  <div class="textae-editor" mode="block-edit" style="min-width:416px">
   {
-    "text":"How are you?\nI am doing well\nWhat is the mission of the company OpenAI?",
+    "text":"Hello, what can I help you with?\nCan vegetarians eat here?",
     "blocks":[
-      {"id":"B2","span":{"begin":0,"end":12},"obj":"Message"},
-      {"id":"B3","span":{"begin":13,"end":28},"obj":"Message"},
-      {"id":"B4","span":{"begin":29,"end":71},"obj":"Message"}
+      {"id":"B1","span":{"begin":0,"end":32},"obj":"Message"},
+      {"id":"B2","span":{"begin":33,"end":58},"obj":"Message"}
     ],
     "attributes":[
-      {"id":"A2","pred":"role","subj":"B2","obj":"User"},
-      {"id":"A3","pred":"role","subj":"B3","obj":"Assistant"},
-      {"id":"A4","pred":"role","subj":"B4","obj":"User"}
+      {"id":"A1","pred":"role","subj":"B1","obj":"Assistant"},
+      {"id":"A2","pred":"role","subj":"B2","obj":"User"}
     ],
     "config": {
       "attribute types": [
@@ -139,8 +139,9 @@ title: Intro
         "simple": false,
         "replicate": false,
         "replicate-auto": false,
-        "undo": false,
-        "redo": false,
+        "boundary-detection": true,
+        "undo": true,
+        "redo": true,
         "setting": false,
         "help": false
       }
@@ -190,8 +191,8 @@ title: Intro
           "simple": false,
           "replicate": false,
           "replicate-auto": false,
-          "undo": false,
-          "redo": false,
+          "undo": true,
+          "redo": true,
           "setting": false,
           "help": false
         }
@@ -204,7 +205,7 @@ title: Intro
 </div>
 
 
-<div class="textae-example" mode="view">
+<div class="textae-example">
 
   <style>
     #multilingual .textae-editor__text-box {
@@ -245,8 +246,8 @@ title: Intro
           "simple": false,
           "replicate": false,
           "replicate-auto": false,
-          "undo": false,
-          "redo": false,
+          "undo": true,
+          "redo": true,
           "setting": false,
           "help": false
         }
@@ -258,8 +259,6 @@ title: Intro
   </div>
 </div>
 
-
-<br/>
 
 ## <i class="fa fa-check" aria-hidden="true"></i> A fully-featured GUI editor
 * You can create or edit various types of annotation.

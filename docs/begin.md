@@ -12,7 +12,19 @@ There are two ways of using TextAE.
 
 ## Using a ready-to-use editor on the web
 
-The easiest way of using TextAE is to use the editor on the web, by choosing [EDITOR](http://textae.pubannotation.org/editor.html?mode=edit) from the top menu of this site, or through its URL, [https://textae.pubannotation.org/editor.html](https://textae.pubannotation.org/editor.html). Do not forget to add the paramatter setting, _mode=edit_ for editting ([https://textae.pubannotation.org/editor.html?mode=edit](https://textae.pubannotation.org/editor.html?mode=edit)).
+The simplest way to use TextAE is by accessing the web editor. You can either select _EDITOR_ from the top menu of this site or visit the URL directly: [https://textae.pubannotation.org/editor.html](https://textae.pubannotation.org/editor.html).
+Be sure to include the parameter _mode=edit_ for editing mode ([https://textae.pubannotation.org/editor.html?mode=edit](https://textae.pubannotation.org/editor.html?mode=edit)).
+
+### Parameters for the TextAE web editor
+
+| Parameter | Description | Available values |
+|-----------|-------------|------------------|
+| mode      | the mode of TextAE | _view_ (viewer mode, default), _edit_ (editor mode) |
+| src       | the location of annotation| URL (of a JSON object) |
+| config    | the location of configuation | URL (of a JSON object) |
+| annotation | annotation | A JSON object, URL-encoded |
+
+
 
 ## Putting TextAE in a HTML document
 

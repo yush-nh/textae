@@ -25,7 +25,12 @@ TextAE works in one of the four modes described below:
 * Similarly to term annotation, a block annotation involves selection of a text span (by a mouse drag-and-drop operation) and specification of the type of the block represented by selected text span.
 * The text span for a block is relatively long, e.g., a sentence or a phrase.
 
-
 ## Relation edit mode (![](https://raw.githubusercontent.com/pubannotation/textae/stable/4/dist/lib/css/images/btn_relation_edit_mode_16.png))
 
 * Relation annotations can be created and edited.
+
+## Text edit mode (![](https://raw.githubusercontent.com/pubannotation/textae/stable/4/dist/lib/css/images/btn_text_edit_mode_16.png))
+
+* The source text can be edited, while keeping the annotation.
+* Select a span of text, then the span of text can be edited.
+  * A text span containing part or all of an annotation cannot be selected for editing.
