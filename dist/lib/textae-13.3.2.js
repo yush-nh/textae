@@ -66146,7 +66146,7 @@
       bindChangeLockConfig(content, typeDictionary)
     } // CONCATENATED MODULE: ./package.json
 
-    const package_namespaceObject = { rE: '13.3.1' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
+    const package_namespaceObject = { rE: '13.3.2' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
     function SettingDialog_template_template(context) {
       const {
         typeGap,
@@ -109599,7 +109599,11 @@ data-button-type="${type}">
         }
 
         const params = new URLSearchParams(window.location.search)
-        return decodeURIComponent(params.get('annotation'))
+        if (params.has('annotation')) {
+          return decodeURIComponent(params.get('annotation'))
+        }
+
+        return null
       }
 
       get #isIgnoreAnnotationParameter() {

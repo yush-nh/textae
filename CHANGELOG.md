@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.3.2](https://github.com/pubannotation/textae/compare/v13.3.1...v13.3.2) (2024-09-27)
+
+
+### Bug Fixes
+
+* An error occurs when initializing TextAE with the initializeTextAEEditor API without the query parameter `annotation`. ([89e77c8](https://github.com/pubannotation/textae/commit/89e77c87a71690b0bc0e7e70552e1b1a4665d2fa))
+
 ### [13.3.1](https://github.com/pubannotation/textae/compare/v13.3.0...v13.3.1) (2024-09-20)
 
 
