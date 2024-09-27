@@ -159,7 +159,11 @@ export default class StartUpOptions {
     }
 
     const params = new URLSearchParams(window.location.search)
-    return decodeURIComponent(params.get('annotation'))
+    if (params.has('annotation')) {
+      return decodeURIComponent(params.get('annotation'))
+    }
+
+    return null
   }
 
   get #isIgnoreAnnotationParameter() {
