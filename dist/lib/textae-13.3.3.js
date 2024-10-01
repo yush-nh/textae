@@ -47923,8 +47923,7 @@
         }
 
         if (options.reference !== 'suffix' && components.scheme) {
-          uriTokens.push(components.scheme)
-          uriTokens.push(':')
+          uriTokens.push(components.scheme, ':')
         }
 
         const authority = recomposeAuthority(components, options)
@@ -47957,13 +47956,11 @@
         }
 
         if (components.query !== undefined) {
-          uriTokens.push('?')
-          uriTokens.push(components.query)
+          uriTokens.push('?', components.query)
         }
 
         if (components.fragment !== undefined) {
-          uriTokens.push('#')
-          uriTokens.push(components.fragment)
+          uriTokens.push('#', components.fragment)
         }
         return uriTokens.join('')
       }
@@ -48094,9 +48091,6 @@
           ) {
             if (gotEncoding && parsed.scheme !== undefined) {
               parsed.scheme = unescape(parsed.scheme)
-            }
-            if (gotEncoding && parsed.userinfo !== undefined) {
-              parsed.userinfo = unescape(parsed.userinfo)
             }
             if (gotEncoding && parsed.host !== undefined) {
               parsed.host = unescape(parsed.host)
@@ -48779,7 +48773,7 @@
     var jquery = __webpack_require__(4692)
     var jquery_default = /*#__PURE__*/ __webpack_require__.n(jquery)
     // EXTERNAL MODULE: ./node_modules/jquery-ui/ui/widgets/dialog.js
-    var dialog = __webpack_require__(1193) // CONCATENATED MODULE: ./src/lib/component/Dialog.js
+    var dialog = __webpack_require__(1193) // ./src/lib/component/Dialog.js
     class Dialog {
       constructor(title, contentHtml, option = {}) {
         this._el = dohtml_default().create(`
@@ -48830,7 +48824,7 @@
       close() {
         this._$dialog.dialog('close')
       }
-    } // CONCATENATED MODULE: ./src/lib/component/HelpDialog.js
+    } // ./src/lib/component/HelpDialog.js
 
     class HelpDialog extends Dialog {
       constructor() {
@@ -48858,7 +48852,7 @@
           }
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/component/TipsDialog.js
+    } // ./src/lib/component/TipsDialog.js
 
     class TipsDialog extends Dialog {
       constructor() {
@@ -48881,7 +48875,7 @@
           }
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/textae/Tool/EditorContainer/isTextFields.js
+    } // ./src/lib/textae/Tool/EditorContainer/isTextFields.js
 
     /* harmony default export */ function isTextFields(htmlElement) {
       return (
@@ -48892,7 +48886,7 @@
 
     // EXTERNAL MODULE: ./node_modules/throttleit/index.js
     var throttleit = __webpack_require__(5408)
-    var throttleit_default = /*#__PURE__*/ __webpack_require__.n(throttleit) // CONCATENATED MODULE: ./src/lib/textae/Tool/EditorContainer/index.js
+    var throttleit_default = /*#__PURE__*/ __webpack_require__.n(throttleit) // ./src/lib/textae/Tool/EditorContainer/index.js
     const helpDialog = new HelpDialog()
     const tipsDialog = new TipsDialog()
 
@@ -49082,7 +49076,7 @@
       get #selectedEditor() {
         return this.#editors.get(this.#selected)
       }
-    } // CONCATENATED MODULE: ./src/lib/textae/Tool/Veil.js
+    } // ./src/lib/textae/Tool/Veil.js
 
     const config = {
       attributes: true,
@@ -49138,7 +49132,7 @@
       _hide() {
         this._el.style.display = 'none'
       }
-    } // CONCATENATED MODULE: ./src/lib/textae/Tool/observeBodyEvents.js
+    } // ./src/lib/textae/Tool/observeBodyEvents.js
 
     /**
      *
@@ -49225,7 +49219,7 @@
           }
         }
       }).observe(document.body, { childList: true, subtree: true })
-    } // CONCATENATED MODULE: ./src/lib/textae/Tool/getMousePoint.js
+    } // ./src/lib/textae/Tool/getMousePoint.js
 
     // Observe and record mouse position to return it.
     const lastMousePoint = {}
@@ -49238,7 +49232,7 @@
 
     /* harmony default export */ function getMousePoint() {
       return lastMousePoint
-    } // CONCATENATED MODULE: ./src/lib/textae/Tool/index.js
+    } // ./src/lib/textae/Tool/index.js
 
     // The tool manages interactions between components.
     class Tool {
@@ -49280,7 +49274,7 @@
         this.#veil.setObserver(element)
         this.#editorContainer.set(element, editor)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/InstanceContainer/index.js
+    } // ./src/lib/Editor/AnnotationModel/InstanceContainer/index.js
 
     class InstanceContainer {
       #emitter
@@ -49376,7 +49370,7 @@
       _emit(event, data) {
         this.#emitter.emit(event, data)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/updateSpanTree/getParent/isChildOf.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/updateSpanTree/getParent/isChildOf.js
 
     /* harmony default export */ function isChildOf(span, maybeParent) {
       if (!maybeParent) {
@@ -49384,7 +49378,7 @@
       }
 
       return maybeParent.begin <= span.begin && span.end <= maybeParent.end
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/updateSpanTree/getParent/index.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/updateSpanTree/getParent/index.js
 
     function getParet(span, parent) {
       if (isChildOf(span, parent)) {
@@ -49394,11 +49388,11 @@
       } else {
         return null
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/spanComparator.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/spanComparator.js
 
     /* harmony default export */ function spanComparator(a, b) {
       return a.begin - b.begin || b.end - a.end
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/updateSpanTree/index.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/updateSpanTree/index.js
 
     // the spanTree has parent-child structure.
     /* harmony default export */ function updateSpanTree(root, spans) {
@@ -49420,10 +49414,10 @@
           span.beChildOf(root)
         }
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SELECTED.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SELECTED.js
 
     const SELECTED = 'ui-selected'
-    /* harmony default export */ const SpanInstanceContainer_SELECTED = SELECTED // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/DenotationSpanInstance/getGridHeightIncludeDescendantGrids.js
+    /* harmony default export */ const SpanInstanceContainer_SELECTED = SELECTED // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/DenotationSpanInstance/getGridHeightIncludeDescendantGrids.js
 
     /**
      *
@@ -49446,7 +49440,7 @@
           getGridHeightIncludeDescendantGrids(childSpan)
         )
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/round.js
+    } // ./src/lib/Editor/round.js
 
     // The value of getBoundingClientRect may contain 13 decimal places.
     // It's too fine to use as a style attribute,
@@ -49454,7 +49448,7 @@
     // which is below the rounding accuracy of Google Chrome and Firefox.
     /* harmony default export */ function round(val) {
       return Math.round(val * 100) / 100
-    } // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/native.js
+    } // ./node_modules/uuid/dist/esm-browser/native.js
 
     var randomUUID =
       typeof crypto !== 'undefined' &&
@@ -49462,7 +49456,7 @@
       crypto.randomUUID.bind(crypto)
     /* harmony default export */ const esm_browser_native = {
       randomUUID
-    } // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/rng.js
+    } // ./node_modules/uuid/dist/esm-browser/rng.js
     // Unique ID creation requires a high quality random # generator. In the browser we therefore
     // require the crypto API and do not support built-in fallback to lower quality random number
     // generators (like Math.random()).
@@ -49484,7 +49478,7 @@
         }
       }
       return getRandomValues(rnds8)
-    } // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/stringify.js
+    } // ./node_modules/uuid/dist/esm-browser/stringify.js
     /**
      * Convert array of 16 byte values to UUID string format of the form:
      * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -49535,7 +49529,7 @@
       return uuid
     }
     /* harmony default export */ const esm_browser_stringify =
-      /* unused pure expression or super */ null && stringify // CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/v4.js
+      /* unused pure expression or super */ null && stringify // ./node_modules/uuid/dist/esm-browser/v4.js
     function v4(options, buf, offset) {
       if (esm_browser_native.randomUUID && !buf && !options) {
         return esm_browser_native.randomUUID()
@@ -49557,7 +49551,7 @@
       }
       return unsafeStringify(rnds)
     }
-    /* harmony default export */ const esm_browser_v4 = v4 // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/createGridHtml.js
+    /* harmony default export */ const esm_browser_v4 = v4 // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/createGridHtml.js
     /* harmony default export */ function createGridHtml(
       spanId,
       top,
@@ -49571,7 +49565,7 @@
   style="top: ${top}px; left: ${left}px; width: ${width}px;">
 </div>
 `
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/updateGridPosition/isStaying.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/updateGridPosition/isStaying.js
 
     /* harmony default export */ function isStaying(gridElement, top, left) {
       if (
@@ -49582,7 +49576,7 @@
         return true
       }
       return false
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/updateGridPosition/index.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/updateGridPosition/index.js
 
     /* harmony default export */ function updateGridPosition(
       gridElement,
@@ -49593,12 +49587,12 @@
         gridElement.style.top = `${top}px`
         gridElement.style.left = `${left}px`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/getAnnotationBox.js
+    } // ./src/lib/Editor/AnnotationModel/getAnnotationBox.js
 
     // Get the display area for denotations and relations.
     /* harmony default export */ function getAnnotationBox(editorHTMLElement) {
       return editorHTMLElement.querySelector('.textae-editor__annotation-box')
-    } // CONCATENATED MODULE: ./src/lib/Editor/getRightElement.js
+    } // ./src/lib/Editor/getRightElement.js
 
     /* harmony default export */ function getRightElement(
       editorHTMLElement,
@@ -49615,7 +49609,7 @@
       }
 
       return null
-    } // CONCATENATED MODULE: ./src/lib/Editor/getRightSpanElement.js
+    } // ./src/lib/Editor/getRightSpanElement.js
 
     /* harmony default export */ function getRightSpanElement(
       editorHTMLElement,
@@ -49626,7 +49620,7 @@
         document.querySelector(`#${spanId}`),
         'textae-editor__span'
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/getRightGrid.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/getRightGrid.js
 
     /* harmony default export */ function getRightGrid(
       editorHTMLElement,
@@ -49639,7 +49633,7 @@
       }
 
       return null
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/getRenderingPosition/getOffset.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/getRenderingPosition/getOffset.js
 
     /* harmony default export */ function getOffset(span, startOfTextNode) {
       const start = span.begin - startOfTextNode
@@ -49649,7 +49643,7 @@
         start,
         end
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/getRenderingPosition/getRenderingPositionFromParent.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/getRenderingPosition/getRenderingPositionFromParent.js
 
     /* harmony default export */ function getRenderingPositionFromParent(span) {
       const { start, end } = getOffset(span, span.parent.begin)
@@ -49659,7 +49653,7 @@
         start,
         end
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/isBoundaryCrossing.js
+    } // ./src/lib/Editor/isBoundaryCrossing.js
 
     /* harmony default export */ function isBoundaryCrossing(
       begin,
@@ -49676,7 +49670,7 @@
         isStartOfCandidateSpanBetweenExistsSpan ||
         isEndOfCandidateSpanBetweenExistSpan
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/getRenderingPosition/getRenderingPositionFromBigBrother.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/getRenderingPosition/getRenderingPositionFromBigBrother.js
 
     /* harmony default export */ function getRenderingPositionFromBigBrother(
       span,
@@ -49706,7 +49700,7 @@
         start,
         end
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/getRenderingPosition/index.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/getRenderingPosition/index.js
 
     /* harmony default export */ function getRenderingPosition(span) {
       const bigBrotherSpan = span.bigBrother
@@ -49721,7 +49715,7 @@
         // unless bigBrotherSpan exists.
         return getRenderingPositionFromParent(span)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/createRange.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/createRange.js
 
     /* harmony default export */ function createRange(textNode, start, end) {
       const range = document.createRange()
@@ -49730,7 +49724,7 @@
       range.setEnd(textNode, end)
 
       return range
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/index.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/createRangeToSpan/index.js
 
     // Get the Range to that new span tag insert.
     // This function works well when no child span is rendered.
@@ -49761,7 +49755,7 @@
       }
 
       return createRange(textNode, start, end)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/index.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/SpanInstance/index.js
 
     class SpanInstance {
       #isGridRendered = false
@@ -50200,7 +50194,7 @@
           }
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/isTouchable.js
+    } // ./src/lib/Editor/isTouchable.js
 
     // https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript/4819886#4819886
     /* harmony default export */ function isTouchable() {
@@ -50209,7 +50203,7 @@
         navigator.maxTouchPoints > 0 ||
         navigator.msMaxTouchPoints > 0
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/DenotationSpanInstance/index.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/DenotationSpanInstance/index.js
 
     const TEXT_HEIGHT = 23
     const MARGIN_TOP = 5
@@ -50388,7 +50382,7 @@
       get #gridHeightIncludeDescendantGrids() {
         return getGridHeightIncludeDescendantGrids(this)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/StyleSpanInstance.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/StyleSpanInstance.js
 
     class StyleSpanInstance extends SpanInstance {
       constructor(
@@ -50429,7 +50423,7 @@
       </span>
     `
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/BlockSpanInstance/renderBackground.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/BlockSpanInstance/renderBackground.js
 
     /* harmony default export */ function renderBackground(parentElement, id) {
       const div = dohtml_default().create(`
@@ -50438,7 +50432,7 @@
 
       // Always add to the top of the annotation box to place it behind the grid.
       parentElement.insertAdjacentElement('afterbegin', div)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/BlockSpanInstance/setPosition.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/BlockSpanInstance/setPosition.js
 
     /* harmony default export */ function setPosition(
       element,
@@ -50451,7 +50445,7 @@
       element.style.left = `${left}px`
       element.style.width = `${width}px`
       element.style.height = `${height}px`
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/BlockSpanInstance/index.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/BlockSpanInstance/index.js
 
     // Leave a gap between the text and the block border.
     const gapBetweenText = 8
@@ -50654,7 +50648,7 @@
         el.title = this.title
         return el
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/getBoundaryCrossingSpans.js
+    } // ./src/lib/Editor/AnnotationModel/getBoundaryCrossingSpans.js
 
     /* harmony default export */ function getBoundaryCrossingSpans(
       spans,
@@ -50662,7 +50656,7 @@
       end
     ) {
       return spans.filter(({ span }) => isBoundaryCrossing(begin, end, span))
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/isBoundaryCrossingWithOtherSpans.js
+    } // ./src/lib/Editor/AnnotationModel/isBoundaryCrossingWithOtherSpans.js
 
     // A span its range is coross over with other spans are not able to rendered.
     // Because spans are renderd with span tag. Html tags can not be cross over.
@@ -50680,7 +50674,7 @@
           end
         ).length > 0
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/rangeFrom.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/rangeFrom.js
 
     /* harmony default export */ function rangeFrom(
       spanInstanceContainer,
@@ -50707,14 +50701,14 @@
             (span.end <= left.end || span.end <= right.end)
         )
         .map((span) => span.id)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/getCurrentMaxHeight.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/getCurrentMaxHeight.js
 
     /* harmony default export */ function getCurrentMaxHeight(spans) {
       const maxHeight = Math.max(
         ...spans.map((span) => span.heightIncludeDescendantGrids)
       )
       return maxHeight
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/TextSelection/getOffsetFromParent.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/TextSelection/getOffsetFromParent.js
 
     /* harmony default export */ function getOffsetFromParent(node) {
       let offset = 0
@@ -50733,23 +50727,23 @@
       }
 
       return offset
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeTextBox.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeTextBox.js
 
     /* harmony default export */ function isNodeTextBox(node) {
       return node.classList.contains('textae-editor__text-box')
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeDenotationSpan.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeDenotationSpan.js
 
     /* harmony default export */ function isNodeDenotationSpan(node) {
       return node.classList.contains('textae-editor__span')
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeStyleSpan.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeStyleSpan.js
 
     /* harmony default export */ function isNodeStyleSpan(node) {
       return node.classList.contains('textae-editor__style')
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeBlockSpan.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/isNodeBlockSpan.js
 
     /* harmony default export */ function isNodeBlockSpan(node) {
       return node.classList.contains('textae-editor__block')
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/TextSelection/getParentOffset.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/TextSelection/getParentOffset.js
 
     /* harmony default export */ function getParentOffset(span, node) {
       const parent = node.parentElement
@@ -50764,7 +50758,7 @@
         return span.get(parent.id).begin
       }
       throw new Error(`Can not get position of a node : ${node} ${node.data}`)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/TextSelection/index.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/TextSelection/index.js
 
     class TextSelection {
       #selection
@@ -50810,7 +50804,7 @@
 
         return this.anchor
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/index.js
+    } // ./src/lib/Editor/AnnotationModel/SpanInstanceContainer/index.js
 
     class SpanInstanceContainer {
       #editorID
@@ -50984,13 +50978,13 @@
       find(type, begin, end) {
         switch (type) {
           case 'denotation':
-            return this.#denotations
-              .values()
-              .find((span) => span.begin === begin && span.end === end)
+            return Array.from(this.#denotations.values()).find(
+              (span) => span.begin === begin && span.end === end
+            )
           case 'block':
-            return this.#blocks
-              .values()
-              .find((span) => span.begin === begin && span.end === end)
+            return Array.from(this.#blocks.values()).find(
+              (span) => span.begin === begin && span.end === end
+            )
           default:
             // Style span has no entity.
             throw `${type} is unknown type span!`
@@ -51356,7 +51350,7 @@
     // EXTERNAL MODULE: ./node_modules/lodash.escape/index.js
     var lodash_escape = __webpack_require__(7901)
     var lodash_escape_default =
-      /*#__PURE__*/ __webpack_require__.n(lodash_escape) // CONCATENATED MODULE: ./src/lib/component/anemone.js
+      /*#__PURE__*/ __webpack_require__.n(lodash_escape) // ./src/lib/component/anemone.js
     // Escape template literals.
     // For example:
     //  anemone`<div>${'&'}</div>` === '<div>&amp;</div>'
@@ -51391,11 +51385,11 @@
       }
 
       return lodash_escape_default()(value)
-    } // CONCATENATED MODULE: ./src/lib/isURI.js
+    } // ./src/lib/isURI.js
 
     /* harmony default export */ function isURI(type) {
       return type.trim().startsWith('http')
-    } // CONCATENATED MODULE: ./src/lib/Editor/getMatchPrefix.js
+    } // ./src/lib/Editor/getMatchPrefix.js
 
     /* harmony default export */ function getMatchPrefix(namespace, type) {
       const namespaces = namespace.all
@@ -51406,7 +51400,7 @@
         })
       if (matchs.length === 1) return matchs[0]
       return null
-    } // CONCATENATED MODULE: ./src/lib/Editor/getUrlMatches.js
+    } // ./src/lib/Editor/getUrlMatches.js
 
     /* harmony default export */ function getUrlMatches(type) {
       // The regular-expression to parse URL.
@@ -51415,7 +51409,7 @@
       const urlRegex =
         /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[.][^\W\s]{2,4}|localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([/]?[^\s?]*[/]{1})*(?:\/?([^\s\n?[\]{}#]*(?:(?=\.)){1}|[^\s\n?[\]{}.#]*)?([.]{1}[^\s?#]*)?)?(?:\?{1}([^\s\n#[\]]*))?([#][^\s\n]*)?\)?/gi
       return urlRegex.exec(type)
-    } // CONCATENATED MODULE: ./src/lib/Editor/getDisplayName/getDisplayNameFromUri.js
+    } // ./src/lib/Editor/getDisplayName/getDisplayNameFromUri.js
 
     // Display short name for URL(http or https);
     /* harmony default export */ function getDisplayNameFromUri(type) {
@@ -51446,7 +51440,7 @@
         }
       }
       return type
-    } // CONCATENATED MODULE: ./src/lib/Editor/getDisplayName/index.js
+    } // ./src/lib/Editor/getDisplayName/index.js
 
     /* harmony default export */ function getDisplayName(
       namespace,
@@ -51469,7 +51463,7 @@
       }
 
       return value
-    } // CONCATENATED MODULE: ./src/lib/Editor/hexToRGBA.js
+    } // ./src/lib/Editor/hexToRGBA.js
 
     /* harmony default export */ function hexToRGBA(hex, alpha) {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
@@ -51479,11 +51473,11 @@
         result[2],
         16
       )}, ${parseInt(result[3], 16)}, ${alpha})`
-    } // CONCATENATED MODULE: ./src/lib/Editor/getLabelBackgroundColor.js
+    } // ./src/lib/Editor/getLabelBackgroundColor.js
 
     /* harmony default export */ function getLabelBackgroundColor() {
       return hexToRGBA('#FFFFFF', 0.6)
-    } // CONCATENATED MODULE: ./src/lib/Editor/getURI.js
+    } // ./src/lib/Editor/getURI.js
 
     /* harmony default export */ function getURI(namespace, value, uri) {
       if (isURI(value)) {
@@ -51510,14 +51504,14 @@
       }
 
       return null
-    } // CONCATENATED MODULE: ./src/lib/Editor/toAnchorElement.js
+    } // ./src/lib/Editor/toAnchorElement.js
 
     /* harmony default export */ function toAnchorElement(displayName, href) {
       return () =>
         href
           ? anemone`<a target="_blank" href="${href}">${displayName}</a>`
           : anemone`${displayName}`
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AttributeInstanceContainer/AttributeInstance.js
+    } // ./src/lib/Editor/AnnotationModel/AttributeInstanceContainer/AttributeInstance.js
 
     class AttributeInstance {
       #id
@@ -51718,7 +51712,7 @@
       get #valueType() {
         return this.#definitionContainer.get(this.pred).valueType
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/IdIssueContainer/index.js
+    } // ./src/lib/Editor/AnnotationModel/IdIssueContainer/index.js
 
     class IdIssueContainer extends InstanceContainer {
       #prefixFunc
@@ -51778,7 +51772,7 @@
         const max = Math.max(...wellFormattedIDs.values())
         return `${prefix}${max + 1}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AttributeInstanceContainer/MediaDictionary.js
+    } // ./src/lib/Editor/AnnotationModel/AttributeInstanceContainer/MediaDictionary.js
 
     // The browser cache is not available until the HTTP request is returned.
     // To make only one request for a single URL, have an application-level cache.
@@ -51839,7 +51833,7 @@
 
         return this._cache.get(url).value
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AttributeInstanceContainer/index.js
+    } // ./src/lib/Editor/AnnotationModel/AttributeInstanceContainer/index.js
 
     class AttributeInstanceContainer extends IdIssueContainer {
       #entityInstanceContainer
@@ -51931,7 +51925,7 @@
             this.#definitionContainer.attributeCompareFunction(a, b)
           )
       }
-    } // CONCATENATED MODULE: ./src/lib/TypeValues.js
+    } // ./src/lib/TypeValues.js
 
     class TypeValues {
       constructor(typeName, attributes = []) {
@@ -51991,7 +51985,7 @@
           return true
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/updatePath.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/updatePath.js
 
     /* harmony default export */ function updatePath(
       path,
@@ -52008,13 +52002,13 @@
       } else {
         path.classList.remove('textae-editor__relation--isBold')
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/NS.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/NS.js
 
     const NS = {
       SVG: 'http://www.w3.org/2000/svg'
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/MarkerHeight.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/MarkerHeight.js
 
-    const MarkerHeight = 6 // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/createSourceBollard.js
+    const MarkerHeight = 6 // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/createSourceBollard.js
 
     /* harmony default export */ function createSourceBollard() {
       const bollard = document.createElementNS(NS.SVG, 'polygon')
@@ -52024,14 +52018,14 @@
       )
 
       return bollard
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/createTargetBollard.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/createTargetBollard.js
 
     /* harmony default export */ function createTargetBollard() {
       const bollard = document.createElementNS(NS.SVG, 'polygon')
       bollard.setAttribute('points', `-4 0, 4 0, 0 ${MarkerHeight}`)
 
       return bollard
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/createPath.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/createPath.js
 
     /**
      *
@@ -52041,7 +52035,7 @@
       const path = document.createElementNS(NS.SVG, 'path')
       path.classList.add('textae-editor__relation')
       return path
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/moveJetty.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/moveJetty.js
 
     /**
      *
@@ -52057,7 +52051,7 @@
           entity.offsetCenter
         } ${entity.offsetTop}`
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/createJetty.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/createJetty.js
 
     /* harmony default export */ function createJetty(x, y, entity) {
       const jetty = document.createElementNS(NS.SVG, 'polyline')
@@ -52065,7 +52059,7 @@
       moveJetty(jetty, x, y, entity)
 
       return jetty
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CurveAlgorithm.js
 
     class CurveAlgorithm {
       /**
@@ -52161,7 +52155,7 @@
       get _targetControlX() {
         return this._startAndEnd.end.x
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/BentOnTargetCurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/BentOnTargetCurveAlgorithm.js
 
     class BentOnTargetCurveAlgorithm extends CurveAlgorithm {
       get isSourceJettyVisible() {
@@ -52213,7 +52207,7 @@
           (this._startAndEnd.isPointingToRight ? 150 : -150)
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/BentOnSourceCurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/BentOnSourceCurveAlgorithm.js
 
     class BentOnSourceCurveAlgorithm extends CurveAlgorithm {
       get isSourceJettyVisible() {
@@ -52266,7 +52260,7 @@
           (this._startAndEnd.isPointingToRight ? 150 : -150)
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/PointingDownCurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/PointingDownCurveAlgorithm.js
 
     class PointingDownCurveAlgorithm extends CurveAlgorithm {
       get isSourceJettyVisible() {
@@ -52302,7 +52296,7 @@
       get sourceY() {
         return this._toolBarHeight - this._clientTopOfContainer
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/PointingUpCurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/PointingUpCurveAlgorithm.js
 
     class PointingUpCurveAlgorithm extends CurveAlgorithm {
       get isSourceJettyVisible() {
@@ -52339,7 +52333,7 @@
       get targetY() {
         return this._toolBarHeight - this._clientTopOfContainer
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/ArchedCurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/ArchedCurveAlgorithm.js
 
     class ArchedCurveAlgorithm extends CurveAlgorithm {
       get isSourceJettyVisible() {
@@ -52349,7 +52343,7 @@
       get isTargetJettyVisible() {
         return true
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/StartAndEnd.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/StartAndEnd.js
 
     class StartAndEnd_startAndEnd {
       /**
@@ -52491,7 +52485,7 @@
         const index = relations.indexOf(this._relation)
         return relations.length === 1 ? 0.5 : index / (relations.length - 1)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnSourceBentOnSourceCurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnSourceBentOnSourceCurveAlgorithm.js
 
     class CutOffOnSourceBentOnSourceCurveAlgorithm extends BentOnSourceCurveAlgorithm {
       get isSourceJettyVisible() {
@@ -52517,7 +52511,7 @@
 
         return offsetBottomOfContainer - 8
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnTargetBentOnTargetCurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnTargetBentOnTargetCurveAlgorithm.js
 
     class CutOffOnTargetBentOnTargetCurveAlgorithm extends BentOnTargetCurveAlgorithm {
       get isSourceJettyVisible() {
@@ -52543,7 +52537,7 @@
 
         return offsetBottomOfContainer - 8
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnSourceBentOnTargetCurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnSourceBentOnTargetCurveAlgorithm.js
 
     class CutOffOnSourceBentOnTargetCurveAlgorithm extends BentOnTargetCurveAlgorithm {
       get isSourceJettyVisible() {
@@ -52569,7 +52563,7 @@
 
         return offsetBottomOfContainer - 8
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnTargetBentOnSourceCurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnTargetBentOnSourceCurveAlgorithm.js
 
     class CutOffOnTargetBentOnSourceCurveAlgorithm extends BentOnSourceCurveAlgorithm {
       get isSourceJettyVisible() {
@@ -52595,7 +52589,7 @@
 
         return offsetBottomOfContainer - 8
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnSourceArchedCurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnSourceArchedCurveAlgorithm.js
 
     class CutOffOnSourceArchedCurveAlgorithm extends ArchedCurveAlgorithm {
       get isSourceJettyVisible() {
@@ -52621,7 +52615,7 @@
 
         return offsetBottomOfContainer - 8
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnTargetArchedCurveAlgorithm.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/CutOffOnTargetArchedCurveAlgorithm.js
 
     class CutOffOnTargetArchedCurveAlgorithm extends ArchedCurveAlgorithm {
       get isSourceJettyVisible() {
@@ -52647,7 +52641,7 @@
 
         return offsetBottomOfContainer - 8
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/index.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/CurveAlgorithmFactory/index.js
 
     class CurveAlgorithmFactory {
       static create(
@@ -52784,7 +52778,7 @@
           )
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/index.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Arrow/index.js
 
     class Arrow {
       #container
@@ -53010,7 +53004,7 @@
           this.#targetJetty = null
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/SignboardHTMLElement.js
+    } // ./src/lib/Editor/SignboardHTMLElement.js
 
     const CSS_CLASS_SELECTED = 'textae-editor__signboard--selected'
     const CSS_CLASS_HOVERED = 'textae-editor__signboard--hovered'
@@ -53145,7 +53139,7 @@
   </div>
   `
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Label.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/Label.js
 
     class Label {
       #container
@@ -53229,7 +53223,7 @@
           this.#arrow.top - 18 - this.#relation.attributes.length * 18
         }px`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/index.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/RelationInstance/index.js
 
     class RelationInstance {
       #editorHTMLElement
@@ -53682,7 +53676,7 @@
           this.#label.updateHighlighting()
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/index.js
+    } // ./src/lib/Editor/AnnotationModel/RelationInstanceContainer/index.js
 
     class RelationInstanceContainer extends IdIssueContainer {
       #editorHTMLElement
@@ -53766,7 +53760,7 @@
         }
         super.clear()
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/EntityInstance.js
+    } // ./src/lib/Editor/EntityInstance.js
 
     const DistanceToShift = 8
     // Leave a gap half the width of the triangle so that the triangle does not intersect the vertical line.
@@ -54245,7 +54239,7 @@
           relation.redrawLineConsideringSelection()
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/EntityInstanceContainer.js
+    } // ./src/lib/Editor/AnnotationModel/EntityInstanceContainer.js
 
     class EntityInstanceContainer extends IdIssueContainer {
       #editorID
@@ -54439,7 +54433,7 @@
           (denotation) => denotation.id === denotationID
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/readAcceptedAnnotationTo/IDConflictResolver.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/readAcceptedAnnotationTo/IDConflictResolver.js
 
     // To avoid ID collisions when reading multi-track annotations,
     // add the track number before the ID.
@@ -54492,7 +54486,7 @@
       _prependTrackNumberTo(val) {
         return this._trackNumber + val
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/readAcceptedAnnotationTo/convertBeginAndEndOfSpanToInteger.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/readAcceptedAnnotationTo/convertBeginAndEndOfSpanToInteger.js
 
     // If the begin or end value is a string,
     // the comparison with other numbers cannot be done correctly.
@@ -54521,7 +54515,7 @@
       // You cannot generate a valid value for the ID of HTML element of span
       // from a begin or end that contains a decimal point.
       return { ...span, begin: parseInt(span.begin), end: parseInt(span.end) }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/readAcceptedAnnotationTo/index.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/readAcceptedAnnotationTo/index.js
 
     /* harmony default export */ function readAcceptedAnnotationTo(
       spanInstanceContainer,
@@ -54553,20 +54547,20 @@
       entityInstanceContainer.addSource(blocks, 'block')
       relationInstanceContainer.addSource(relations)
       attributeInstanceContainer.addSource(attributes)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/getSpanValidation/isBeginAndEndIn/isInText.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/getSpanValidation/isBeginAndEndIn/isInText.js
 
     /* harmony default export */ function isInText(boundary, text) {
       return 0 <= boundary && boundary <= text.length
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/getSpanValidation/isBeginAndEndIn/index.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/getSpanValidation/isBeginAndEndIn/index.js
 
     /* harmony default export */ function isBeginAndEndIn(text, span) {
       return isInText(span.begin, text) && isInText(span.end, text)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/ChainValidation/setSourceProperty.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/ChainValidation/setSourceProperty.js
 
     /* harmony default export */ function setSourceProperty(n, name) {
       n.sourceProperty = name
       return n
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/ErrorMap.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/ErrorMap.js
 
     class ErrorMap {
       constructor() {
@@ -54595,7 +54589,7 @@
         (acc, errorMap) => acc.concat(errorMap.getErrors(name)),
         []
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/ChainValidation/index.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/ChainValidation/index.js
 
     class ChainValidation {
       constructor(
@@ -54691,7 +54685,7 @@
 
         return result
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/getSpanValidation/index.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/getSpanValidation/index.js
 
     /* harmony default export */ function getSpanValidation(
       targetSpans,
@@ -54710,7 +54704,7 @@
           )
           return [bondaryCrossingSpans.length === 0, bondaryCrossingSpans]
         })
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateTypeSettings.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateTypeSettings.js
 
     /* harmony default export */ function validateTypeSettings(
       text,
@@ -54723,14 +54717,14 @@
         allSpans,
         'typesettings'
       ).validateAll()
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/isContains.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/isContains.js
 
     /* harmony default export */ function isContains(
       dictionary,
       referedEntityId
     ) {
       return dictionary.some((entry) => entry.id === referedEntityId)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateAttribute/isUniqueIn.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateAttribute/isUniqueIn.js
 
     /* harmony default export */ function isUniqueIn(attributes, node) {
       return (
@@ -54739,7 +54733,7 @@
             a.subj === node.subj && a.pred === node.pred && a.obj === node.obj
         ).length === 1
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateAttribute/index.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateAttribute/index.js
 
     /* harmony default export */ function validateAttribute(
       subjects,
@@ -54749,7 +54743,7 @@
         .and('subject', (a) => isContains(subjects, a.subj))
         .and('unique', (node) => isUniqueIn(attributes, node))
         .validateAll()
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateRelation.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateRelation.js
 
     /* harmony default export */ function validateRelation(
       denotations,
@@ -54759,7 +54753,7 @@
         .and('object', (r) => isContains(denotations, r.obj))
         .and('subject', (r) => isContains(denotations, r.subj))
         .validateAll()
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/transformToReferencedEntitiesError.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/transformToReferencedEntitiesError.js
 
     /* harmony default export */ function transformToReferencedEntitiesError(
       attributeSubj,
@@ -54788,7 +54782,7 @@
             return relation
           })
         )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/isIDUnique.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/isIDUnique.js
 
     /* harmony default export */ function isIDUnique(spans, node) {
       // Span without ID is acceptable.
@@ -54796,7 +54790,7 @@
         node.id === undefined ||
         spans.filter((d) => node.id && node.id === d.id).length === 1
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateDenotation.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateDenotation.js
 
     /* harmony default export */ function validateDenotation(
       text,
@@ -54812,7 +54806,7 @@
       )
         .and('uniqueID', (n) => isIDUnique(spansInTrack, n))
         .validateAll()
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateBlock.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/validateBlock.js
 
     /* harmony default export */ function validateBlock(
       text,
@@ -54831,7 +54825,7 @@
             ).length === 1
         )
         .validateAll()
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/debugLogCrossing.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/debugLogCrossing.js
 
     /* harmony default export */ function debugLogCrossing(name, errors) {
       for (const [key, values] of errors.getInhibitors('isNotCrossing')) {
@@ -54843,12 +54837,12 @@
             .join(', ')}`
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/getAllSpansIn.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/getAllSpansIn.js
 
     /* harmony default export */ function getAllSpansIn(track) {
       const { typesettings, denotations, blocks } = track
       return (typesettings || []).concat(denotations || []).concat(blocks || [])
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/index.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/validateAnnotation/index.js
 
     /* harmony default export */ function validateAnnotation(
       text,
@@ -54930,7 +54924,7 @@
             errorTypeSettings.size
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/parseTracks.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/parseTracks.js
 
     /* harmony default export */ function parseTracks(
       spanContainer,
@@ -54961,7 +54955,7 @@
         reject.name = `Track ${number} annotations.`
         return reject
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/getAllSpansOf.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/getAllSpansOf.js
 
     // The boundaries of elements in the typesetings and
     // the denotations and blocks cannot cross each other.
@@ -54977,7 +54971,7 @@
       }
 
       return spans
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/index.js
+    } // ./src/lib/Editor/AnnotationModel/AnnotationEvaluator/index.js
 
     class AnnotationEvaluator {
       #namespaceInstanceContainer
@@ -55069,7 +55063,7 @@
       get #spans() {
         return getAllSpansOf(this.#rowData)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/toDenotations.js
+    } // ./src/lib/Editor/AnnotationModel/toDenotations.js
 
     /* harmony default export */ function toDenotations(annotationModel) {
       return annotationModel.entityInstanceContainer.denotations.map(
@@ -55082,7 +55076,7 @@
           obj: entity.typeName
         })
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/toRelations.js
+    } // ./src/lib/Editor/AnnotationModel/toRelations.js
 
     /* harmony default export */ function toRelations(annotationModel) {
       return annotationModel.relationInstanceContainer.all.map((r) => {
@@ -55093,7 +55087,7 @@
           obj: r.obj
         }
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/toBlocks.js
+    } // ./src/lib/Editor/AnnotationModel/toBlocks.js
 
     /* harmony default export */ function toBlocks(annotationModel) {
       return annotationModel.entityInstanceContainer.blocks.map((entity) => ({
@@ -55104,7 +55098,7 @@
         },
         obj: entity.typeName
       }))
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/getReplicationRanges/getDuplicateSentenceFromText.js
+    } // ./src/lib/Editor/AnnotationModel/getReplicationRanges/getDuplicateSentenceFromText.js
 
     /* harmony default export */ function getDuplicateSentenceFromText(
       text,
@@ -55131,7 +55125,7 @@
       }
 
       return findRanges
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/getReplicationRanges/isWord.js
+    } // ./src/lib/Editor/AnnotationModel/getReplicationRanges/isWord.js
 
     // The preceding character and the following of a word character are delimiter.
     // For example, 't' ,a part of 'that', is not same with an origin span when it is 't'.
@@ -55145,7 +55139,7 @@
       const followingChar = sourceDoc.charAt(end)
 
       return isDelimiterFunc(precedingChar) && isDelimiterFunc(followingChar)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/getReplicationRanges/index.js
+    } // ./src/lib/Editor/AnnotationModel/getReplicationRanges/index.js
 
     // Check replications are word or not if spanConfig is set.
     /* harmony default export */ function getReplicationRanges(
@@ -55169,7 +55163,7 @@
         .filter(
           ({ begin, end }) => !span.isBoundaryCrossingWithOtherSpans(begin, end)
         )
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/TypeGap.js
+    } // ./src/lib/Editor/AnnotationModel/TypeGap.js
 
     class TypeGap {
       constructor(callback) {
@@ -55208,7 +55202,7 @@
           this._callback(val)
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/createTextBox/focusEditorWhenFocusedChildRemoved.js
+    } // ./src/lib/Editor/AnnotationModel/createTextBox/focusEditorWhenFocusedChildRemoved.js
 
     // Focus of the editor or children element is necessary to listen to keyboard events.
     // Elements be able to focused are the editor, spans and entity types.
@@ -55242,19 +55236,19 @@
         childList: true,
         subtree: true
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/createTextBox/TextBox/pixelToInt.js
+    } // ./src/lib/Editor/AnnotationModel/createTextBox/TextBox/pixelToInt.js
 
     /* harmony default export */ function pixelToInt(str) {
       // The default value of google chrome line-height is "normal".
       // "normal" cannot be converted to an integer.
       const i = parseInt(str, 10)
       return isNaN(i) ? 0 : i
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/createTextBox/TextBox/getLineHeight.js
+    } // ./src/lib/Editor/AnnotationModel/createTextBox/TextBox/getLineHeight.js
 
     /* harmony default export */ function getLineHeight(textBox) {
       const style = window.getComputedStyle(textBox)
       return pixelToInt(style.lineHeight)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/createTextBox/TextBox/setLineHeight.js
+    } // ./src/lib/Editor/AnnotationModel/createTextBox/TextBox/setLineHeight.js
 
     /* harmony default export */ function setLineHeight(
       textBox,
@@ -55263,7 +55257,7 @@
     ) {
       textBox.style.lineHeight = `${heightValue}px`
       textBox.style.paddingTop = `${heightValue / 2 + additionalPaddingTop}px`
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/createTextBox/TextBox/updateTextBoxHeight.js
+    } // ./src/lib/Editor/AnnotationModel/createTextBox/TextBox/updateTextBoxHeight.js
 
     // Reduce the space under the .textae-editor__text-box same as padding-top.
     /* harmony default export */ function updateTextBoxHeight(
@@ -55281,7 +55275,7 @@
         20 +
         additionalPaddingTop
       }px`
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/createTextBox/TextBox/index.js
+    } // ./src/lib/Editor/AnnotationModel/createTextBox/TextBox/index.js
 
     class TextBox {
       #editorHTMLElement
@@ -55358,7 +55352,7 @@
         const width = parseFloat(window.getComputedStyle(this.#el).width)
         relationBox.style.width = `${width - 10}px`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/createTextBox/index.js
+    } // ./src/lib/Editor/AnnotationModel/createTextBox/index.js
 
     /* harmony default export */ function createTextBox(
       editorHTMLElement,
@@ -55392,7 +55386,7 @@
 
     // EXTERNAL MODULE: ./node_modules/observ/index.js
     var observ = __webpack_require__(504)
-    var observ_default = /*#__PURE__*/ __webpack_require__.n(observ) // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/TypeDictionary.js
+    var observ_default = /*#__PURE__*/ __webpack_require__.n(observ) // ./src/lib/Editor/AnnotationModel/TypeDictionary.js
     class TypeDictionary {
       /**
        *
@@ -55486,7 +55480,7 @@
 
         this._eventEmitter.emit(`textae-event.type-definition.reset`)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/DefinitionContainer/formatForPallet/index.js
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/formatForPallet/index.js
 
     /* harmony default export */ function formatForPallet(
       types,
@@ -55505,7 +55499,7 @@
           (definedTypes.has(id) && definedTypes.get(id).color) || defaultColor,
         useNumber: countMap.get(id).usage
       }))
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/getForwardMatchTypes.js
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/getForwardMatchTypes.js
 
     /* harmony default export */ function getForwardMatchTypes(typeIds, id) {
       const forwardMatchTypes = []
@@ -55520,7 +55514,7 @@
       }
 
       return forwardMatchTypes
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/getLongestIdMatchType.js
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/getLongestIdMatchType.js
 
     /* harmony default export */ function getLongestIdMatchType(typeIds) {
       let longestMatchId = ''
@@ -55532,7 +55526,7 @@
       }
 
       return longestMatchId
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/getForwardMatchType.js
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/getForwardMatchType.js
 
     /* harmony default export */ function getForwardMatchType(
       definedTypes,
@@ -55547,7 +55541,7 @@
 
       // If some wildcard-id are matched, return the type of the most longest matched.
       return definedTypes.get(getLongestIdMatchType(forwardMatchTypes))
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/index.js
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/index.js
 
     /* harmony default export */ function getConfig(definedTypes, id) {
       // Return value if perfectly matched
@@ -55557,7 +55551,7 @@
 
       // Return value if forward matched
       return getForwardMatchType(definedTypes, id)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/index.js
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/index.js
 
     class DefinedTypeContainer {
       // Expected values is an array of object.
@@ -55607,7 +55601,7 @@
       get map() {
         return this._list.reduce((acc, cur) => acc.set(cur.id, cur), new Map())
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/DefinitionContainer/sortByCountAndName.js
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/sortByCountAndName.js
 
     /* harmony default export */ function sortByCountAndName(countTypeUse) {
       // Sort by number of types, and by name if numbers are same.
@@ -55619,7 +55613,7 @@
       })
 
       return typeNames
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/DefinitionContainer/countUsage.js
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/countUsage.js
 
     /* harmony default export */ function countUsage(map, instances) {
       for (const [key, value] of map.entries()) {
@@ -55631,7 +55625,7 @@
 
         return countMap
       }, map)
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/DefinitionContainer/index.js
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/index.js
 
     class DefinitionContainer {
       constructor(
@@ -55815,7 +55809,7 @@
           id
         )
       }
-    } // CONCATENATED MODULE: ./node_modules/array-move/index.js
+    } // ./node_modules/array-move/index.js
 
     function arrayMoveMutable(array, fromIndex, toIndex) {
       const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex
@@ -55832,7 +55826,7 @@
       array = [...array]
       arrayMoveMutable(array, fromIndex, toIndex)
       return array
-    } // CONCATENATED MODULE: ./src/lib/AttributeDefinition.js
+    } // ./src/lib/AttributeDefinition.js
 
     class AttributeDefinition {
       constructor(valueType, pred) {
@@ -55861,7 +55855,7 @@
         }
         return values
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AttributeDefinitionContainer/createAttributeDefinition/FlagAttributeDefinition.js
+    } // ./src/lib/Editor/AttributeDefinitionContainer/createAttributeDefinition/FlagAttributeDefinition.js
 
     class FlagAttributeDefinition extends AttributeDefinition {
       constructor(valueType, hash) {
@@ -55898,15 +55892,15 @@
           }
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/IntervalNotation/gte.js
+    } // ./src/lib/IntervalNotation/gte.js
 
     /* harmony default export */ function gte(left, right) {
       return left <= right
-    } // CONCATENATED MODULE: ./src/lib/IntervalNotation/gt.js
+    } // ./src/lib/IntervalNotation/gt.js
 
     /* harmony default export */ function gt(left, right) {
       return left < right
-    } // CONCATENATED MODULE: ./src/lib/IntervalNotation/getLowwerCond.js
+    } // ./src/lib/IntervalNotation/getLowwerCond.js
 
     /* harmony default export */ function getLowwerCond(str) {
       if (str.startsWith('[')) {
@@ -55916,7 +55910,7 @@
         return (right) => gt(new Number(str.replace('(', '')), right)
       }
       throw `${str} is not valid interval notation`
-    } // CONCATENATED MODULE: ./src/lib/IntervalNotation/getUpperCond.js
+    } // ./src/lib/IntervalNotation/getUpperCond.js
 
     /* harmony default export */ function getUpperCond(str) {
       if (str.endsWith(']')) {
@@ -55926,7 +55920,7 @@
         return (left) => gt(left, new Number(str.replace(')', '')))
       }
       throw `${str} is not valid interval notation`
-    } // CONCATENATED MODULE: ./src/lib/IntervalNotation/index.js
+    } // ./src/lib/IntervalNotation/index.js
 
     // https://www.varsitytutors.com/hotmath/hotmath_help/topics/interval-notation
     class IntervalNotation {
@@ -55958,11 +55952,11 @@
       test(value) {
         return this._lowwerCond(value) && this._upperCond(value)
       }
-    } // CONCATENATED MODULE: ./src/lib/isAbleToParseFloat.js
+    } // ./src/lib/isAbleToParseFloat.js
 
     /* harmony default export */ function isAbleToParseFloat(str) {
       return !Number.isNaN(parseFloat(str))
-    } // CONCATENATED MODULE: ./src/lib/NumericAttributeDefinition.js
+    } // ./src/lib/NumericAttributeDefinition.js
 
     const DEFAULT = 0
     const STEP = 2
@@ -56035,7 +56029,7 @@
           }
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AttributeDefinitionContainer/createAttributeDefinition/SelectionAttributeDefinition.js
+    } // ./src/lib/Editor/AttributeDefinitionContainer/createAttributeDefinition/SelectionAttributeDefinition.js
 
     class SelectionAttributeDefinition extends AttributeDefinition {
       constructor(valueType, hash) {
@@ -56090,7 +56084,7 @@
           }
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AttributeDefinitionContainer/createAttributeDefinition/StringAttributeDefinition.js
+    } // ./src/lib/Editor/AttributeDefinitionContainer/createAttributeDefinition/StringAttributeDefinition.js
 
     class StringAttributeDefinition extends AttributeDefinition {
       constructor(valueType, hash) {
@@ -56154,7 +56148,7 @@
           }
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AttributeDefinitionContainer/createAttributeDefinition/index.js
+    } // ./src/lib/Editor/AttributeDefinitionContainer/createAttributeDefinition/index.js
 
     /* harmony default export */ function createAttributeDefinition(
       valueType,
@@ -56174,7 +56168,7 @@
             `${valueType} of ${JSON.stringify(hash)} is Uknown Attribute`
           )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AttributeDefinitionContainer/index.js
+    } // ./src/lib/Editor/AttributeDefinitionContainer/index.js
 
     class AttributeDefinitionContainer {
       constructor(eventEmitter, getAllInstanceFunc) {
@@ -56357,7 +56351,7 @@
 
         return 0
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/LineHeightAuto.js
+    } // ./src/lib/Editor/AnnotationModel/LineHeightAuto.js
 
     class LineHeightAuto {
       /**
@@ -56383,7 +56377,7 @@
           this._textBox.updateLineHeight()
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModel/index.js
+    } // ./src/lib/Editor/AnnotationModel/index.js
 
     class AnnotationModel {
       #sourceDoc
@@ -56824,7 +56818,7 @@
         // Clear rendered annotations.
         getAnnotationBox(this.#editorHTMLElement).innerHTML = ''
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/SpanConfig.js
+    } // ./src/lib/Editor/UseCase/SpanConfig.js
 
     const defaults = {
       'delimiter characters': [
@@ -56888,7 +56882,7 @@
 
         return str
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/History.js
+    } // ./src/lib/Editor/UseCase/Commander/History.js
 
     // histories of edit to undo and redo.
     class History {
@@ -56963,7 +56957,7 @@
         this._pointer = -1
         this._histories = []
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/commandLog.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/commandLog.js
 
     /* harmony default export */ function commandLog(self, message, object) {
       // For debug
@@ -56972,7 +56966,7 @@
       } else {
         console.log(`[${self.constructor.name}]`, message)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/BaseCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/BaseCommand.js
 
     class BaseCommand {
       get isEmpty() {
@@ -56982,13 +56976,13 @@
       isExactly(kind) {
         return this.kind.has(kind) && this.kind.size === 1
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/AnnotationCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/AnnotationCommand.js
 
     class AnnotationCommand extends BaseCommand {
       get kind() {
         return new Set(['annotation_command'])
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/commandTemplate.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/commandTemplate.js
 
     class CreateCommand extends AnnotationCommand {
       #annotationModel
@@ -57057,13 +57051,13 @@
           this.#instance
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ConfigurationCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ConfigurationCommand.js
 
     class ConfigurationCommand extends BaseCommand {
       get kind() {
         return new Set(['configuration_command'])
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/RemoveValueFromAttributeDefinitionCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/RemoveValueFromAttributeDefinitionCommand.js
 
     class RemoveValueFromAttributeDefinitionCommand extends ConfigurationCommand {
       constructor(
@@ -57135,7 +57129,7 @@
           this._index
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/AddValueToAttributeDefinitionCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/AddValueToAttributeDefinitionCommand.js
 
     class AddValueToAttributeDefinitionCommand extends ConfigurationCommand {
       constructor(definitionContainer, attrDef, value, index = null) {
@@ -57193,7 +57187,7 @@
           this._indexThatRemoveDefaultFrom
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CompositeCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/CompositeCommand.js
 
     class CompositeCommand extends BaseCommand {
       constructor() {
@@ -57258,7 +57252,7 @@
       get isEmpty() {
         return !this._subCommands || this._subCommands.length === 0
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndReflectInstancesCommand/ChangeAttributeDefinitionCommand/applyChangedProperties.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndReflectInstancesCommand/ChangeAttributeDefinitionCommand/applyChangedProperties.js
 
     /* harmony default export */ function applyChangedProperties(
       oldAttrDef,
@@ -57280,7 +57274,7 @@
         }
       }
       return [newAttrDef, revertChangedProperties]
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndReflectInstancesCommand/ChangeAttributeDefinitionCommand/index.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndReflectInstancesCommand/ChangeAttributeDefinitionCommand/index.js
 
     class ChangeAttributeDefinitionCommand extends ConfigurationCommand {
       /**
@@ -57322,7 +57316,7 @@
           this._revertChangedProperties
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeCommand.js
 
     class ChangeAttributeCommand extends AnnotationCommand {
       #annotationModel
@@ -57365,7 +57359,7 @@
           this.#oldObj
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndReflectInstancesCommand/index.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeDefinitionAndReflectInstancesCommand/index.js
 
     class ChangeAttributeDefinitionAndReflectInstancesCommand extends CompositeCommand {
       constructor(
@@ -57422,7 +57416,7 @@
           ([id, val]) => `${id}:${val}`
         )} to attribute definition ${attrDef.pred}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeObjOfItemsCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeAttributeObjOfItemsCommand.js
 
     class ChangeAttributeObjOfItemsCommand extends CompositeCommand {
       constructor(eventEmitter, annotationModel, items, attrDef, newObj) {
@@ -57456,7 +57450,7 @@
           .map((attribute) => attribute.id)
           .join(',')}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/getAddPatternToStringAttributeDefinitionCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/getAddPatternToStringAttributeDefinitionCommand.js
 
     /* harmony default export */ function getAddPatternToStringAttributeDefinitionCommand(
       definitionContainer,
@@ -57482,7 +57476,7 @@
           }
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeStringAttributeObjOfItemsCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeStringAttributeObjOfItemsCommand.js
 
     class ChangeStringAttributeObjOfItemsCommand extends CompositeCommand {
       constructor(
@@ -57534,7 +57528,7 @@
           .map((attribute) => attribute.id)
           .join(',')}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeAnnotationCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeAnnotationCommand.js
 
     class ChangeAnnotationCommand extends AnnotationCommand {
       #annotationDataModel
@@ -57574,7 +57568,7 @@
           this.oldType
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeNameAndAttributeOfSelectedItemsCommand/getChangeAttributeCommands.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeNameAndAttributeOfSelectedItemsCommand/getChangeAttributeCommands.js
 
     /* harmony default export */ function getChangeAttributeCommands(
       items,
@@ -57626,7 +57620,7 @@
       }
 
       return changeAttributeCommnads
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeNameAndAttributeOfSelectedItemsCommand/index.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeNameAndAttributeOfSelectedItemsCommand/index.js
 
     class ChangeTypeNameAndAttributeOfSelectedItemsCommand extends CompositeCommand {
       constructor(
@@ -57683,7 +57677,7 @@
             : ``
         } to ${annotationType} items ${itemsWithChange.map((i) => i.id)}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionCommand/applyChangedProperties.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionCommand/applyChangedProperties.js
 
     /* harmony default export */ function ChangeTypeDefinitionCommand_applyChangedProperties(
       changedProperties,
@@ -57707,7 +57701,7 @@
       }
 
       return [newType, revertChangedProperties]
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionCommand/index.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionCommand/index.js
 
     class ChangeTypeDefinitionCommand extends ConfigurationCommand {
       constructor(
@@ -57762,7 +57756,7 @@
           this.revertDefaultTypeId
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/RemoveTypeDefinitionCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/RemoveTypeDefinitionCommand.js
 
     class RemoveTypeDefinitionCommand extends ConfigurationCommand {
       constructor(definitionContainer, removeType, revertDefaultTypeId) {
@@ -57796,7 +57790,7 @@
           this._removeType
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateTypeDefinitionCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/CreateTypeDefinitionCommand.js
 
     class CreateTypeDefinitionCommand extends ConfigurationCommand {
       constructor(definitionContainer, newType) {
@@ -57826,7 +57820,7 @@
           this._revertDefaultTypeId
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/createChangeConfigCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/createChangeConfigCommand.js
 
     /* harmony default export */ function createChangeConfigCommand(
       definitionContainer,
@@ -57853,7 +57847,7 @@
           ...Object.fromEntries(changedProperties)
         })
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeValuesCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeValuesCommand.js
 
     class ChangeTypeValuesCommand extends CompositeCommand {
       constructor(
@@ -57899,7 +57893,7 @@
             : ``
         }`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionAndReflectInstancesCommand/createChangeAnnotationCommands.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionAndReflectInstancesCommand/createChangeAnnotationCommands.js
 
     /* harmony default export */ function createChangeAnnotationCommands(
       annotationModel,
@@ -57918,7 +57912,7 @@
             newTypeName
           )
         })
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionAndReflectInstancesCommand/index.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeDefinitionAndReflectInstancesCommand/index.js
 
     class ChangeTypeDefinitionAndReflectInstancesCommand extends CompositeCommand {
       constructor(
@@ -57956,7 +57950,7 @@
           ([id, val]) => `${id}:${val}`
         )} to type definition ${id}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeOfSelectedItemsCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeTypeOfSelectedItemsCommand.js
 
     class ChangeTypeOfSelectedItemsCommand extends CompositeCommand {
       constructor(annotationModel, selectionModel, annotationType, typeName) {
@@ -57977,7 +57971,7 @@
         )
         this._logMessage = `set type ${typeName} to ${annotationType} items ${itemsWithChange}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeValueOfAttributeDefinitionAndObjectOfAttributeCommand/ChangeValueOfAttributeDefinitionCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeValueOfAttributeDefinitionAndObjectOfAttributeCommand/ChangeValueOfAttributeDefinitionCommand.js
 
     class ChangeValueOfAttributeDefinitionCommand extends ConfigurationCommand {
       constructor(
@@ -58068,7 +58062,7 @@
           this._indexThatRemoveDefaultFrom
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeValueOfAttributeDefinitionAndObjectOfAttributeCommand/index.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeValueOfAttributeDefinitionAndObjectOfAttributeCommand/index.js
 
     class ChangeValueOfAttributeDefinitionAndObjectOfAttributeCommand extends CompositeCommand {
       constructor(
@@ -58116,7 +58110,7 @@
 
         this._logMessage = `attribute: ${attrDef.pred}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/DeleteAttributeDefinitionCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/DeleteAttributeDefinitionCommand.js
 
     class DeleteAttributeDefinitionCommand extends ConfigurationCommand {
       constructor(definitionContainer, attrDef) {
@@ -58144,7 +58138,7 @@
           this._index
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateAttributeDefinitionCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/CreateAttributeDefinitionCommand.js
 
     class CreateAttributeDefinitionCommand extends ConfigurationCommand {
       /** @param {import("../../../AttributeDefinitionContainer").default} definitionContainer */
@@ -58190,7 +58184,7 @@
           this._newAttrDef
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/getCreateAttributeToItemsCommands.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/getCreateAttributeToItemsCommands.js
 
     /* harmony default export */ function getCreateAttributeToItemsCommands(
       annotationModel,
@@ -58208,7 +58202,7 @@
             obj
           })
         })
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateAttributeToItemsCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/CreateAttributeToItemsCommand.js
 
     class CreateAttributeToItemsCommand extends CompositeCommand {
       constructor(annotationModel, items, attributeDefinition, obj) {
@@ -58225,7 +58219,7 @@
           attributeDefinition.default
         } to item ${items.map(({ id }) => id).join(', ')}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateEntityAndAttributesCommand/CreateAttributeToTheLatestEntityCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/CreateEntityAndAttributesCommand/CreateAttributeToTheLatestEntityCommand.js
 
     class CreateAttributeToTheLatestEntityCommand extends CreateCommand {
       constructor(annotationModel, obj, pred) {
@@ -58240,7 +58234,7 @@
         this._instance.subj = subj
         return super.execute()
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateEntityAndAttributesCommand/index.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/CreateEntityAndAttributesCommand/index.js
 
     class CreateEntityAndAttributesCommand extends CompositeCommand {
       constructor(
@@ -58279,7 +58273,7 @@
             : ''
         }`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateBlockSpanCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/CreateBlockSpanCommand.js
 
     class CreateBlockSpanCommand extends CompositeCommand {
       constructor(
@@ -58315,7 +58309,7 @@
         this._subCommands = [createSpanCommand, createEntityCommand]
         this._logMessage = `create a span ${begin}:${end} with type ${defaultType}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateDefaultTypeEntityToSelectedSpansCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/CreateDefaultTypeEntityToSelectedSpansCommand.js
 
     class CreateDefaultTypeEntityToSelectedSpansCommand extends CompositeCommand {
       constructor(annotationModel, selectionModel, typeName) {
@@ -58340,7 +58334,7 @@
 
         this._logMessage = `create a ${typeName} type entity to ${selectedSpans}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateDenotationSpanAndTypesCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/CreateDenotationSpanAndTypesCommand.js
 
     class CreateDenotationSpanAndTypesCommand extends CompositeCommand {
       constructor(
@@ -58381,7 +58375,7 @@
           .map(({ typeName }) => typeName)
           .join(', ')}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ReplicateSpanCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ReplicateSpanCommand.js
 
     class ReplicateSpanCommand extends CompositeCommand {
       constructor(
@@ -58410,7 +58404,7 @@
           })
         this._logMessage = `from span: ${span.id}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/CreateSpanAndAutoReplicateCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/CreateSpanAndAutoReplicateCommand.js
 
     const BLOCK_THRESHOLD = 100
 
@@ -58457,7 +58451,7 @@
           this._logMessage = `${this._logMessage} and replicate auto`
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveAttributeDefinitionCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/MoveAttributeDefinitionCommand.js
 
     class MoveAttributeDefinitionCommand extends ConfigurationCommand {
       constructor(definitionContainer, oldIndex, newIndex) {
@@ -58483,7 +58477,7 @@
           this._oldIndex
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveBlockSpanCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/MoveBlockSpanCommand.js
 
     class MoveBlockSpanCommand extends AnnotationCommand {
       #annotationModel
@@ -58529,7 +58523,7 @@
           this.#endBeforeMove
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveDenotationSpanCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/MoveDenotationSpanCommand.js
 
     class MoveDenotationSpanCommand extends AnnotationCommand {
       #annotationModel
@@ -58575,11 +58569,11 @@
           this.#endBeforeMove
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/areAllEntitiesOfSpan.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/areAllEntitiesOfSpan.js
 
     /* harmony default export */ function areAllEntitiesOfSpan(span, entities) {
       return span.entities.every((entity) => entities.includes(entity))
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/MoveEntitiesToSpanCommand/RevertMoveEntitiesCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/MoveEntitiesToSpanCommand/RevertMoveEntitiesCommand.js
 
     class RevertMoveEntitiesCommand extends CompositeCommand {
       constructor(annotationModel, moveMap) {
@@ -58597,7 +58591,7 @@
           .map((e) => e.id)
           .join(', ')}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/MoveEntitiesToSpanCommand/index.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/MoveEntitiesToSpanCommand/index.js
 
     class MoveEntitiesToSpanCommand extends AnnotationCommand {
       constructor(annotationModel, span, entities) {
@@ -58641,7 +58635,7 @@
           this._moveMap
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/index.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/MoveEntitiesToSelectedDenotationSpanCommand/index.js
 
     class MoveEntitiesToSelectedDenotationSpanCommand extends CompositeCommand {
       constructor(annotationModel, selectionModel, entities) {
@@ -58678,7 +58672,7 @@
 
         this._logMessage = `paste cut entities`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/PasteTypesToSelectedDenotationSpansCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/PasteTypesToSelectedDenotationSpansCommand.js
 
     class PasteTypesToSelectedDenotationSpansCommand extends CompositeCommand {
       constructor(
@@ -58750,7 +58744,7 @@
             )
         )}] to ${selectedSpans}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/getRemoveAttributesByPredCommands.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/getRemoveAttributesByPredCommands.js
 
     /* harmony default export */ function getRemoveAttributesByPredCommands(
       annotationModel,
@@ -58761,7 +58755,7 @@
         .reduce((attrs, { attributes }) => attrs.concat(attributes), [])
         .filter((a) => a.pred === pred)
         .map((a) => new RemoveCommand(annotationModel, 'attribute', a))
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/RemoveAttributesFromItemsByPredCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/RemoveAttributesFromItemsByPredCommand.js
 
     class RemoveAttributesFromItemsByPredCommand extends CompositeCommand {
       constructor(annotationModel, items, attributeDefinition) {
@@ -58778,7 +58772,7 @@
           attributeDefinition.pred
         } attribute from items ${items.map((i) => i.id).join(', ')}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/aggregateTargetRelations.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/aggregateTargetRelations.js
 
     /* harmony default export */ function aggregateTargetRelations(
       targetRelations,
@@ -58789,7 +58783,7 @@
       for (const attribute of relation.attributes) {
         targetAttributes.add(attribute)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/aggregateTargetEntities.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/aggregateTargetEntities.js
 
     /* harmony default export */ function aggregateTargetEntities(
       targetEntities,
@@ -58804,7 +58798,7 @@
       for (const relation of entity.relations) {
         aggregateTargetRelations(targetRelations, targetAttributes, relation)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/RemoveSelectedCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/RemoveSelectedCommand.js
 
     class RemoveSelectedCommand extends CompositeCommand {
       constructor(annotationModel, selectionModel) {
@@ -58880,7 +58874,7 @@
           .map(({ id }) => id)
           .join(', ')}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/RemoveRelationAndAssociatesCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/RemoveRelationAndAssociatesCommand.js
 
     class RemoveRelationAndAssociatesCommand extends CompositeCommand {
       constructor(annotationModel, relation) {
@@ -58898,7 +58892,7 @@
         this._subCommands = removeAttribute.concat(removeRelation)
         this._logMessage = `remove a relation ${relation.id}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/RemoveEntityAndAssociatesCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/RemoveEntityAndAssociatesCommand.js
 
     class RemoveEntityAndAssociatesCommand extends CompositeCommand {
       constructor(annotationModel, entity) {
@@ -58922,7 +58916,7 @@
           .concat(removeEntity)
         this._logMessage = `remove an entity ${entity.id}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/RemoveSpanCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/RemoveSpanCommand.js
 
     class RemoveSpanCommand extends CompositeCommand {
       constructor(annotationModel, id) {
@@ -58939,7 +58933,7 @@
         this._subCommands = removeEntities.concat(removeSpan)
         this._logMessage = `remove a span ${id}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ToggleFlagAttributeToItemsCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ToggleFlagAttributeToItemsCommand.js
 
     class ToggleFlagAttributeToItemsCommand extends CompositeCommand {
       constructor(annotationModel, items, attributeDefinition) {
@@ -58965,7 +58959,7 @@
           attributeDefinition.pred
         } to item ${items.map(({ id }) => id).join(', ')}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTextCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeTextCommand.js
 
     class ChangeTextCommand extends AnnotationCommand {
       #annotationModel
@@ -59010,7 +59004,7 @@
           this.#textBeforeChange
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/ChangeTextAndMoveSpanCommand.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/ChangeTextAndMoveSpanCommand.js
 
     class ChangeTextAndMoveSpanCommand extends CompositeCommand {
       constructor(annotationModel, begin, end, newText) {
@@ -59024,7 +59018,7 @@
 
         this._logMessage = `change text from ${begin} to ${end} to ${newText}`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/Factory/index.js
+    } // ./src/lib/Editor/UseCase/Commander/Factory/index.js
 
     class Factory {
       #editorID
@@ -59313,7 +59307,7 @@
           newText
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Commander/index.js
+    } // ./src/lib/Editor/UseCase/Commander/index.js
 
     // A command is an operation by user that is saved as history, and can undo and redo.
     // Users can edit model only via commands.
@@ -59381,7 +59375,7 @@
           this._annotationModel.typeDictionary
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/MODE.js
+    } // ./src/lib/MODE.js
 
     const MODE = {
       INIT: 'Init',
@@ -59390,11 +59384,11 @@
       EDIT_BLOCK: 'Block',
       EDIT_RELATION: 'Relation',
       EDIT_TEXT: 'Text'
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/clearTextSelection.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/clearTextSelection.js
 
     /* harmony default export */ function clearTextSelection() {
       window.getSelection().removeAllRanges()
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/selectSpan.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/selectSpan.js
 
     /* harmony default export */ function selectSpan(
       selectionModel,
@@ -59413,7 +59407,7 @@
       }
 
       selectionModel.selectSpan(spanID)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/isTextSelectionInTextBox.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/isTextSelectionInTextBox.js
 
     function isTextSelectionInTextBox(textBoxHTMLElement) {
       const selection = window.getSelection()
@@ -59422,13 +59416,13 @@
         textBoxHTMLElement.contains(selection.anchorNode) &&
         textBoxHTMLElement.contains(selection.focusNode)
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/getEntityHTMLelementFromChild.js
+    } // ./src/lib/Editor/UseCase/getEntityHTMLelementFromChild.js
 
     /* harmony default export */ function getEntityHTMLelementFromChild(
       elementInEntityHtmlelement
     ) {
       return elementInEntityHtmlelement.closest('.textae-editor__signboard')
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/MouseEventHandler.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/MouseEventHandler.js
 
     class MouseEventHandler {
       #editorHTMLElement
@@ -59692,7 +59686,7 @@
 
         selectSpan(this.#selectionModel, rangeOfSpans, event, spanID)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/SpanEditor/create.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/SpanEditor/create.js
 
     function create(
       annotationModel,
@@ -59715,7 +59709,7 @@
         )
         commander.invoke(command)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/shrinkSpan/shrinkSpanToSelection.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/shrinkSpan/shrinkSpanToSelection.js
 
     /**
      *
@@ -59757,7 +59751,7 @@
       }
 
       return false
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/shrinkSpan/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/shrinkSpan/index.js
 
     /* harmony default export */ function shrinkSpan(
       editorHTMLElement,
@@ -59789,7 +59783,7 @@
           selectionModel.selectSpan(nextSpan.id)
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/getIsDelimiterFunc.js
+    } // ./src/lib/Editor/UseCase/Presenter/getIsDelimiterFunc.js
 
     /* harmony default export */ function getIsDelimiterFunc(
       menuState,
@@ -59800,7 +59794,7 @@
       } else {
         return () => true
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/SelectionWrapper/index.js
 
     class SelectionWrapper {
       constructor() {
@@ -59896,7 +59890,7 @@
       get parentOfFocusNode() {
         return this.selection.focusNode.parentElement
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/SpanEditor/isPositionBetweenSpan.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/SpanEditor/isPositionBetweenSpan.js
 
     /* harmony default export */ function isPositionBetweenSpan(
       span,
@@ -59907,7 +59901,7 @@
       }
 
       return span.begin < position && position < span.end
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/SpanEditor/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/SpanEditor/index.js
 
     class SpanEditor {
       #editorHTMLElement
@@ -60592,7 +60586,7 @@
       get #isReplicateAuto() {
         return this.#menuState.isPushed('auto replicate')
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/index.js
 
     class EditMode {
       // Interface methods
@@ -60611,7 +60605,7 @@
       get isPalletShown() {
         return false
       }
-    } // CONCATENATED MODULE: ./src/lib/component/PromiseDialog.js
+    } // ./src/lib/component/PromiseDialog.js
 
     class PromiseDialog extends Dialog {
       constructor(title, contentHtml, option, getResultsFunc) {
@@ -60648,7 +60642,7 @@
         super.open()
         return new Promise((resolveFunc) => (this.resolveFunc = resolveFunc))
       }
-    } // CONCATENATED MODULE: ./src/lib/component/EditNumericAttributeDialog.js
+    } // ./src/lib/component/EditNumericAttributeDialog.js
 
     function template(context) {
       const { subjects, pred, min, max, step, value } = context
@@ -60755,7 +60749,7 @@
           )
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/openEditNumericAttributeDialog.js
+    } // ./src/lib/openEditNumericAttributeDialog.js
 
     /* harmony default export */ function openEditNumericAttributeDialog(
       selectionModelEntity,
@@ -60791,7 +60785,7 @@
 
           commander.invoke(command)
         })
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/createNumericAttributeOrShowEditNumericAttributeDialog.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/createNumericAttributeOrShowEditNumericAttributeDialog.js
 
     /* harmony default export */ function createNumericAttributeOrShowEditNumericAttributeDialog(
       selectionModelItems,
@@ -60828,7 +60822,7 @@
         )
         commander.invoke(command)
       }
-    } // CONCATENATED MODULE: ./src/lib/component/searchTerm.js
+    } // ./src/lib/component/searchTerm.js
 
     /* harmony default export */ function searchTerm(
       autocompletionWs,
@@ -60862,7 +60856,7 @@
     }
 
     // EXTERNAL MODULE: ./node_modules/jquery-ui/ui/widgets/autocomplete.js
-    var autocomplete = __webpack_require__(97) // CONCATENATED MODULE: ./src/lib/component/customize-jquery-ui-autocomplete.js
+    var autocomplete = __webpack_require__(97) // ./src/lib/component/customize-jquery-ui-autocomplete.js
     /* eslint no-underscore-dangle: 0 */
     // Customize jQuery-ui autocomplete
     /* harmony default export */ function customize_jquery_ui_autocomplete() {
@@ -60887,7 +60881,7 @@
       jquery_default().ui.autocomplete.prototype._resizeMenu = () => {
         // Prepend resize menu
       }
-    } // CONCATENATED MODULE: ./src/lib/component/setSourceOfAutoComplete.js
+    } // ./src/lib/component/setSourceOfAutoComplete.js
 
     customize_jquery_ui_autocomplete()
 
@@ -60930,7 +60924,7 @@
           return false
         }
       })
-    } // CONCATENATED MODULE: ./src/lib/component/EditStringAttributeDialog.js
+    } // ./src/lib/component/EditStringAttributeDialog.js
 
     function EditStringAttributeDialog_template(context) {
       const { subjects, pred, value } = context
@@ -61051,7 +61045,7 @@
           () => []
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/openEditStringAttributeDialog.js
+    } // ./src/lib/openEditStringAttributeDialog.js
 
     /* harmony default export */ function openEditStringAttributeDialog(
       selectionModelEntity,
@@ -61092,7 +61086,7 @@
             )
           }
         })
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/createStringAttributeOrShowEditStringAttributeDialog.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/createStringAttributeOrShowEditStringAttributeDialog.js
 
     /* harmony default export */ function createStringAttributeOrShowEditStringAttributeDialog(
       selectionModelItems,
@@ -61129,7 +61123,7 @@
         )
         commander.invoke(command)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/AttributeEditor/index.js
 
     class AttributeEditor {
       #commander
@@ -61260,7 +61254,7 @@
             throw `${attrDef.valueType} is unknown attribute`
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/component/SelectionAttributePallet/toBodyRow.js
+    } // ./src/lib/component/SelectionAttributePallet/toBodyRow.js
 
     function toBodyRow(color, id, defaultValue, label) {
       return () => anemone`
@@ -61280,7 +61274,7 @@
           </td>
         </tr>
         `
-    } // CONCATENATED MODULE: ./src/lib/component/SelectionAttributePallet/template.js
+    } // ./src/lib/component/SelectionAttributePallet/template.js
 
     /* harmony default export */ function SelectionAttributePallet_template(
       context
@@ -61308,7 +61302,7 @@
     }
 
     // EXTERNAL MODULE: ./node_modules/jquery-ui/ui/widgets/draggable.js
-    var draggable = __webpack_require__(1758) // CONCATENATED MODULE: ./src/lib/component/Pallet/enableJqueryDraggable.js
+    var draggable = __webpack_require__(1758) // ./src/lib/component/Pallet/enableJqueryDraggable.js
     /* harmony default export */ function enableJqueryDraggable(
       element,
       editorHTMLElement
@@ -61317,7 +61311,7 @@
         containment: editorHTMLElement,
         distance: 10
       })
-    } // CONCATENATED MODULE: ./src/lib/component/Pallet/setWidthWithin.js
+    } // ./src/lib/component/Pallet/setWidthWithin.js
 
     /* harmony default export */ function setWidthWithin(pallet, width) {
       pallet.style.width = 'auto'
@@ -61325,7 +61319,7 @@
       if (width - 2 <= pallet.offsetWidth) {
         pallet.style.width = `${width - 4}px`
       }
-    } // CONCATENATED MODULE: ./src/lib/component/Pallet/setHeightWithin.js
+    } // ./src/lib/component/Pallet/setHeightWithin.js
 
     const BORDER_HEIGHT = 7 * 2
 
@@ -61335,7 +61329,7 @@
       } else {
         pallet.style.height = null
       }
-    } // CONCATENATED MODULE: ./src/lib/component/Pallet/index.js
+    } // ./src/lib/component/Pallet/index.js
 
     class Pallet {
       constructor(editorHTMLElement, title, mousePoint) {
@@ -61471,7 +61465,7 @@
       get _maxHeight() {
         return document.documentElement.clientHeight
       }
-    } // CONCATENATED MODULE: ./src/lib/component/SelectionAttributePallet/index.js
+    } // ./src/lib/component/SelectionAttributePallet/index.js
 
     class SelectionAttributePallet extends Pallet {
       constructor(editorHTMLElement, mousePoint) {
@@ -61539,7 +61533,7 @@
         }
         return SelectionAttributePallet_template(values)
       }
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/getValues.js
+    } // ./src/lib/component/EditPropertiesDialog/getValues.js
 
     /* harmony default export */ function getValues(content) {
       const typeName = content.querySelector(
@@ -61574,7 +61568,7 @@
       }
 
       return { typeName, label, attributes }
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toEntityHTML.js
+    } // ./src/lib/component/EditPropertiesDialog/createContentHTML/toEntityHTML.js
 
     /* harmony default export */ function toEntityHTML(value, entityContainer) {
       const label = entityContainer.getLabel(value) || ''
@@ -61596,7 +61590,7 @@
       </td>
     </tr>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toAttributeHTML/getLabelOf.js
+    } // ./src/lib/component/EditPropertiesDialog/createContentHTML/toAttributeHTML/getLabelOf.js
 
     /* harmony default export */ function getLabelOf(
       attribute,
@@ -61620,7 +61614,7 @@
         default:
           throw `unknown attribute type: ${valueType}`
       }
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toAttributeHTML/index.js
+    } // ./src/lib/component/EditPropertiesDialog/createContentHTML/toAttributeHTML/index.js
 
     /* harmony default export */ function toAttributeHTML(
       attribute,
@@ -61693,7 +61687,7 @@
   </td>
 </tr>
 `
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/toAddAttributeButton.js
+    } // ./src/lib/component/EditPropertiesDialog/createContentHTML/toAddAttributeButton.js
 
     function toAddAttributeButton(valueType, pred, isDisabled) {
       const title = () =>
@@ -61707,7 +61701,7 @@
      class="textae-editor__edit-type-values-dialog__add-attribute textae-editor__edit-type-values-dialog__add-attribute--${valueType}"
      data-pred="${pred}"
       ${title}> ${pred}</button>`
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/createContentHTML/index.js
+    } // ./src/lib/component/EditPropertiesDialog/createContentHTML/index.js
 
     /* harmony default export */ function createContentHTML(
       typeName,
@@ -61758,7 +61752,7 @@
           i.pred === pred &&
           String(i.obj) === String(attributeContainer.get(pred).default)
       )
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/mergedTypeValuesOf.js
+    } // ./src/lib/component/EditPropertiesDialog/mergedTypeValuesOf.js
 
     // When you select multiple entities and display the edit dialog,
     // this is used to display the merged type name and attributes.
@@ -61779,7 +61773,7 @@
       }
 
       return new TypeValues(typeName, mergedAttributes)
-    } // CONCATENATED MODULE: ./src/lib/component/EditPropertiesDialog/index.js
+    } // ./src/lib/component/EditPropertiesDialog/index.js
 
     class EditPropertiesDialog extends PromiseDialog {
       constructor(
@@ -61962,7 +61956,7 @@
         )
         super.el.closest('.ui-dialog-content').innerHTML = contentHtml
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/PropertyEditor.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/PropertyEditor.js
 
     class PropertyEditor {
       #editorHTMLElement
@@ -62032,7 +62026,7 @@
           this.#mousePoint
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/forwardMethods.js
+    } // ./src/lib/Editor/forwardMethods.js
 
     /* harmony default export */ function forwardMethods(
       delegator,
@@ -62053,7 +62047,7 @@
       }
 
       return delegator
-    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/select.js
+    } // ./src/lib/component/TypeDefinitionDialog/select.js
 
     /* harmony default export */ function TypeDefinitionDialog_select(
       inputId,
@@ -62063,7 +62057,7 @@
       inputId.value = item.id
       inputLabel.value = item.label
       return false
-    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/setSourceOfAutoComplete.js
+    } // ./src/lib/component/TypeDefinitionDialog/setSourceOfAutoComplete.js
 
     customize_jquery_ui_autocomplete()
 
@@ -62098,7 +62092,7 @@
         minLength: 3,
         select: (_, ui) => TypeDefinitionDialog_select(inputs[0], inputs[1], ui)
       })
-    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/template.js
+    } // ./src/lib/component/TypeDefinitionDialog/template.js
 
     function template_template(context) {
       const { id, label, color, isDefault } = context
@@ -62130,7 +62124,7 @@
     Default type</label>
   </div>
 </div>`
-    } // CONCATENATED MODULE: ./src/lib/component/TypeDefinitionDialog/index.js
+    } // ./src/lib/component/TypeDefinitionDialog/index.js
 
     class TypeDefinitionDialog extends PromiseDialog {
       constructor(
@@ -62156,7 +62150,7 @@
           (term) => definitionContainer.findByLabel(term)
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/component/CreateTypeDefinitionDialog.js
+    } // ./src/lib/component/CreateTypeDefinitionDialog.js
 
     class CreateTypeDefinitionDialog extends TypeDefinitionDialog {
       constructor(definitionContainer, autocompletionWs) {
@@ -62199,7 +62193,7 @@
           convertToReseltsFunc
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/component/EditTypeDefinitionDialog/getDifference.js
+    } // ./src/lib/component/EditTypeDefinitionDialog/getDifference.js
 
     /* harmony default export */ function getDifference(before, after) {
       const changedProperties = new Map()
@@ -62221,7 +62215,7 @@
       }
 
       return changedProperties
-    } // CONCATENATED MODULE: ./src/lib/component/EditTypeDefinitionDialog/index.js
+    } // ./src/lib/component/EditTypeDefinitionDialog/index.js
 
     class EditTypeDefinitionDialog extends TypeDefinitionDialog {
       constructor(definitionContainer, id, color, isDefault, autocompletionWs) {
@@ -62263,13 +62257,13 @@
           convertToReseltsFunc
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/PalletFactory/bindPalletEvents/checkButtonEnable.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/PalletFactory/bindPalletEvents/checkButtonEnable.js
 
     /* harmony default export */ function checkButtonEnable(targetNode) {
       return !targetNode.classList.contains(
         'textae-editor__pallet__table-button--disabled'
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/PalletFactory/bindPalletEvents/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/PalletFactory/bindPalletEvents/index.js
 
     /* harmony default export */ function bindPalletEvents(
       pallet,
@@ -62388,14 +62382,14 @@
           )
         }
       )
-    } // CONCATENATED MODULE: ./src/lib/component/getInputElementValue.js
+    } // ./src/lib/component/getInputElementValue.js
 
     /* harmony default export */ function getInputElementValue(el, selector) {
       return (
         el.querySelector(`input${selector}`) &&
         el.querySelector(`input${selector}`).value
       )
-    } // CONCATENATED MODULE: ./src/lib/component/inputAttributeDefinition/inputDefault.js
+    } // ./src/lib/component/inputAttributeDefinition/inputDefault.js
 
     /* harmony default export */ function inputDefault(
       componentClassName,
@@ -62410,7 +62404,7 @@
     >
   </div>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/inputAttributeDefinition/inputMediaHeight.js
+    } // ./src/lib/component/inputAttributeDefinition/inputMediaHeight.js
 
     /* harmony default export */ function inputMediaHeight(
       componentClassName,
@@ -62426,7 +62420,7 @@
       >
     </div>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/getRandomColorString.js
+    } // ./src/lib/component/getRandomColorString.js
 
     /* harmony default export */ function getRandomColorString() {
       return `#${getRandomHEXFrom64ToFF()}${getRandomHEXFrom64ToFF()}${getRandomHEXFrom64ToFF()}`
@@ -62434,7 +62428,7 @@
 
     function getRandomHEXFrom64ToFF() {
       return Math.floor(Math.random() * 155 + 100).toString(16)
-    } // CONCATENATED MODULE: ./src/lib/component/inputAttributeDefinition/inputLabelAndColor.js
+    } // ./src/lib/component/inputAttributeDefinition/inputLabelAndColor.js
 
     /* harmony default export */ function inputLabelAndColor(
       componentClassName,
@@ -62459,7 +62453,7 @@
       >
     </div>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/inputAttributeDefinition/inputNumeric.js
+    } // ./src/lib/component/inputAttributeDefinition/inputNumeric.js
 
     /* harmony default export */ function inputNumeric(
       componentClassName,
@@ -62493,7 +62487,7 @@
       >
     </div>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/inputAttributeDefinition/index.js
+    } // ./src/lib/component/inputAttributeDefinition/index.js
 
     /* harmony default export */ function inputAttributeDefinition(
       componentClassName,
@@ -62533,7 +62527,7 @@
     }
     ${showNumeric ? inputNumeric(componentClassName, min, max, step) : ''}
   `
-    } // CONCATENATED MODULE: ./src/lib/component/CreateAttributeDefinitionDialog/template.js
+    } // ./src/lib/component/CreateAttributeDefinitionDialog/template.js
 
     /* harmony default export */ function CreateAttributeDefinitionDialog_template(
       componentClassName,
@@ -62590,7 +62584,7 @@
   </div>
   ${() => inputAttributeDefinition(componentClassName, context)}
 </div>`
-    } // CONCATENATED MODULE: ./src/lib/component/CreateAttributeDefinitionDialog/index.js
+    } // ./src/lib/component/CreateAttributeDefinitionDialog/index.js
 
     const componentClassName = `textae-editor__create-attribute-definition-dialog`
 
@@ -62668,12 +62662,12 @@
           valueType
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/component/EditAttributeDefinitionDialog/isChanged.js
+    } // ./src/lib/component/EditAttributeDefinitionDialog/isChanged.js
 
     /* harmony default export */ function isChanged(orig, changed) {
       // Ignore non number value.
       return !Number.isNaN(parseFloat(changed)) && orig !== parseFloat(changed)
-    } // CONCATENATED MODULE: ./src/lib/component/EditAttributeDefinitionDialog/template.js
+    } // ./src/lib/component/EditAttributeDefinitionDialog/template.js
 
     /* harmony default export */ function EditAttributeDefinitionDialog_template(
       componentClassName,
@@ -62683,7 +62677,7 @@
 <div class="${componentClassName}__container">
   ${inputAttributeDefinition(componentClassName, context)}
 </div>`
-    } // CONCATENATED MODULE: ./src/lib/component/EditAttributeDefinitionDialog/index.js
+    } // ./src/lib/component/EditAttributeDefinitionDialog/index.js
 
     const EditAttributeDefinitionDialog_componentClassName = `textae-editor__edit-attribute-definition-dialog`
 
@@ -62781,7 +62775,7 @@
           }
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/component/CreateOrEditValueOfAttributeDefinitionDialog/inputDefault.js
+    } // ./src/lib/component/CreateOrEditValueOfAttributeDefinitionDialog/inputDefault.js
 
     /* harmony default export */ function CreateOrEditValueOfAttributeDefinitionDialog_inputDefault(
       showDefault,
@@ -62802,7 +62796,7 @@
     </div>
     `
           : ``
-    } // CONCATENATED MODULE: ./src/lib/component/CreateOrEditValueOfAttributeDefinitionDialog/template.js
+    } // ./src/lib/component/CreateOrEditValueOfAttributeDefinitionDialog/template.js
 
     /* harmony default export */ function CreateOrEditValueOfAttributeDefinitionDialog_template(
       context
@@ -62844,7 +62838,7 @@
     </label>
   </div>
 </div>`
-    } // CONCATENATED MODULE: ./src/lib/component/enableHTMLElement.js
+    } // ./src/lib/component/enableHTMLElement.js
 
     // Since the style is specified by [disabled = "disabled"],
     // set the attribute to disabled without using the disable property.
@@ -62854,7 +62848,7 @@
       } else {
         element.setAttribute('disabled', 'disabled')
       }
-    } // CONCATENATED MODULE: ./src/lib/component/CreateOrEditValueOfAttributeDefinitionDialog/index.js
+    } // ./src/lib/component/CreateOrEditValueOfAttributeDefinitionDialog/index.js
 
     class CreateOrEditValueOfAttributeDefinitionDialog extends PromiseDialog {
       constructor(valueType, value = {}) {
@@ -62987,19 +62981,19 @@
             )
           })
       }
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/bindAttributeEvent/enableAttributeTabDrag/showDropTargets.js
+    } // ./src/lib/component/TypeValuesPallet/bindAttributeEvent/enableAttributeTabDrag/showDropTargets.js
 
     /* harmony default export */ function showDropTargets(e) {
       e.target
         .closest('.textae-editor__pallet__content')
         .classList.add('textae-editor__pallet__content--dragging')
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/bindAttributeEvent/enableAttributeTabDrag/hideDropTargets.js
+    } // ./src/lib/component/TypeValuesPallet/bindAttributeEvent/enableAttributeTabDrag/hideDropTargets.js
 
     /* harmony default export */ function hideDropTargets(e) {
       e.target
         .closest('.textae-editor__pallet__content')
         .classList.remove('textae-editor__pallet__content--dragging')
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/bindAttributeEvent/enableAttributeTabDrag/index.js
+    } // ./src/lib/component/TypeValuesPallet/bindAttributeEvent/enableAttributeTabDrag/index.js
 
     /* harmony default export */ function enableAttributeTabDrag(el) {
       delegate_default()(
@@ -63023,7 +63017,7 @@
           hideDropTargets(e)
         }
       )
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/bindAttributeEvent/enableAttributeTabDrop.js
+    } // ./src/lib/component/TypeValuesPallet/bindAttributeEvent/enableAttributeTabDrop.js
 
     /* harmony default export */ function enableAttributeTabDrop(
       el,
@@ -63075,7 +63069,7 @@
           )
         }
       )
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/bindAttributeEvent/index.js
+    } // ./src/lib/component/TypeValuesPallet/bindAttributeEvent/index.js
 
     /**
      * @param {import('../../../Editor/UseCase/Commander').default} commander
@@ -63312,7 +63306,7 @@
             )
           )
       )
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/getSelectedEntityLabel.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/getSelectedEntityLabel.js
 
     /* harmony default export */ function getSelectedEntityLabel(
       numberOfSelectedItems
@@ -63322,7 +63316,7 @@
         : numberOfSelectedItems > 1
           ? `${numberOfSelectedItems} items selected`
           : ''
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/attributeTabTemplate.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/attributeTabTemplate.js
 
     /* harmony default export */ function attributeTabTemplate(
       { pred },
@@ -63355,7 +63349,7 @@
       ${index < 9 ? `${index + 1}:` : ''}${pred}
     </p>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/addAttributeButtonTemplate.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/addAttributeButtonTemplate.js
 
     /* harmony default export */ function addAttributeButtonTemplate(context) {
       const { selectionModelItems, selectedPred } = context
@@ -63378,7 +63372,7 @@
         title="All the selected items already have this attribute."
         >add to</button>
       `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/editAttributeButtonTemplate.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/editAttributeButtonTemplate.js
 
     /* harmony default export */ function editAttributeButtonTemplate(context) {
       const { attrDef, selectionModelItems, selectedPred } = context
@@ -63406,7 +63400,7 @@
         </button>
       `
           : ``
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/removeAttributeButtonTemplate.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/removeAttributeButtonTemplate.js
 
     /* harmony default export */ function removeAttributeButtonTemplate(
       context
@@ -63431,7 +63425,7 @@
         title="None of the selected items has this attribute."
         >remove from</button>
       `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/addNewAttributeTabTemplate.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/addNewAttributeTabTemplate.js
 
     function addNewAttributeTabTemplate(
       isLock,
@@ -63456,7 +63450,7 @@
             `
             : ''
         }`
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/index.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/headerTemplate/index.js
 
     /* harmony default export */ function headerTemplate(context) {
       const { isLock, selectionModelItems, selectedPred, attributes, hasDiff } =
@@ -63512,7 +63506,7 @@
   )}
 </div>
 `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/typeTemplate/editButtonsTemplate.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/typeTemplate/editButtonsTemplate.js
 
     function editButtonsTemplate(id, color, defaultType, label, useNumber) {
       return () => anemone`
@@ -63537,7 +63531,7 @@
             data-label="${label}">
           </button>
           `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/typeTemplate/toTypeRow.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/typeTemplate/toTypeRow.js
 
     function toTypeRow(color, id, uri, defaultType, label, useNumber, isLock) {
       return () => anemone`
@@ -63582,7 +63576,7 @@
           }
         </td>
       </tr>`
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/typeTemplate/index.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/typeTemplate/index.js
 
     /* harmony default export */ function typeTemplate(context) {
       const { types, isLock } = context
@@ -63619,7 +63613,7 @@
     </tbody>
   </table>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/predicateControllerTemplate/toDeleteButton.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/predicateControllerTemplate/toDeleteButton.js
 
     function toDeleteButton(numberOfItemsUsingSelectedPred) {
       return numberOfItemsUsingSelectedPred.size > 0
@@ -63638,7 +63632,7 @@
         title="Delete this predicate.">
       </button>
     `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/predicateControllerTemplate/editAttributeDefinitionBlockTemplate.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/predicateControllerTemplate/editAttributeDefinitionBlockTemplate.js
 
     /* harmony default export */ function editAttributeDefinitionBlockTemplate(
       context
@@ -63668,7 +63662,7 @@
     </button>
     ${toDeleteButton(numberOfItemsUsingSelectedPred)}
   `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/predicateControllerTemplate/index.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/predicateControllerTemplate/index.js
 
     /* harmony default export */ function predicateControllerTemplate(context) {
       const { attrDef } = context
@@ -63686,7 +63680,7 @@
       ${editAttributeDefinitionBlockTemplate(context)}
     </div>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/flagAttributeTemplate.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/flagAttributeTemplate.js
 
     /* harmony default export */ function flagAttributeTemplate(context) {
       const { label, color } = context.attrDef
@@ -63701,7 +63695,7 @@
     </div>
   </div>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/showAddAttributeValueButton.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/showAddAttributeValueButton.js
 
     /* harmony default export */ function showAddAttributeValueButton(isLock) {
       return isLock
@@ -63710,7 +63704,7 @@
         <th>
           <span class="textae-editor__pallet__add-attribute-value-button" title="Add new value"></span>
         </th>`
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/valueButtonsTemplate.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/valueButtonsTemplate.js
 
     /* harmony default export */ function valueButtonsTemplate(
       isLock,
@@ -63741,7 +63735,7 @@
     </button>
   </td>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/numericAttributeTemplate/toBodyRow.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/numericAttributeTemplate/toBodyRow.js
 
     function toBodyRow_toBodyRow(
       color,
@@ -63765,7 +63759,7 @@
       ${valueButtonsTemplate(isLock, index, indelible)}
     </tr>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/numericAttributeTemplate/index.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/numericAttributeTemplate/index.js
 
     /* harmony default export */ function numericAttributeTemplate(context) {
       const { min, max, step, default: defaultValue, values } = context.attrDef
@@ -63799,7 +63793,7 @@
     </table>
   </div>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/selectionAttributeTemplate/toBodyRow.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/selectionAttributeTemplate/toBodyRow.js
 
     function selectionAttributeTemplate_toBodyRow_toBodyRow(
       color,
@@ -63837,7 +63831,7 @@
       )}
     </tr>
     `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/selectionAttributeTemplate/index.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/selectionAttributeTemplate/index.js
 
     /* harmony default export */ function selectionAttributeTemplate(
       context,
@@ -63880,7 +63874,7 @@
     </table>
   </div>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/stringAttributeTemplate/toBodyRow.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/stringAttributeTemplate/toBodyRow.js
 
     function stringAttributeTemplate_toBodyRow_toBodyRow(
       color,
@@ -63903,7 +63897,7 @@
       </td>
       ${valueButtonsTemplate(isLock, index, indelible)}
     </tr>`
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/stringAttributeTemplate/index.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/stringAttributeTemplate/index.js
 
     /* harmony default export */ function stringAttributeTemplate(context) {
       const { default: defaultValue, mediaHeight, values } = context.attrDef
@@ -63943,7 +63937,7 @@
     </table>
   </div>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/createContentHtml/index.js
+    } // ./src/lib/component/TypeValuesPallet/createContentHtml/index.js
 
     /* harmony default export */ function createContentHtml(
       types,
@@ -64006,7 +64000,7 @@
         default:
           throw `attrDef.valueType is unknown attribute`
       }
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/enableDrag.js
+    } // ./src/lib/component/TypeValuesPallet/enableDrag.js
 
     /* harmony default export */ function enableDrag(el) {
       for (const attributeTab of el.querySelectorAll(
@@ -64018,7 +64012,7 @@
           e.stopPropagation()
         })
       }
-    } // CONCATENATED MODULE: ./src/lib/component/TypeValuesPallet/index.js
+    } // ./src/lib/component/TypeValuesPallet/index.js
 
     class TypeValuesPallet extends Pallet {
       #typeDictionary
@@ -64207,7 +64201,7 @@
       get #attributeDefinitions() {
         return this.#typeDictionary.attribute.attributes
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/PalletFactory/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/PalletFactory/index.js
 
     class PalletWrapper {
       static create(
@@ -64265,7 +64259,7 @@
       static #appendTo(editorHTMLElement, pallet) {
         editorHTMLElement.appendChild(pallet.el)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TermEditMode/index.js
 
     class TermEditMode extends EditMode {
       #mouseEventHandler
@@ -64409,7 +64403,7 @@
           )
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/create.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/create.js
 
     /* harmony default export */ function BlockEditMode_create(
       annotationModel,
@@ -64430,7 +64424,7 @@
 
         commander.invoke(command)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/SpanEditor.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/SpanEditor.js
 
     class SpanEditor_SpanEditor {
       #editorHTMLElement
@@ -64833,7 +64827,7 @@
           }
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/MouseEventHandler.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/MouseEventHandler.js
 
     class MouseEventHandler_MouseEventHandler {
       #editorHTMLElement
@@ -65108,7 +65102,7 @@
 
         this.#selectionModel.add('entity', entities)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/BlockEditMode/index.js
 
     class BlockEditMode extends EditMode {
       #mouseEventHandler
@@ -65253,7 +65247,7 @@
           )
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/MouseEventHandler/typeValuesClicked/updateSelectionOfEntity.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/MouseEventHandler/typeValuesClicked/updateSelectionOfEntity.js
 
     /* harmony default export */ function updateSelectionOfEntity(
       event,
@@ -65271,7 +65265,7 @@
         selectionModel.remove('entity', subjectEntityId)
         selectionModel.remove('entity', objectEntityId)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/MouseEventHandler/typeValuesClicked/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/MouseEventHandler/typeValuesClicked/index.js
 
     /* harmony default export */ function typeValuesClicked(
       selectionModel,
@@ -65306,7 +65300,7 @@
           )
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/MouseEventHandler/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/MouseEventHandler/index.js
 
     class RelationEditMode_MouseEventHandler_MouseEventHandler {
       #editorHTMLElement
@@ -65403,7 +65397,7 @@
           entityID
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/RelationEditMode/index.js
 
     class RelationEditMode extends EditMode {
       #mouseEventHandler
@@ -65501,7 +65495,7 @@
         entity.span.forceRenderGrid()
         this.#selectionModel.selectEntity(entity.id)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/ModeTransitionReactor/EditorCSS.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/ModeTransitionReactor/EditorCSS.js
 
     class EditorCSS {
       constructor(editorHTMLElement) {
@@ -65519,7 +65513,7 @@
       setFor(mode) {
         this._editorHTMLElement.classList.add(`textae-editor__mode--${mode}`)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/ModeTransitionReactor/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/ModeTransitionReactor/index.js
 
     class ModeTransitionReactor {
       #listeners
@@ -65596,7 +65590,7 @@
         }
         this.#listeners = []
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TextEditMode/TextEditDialog.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TextEditMode/TextEditDialog.js
 
     class TextEditDialog {
       #dialog
@@ -65666,7 +65660,7 @@
       </form>
     `
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TextEditMode/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/TextEditMode/index.js
 
     class TextEditMode extends EditMode {
       #editorHTMLElement
@@ -65768,7 +65762,7 @@
       get #textBox() {
         return this.#editorHTMLElement.querySelector('.textae-editor__text-box')
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/index.js
 
     class EditModeSwitch {
       #termEditMode
@@ -65961,7 +65955,7 @@
             return new EditMode()
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/Horizontal.js
+    } // ./src/lib/Editor/UseCase/Presenter/Horizontal.js
 
     class Horizontal {
       constructor(editorHTMLElement, selectionModel) {
@@ -66042,7 +66036,7 @@
           return elements[elements.length - lastSelectedIndex]
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/Vertical.js
+    } // ./src/lib/Editor/UseCase/Presenter/Vertical.js
 
     class Vertical {
       constructor(editorHTMLElement, selectionModel) {
@@ -66072,11 +66066,11 @@
           this._selectionModel.selectSpan(spanId)
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/reflectImmediately/debounce300.js
+    } // ./src/lib/component/SettingDialog/reflectImmediately/debounce300.js
 
     /* harmony default export */ function debounce300(func) {
       return debounce_default()(func, 300)
-    } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/reflectImmediately/bindChangeLockConfig.js
+    } // ./src/lib/component/SettingDialog/reflectImmediately/bindChangeLockConfig.js
 
     /* harmony default export */ function bindChangeLockConfig(
       content,
@@ -66094,13 +66088,13 @@
           }
         })
       )
-    } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/reflectImmediately/redrawAllEditor.js
+    } // ./src/lib/component/SettingDialog/reflectImmediately/redrawAllEditor.js
 
     // Redraw all editors in tha windows.
     function redrawAllEditor() {
       const event = new Event('resize')
       window.dispatchEvent(event)
-    } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/reflectImmediately/bindChangeLineHeight.js
+    } // ./src/lib/component/SettingDialog/reflectImmediately/bindChangeLineHeight.js
 
     /* harmony default export */ function bindChangeLineHeight(
       content,
@@ -66115,7 +66109,7 @@
           redrawAllEditor()
         })
       )
-    } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/reflectImmediately/bindChangeTypeGap.js
+    } // ./src/lib/component/SettingDialog/reflectImmediately/bindChangeTypeGap.js
 
     /* harmony default export */ function bindChangeTypeGap(
       content,
@@ -66133,7 +66127,7 @@
           ).value = textBox.lineHeight
         })
       )
-    } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/reflectImmediately/index.js
+    } // ./src/lib/component/SettingDialog/reflectImmediately/index.js
 
     /* harmony default export */ function reflectImmediately(
       content,
@@ -66144,9 +66138,9 @@
       bindChangeTypeGap(content, typeGap, textBox)
       bindChangeLineHeight(content, textBox)
       bindChangeLockConfig(content, typeDictionary)
-    } // CONCATENATED MODULE: ./package.json
+    } // ./package.json
 
-    const package_namespaceObject = { rE: '13.3.2' } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/template.js
+    const package_namespaceObject = { rE: '13.3.3' } // ./src/lib/component/SettingDialog/template.js
     function SettingDialog_template_template(context) {
       const {
         typeGap,
@@ -66191,7 +66185,7 @@
   </div>
 </div>
 `
-    } // CONCATENATED MODULE: ./src/lib/component/SettingDialog/index.js
+    } // ./src/lib/component/SettingDialog/index.js
 
     class SettingDialog extends Dialog {
       constructor(typeDictionary, typeGap, textBox) {
@@ -66215,7 +66209,7 @@
           }
         })
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Presenter/index.js
+    } // ./src/lib/Editor/UseCase/Presenter/index.js
 
     class Presenter {
       #editorHTMLElement
@@ -66439,7 +66433,7 @@
 
     // EXTERNAL MODULE: ./node_modules/dropzone/dist/dropzone.js
     var dropzone = __webpack_require__(2628)
-    var dropzone_default = /*#__PURE__*/ __webpack_require__.n(dropzone) // CONCATENATED MODULE: ./src/lib/isJSON.js
+    var dropzone_default = /*#__PURE__*/ __webpack_require__.n(dropzone) // ./src/lib/isJSON.js
     /* harmony default export */ function isJSON(arg) {
       if (typeof arg !== 'string') {
         return false
@@ -66452,7 +66446,7 @@
       }
 
       return true
-    } // CONCATENATED MODULE: ./src/lib/component/LoadDialog/maximizeOverlay.js
+    } // ./src/lib/component/LoadDialog/maximizeOverlay.js
 
     /* harmony default export */ function maximizeOverlay(overlayDropzone) {
       const { element } = overlayDropzone
@@ -66460,7 +66454,7 @@
         'textae-editor__load-dialog__overlay-dropzone--maximized'
       )
       element.style.zIndex = parseInt(element.style.zIndex) + 1
-    } // CONCATENATED MODULE: ./src/lib/component/LoadDialog/revertMaximizeOverlay.js
+    } // ./src/lib/component/LoadDialog/revertMaximizeOverlay.js
 
     /* harmony default export */ function revertMaximizeOverlay(
       overlayDropzone,
@@ -66470,7 +66464,7 @@
         'textae-editor__load-dialog__overlay-dropzone--maximized'
       )
       overlayDropzone.element.style.zIndex = zIndexOfOverlayDropzone
-    } // CONCATENATED MODULE: ./node_modules/@codemirror/state/dist/index.js
+    } // ./node_modules/@codemirror/state/dist/index.js
 
     /**
 The data structure for documents. @nonabstract
@@ -71032,7 +71026,7 @@ situation.
         i = findClusterBreak(string, i)
       }
       return strict === true ? -1 : string.length
-    } // CONCATENATED MODULE: ./node_modules/style-mod/src/style-mod.js
+    } // ./node_modules/style-mod/src/style-mod.js
 
     const C = '\u037c'
     const COUNT = typeof Symbol == 'undefined' ? '__' + C : Symbol.for(C)
@@ -71223,7 +71217,7 @@ situation.
         if (this.styleTag && this.styleTag.getAttribute('nonce') != nonce)
           this.styleTag.setAttribute('nonce', nonce)
       }
-    } // CONCATENATED MODULE: ./node_modules/w3c-keyname/index.js
+    } // ./node_modules/w3c-keyname/index.js
 
     // Style::Object<union<Style,string>>
     //
@@ -71382,7 +71376,7 @@ situation.
       if (name == 'Right') name = 'ArrowRight'
       if (name == 'Down') name = 'ArrowDown'
       return name
-    } // CONCATENATED MODULE: ./node_modules/@codemirror/view/dist/index.js
+    } // ./node_modules/@codemirror/view/dist/index.js
 
     function getSelection(root) {
       let target
@@ -71402,11 +71396,6 @@ situation.
         ? dom == node ||
             dom.contains(node.nodeType != 1 ? node.parentNode : node)
         : false
-    }
-    function deepActiveElement(doc) {
-      let elt = doc.activeElement
-      while (elt && elt.shadowRoot) elt = elt.shadowRoot.activeElement
-      return elt
     }
     function hasSelection(dom, selection) {
       if (!selection.anchorNode) return false
@@ -75816,6 +75805,10 @@ class, which describe what happened, whenever the view is updated.
               node = undefined
           }
         }
+        // Chrome will return offsets into <input> elements without child
+        // nodes, which will lead to a null deref below, so clip the
+        // offset to the node size.
+        if (node) offset = Math.min(maxOffset(node), offset)
       }
       // No luck, do our own (potentially expensive) search
       if (!node || !view.docView.dom.contains(node)) {
@@ -76545,7 +76538,6 @@ class, which describe what happened, whenever the view is updated.
         : null
     }
 
-    // This will also be where dragging info and such goes
     class InputState {
       setSelectionOrigin(origin) {
         this.lastSelectionOrigin = origin
@@ -79643,11 +79635,10 @@ in the editor view.
           display: 'inline-block',
           verticalAlign: 'top'
         },
-        '.cm-highlightSpace:before': {
-          content: 'attr(data-display)',
-          position: 'absolute',
-          pointerEvents: 'none',
-          color: '#888'
+        '.cm-highlightSpace': {
+          backgroundImage:
+            'radial-gradient(circle at 50% 55%, #aaa 20%, transparent 5%)',
+          backgroundPosition: 'center'
         },
         '.cm-highlightTab': {
           backgroundImage: `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><path stroke="%23888" stroke-width="1" fill="none" d="M1 10H196L190 5M190 15L196 10M197 4L197 16"/></svg>')`,
@@ -79877,7 +79868,7 @@ in the editor view.
         if (
           view.state.facet(editable)
             ? view.root.activeElement != this.dom
-            : !hasSelection(view.dom, sel)
+            : !hasSelection(this.dom, sel)
         )
           return
         let context = sel.anchorNode && view.docView.nearest(sel.anchorNode)
@@ -79915,7 +79906,7 @@ in the editor view.
         let range =
           (browser.safari &&
             view.root.nodeType == 11 &&
-            deepActiveElement(this.dom.ownerDocument) == this.dom &&
+            view.root.activeElement == this.dom &&
             safariSelectionRangeHack(this.view, selection)) ||
           selection
         if (!range || this.selectionRange.eq(range)) return false
@@ -83152,14 +83143,16 @@ DOM class.
         super()
         this.content = content
       }
-      toDOM() {
+      toDOM(view) {
         let wrap = document.createElement('span')
         wrap.className = 'cm-placeholder'
         wrap.style.pointerEvents = 'none'
         wrap.appendChild(
           typeof this.content == 'string'
             ? document.createTextNode(this.content)
-            : this.content
+            : typeof this.content == 'function'
+              ? this.content(view)
+              : this.content.cloneNode(true)
         )
         if (typeof this.content == 'string')
           wrap.setAttribute('aria-label', 'placeholder ' + this.content)
@@ -84977,26 +84970,6 @@ line](https://codemirror.net/6/docs/ref/#view.highlightActiveLine).
       return activeLineGutterHighlighter
     }
 
-    const WhitespaceDeco = /*@__PURE__*/ new Map()
-    function getWhitespaceDeco(space) {
-      let deco = WhitespaceDeco.get(space)
-      if (!deco)
-        WhitespaceDeco.set(
-          space,
-          (deco = Decoration.mark({
-            attributes:
-              space === '\t'
-                ? {
-                    class: 'cm-highlightTab'
-                  }
-                : {
-                    class: 'cm-highlightSpace',
-                    'data-display': space.replace(/ /g, '·')
-                  }
-          }))
-        )
-      return deco
-    }
     function matcher(decorator) {
       return dist_ViewPlugin.define(
         (view) => ({
@@ -85010,10 +84983,14 @@ line](https://codemirror.net/6/docs/ref/#view.highlightActiveLine).
         }
       )
     }
+    const tabDeco = /*@__PURE__*/ Decoration.mark({ class: 'cm-highlightTab' })
+    const spaceDeco = /*@__PURE__*/ Decoration.mark({
+      class: 'cm-highlightSpace'
+    })
     const whitespaceHighlighter = /*@__PURE__*/ matcher(
       /*@__PURE__*/ new MatchDecorator({
-        regexp: /\t| +/g,
-        decoration: (match) => getWhitespaceDeco(match[0]),
+        regexp: /\t| /g,
+        decoration: (match) => (match[0] == '\t' ? tabDeco : spaceDeco),
         boundary: /\S/
       })
     )
@@ -85056,7 +85033,7 @@ trailing whitespace.
       moveVisually,
       clearHeightChangeFlag,
       getHeightChangeFlag: () => heightChangeFlag
-    } // CONCATENATED MODULE: ./node_modules/@lezer/common/dist/index.js
+    } // ./node_modules/@lezer/common/dist/index.js
 
     /**
 The default maximum length of a `TreeBuffer` node.
@@ -87842,7 +87819,7 @@ tree.
         }
       }
       return result
-    } // CONCATENATED MODULE: ./node_modules/@lezer/highlight/dist/index.js
+    } // ./node_modules/@lezer/highlight/dist/index.js
 
     let nextTagID = 0
     /**
@@ -88794,7 +88771,7 @@ In addition, these mappings are provided:
       { tag: tags.meta, class: 'tok-meta' },
       { tag: tags.invalid, class: 'tok-invalid' },
       { tag: tags.punctuation, class: 'tok-punctuation' }
-    ]) // CONCATENATED MODULE: ./node_modules/@codemirror/language/dist/index.js
+    ]) // ./node_modules/@codemirror/language/dist/index.js
 
     var _a
     /**
@@ -91994,7 +91971,7 @@ isolates them from the surrounding text.
         attributes: { dir: 'auto' },
         bidiIsolate: null
       })
-    } // CONCATENATED MODULE: ./node_modules/@codemirror/commands/dist/index.js
+    } // ./node_modules/@codemirror/commands/dist/index.js
 
     /**
 Comment or uncomment the current selection. Will use line comments
@@ -94256,7 +94233,7 @@ Shift-Tab to [`indentLess`](https://codemirror.net/6/docs/ref/#commands.indentLe
 Please see the [Tab example](../../examples/tab/) before using
 this.
 */
-    const indentWithTab = { key: 'Tab', run: indentMore, shift: indentLess } // CONCATENATED MODULE: ./node_modules/crelt/index.js
+    const indentWithTab = { key: 'Tab', run: indentMore, shift: indentLess } // ./node_modules/crelt/index.js
 
     function crelt() {
       var elt = arguments[0]
@@ -94292,7 +94269,7 @@ this.
       } else {
         throw new RangeError('Unsupported child node: ' + child)
       }
-    } // CONCATENATED MODULE: ./node_modules/@codemirror/search/dist/index.js
+    } // ./node_modules/@codemirror/search/dist/index.js
 
     const basicNormalize =
       typeof String.prototype.normalize == 'function'
@@ -95824,7 +95801,7 @@ Default search-related key bindings.
       searchState,
       /*@__PURE__*/ Prec.low(searchHighlighter),
       search_dist_baseTheme
-    ] // CONCATENATED MODULE: ./node_modules/@codemirror/autocomplete/dist/index.js
+    ] // ./node_modules/@codemirror/autocomplete/dist/index.js
 
     /**
 An instance of this is passed to completion source functions.
@@ -98608,7 +98585,7 @@ the currently selected completion.
 */
     function setSelectedCompletion(index) {
       return setSelectedEffect.of(index)
-    } // CONCATENATED MODULE: ./node_modules/@codemirror/lint/dist/index.js
+    } // ./node_modules/@codemirror/lint/dist/index.js
 
     class SelectedDiagnostic {
       constructor(from, to, diagnostic) {
@@ -98893,13 +98870,16 @@ A set of default key bindings for the lint functionality.
               let { state } = this.view,
                 { sources } = state.facet(lintConfig)
               if (sources.length)
-                Promise.all(
-                  sources.map((source) => Promise.resolve(source(this.view)))
-                ).then(
+                batchResults(
+                  sources.map((s) => Promise.resolve(s(this.view))),
                   (annotations) => {
-                    let all = annotations.reduce((a, b) => a.concat(b))
                     if (this.view.state.doc == state.doc)
-                      this.view.dispatch(setDiagnostics(this.view.state, all))
+                      this.view.dispatch(
+                        setDiagnostics(
+                          this.view.state,
+                          annotations.reduce((a, b) => a.concat(b))
+                        )
+                      )
                   },
                   (error) => {
                     logException(this.view.state, error)
@@ -98932,6 +98912,17 @@ A set of default key bindings for the lint functionality.
           }
         }
       )
+    function batchResults(promises, sink, error) {
+      let collected = [],
+        timeout = -1
+      for (let p of promises)
+        p.then((value) => {
+          collected.push(value)
+          clearTimeout(timeout)
+          if (collected.length == promises.length) sink(collected)
+          else setTimeout(() => sink(collected), 200)
+        }, error)
+    }
     const lintConfig = /*@__PURE__*/ Facet.define({
       combine(input) {
         return Object.assign(
@@ -99463,7 +99454,16 @@ editor is idle to run right away.
     }
     const lintGutterExtension = /*@__PURE__*/ gutter({
       class: 'cm-gutter-lint',
-      markers: (view) => view.state.field(lintGutterMarkers)
+      markers: (view) => view.state.field(lintGutterMarkers),
+      widgetMarker: (view, widget, block) => {
+        let diagnostics = []
+        view.state
+          .field(lintGutterMarkers)
+          .between(block.from, block.to, (from, to, value) => {
+            diagnostics.push(...value.diagnostics)
+          })
+        return diagnostics.length ? new LintGutterMarker(diagnostics) : null
+      }
     })
     const lintGutterMarkers = /*@__PURE__*/ StateField.define({
       create() {
@@ -99579,7 +99579,7 @@ arguments hold the diagnostic's current position.
           iter.next()
         )
           f(iter.value.spec.diagnostic, iter.from, iter.to)
-    } // CONCATENATED MODULE: ./node_modules/codemirror/dist/index.js
+    } // ./node_modules/codemirror/dist/index.js
 
     // (The superfluous function calls around the list of extensions work
     // around current limitations in tree-shaking software.)
@@ -99664,7 +99664,7 @@ style](https://codemirror.net/6/docs/ref/#language.defaultHighlightStyle).
         drawSelection(),
         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
         keymap.of([...defaultKeymap, ...historyKeymap])
-      ])() // CONCATENATED MODULE: ./node_modules/@lezer/lr/dist/index.js
+      ])() // ./node_modules/@lezer/lr/dist/index.js
 
     /**
 A parse stack. These are used internally by the parser to track
@@ -101826,7 +101826,7 @@ content with.
         return (value, stack) => (spec.external(value, stack) << 1) | mask
       }
       return spec.get
-    } // CONCATENATED MODULE: ./node_modules/@lezer/javascript/dist/index.js
+    } // ./node_modules/@lezer/javascript/dist/index.js
 
     // This file was generated by lezer-generator. You probably shouldn't edit it.
     const noSemi = 312,
@@ -102299,7 +102299,7 @@ content with.
         { term: 92, get: (value) => spec_LessThan[value] || -1 }
       ],
       tokenPrec: 14815
-    }) // CONCATENATED MODULE: ./node_modules/@codemirror/lang-javascript/dist/index.js
+    }) // ./node_modules/@codemirror/lang-javascript/dist/index.js
 
     /**
 A collection of JavaScript-related
@@ -102952,7 +102952,7 @@ package may help with that (see
         ]
       }
       return result
-    } // CONCATENATED MODULE: ./src/lib/component/LoadDialog/initJSONEditor.js
+    } // ./src/lib/component/LoadDialog/initJSONEditor.js
 
     function initJSONEditor(textarea, dialogHeight) {
       const editorHeightTheme = EditorView.theme({
@@ -102976,7 +102976,7 @@ package may help with that (see
       textarea.style.display = 'none'
 
       return view
-    } // CONCATENATED MODULE: ./src/lib/component/LoadDialog/index.js
+    } // ./src/lib/component/LoadDialog/index.js
 
     function LoadDialog_template(context) {
       const { url } = context
@@ -103190,7 +103190,7 @@ package may help with that (see
           .closest('.textae-editor__dialog')
           .classList.add('textae-editor__load-dialog--expanded')
       }
-    } // CONCATENATED MODULE: ./src/lib/component/createDownloadPath.js
+    } // ./src/lib/component/createDownloadPath.js
 
     /* harmony default export */ function createDownloadPath(dataObject) {
       const blob = new Blob([JSON.stringify(dataObject)], {
@@ -103198,7 +103198,7 @@ package may help with that (see
       })
 
       return URL.createObjectURL(blob)
-    } // CONCATENATED MODULE: ./src/lib/component/SaveAnnotationDialog/bind.js
+    } // ./src/lib/component/SaveAnnotationDialog/bind.js
 
     /* harmony default export */ function bind(
       eventEmitter,
@@ -103264,7 +103264,7 @@ package may help with that (see
           closeDialog()
         }
       )
-    } // CONCATENATED MODULE: ./src/lib/component/SaveAnnotationDialog/index.js
+    } // ./src/lib/component/SaveAnnotationDialog/index.js
 
     function SaveAnnotationDialog_template(context) {
       const { url, filename } = context
@@ -103307,7 +103307,7 @@ package may help with that (see
 
         bind(eventEmitter, super.el, data, () => super.close(), saveAnnotation)
       }
-    } // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/formatters/base.js
+    } // ./node_modules/jsondiffpatch/lib/formatters/base.js
 
     const trimUnderscore = (str) => {
       if (str.substring(0, 1) === '_') {
@@ -103543,7 +103543,7 @@ package may help with that (see
         return output
       }
     }
-    /* harmony default export */ const formatters_base = BaseFormatter // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/formatters/html.js
+    /* harmony default export */ const formatters_base = BaseFormatter // ./node_modules/jsondiffpatch/lib/formatters/html.js
 
     class HtmlFormatter extends formatters_base {
       typeFormattterErrorFormatter(context, err) {
@@ -103813,7 +103813,7 @@ package may help with that (see
         defaultInstance = new HtmlFormatter()
       }
       return defaultInstance.format(delta, left)
-    } // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/processor.js
+    } // ./node_modules/jsondiffpatch/lib/processor.js
 
     class Processor {
       constructor(options) {
@@ -103876,7 +103876,7 @@ package may help with that (see
         return context.hasResult ? context.result : undefined
       }
     }
-    /* harmony default export */ const processor = Processor // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/pipe.js
+    /* harmony default export */ const processor = Processor // ./node_modules/jsondiffpatch/lib/pipe.js
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     class Pipe {
@@ -103975,7 +103975,7 @@ package may help with that (see
         return this
       }
     }
-    /* harmony default export */ const pipe = Pipe // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/contexts/context.js
+    /* harmony default export */ const pipe = Pipe // ./node_modules/jsondiffpatch/lib/contexts/context.js
 
     class Context {
       setResult(result) {
@@ -104005,7 +104005,7 @@ package may help with that (see
         child.next = this
         return this
       }
-    } // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/clone.js
+    } // ./node_modules/jsondiffpatch/lib/clone.js
 
     function cloneRegExp(re) {
       const regexMatch = /^\/(.*)\/([gimyu]*)$/.exec(re.toString())
@@ -104034,7 +104034,7 @@ package may help with that (see
         }
       }
       return cloned
-    } // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/contexts/diff.js
+    } // ./node_modules/jsondiffpatch/lib/contexts/diff.js
 
     class DiffContext extends Context {
       constructor(left, right) {
@@ -104059,7 +104059,7 @@ package may help with that (see
         return super.setResult(result)
       }
     }
-    /* harmony default export */ const diff = DiffContext // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/contexts/patch.js
+    /* harmony default export */ const diff = DiffContext // ./node_modules/jsondiffpatch/lib/contexts/patch.js
 
     class PatchContext extends Context {
       constructor(left, delta) {
@@ -104069,7 +104069,7 @@ package may help with that (see
         this.pipe = 'patch'
       }
     }
-    /* harmony default export */ const patch = PatchContext // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/contexts/reverse.js
+    /* harmony default export */ const patch = PatchContext // ./node_modules/jsondiffpatch/lib/contexts/reverse.js
 
     class ReverseContext extends Context {
       constructor(delta) {
@@ -104078,7 +104078,7 @@ package may help with that (see
         this.pipe = 'reverse'
       }
     }
-    /* harmony default export */ const reverse = ReverseContext // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/filters/trivial.js
+    /* harmony default export */ const reverse = ReverseContext // ./node_modules/jsondiffpatch/lib/filters/trivial.js
 
     const diffFilter = function trivialMatchesDiffFilter(context) {
       if (context.left === context.right) {
@@ -104185,7 +104185,7 @@ package may help with that (see
         context.setResult([nonNestedDelta[0]]).exit()
       }
     }
-    reverseFilter.filterName = 'trivial' // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/filters/nested.js
+    reverseFilter.filterName = 'trivial' // ./node_modules/jsondiffpatch/lib/filters/nested.js
 
     const collectChildrenDiffFilter = (context) => {
       if (!context || !context.children) {
@@ -104330,7 +104330,7 @@ package may help with that (see
       }
       context.setResult(delta).exit()
     }
-    collectChildrenReverseFilter.filterName = 'collectChildren' // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/filters/lcs.js
+    collectChildrenReverseFilter.filterName = 'collectChildren' // ./node_modules/jsondiffpatch/lib/filters/lcs.js
 
     /*
 
@@ -104413,7 +104413,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     }
     /* harmony default export */ const lcs = {
       get
-    } // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/filters/arrays.js
+    } // ./node_modules/jsondiffpatch/lib/filters/arrays.js
 
     const ARRAY_MOVE = 3
     function arraysHaveMatchByRef(array1, array2, len1, len2) {
@@ -104852,7 +104852,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
       context.setResult(delta).exit()
     }
-    arrays_collectChildrenReverseFilter.filterName = 'arraysCollectChildren' // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/filters/dates.js
+    arrays_collectChildrenReverseFilter.filterName = 'arraysCollectChildren' // ./node_modules/jsondiffpatch/lib/filters/dates.js
 
     const dates_diffFilter = function datesDiffFilter(context) {
       if (context.left instanceof Date) {
@@ -104870,7 +104870,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         context.setResult([context.left, context.right]).exit()
       }
     }
-    dates_diffFilter.filterName = 'dates' // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/filters/texts.js
+    dates_diffFilter.filterName = 'dates' // ./node_modules/jsondiffpatch/lib/filters/texts.js
 
     const TEXT_DIFF = 2
     const DEFAULT_MIN_LENGTH = 60
@@ -105015,7 +105015,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         .setResult([textDeltaReverse(textDiffDelta[0]), 0, TEXT_DIFF])
         .exit()
     }
-    texts_reverseFilter.filterName = 'texts' // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/diffpatcher.js
+    texts_reverseFilter.filterName = 'texts' // ./node_modules/jsondiffpatch/lib/diffpatcher.js
 
     class diffpatcher_DiffPatcher {
       constructor(options) {
@@ -105076,7 +105076,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         return clone_clone(value)
       }
     }
-    /* harmony default export */ const diffpatcher = diffpatcher_DiffPatcher // CONCATENATED MODULE: ./node_modules/jsondiffpatch/lib/index.js
+    /* harmony default export */ const diffpatcher = diffpatcher_DiffPatcher // ./node_modules/jsondiffpatch/lib/index.js
 
     function lib_create(options) {
       return new diffpatcher(options)
@@ -105111,7 +105111,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         lib_defaultInstance = new DiffPatcher()
       }
       return lib_defaultInstance.clone(value)
-    } // CONCATENATED MODULE: ./src/lib/component/SaveConfigurationDialog/jsonDiff.js
+    } // ./src/lib/component/SaveConfigurationDialog/jsonDiff.js
 
     const jsond = lib_create({
       objectHash(obj, index) {
@@ -105125,7 +105125,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     ) {
       const delta = jsond.diff(originalConfig, editedConfig)
       return format(delta, originalConfig)
-    } // CONCATENATED MODULE: ./src/lib/component/SaveConfigurationDialog/bind.js
+    } // ./src/lib/component/SaveConfigurationDialog/bind.js
 
     /* harmony default export */ function SaveConfigurationDialog_bind(
       eventEmitter,
@@ -105183,7 +105183,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           closeDialog()
         }
       )
-    } // CONCATENATED MODULE: ./src/lib/component/SaveConfigurationDialog/index.js
+    } // ./src/lib/component/SaveConfigurationDialog/index.js
 
     function SaveConfigurationDialog_template(context) {
       const { url, filename, diff } = context
@@ -105253,7 +105253,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           saveConfiguration
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/PersistenceInterface/readFile.js
+    } // ./src/lib/Editor/UseCase/PersistenceInterface/readFile.js
 
     /* harmony default export */ async function readFile(file) {
       return new Promise((resolve) => {
@@ -105267,10 +105267,10 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     // EXTERNAL MODULE: ./node_modules/path-browserify/index.js
     var path_browserify = __webpack_require__(7975)
     var path_browserify_default =
-      /*#__PURE__*/ __webpack_require__.n(path_browserify) // CONCATENATED MODULE: ./src/lib/Editor/UseCase/PersistenceInterface/isTxtFile.js
+      /*#__PURE__*/ __webpack_require__.n(path_browserify) // ./src/lib/Editor/UseCase/PersistenceInterface/isTxtFile.js
     /* harmony default export */ function isTxtFile(fileName) {
       return path_browserify_default().extname(fileName) === '.txt'
-    } // CONCATENATED MODULE: ./src/lib/Editor/RESOURCE_TYPE.js
+    } // ./src/lib/Editor/RESOURCE_TYPE.js
 
     const RESOURCE_TYPE = Object.freeze({
       QUERY_PARAMETER: 'parameter', // The annotation data is passed as a query parameter.
@@ -105279,7 +105279,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       INSTANT: 'instant', // The annotation data is set by the data load dialog as json string.
       LOCAL_FILE: 'local file', // The annotation data is set by the data load dialog as a local file.
       UNKNOWN: 'unknown'
-    }) // CONCATENATED MODULE: ./src/lib/Editor/DataSource.js
+    }) // ./src/lib/Editor/DataSource.js
 
     class DataSource {
       #type
@@ -105366,7 +105366,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             return `${this.#type}`
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/PersistenceInterface/readAnnotationFile.js
+    } // ./src/lib/Editor/UseCase/PersistenceInterface/readAnnotationFile.js
 
     /* harmony default export */ async function readAnnotationFile(
       file,
@@ -105404,7 +105404,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         'textae-event.resource.annotation.format.error',
         DataSource.createFileSource(file.name)
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/PersistenceInterface/readConfigurationFile.js
+    } // ./src/lib/Editor/UseCase/PersistenceInterface/readConfigurationFile.js
 
     /* harmony default export */ function readConfigurationFile(
       file,
@@ -105423,7 +105423,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           )
         }
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/loadAnnotation.js
+    } // ./src/lib/Editor/loadAnnotation.js
 
     function loadAnnotation(eventEmitter, annotation) {
       if (!annotation.text) {
@@ -105436,7 +105436,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       )
 
       return true
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/PersistenceInterface/readAnnotationText.js
+    } // ./src/lib/Editor/UseCase/PersistenceInterface/readAnnotationText.js
 
     function readAnnotationText(eventEmitter, text) {
       if (!isJSON(text)) {
@@ -105444,7 +105444,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       return loadAnnotation(eventEmitter, JSON.parse(text))
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/PersistenceInterface/LastLoadedURL.js
+    } // ./src/lib/Editor/UseCase/PersistenceInterface/LastLoadedURL.js
 
     class LastLoadedURL {
       #annotation
@@ -105477,7 +105477,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       get configuration() {
         return this.#configuration || ''
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/PersistenceInterface/LastLoadedFilename.js
+    } // ./src/lib/Editor/UseCase/PersistenceInterface/LastLoadedFilename.js
 
     class LastLoadedFilename {
       #annotation
@@ -105507,7 +105507,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       get configuration() {
         return this.#configuration
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/PersistenceInterface/index.js
+    } // ./src/lib/Editor/UseCase/PersistenceInterface/index.js
 
     class PersistenceInterface {
       #eventEmitter
@@ -105652,7 +105652,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
         return annotation
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/setAnnotationAndConfiguration.js
+    } // ./src/lib/Editor/UseCase/setAnnotationAndConfiguration.js
 
     /**
      *
@@ -105671,7 +105671,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       spanConfig.set(validConfig)
       annotationModel.reset(annotation, validConfig)
       functionAvailability.availability = validConfig['function availability']
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillInferDefinitionFromAnnotation/fill.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillInferDefinitionFromAnnotation/fill.js
 
     // Complement the config with the generated Attribute definition.
     // Does not override the existing Attribute definition.
@@ -105689,7 +105689,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       return config
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/AnnotationsForPred/getValueType.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/AnnotationsForPred/getValueType.js
 
     /* harmony default export */ function getValueType(obj) {
       if (obj === true) {
@@ -105701,7 +105701,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       } else {
         throw `${JSON.stringify(obj)} is an unexpected value for an Attribute.`
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/AnnotationsForPred/getMostFrequentObject.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/AnnotationsForPred/getMostFrequentObject.js
 
     // The default value is the value of the first object of the most frequent object.
     /* harmony default export */ function getMostFrequentObject(objects) {
@@ -105720,7 +105720,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           return obj
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/AnnotationsForPred/getStep.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/AnnotationsForPred/getStep.js
 
     // The value of step is matched to the smallest digit of all objcts.
     /* harmony default export */ function getStep(objects) {
@@ -105737,7 +105737,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           .reduce((acc, _) => acc * 0.1, 1)
           .toFixed(numberOfDigits)
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/AnnotationsForPred/index.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/AnnotationsForPred/index.js
 
     class AnnotationsForPred {
       constructor({ pred, obj }) {
@@ -105793,7 +105793,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           ...this._prototype
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/getAnnotationMap.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/getAnnotationMap.js
 
     /* harmony default export */ function getAnnotationMap(annotations) {
       return annotations.reduce((map, attr) => {
@@ -105804,7 +105804,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         }
         return map
       }, new Map())
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillInferDefinitionFromAnnotation/inferDefinitionFromAnnotation/index.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillInferDefinitionFromAnnotation/inferDefinitionFromAnnotation/index.js
 
     // Generates a definition of an attribute by inferring a definition from the value of an annotation.
     /* harmony default export */ function inferDefinitionFromAnnotation(
@@ -105813,7 +105813,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       return [...getAnnotationMap(annotations).values()].map(
         (a) => a.definition
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillInferDefinitionFromAnnotation/index.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillInferDefinitionFromAnnotation/index.js
 
     /* harmony default export */ function fillInferDefinitionFromAnnotation(
       config,
@@ -105821,15 +105821,15 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     ) {
       const inferDefinitions = inferDefinitionFromAnnotation(annotations)
       return fill(config, inferDefinitions)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/clone.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/clone.js
 
     /* harmony default export */ function patchConfiguration_clone(config) {
       return config ? JSON.parse(JSON.stringify(config)) : {}
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillDefaultValueOfSelectionAttributes/getSelectionAttributes.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillDefaultValueOfSelectionAttributes/getSelectionAttributes.js
 
     /* harmony default export */ function getSelectionAttributes(config) {
       return config.filter((a) => a['value type'] === 'selection')
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillDefaultValueOfSelectionAttributes/index.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillDefaultValueOfSelectionAttributes/index.js
 
     // Sets a default value for the definition of a selection attribute that does not have a default value.
     //
@@ -105889,7 +105889,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       return config
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillMandatoryValueOfNumericAttributes.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillMandatoryValueOfNumericAttributes.js
 
     /* harmony default export */ function fillMandatoryValueOfNumericAttributes(
       config
@@ -105906,7 +105906,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       return config
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillDefaultValueOfStringAttributes.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillDefaultValueOfStringAttributes.js
 
     /* harmony default export */ function fillDefaultValueOfStringAttributes(
       config
@@ -105920,7 +105920,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       return config
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/index.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/index.js
 
     class AttributeConfigurationGenerator {
       constructor(config = [], annotations = []) {
@@ -105942,7 +105942,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
         return newConfig
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/patchConfiguration/index.js
+    } // ./src/lib/Editor/UseCase/patchConfiguration/index.js
 
     /* harmony default export */ function patchConfiguration(
       annotation,
@@ -105975,10 +105975,10 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     var ajv_default = /*#__PURE__*/ __webpack_require__.n(ajv)
     // EXTERNAL MODULE: ./node_modules/ajv-formats/dist/index.js
     var ajv_formats_dist = __webpack_require__(8182)
-    var dist_default = /*#__PURE__*/ __webpack_require__.n(ajv_formats_dist) // CONCATENATED MODULE: ./src/lib/Editor/UseCase/validateConfigurationAndAlert/validateConfiguration/configurationScheme.json
+    var dist_default = /*#__PURE__*/ __webpack_require__.n(ajv_formats_dist) // ./src/lib/Editor/UseCase/validateConfigurationAndAlert/validateConfiguration/configurationScheme.json
     const configurationScheme_namespaceObject = /*#__PURE__*/ JSON.parse(
       '{"$schema":"http://json-schema.org/draft-07/schema#","title":"JSON schema for texta configuration files","definitions":{"characters":{"type":"array","items":{"type":"string","minLength":1,"maxLength":1}},"color":{"pattern":"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$","type":"string"},"default":{"type":"boolean"},"denote":{"type":"object","required":["id"],"properties":{"id":{"type":"string"},"label":{"type":"string"},"color":{"$ref":"#/definitions/color"},"default":{"$ref":"#/definitions/default"}}},"types":{"type":"array","items":{"$ref":"#/definitions/denote"}},"autocompletion_ws":{"type":"string","format":"uri-reference"}},"type":"object","properties":{"delimiter characters":{"$ref":"#/definitions/characters"},"non-edge characters":{"$ref":"#/definitions/characters"},"autocompletion_ws":{"$ref":"#/definitions/autocompletion_ws"},"autosave":{"type":"boolean"},"autolineheight":{"type":"boolean"},"boundarydetection":{"type":"boolean"},"entity types":{"$ref":"#/definitions/types"},"relation types":{"$ref":"#/definitions/types"},"attribute types":{"type":"array","items":{"type":"object","required":["pred","value type"],"properties":{"pred":{"type":"string"},"value type":{"enum":["flag","selection","string","numeric"]}},"allOf":[{"if":{"properties":{"value type":{"const":"flag"}}},"then":{"properties":{"color":{"$ref":"#/definitions/color"},"label":{"type":"string"}}}},{"if":{"properties":{"value type":{"const":"selection"}}},"then":{"required":["values"],"properties":{"values":{"type":"array","items":{"$ref":"#/definitions/denote"}}}}},{"if":{"properties":{"value type":{"const":"string"}}},"then":{"required":["default"],"properties":{"autocompletion_ws":{"$ref":"#/definitions/autocompletion_ws"},"default":{"type":"string"},"values":{"type":"array","items":{"type":"object","required":["pattern"],"properties":{"pattern":{"type":"string","format":"regex"},"label":{"type":"string"},"color":{"$ref":"#/definitions/color"}}}}}}},{"if":{"properties":{"value type":{"const":"numeric"}}},"then":{"required":["default","step"],"properties":{"default":{"type":"number"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"values":{"type":"array","items":{"type":"object","required":["range"],"properties":{"range":{"type":"string"},"label":{"type":"string"},"color":{"$ref":"#/definitions/color"}}}}}}}]}},"function availability":{"type":"object","properties":{"read":{"type":"boolean"},"write":{"type":"boolean"},"write-auto":{"type":"boolean"},"view":{"type":"boolean"},"term":{"type":"boolean"},"block":{"type":"boolean"},"relation":{"type":"boolean"},"simple":{"type":"boolean"},"line-height":{"type":"boolean"},"line-height-auto":{"type":"boolean"},"undo":{"type":"boolean"},"redo":{"type":"boolean"},"replicate":{"type":"boolean"},"replicate-auto":{"type":"boolean"},"boundary-detection":{"type":"boolean"},"create-span-by-touch":{"type":"boolean"},"expand-span-by-touch":{"type":"boolean"},"shrink-span-by-touch":{"type":"boolean"},"entity":{"type":"boolean"},"pallet":{"type":"boolean"},"edit-properties":{"type":"boolean"},"delete":{"type":"boolean"},"copy":{"type":"boolean"},"cut":{"type":"boolean"},"paste":{"type":"boolean"},"setting":{"type":"boolean"},"help":{"type":"boolean"}}}}}'
-    ) // CONCATENATED MODULE: ./src/lib/Editor/UseCase/validateConfigurationAndAlert/validateConfiguration/toErrorMessage.js
+    ) // ./src/lib/Editor/UseCase/validateConfigurationAndAlert/validateConfiguration/toErrorMessage.js
     /* harmony default export */ function toErrorMessage(errors) {
       for (const e of errors) {
         if (e.keyword === 'required') {
@@ -105987,7 +105987,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           return anemone`Invalid configuration: '${e.data}' is invalid color format.`
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/validateConfigurationAndAlert/validateConfiguration/index.js
+    } // ./src/lib/Editor/UseCase/validateConfigurationAndAlert/validateConfiguration/index.js
 
     const validateConfiguration_ajv = new (ajv_default())({ verbose: true })
     dist_default()(validateConfiguration_ajv, ['uri-reference', 'regex'])
@@ -106005,7 +106005,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       return null
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/validateAttribueDefinitionAndAlert/hasAllValueDefinitionOfSelectionAttributes.js
+    } // ./src/lib/Editor/UseCase/validateAttribueDefinitionAndAlert/hasAllValueDefinitionOfSelectionAttributes.js
 
     // Check for definitions of values for selection attributes.
     /* harmony default export */ function hasAllValueDefinitionOfSelectionAttributes(
@@ -106048,7 +106048,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             .join(', ')}" in configuration is missing. `
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/validateAttribueDefinitionAndAlert/index.js
+    } // ./src/lib/Editor/UseCase/validateAttribueDefinitionAndAlert/index.js
 
     /* harmony default export */ function validateAttribueDefinitionAndAlert(
       annotation,
@@ -106065,7 +106065,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       return config
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/validateConfigurationAndAlert/index.js
+    } // ./src/lib/Editor/UseCase/validateConfigurationAndAlert/index.js
 
     /* harmony default export */ function validateConfigurationAndAlert(
       annotation,
@@ -106080,7 +106080,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       return validateAttribueDefinitionAndAlert(annotation, patchedConfig)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/warningIfBeginEndOfSpanAreNotInteger/areNotBeginAndEndInteger.js
+    } // ./src/lib/Editor/UseCase/warningIfBeginEndOfSpanAreNotInteger/areNotBeginAndEndInteger.js
 
     /* harmony default export */ function areNotBeginAndEndInteger(annotation) {
       if (annotation.denotations) {
@@ -106094,7 +106094,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           }
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/warningIfBeginEndOfSpanAreNotInteger/index.js
+    } // ./src/lib/Editor/UseCase/warningIfBeginEndOfSpanAreNotInteger/index.js
 
     /* harmony default export */ function warningIfBeginEndOfSpanAreNotInteger(
       annotation
@@ -106107,7 +106107,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           15
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/initAnnotation/setLoadedAnnotation.js
+    } // ./src/lib/Editor/UseCase/initAnnotation/setLoadedAnnotation.js
 
     function setLoadedAnnotation(
       dataSource,
@@ -106153,7 +106153,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           originalData.annotation = dataSource
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/initAnnotation/index.js
+    } // ./src/lib/Editor/UseCase/initAnnotation/index.js
 
     /**
      *
@@ -106211,7 +106211,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             )
           }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/OriginalData/StatusBar/html.js
+    } // ./src/lib/Editor/UseCase/OriginalData/StatusBar/html.js
 
     const html_html = `
 <div class="textae-editor__footer">
@@ -106219,7 +106219,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 </div>
 `
 
-    /* harmony default export */ const StatusBar_html = html_html // CONCATENATED MODULE: ./src/lib/Editor/UseCase/OriginalData/StatusBar/getAreaIn.js
+    /* harmony default export */ const StatusBar_html = html_html // ./src/lib/Editor/UseCase/OriginalData/StatusBar/getAreaIn.js
 
     /* harmony default export */ function getAreaIn(container) {
       const area = container.querySelector('.textae-editor__footer__message')
@@ -106236,7 +106236,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         StatusBar_html.replace(/[\n\r]+/g, '')
       )
       return container.querySelector('.textae-editor__footer__message')
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/OriginalData/StatusBar/index.js
+    } // ./src/lib/Editor/UseCase/OriginalData/StatusBar/index.js
 
     class StatusBar {
       #editorHTMLElement
@@ -106260,7 +106260,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             : `Source: ${message}`
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/OriginalData/index.js
+    } // ./src/lib/Editor/UseCase/OriginalData/index.js
 
     // Manage the original annotations and the original configuration and merge the changes when you save them.
     class OriginalData {
@@ -106332,7 +106332,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           this.#configuration = annotation.config
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/Buttons/definition.js
+    } // ./src/lib/Editor/UseCase/MenuState/Buttons/definition.js
 
     const definition = [
       {
@@ -106564,14 +106564,14 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           }
         ]
       }
-    ] // CONCATENATED MODULE: ./src/lib/Editor/isAndroid.js
+    ] // ./src/lib/Editor/isAndroid.js
 
     /* harmony default export */ function isAndroid() {
       // For development environments, Use the navigator.userAgent.
       // Because the navigator.userAgentData only work in the secure context(HTTPS).
       // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/userAgentData
       return /Android/.test(navigator.userAgent)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/Buttons/Section.js
+    } // ./src/lib/Editor/UseCase/MenuState/Buttons/Section.js
 
     function isIOS() {
       // iPad Safari (iPadOS 14 or later) does not include the string iPad in its userAgent.
@@ -106624,7 +106624,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           list: this.#buttonList.map((button) => button.displayProperties)
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/Buttons/Button.js
+    } // ./src/lib/Editor/UseCase/MenuState/Buttons/Button.js
 
     class Button {
       #type
@@ -106679,7 +106679,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       get availableModes() {
         return this.#availableModes
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/Buttons/index.js
+    } // ./src/lib/Editor/UseCase/MenuState/Buttons/index.js
 
     class Buttons {
       #sections
@@ -106733,7 +106733,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       get #buttonList() {
         return this.#sections.flatMap((section) => section.buttonList)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/PushButtons/PushButton.js
+    } // ./src/lib/Editor/UseCase/MenuState/PushButtons/PushButton.js
 
     class PushButton {
       #name
@@ -106769,7 +106769,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           this.#eventEmitter.emit('textae-event.control.button.push', this)
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/PushButtons/index.js
+    } // ./src/lib/Editor/UseCase/MenuState/PushButtons/index.js
 
     class PushButtons {
       #buttons
@@ -106834,7 +106834,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         this.#buttons.get('text edit mode').isPushed = editText
         this.#buttons.get('simple view').isPushed = simple
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/EnableState.js
+    } // ./src/lib/Editor/UseCase/MenuState/EnableState.js
 
     class EnableState {
       #states
@@ -107017,7 +107017,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         this.#states.set('shrink span by touch', span)
         this.#states.set('pallet', pallet)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/skipCharacters.js
+    } // ./src/lib/Editor/UseCase/MenuState/skipCharacters.js
 
     /* harmony default export */ function skipCharacters(
       getChars,
@@ -107029,7 +107029,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       while (predicate(getChars(str, position))) position += step
 
       return position
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/skipBlank.js
+    } // ./src/lib/Editor/UseCase/MenuState/skipBlank.js
 
     const getNow = function (str, position) {
       return str.charAt(position)
@@ -107044,7 +107044,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     /* harmony default export */ const skipBlank = {
       forward: skipForwardBlank,
       back: skipBackBlank
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/TextSelectionAdjuster.js
+    } // ./src/lib/Editor/UseCase/MenuState/TextSelectionAdjuster.js
 
     class TextSelectionAdjuster {
       backFromBegin(str, position, spanConfig) {}
@@ -107054,11 +107054,11 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       forwardFromBegin(str, position, spanConfig) {}
 
       backFromEnd(str, position, spanConfig) {}
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/getPrev.js
+    } // ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/getPrev.js
 
     /* harmony default export */ function getPrev(str, position) {
       return [str.charAt(position), str.charAt(position - 1)]
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/backToDelimiter.js
+    } // ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/backToDelimiter.js
 
     /* harmony default export */ function backToDelimiter(
       str,
@@ -107069,11 +107069,11 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         // Proceed the position between two characters as (!delimiter delimiter) || (delimiter !delimiter) || (!delimiter !delimiter).
         return chars[1] && !isDelimiter(chars[0]) && !isDelimiter(chars[1])
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/getNext.js
+    } // ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/getNext.js
 
     /* harmony default export */ function getNext(str, position) {
       return [str.charAt(position), str.charAt(position + 1)]
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/skipToDelimiter.js
+    } // ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/skipToDelimiter.js
 
     function skipToDelimiter(str, position, isDelimiter) {
       return skipCharacters(getNext, 1, str, position, (chars) => {
@@ -107081,7 +107081,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         // Return false to stop an infinite loop when the character undefined.
         return chars[1] && !isDelimiter(chars[0]) && !isDelimiter(chars[1])
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/isNotWord.js
+    } // ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/isNotWord.js
 
     /* harmony default export */ function isNotWord(
       isBlankCharacter,
@@ -107095,7 +107095,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           !isDelimiter(chars[1])) ||
         isDelimiter(chars[0])
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/skipToWord.js
+    } // ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/skipToWord.js
 
     /* harmony default export */ function skipToWord(
       str,
@@ -107103,7 +107103,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       isWordEdge
     ) {
       return skipCharacters(getPrev, 1, str, position, isWordEdge)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/backToWord.js
+    } // ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/backToWord.js
 
     /* harmony default export */ function backToWord(
       str,
@@ -107111,7 +107111,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       isWordEdge
     ) {
       return skipCharacters(getNext, -1, str, position, isWordEdge)
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/index.js
+    } // ./src/lib/Editor/UseCase/MenuState/DelimiterDetectAdjuster/index.js
 
     class DelimiterDetectAdjuster extends TextSelectionAdjuster {
       backFromBegin(str, beginPosition, spanConfig) {
@@ -107159,7 +107159,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
         return backToWord(str, endPosition, isWordEdge)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/BlankSkipAdjuster.js
+    } // ./src/lib/Editor/UseCase/MenuState/BlankSkipAdjuster.js
 
     class BlankSkipAdjuster extends TextSelectionAdjuster {
       backFromBegin(str, position, spanConfig) {
@@ -107185,7 +107185,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           spanConfig.isBlankCharacter(char)
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/getPalletButtonTitleFor.js
+    } // ./src/lib/Editor/getPalletButtonTitleFor.js
 
     function getPalletButtonTitleFor(mode) {
       switch (mode) {
@@ -107198,7 +107198,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         default:
           return ''
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/MenuState/index.js
+    } // ./src/lib/Editor/UseCase/MenuState/index.js
 
     class MenuState {
       #enableState
@@ -107388,7 +107388,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           transit: this.getState(type, 'transit')
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/Clipboard/index.js
+    } // ./src/lib/Editor/UseCase/Clipboard/index.js
 
     class Clipboard {
       #eventEmitter
@@ -107697,7 +107697,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       get #cuttingItems() {
         return this.hasCuttingItem ? this.#items : []
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/AnnotationAutoSaver.js
+    } // ./src/lib/Editor/UseCase/AnnotationAutoSaver.js
 
     class AnnotationAutoSaver {
       #menuState
@@ -107753,7 +107753,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           this.#menuState.toggleButton('upload automatically')
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/Menu/bindEventHandler.js
+    } // ./src/lib/Editor/control/Menu/bindEventHandler.js
 
     const bindEventHandler_helpDialog = new HelpDialog()
 
@@ -107817,7 +107817,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             .classList.toggle('textae-control-details--force-show')
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/Menu/index.js
+    } // ./src/lib/Editor/control/Menu/index.js
 
     // The control is a control bar in an editor.
     class Menu {
@@ -107838,7 +107838,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       _querySelector(selector) {
         return this.#el.querySelector(selector)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/ToolBar/toButtonGroup/toButtonIcon.js
+    } // ./src/lib/Editor/control/ToolBar/toButtonGroup/toButtonIcon.js
 
     /* harmony default export */ function toButtonIcon({
       type,
@@ -107852,7 +107852,7 @@ title="${title}"
 data-button-type="${type}">
 </span>
 `
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/ToolBar/toButtonGroup/index.js
+    } // ./src/lib/Editor/control/ToolBar/toButtonGroup/index.js
 
     /* harmony default export */ function toButtonGroup() {
       return (list) => `
@@ -107863,7 +107863,7 @@ data-button-type="${type}">
 
     // EXTERNAL MODULE: ./node_modules/sticky-js/index.js
     var sticky_js = __webpack_require__(6438)
-    var sticky_js_default = /*#__PURE__*/ __webpack_require__.n(sticky_js) // CONCATENATED MODULE: ./src/lib/Editor/control/classify.js
+    var sticky_js_default = /*#__PURE__*/ __webpack_require__.n(sticky_js) // ./src/lib/Editor/control/classify.js
     /* harmony default export */ function classify(buttonGroup) {
       return buttonGroup.map((list) => {
         const ret = []
@@ -107887,7 +107887,7 @@ data-button-type="${type}">
 
         return ret
       })
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/ToolBar/index.js
+    } // ./src/lib/Editor/control/ToolBar/index.js
 
     function ToolBar_template(context) {
       return `
@@ -108030,7 +108030,7 @@ data-button-type="${type}">
           ToolBar_template(this.#menuState)
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/ContextMenu/toContextMenuItem.js
+    } // ./src/lib/Editor/control/ContextMenu/toContextMenuItem.js
 
     /* harmony default export */ function toContextMenuItem({
       type,
@@ -108041,7 +108041,7 @@ data-button-type="${type}">
     class="${classList.join(' ')}"  
     data-button-type="${type}">${title}
   </p>`
-    } // CONCATENATED MODULE: ./src/lib/Editor/control/ContextMenu/index.js
+    } // ./src/lib/Editor/control/ContextMenu/index.js
 
     class ContextMenu extends Menu {
       #editorHTMLElement
@@ -108137,7 +108137,7 @@ data-button-type="${type}">
         super.el.classList.remove('textae-context-menu--hide')
         super.el.classList.add('textae-context-menu--show')
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/KeyEventMap.js
+    } // ./src/lib/Editor/UseCase/KeyEventMap.js
 
     class KeyEventMap {
       /**
@@ -108247,7 +108247,7 @@ data-button-type="${type}">
           this._map.get(key)(event.shiftKey)
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/IconEventMap.js
+    } // ./src/lib/Editor/UseCase/IconEventMap.js
 
     class IconEventMap {
       constructor(
@@ -108300,7 +108300,7 @@ data-button-type="${type}">
           this._map.get(key)()
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/diffOfAnnotation/byID.js
+    } // ./src/lib/Editor/diffOfAnnotation/byID.js
 
     function byID(a, b) {
       if (a.id < b.id) {
@@ -108310,7 +108310,7 @@ data-button-type="${type}">
         return 1
       }
       return 0
-    } // CONCATENATED MODULE: ./src/lib/Editor/diffOfAnnotation/sortByID.js
+    } // ./src/lib/Editor/diffOfAnnotation/sortByID.js
 
     function sortByID({
       text,
@@ -108326,11 +108326,11 @@ data-button-type="${type}">
         relations: relations.sort(byID),
         blocks: blocks.sort(byID)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/diffOfAnnotation/index.js
+    } // ./src/lib/Editor/diffOfAnnotation/index.js
 
     function diffOfAnnotation(oldAnnotation, newAnnotation) {
       return lib_diff(sortByID(oldAnnotation), sortByID(newAnnotation))
-    } // CONCATENATED MODULE: ./src/lib/Editor/AnnotationModelEventsObserver.js
+    } // ./src/lib/Editor/AnnotationModelEventsObserver.js
 
     // Maintenance a state of which the save button is able to be push.
 
@@ -108427,7 +108427,7 @@ data-button-type="${type}">
           this.#annotationModel
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/RemoteResource/AnnotationLoader.js
+    } // ./src/lib/Editor/RemoteResource/AnnotationLoader.js
 
     class AnnotationLoader {
       #eventEmitter
@@ -108516,7 +108516,7 @@ data-button-type="${type}">
           url
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/RemoteResource/ConfigurationLoader.js
+    } // ./src/lib/Editor/RemoteResource/ConfigurationLoader.js
 
     class ConfigurationLoader {
       #eventEmitter
@@ -108576,7 +108576,7 @@ data-button-type="${type}">
           url
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/RemoteResource/isServerPageAuthRequired.js
+    } // ./src/lib/Editor/RemoteResource/isServerPageAuthRequired.js
 
     // When save failed, analyze the response code and headers.
     // If the response follows the followings format, will open 'login-page-url' in a new popup window.
@@ -108603,14 +108603,14 @@ data-button-type="${type}">
         locationHeader
 
       return required ? locationHeader : null
-    } // CONCATENATED MODULE: ./src/lib/Editor/RemoteResource/openPopUp.js
+    } // ./src/lib/Editor/RemoteResource/openPopUp.js
 
     /* harmony default export */ function openPopUp(url) {
       const width = 600
       const height = 500
 
       return window.open(url, '_blank', `width=${width}, height=${height}`)
-    } // CONCATENATED MODULE: ./src/lib/Editor/RemoteResource/AnnotationSaver.js
+    } // ./src/lib/Editor/RemoteResource/AnnotationSaver.js
 
     class AnnotationSaver {
       #eventEmitter
@@ -108705,7 +108705,7 @@ data-button-type="${type}">
         alertify_default().error('could not save')
         this.#eventEmitter.emit('textae-event.resource.save.error')
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/RemoteResource/ConfigurationSaver.js
+    } // ./src/lib/Editor/RemoteResource/ConfigurationSaver.js
 
     class ConfigurationSaver {
       #eventEmitter
@@ -108798,7 +108798,7 @@ data-button-type="${type}">
         alertify_default().error('could not save')
         this.#eventEmitter.emit('textae-event.resource.save.error')
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/RemoteResource/index.js
+    } // ./src/lib/Editor/RemoteResource/index.js
 
     // A sub component to save and load data.
     class RemoteSource {
@@ -108826,7 +108826,7 @@ data-button-type="${type}">
       saveConfiguration(url, editedData) {
         new ConfigurationSaver(this.#eventEmitter).saveTo(url, editedData)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/FunctionAvailability/Translator.js
+    } // ./src/lib/Editor/UseCase/FunctionAvailability/Translator.js
 
     // This is a map of function names specified in config and those used internally.
     class Translator {
@@ -108888,8 +108888,7 @@ data-button-type="${type}">
       }
 
       get defaultAvailabilities() {
-        return this.#map
-          .values()
+        return Array.from(this.#map.values())
           .filter(
             ({ name, enabled }) => name !== undefined && enabled !== undefined
           )
@@ -108914,7 +108913,7 @@ data-button-type="${type}">
 
         return functionName
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/FunctionAvailability/index.js
+    } // ./src/lib/Editor/UseCase/FunctionAvailability/index.js
 
     class FunctionAvailability {
       #translator
@@ -108946,7 +108945,7 @@ data-button-type="${type}">
 
         this.#availabilities = availabilities
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/EditModeState.js
+    } // ./src/lib/Editor/UseCase/EditModeState.js
 
     class EditModeState {
       #currentShowRelation
@@ -109090,7 +109089,7 @@ data-button-type="${type}">
           this.#functionAvailability.isAvailable(mode.availabilityName)
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/UseCase/index.js
+    } // ./src/lib/Editor/UseCase/index.js
 
     class UseCase {
       #contextMenu
@@ -109392,7 +109391,7 @@ data-button-type="${type}">
     }
 
     // EXTERNAL MODULE: ./node_modules/events/events.js
-    var events = __webpack_require__(7007) // CONCATENATED MODULE: ./src/lib/Editor/StartUpOptions/AnnotationResource.js
+    var events = __webpack_require__(7007) // ./src/lib/Editor/StartUpOptions/AnnotationResource.js
     class AnnotationResource {
       #annotation
       #sourceURL
@@ -109434,7 +109433,7 @@ data-button-type="${type}">
         element.innerHTML = ''
         return inlineAnnotation
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/StartUpOptions/index.js
+    } // ./src/lib/Editor/StartUpOptions/index.js
 
     class StartUpOptions {
       #element
@@ -109611,7 +109610,7 @@ data-button-type="${type}">
           this.#element.getAttribute('ignore_annotation_parameter')
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/EditorCSSClass.js
+    } // ./src/lib/Editor/EditorCSSClass.js
 
     class EditorCSSClass {
       constructor(editorHTMLElement) {
@@ -109623,7 +109622,7 @@ data-button-type="${type}">
       endWait() {
         this._editorHTMLElement.classList.remove('textae-editor--wait')
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/observeElement.js
+    } // ./src/lib/Editor/observeElement.js
 
     /* harmony default export */ function observeElement(element) {
       // Prevent a selection text with shift keies.
@@ -109640,7 +109639,7 @@ data-button-type="${type}">
         'mousedown',
         (e) => e.preventDefault()
       )
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/boundaryCrossingSpansTemplate.js
+    } // ./src/lib/component/ValidationDialog/boundaryCrossingSpansTemplate.js
 
     /* harmony default export */ function boundaryCrossingSpansTemplate(
       boundaryCrossingSpans
@@ -109691,7 +109690,7 @@ data-button-type="${type}">
       <td>${style || obj}</td>
     </tr>
     `
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/duplicatedAttributesTemplate.js
+    } // ./src/lib/component/ValidationDialog/duplicatedAttributesTemplate.js
 
     /* harmony default export */ function duplicatedAttributesTemplate(
       duplicatedAttributes
@@ -109727,7 +109726,7 @@ data-button-type="${type}">
             <td class="alert">${obj}</td>
           </tr>
           `
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/duplicatedIDsTemplate.js
+    } // ./src/lib/component/ValidationDialog/duplicatedIDsTemplate.js
 
     /* harmony default export */ function duplicatedIDsTemplate(duplicatedIDs) {
       return duplicatedIDs.length
@@ -109763,7 +109762,7 @@ data-button-type="${type}">
       <td>${obj}</td>
     </tr>
     `
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/duplicateRangeBlocksTemplate.js
+    } // ./src/lib/component/ValidationDialog/duplicateRangeBlocksTemplate.js
 
     /* harmony default export */ function duplicateRangeBlocksTemplate(
       duplicatedRangeBlocks
@@ -109798,7 +109797,7 @@ data-button-type="${type}">
       <td>${obj}</td>
     </tr>
     `
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/outOfTextBlocksTemplate.js
+    } // ./src/lib/component/ValidationDialog/outOfTextBlocksTemplate.js
 
     /* harmony default export */ function outOfTextBlocksTemplate(
       outOfTextBlocks
@@ -109833,7 +109832,7 @@ data-button-type="${type}">
       <td>${obj}</td>
     </tr>
     `
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/outOfTextDenotationsTemplate.js
+    } // ./src/lib/component/ValidationDialog/outOfTextDenotationsTemplate.js
 
     /* harmony default export */ function outOfTextDenotationsTemplate(
       outOfTextDenotations
@@ -109868,7 +109867,7 @@ data-button-type="${type}">
       <td>${obj}</td>
     </tr>
     `
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/outOfTextTypesettingsTemplate.js
+    } // ./src/lib/component/ValidationDialog/outOfTextTypesettingsTemplate.js
 
     /* harmony default export */ function outOfTextTypesettingsTemplate(
       outOfTextTypesettings
@@ -109904,7 +109903,7 @@ data-button-type="${type}">
       <td>${style}</td>
     </tr>
     `
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/referencedEntitiesDoNotExistTemplate.js
+    } // ./src/lib/component/ValidationDialog/referencedEntitiesDoNotExistTemplate.js
 
     /* harmony default export */ function referencedEntitiesDoNotExistTemplate(
       referencedEntitiesDoNotExist
@@ -109959,7 +109958,7 @@ data-button-type="${type}">
       <td${alertObj ? ' class="alert"' : ''}>${obj}</td>
     </tr>
     `
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/wrongRangeBlocksTemplate.js
+    } // ./src/lib/component/ValidationDialog/wrongRangeBlocksTemplate.js
 
     /* harmony default export */ function wrongRangeBlocksTemplate(
       wrongRangeBlocks
@@ -109995,7 +109994,7 @@ data-button-type="${type}">
       <td>${obj}</td>
     </tr>
     `
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/wrongRangeDenotationsTemplate.js
+    } // ./src/lib/component/ValidationDialog/wrongRangeDenotationsTemplate.js
 
     /* harmony default export */ function wrongRangeDenotationsTemplate(
       wrongRangeDenotations
@@ -110029,7 +110028,7 @@ data-button-type="${type}">
       <td>${obj}</td>
     </tr>
   `
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/wrongRangeTypesettingsTemplate.js
+    } // ./src/lib/component/ValidationDialog/wrongRangeTypesettingsTemplate.js
 
     /* harmony default export */ function wrongRangeTypesettingsTemplate(
       wrongRangeTypesettings
@@ -110063,7 +110062,7 @@ data-button-type="${type}">
       </table>
       `
         : ''
-    } // CONCATENATED MODULE: ./src/lib/component/ValidationDialog/index.js
+    } // ./src/lib/component/ValidationDialog/index.js
 
     class ValidationDialog extends Dialog {
       constructor(rejects) {
@@ -110118,7 +110117,7 @@ data-button-type="${type}">
           maxWidth: 900
         })
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/observeEventEmitter.js
+    } // ./src/lib/Editor/observeEventEmitter.js
 
     /* harmony default export */ function observeEventEmitter(eventEmitter) {
       eventEmitter
@@ -110178,7 +110177,7 @@ data-button-type="${type}">
           }
         }
       )
-    } // CONCATENATED MODULE: ./src/lib/Editor/editorCSSClassObserve.js
+    } // ./src/lib/Editor/editorCSSClassObserve.js
 
     /* harmony default export */ function editorCSSClassObserve(
       eventEmitter,
@@ -110189,7 +110188,7 @@ data-button-type="${type}">
         .on('textae-event.resource.endLoad', () => editorCSSClass.endWait())
         .on('textae-event.resource.startSave', () => editorCSSClass.startWait())
         .on('textae-event.resource.endSave', () => editorCSSClass.endWait())
-    } // CONCATENATED MODULE: ./src/lib/Editor/EditorEventListener.js
+    } // ./src/lib/Editor/EditorEventListener.js
 
     class EditorEventListener {
       #eventEmitter
@@ -110207,7 +110206,7 @@ data-button-type="${type}">
       dispose() {
         this.#eventEmitter.off(this.#event, this.#listener)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/BrowserEventListener.js
+    } // ./src/lib/Editor/BrowserEventListener.js
 
     class BrowserEventListener {
       #target
@@ -110229,7 +110228,7 @@ data-button-type="${type}">
       #bind() {
         this.#target.addEventListener(this.#event, this.#listener)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/SelectionModel/SelectedItems.js
+    } // ./src/lib/Editor/SelectionModel/SelectedItems.js
 
     class SelectedItems {
       #emitter
@@ -110338,7 +110337,7 @@ data-button-type="${type}">
           `textae-event.selection.${this.#annotationType}.change`
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/SelectionModel/SelectedItemsWithAttributes.js
+    } // ./src/lib/Editor/SelectionModel/SelectedItemsWithAttributes.js
 
     class SelectedItemsWithAttributes extends SelectedItems {
       selectedWithAttributeOf(pred) {
@@ -110384,7 +110383,7 @@ data-button-type="${type}">
           return itemWithSamePred.attributes.find((a) => a.pred === pred)
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/SelectionModel/index.js
+    } // ./src/lib/Editor/SelectionModel/index.js
 
     class SelectionModel {
       #annotationModel
@@ -110513,7 +110512,7 @@ data-button-type="${type}">
       #isDenotation(id) {
         return this.#annotationModel.entityInstanceContainer.hasDenotation(id)
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/filterIfModelModified.js
+    } // ./src/lib/Editor/filterIfModelModified.js
 
     function filterIfModelModified(annotationModel, callback) {
       let previous = annotationModel.externalFormat
@@ -110531,7 +110530,7 @@ data-button-type="${type}">
           callback(annotationModel.externalFormat)
         }
       }
-    } // CONCATENATED MODULE: ./src/lib/Editor/index.js
+    } // ./src/lib/Editor/index.js
 
     // model manages data objects.
 
@@ -110725,7 +110724,7 @@ data-button-type="${type}">
           filterIfModelModified(this.#annotationModel, callback)
         )
       }
-    } // CONCATENATED MODULE: ./src/lib/createEditor.js
+    } // ./src/lib/createEditor.js
 
     function createEditor(element, tool) {
       return new Editor(
@@ -110754,7 +110753,7 @@ data-button-type="${type}">
           }
         }
       )
-    } // CONCATENATED MODULE: ./src/lib/textae/toEditor.js
+    } // ./src/lib/textae/toEditor.js
 
     function toEditor(tool, element) {
       // Create an editor
@@ -110766,7 +110765,7 @@ data-button-type="${type}">
       element.dataset.textaeInitialized = true
 
       return editor
-    } // CONCATENATED MODULE: ./src/lib/textae/API.js
+    } // ./src/lib/textae/API.js
 
     class API {
       /**
@@ -110800,7 +110799,7 @@ data-button-type="${type}">
       selectDenotation(denotationID) {
         this._editor.selectDenotation(denotationID)
       }
-    } // CONCATENATED MODULE: ./src/lib/textae/index.js
+    } // ./src/lib/textae/index.js
 
     const tool = new Tool()
 
@@ -110812,7 +110811,7 @@ data-button-type="${type}">
         .filter((element) => !element.dataset.textaeInitialized)
         .map((element) => toEditor(tool, element))
         .map((editor) => new API(editor))
-    } // CONCATENATED MODULE: ./src/index.js
+    } // ./src/index.js
 
     document.addEventListener('DOMContentLoaded', initializeTextAEEditor)
 
