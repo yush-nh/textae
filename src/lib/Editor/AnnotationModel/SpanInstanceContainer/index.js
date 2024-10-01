@@ -181,13 +181,13 @@ export default class SpanInstanceContainer {
   find(type, begin, end) {
     switch (type) {
       case 'denotation':
-        return this.#denotations
-          .values()
-          .find((span) => span.begin === begin && span.end === end)
+        return Array.from(this.#denotations.values()).find(
+          (span) => span.begin === begin && span.end === end
+        )
       case 'block':
-        return this.#blocks
-          .values()
-          .find((span) => span.begin === begin && span.end === end)
+        return Array.from(this.#blocks.values()).find(
+          (span) => span.begin === begin && span.end === end
+        )
       default:
         // Style span has no entity.
         throw `${type} is unknown type span!`

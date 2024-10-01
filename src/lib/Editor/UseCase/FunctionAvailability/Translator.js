@@ -48,8 +48,7 @@ export default class Translator {
   }
 
   get defaultAvailabilities() {
-    return this.#map
-      .values()
+    return Array.from(this.#map.values())
       .filter(
         ({ name, enabled }) => name !== undefined && enabled !== undefined
       )
