@@ -1,7 +1,7 @@
 import alertifyjs from 'alertifyjs'
 import patchConfiguration from '../patchConfiguration'
 import validateConfiguration from './validateConfiguration'
-import validateAttribueDefinitionAndAlert from '../validateAttribueDefinitionAndAlert'
+import validateAttributeDefinitionAndAlert from '../validateAttributeDefinitionAndAlert'
 
 export default function (annotation, config) {
   const patchedConfig = patchConfiguration(annotation, config)
@@ -12,5 +12,5 @@ export default function (annotation, config) {
     return
   }
 
-  return validateAttribueDefinitionAndAlert(annotation, patchedConfig)
+  return validateAttributeDefinitionAndAlert(annotation, patchedConfig)
 }
