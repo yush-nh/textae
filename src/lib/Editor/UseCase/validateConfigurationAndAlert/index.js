@@ -3,7 +3,7 @@ import patchConfiguration from '../patchConfiguration'
 import validateConfiguration from './validateConfiguration'
 import validateAttributeDefinitionAndAlert from '../validateAttributeDefinitionAndAlert'
 
-export default function (annotation, config) {
+export default function validateConfigurationAndAlert(annotation, config) {
   const patchedConfig = patchConfiguration(annotation, config)
   const errorMessage = validateConfiguration(patchedConfig)
   if (errorMessage) {
