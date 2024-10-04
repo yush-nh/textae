@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.4.0](https://github.com/pubannotation/textae/compare/v13.3.3...v13.4.0) (2024-10-04)
+
+
+### Features
+
+* Add HTTP header to determine application ([1a2cf22](https://github.com/pubannotation/textae/commit/1a2cf2276121db09f303e3054c4990a0cfd1684c))
+
+
+### Bug Fixes
+
+* In the Text Edit Mode, when text adjacent to the front of a span is deleted, the span begin position is not updated. ([847a443](https://github.com/pubannotation/textae/commit/847a44348bd99100fb64bf1c349a3822bedc6bb4))
+
 ### [13.3.3](https://github.com/pubannotation/textae/compare/v13.3.2...v13.3.3) (2024-10-01)
 
 

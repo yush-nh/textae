@@ -51197,7 +51197,7 @@
           } else if (span.end < end) {
             // Span movement in this section is prohibited.
             continue
-          } else if (end < span.begin) {
+          } else if (end <= span.begin) {
             // Change both the begin and end of the span
             span.offset(offset, offset)
             effected.push(span)
@@ -66140,7 +66140,7 @@
       bindChangeLockConfig(content, typeDictionary)
     } // ./package.json
 
-    const package_namespaceObject = { rE: '13.3.3' } // ./src/lib/component/SettingDialog/template.js
+    const package_namespaceObject = { rE: '13.4.0' } // ./src/lib/component/SettingDialog/template.js
     function SettingDialog_template_template(context) {
       const {
         typeGap,
@@ -71985,7 +71985,14 @@ situation.
           if (child.parent == this && children.indexOf(child) < 0)
             child.destroy()
         }
-        this.children.splice(from, to - from, ...children)
+        if (children.length < 250)
+          this.children.splice(from, to - from, ...children)
+        else
+          this.children = [].concat(
+            this.children.slice(0, from),
+            children,
+            this.children.slice(to)
+          )
         for (let i = 0; i < children.length; i++) children[i].setParent(this)
       }
       ignoreMutation(_rec) {
@@ -78527,10 +78534,11 @@ in the editor view.
     // lines within the viewport, as a kludge to keep the editor
     // responsive when a ridiculously long line is loaded into it.
     class LineGap {
-      constructor(from, to, size) {
+      constructor(from, to, size, displaySize) {
         this.from = from
         this.to = to
         this.size = size
+        this.displaySize = displaySize
       }
       static same(a, b) {
         if (a.length != b.length) return false
@@ -78545,7 +78553,7 @@ in the editor view.
       draw(viewState, wrapping) {
         return Decoration.replace({
           widget: new LineGapWidget(
-            this.size * (wrapping ? viewState.scaleY : viewState.scaleX),
+            this.displaySize * (wrapping ? viewState.scaleY : viewState.scaleX),
             wrapping
           )
         }).range(this.from, this.to)
@@ -79043,7 +79051,8 @@ in the editor view.
               new LineGap(
                 changes.mapPos(gap.from),
                 changes.mapPos(gap.to),
-                gap.size
+                gap.size,
+                gap.displaySize
               )
             )
         return mapped
@@ -79101,7 +79110,12 @@ in the editor view.
               ).head
               if (lineStart > from) to = lineStart
             }
-            gap = new LineGap(from, to, this.gapSize(line, from, to, structure))
+            let size = this.gapSize(line, from, to, structure)
+            let displaySize =
+              wrapping || size < 2000000 /* VP.MaxHorizGap */
+                ? size
+                : 2000000 /* VP.MaxHorizGap */
+            gap = new LineGap(from, to, size, displaySize)
           }
           gaps.push(gap)
         }
@@ -79132,18 +79146,30 @@ in the editor view.
           } else {
             let totalWidth = structure.total * this.heightOracle.charWidth
             let marginWidth = margin * this.heightOracle.charWidth
+            let horizOffset = 0
+            if (totalWidth > 2000000 /* VP.MaxHorizGap */)
+              for (let old of current) {
+                if (
+                  old.from >= line.from &&
+                  old.from < line.to &&
+                  old.size != old.displaySize &&
+                  old.from * this.heightOracle.charWidth + horizOffset <
+                    this.pixelViewport.left
+                )
+                  horizOffset = old.size - old.displaySize
+              }
+            let pxLeft = this.pixelViewport.left + horizOffset,
+              pxRight = this.pixelViewport.right + horizOffset
             let left, right
             if (target != null) {
               let targetFrac = findFraction(structure, target)
               let spaceFrac =
-                ((this.pixelViewport.right - this.pixelViewport.left) / 2 +
-                  marginWidth) /
-                totalWidth
+                ((pxRight - pxLeft) / 2 + marginWidth) / totalWidth
               left = targetFrac - spaceFrac
               right = targetFrac + spaceFrac
             } else {
-              left = (this.pixelViewport.left - marginWidth) / totalWidth
-              right = (this.pixelViewport.right + marginWidth) / totalWidth
+              left = (pxLeft - marginWidth) / totalWidth
+              right = (pxRight + marginWidth) / totalWidth
             }
             viewFrom = findPosition(structure, left)
             viewTo = findPosition(structure, right)
@@ -85838,7 +85864,7 @@ children belong to it).
         return resolveNode(this, pos, side, true)
       }
       matchContext(context) {
-        return matchNodeContext(this, context)
+        return matchNodeContext(this.parent, context)
       }
       enterUnfinishedNodesBefore(pos) {
         let scan = this.childBefore(pos),
@@ -86034,7 +86060,7 @@ children belong to it).
       }
     }
     function matchNodeContext(node, context, i = context.length - 1) {
-      for (let p = node.parent; i >= 0; p = p.parent) {
+      for (let p = node; i >= 0; p = p.parent) {
         if (!p) return false
         if (!p.type.isAnonymous) {
           if (context[i] && context[i] != p.name) return false
@@ -86603,7 +86629,7 @@ allows you to move to adjacent nodes.
     are treated as wildcards.
     */
       matchContext(context) {
-        if (!this.buffer) return matchNodeContext(this.node, context)
+        if (!this.buffer) return matchNodeContext(this.node.parent, context)
         let { buffer } = this.buffer,
           { types } = buffer.set
         for (
@@ -86611,7 +86637,7 @@ allows you to move to adjacent nodes.
           i >= 0;
           d--
         ) {
-          if (d < 0) return matchNodeContext(this.node, context, i)
+          if (d < 0) return matchNodeContext(this._tree, context, i)
           let type = types[buffer.buffer[this.stack[d]]]
           if (!type.isAnonymous) {
             if (context[i] && context[i] != type.name) return false
@@ -86650,7 +86676,8 @@ allows you to move to adjacent nodes.
         depth
       ) {
         let { id, start, end, size } = cursor
-        let lookAheadAtStart = lookAhead
+        let lookAheadAtStart = lookAhead,
+          contextAtStart = contextHash
         while (size < 0) {
           cursor.next()
           if (size == -1 /* SpecialRecord.Reuse */) {
@@ -86709,7 +86736,8 @@ allows you to move to adjacent nodes.
                   cursor.end,
                   lastEnd,
                   localInRepeat,
-                  lookAheadAtStart
+                  lookAheadAtStart,
+                  contextAtStart
                 )
                 lastGroup = localChildren.length
                 lastEnd = cursor.end
@@ -86741,12 +86769,13 @@ allows you to move to adjacent nodes.
               start,
               lastEnd,
               localInRepeat,
-              lookAheadAtStart
+              lookAheadAtStart,
+              contextAtStart
             )
           localChildren.reverse()
           localPositions.reverse()
           if (localInRepeat > -1 && lastGroup > 0) {
-            let make = makeBalanced(type)
+            let make = makeBalanced(type, contextAtStart)
             node = balanceRange(
               type,
               localChildren,
@@ -86764,7 +86793,8 @@ allows you to move to adjacent nodes.
               localChildren,
               localPositions,
               end - start,
-              lookAheadAtStart - end
+              lookAheadAtStart - end,
+              contextAtStart
             )
           }
         }
@@ -86802,7 +86832,7 @@ allows you to move to adjacent nodes.
           positions.push(start - parentStart)
         }
       }
-      function makeBalanced(type) {
+      function makeBalanced(type, contextHash) {
         return (children, positions, length) => {
           let lookAhead = 0,
             lastI = children.length - 1,
@@ -86814,7 +86844,14 @@ allows you to move to adjacent nodes.
             if ((lookAheadProp = last.prop(NodeProp.lookAhead)))
               lookAhead = positions[lastI] + last.length + lookAheadProp
           }
-          return makeTree(type, children, positions, length, lookAhead)
+          return makeTree(
+            type,
+            children,
+            positions,
+            length,
+            lookAhead,
+            contextHash
+          )
         }
       }
       function makeRepeatLeaf(
@@ -86825,7 +86862,8 @@ allows you to move to adjacent nodes.
         from,
         to,
         type,
-        lookAhead
+        lookAhead,
+        contextHash
       ) {
         let localChildren = [],
           localPositions = []
@@ -86839,7 +86877,8 @@ allows you to move to adjacent nodes.
             localChildren,
             localPositions,
             to - from,
-            lookAhead - to
+            lookAhead - to,
+            contextHash
           )
         )
         positions.push(from - base)
@@ -86849,7 +86888,8 @@ allows you to move to adjacent nodes.
         children,
         positions,
         length,
-        lookAhead = 0,
+        lookAhead,
+        contextHash,
         props
       ) {
         if (contextHash) {
@@ -87482,7 +87522,15 @@ tree.
             }
           } else if (overlay && (range = overlay.predicate(cursor))) {
             if (range === true) range = new dist_Range(cursor.from, cursor.to)
-            if (range.from < range.to) overlay.ranges.push(range)
+            if (range.from < range.to) {
+              let last = overlay.ranges.length - 1
+              if (last >= 0 && overlay.ranges[last].to == range.from)
+                overlay.ranges[last] = {
+                  from: overlay.ranges[last].from,
+                  to: range.to
+                }
+              else overlay.ranges.push(range)
+            }
           }
           if (enter && cursor.firstChild()) {
             if (overlay) overlay.depth++
@@ -106005,7 +106053,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       return null
-    } // ./src/lib/Editor/UseCase/validateAttribueDefinitionAndAlert/hasAllValueDefinitionOfSelectionAttributes.js
+    } // ./src/lib/Editor/UseCase/validateAttributeDefinitionAndAlert/hasAllValueDefinitionOfSelectionAttributes.js
 
     // Check for definitions of values for selection attributes.
     /* harmony default export */ function hasAllValueDefinitionOfSelectionAttributes(
@@ -106048,9 +106096,9 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
             .join(', ')}" in configuration is missing. `
         }
       }
-    } // ./src/lib/Editor/UseCase/validateAttribueDefinitionAndAlert/index.js
+    } // ./src/lib/Editor/UseCase/validateAttributeDefinitionAndAlert/index.js
 
-    /* harmony default export */ function validateAttribueDefinitionAndAlert(
+    /* harmony default export */ function validateAttributeDefinitionAndAlert(
       annotation,
       config
     ) {
@@ -106067,10 +106115,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       return config
     } // ./src/lib/Editor/UseCase/validateConfigurationAndAlert/index.js
 
-    /* harmony default export */ function validateConfigurationAndAlert(
-      annotation,
-      config
-    ) {
+    function validateConfigurationAndAlert(annotation, config) {
       const patchedConfig = patchConfiguration(annotation, config)
       const errorMessage = validateConfiguration(patchedConfig)
       if (errorMessage) {
@@ -106079,7 +106124,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
         return
       }
 
-      return validateAttribueDefinitionAndAlert(annotation, patchedConfig)
+      return validateAttributeDefinitionAndAlert(annotation, patchedConfig)
     } // ./src/lib/Editor/UseCase/warningIfBeginEndOfSpanAreNotInteger/areNotBeginAndEndInteger.js
 
     /* harmony default export */ function areNotBeginAndEndInteger(annotation) {
@@ -108626,7 +108671,8 @@ data-button-type="${type}">
           const opt = {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'App-Name': 'TextAE'
             },
             body: JSON.stringify(editedData),
             credentials: 'include'
