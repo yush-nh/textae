@@ -124,7 +124,7 @@ export default class PersistenceInterface {
     // Merge with the original config and save the value unchanged in the editor.
     const editedConfig = {
       ...this.#getOriginalConfig(),
-      ...this.#annotationModel.typeDictionary.config
+      ...this.#getActualNewConfig()
     }
 
     new SaveConfigurationDialog(
@@ -150,5 +150,39 @@ export default class PersistenceInterface {
     delete annotation.tracks
 
     return annotation
+  }
+
+  #getActualNewConfig() {
+    const originalConfig = this.#getOriginalConfig()
+    const newConfig = this.#annotationModel.typeDictionary.config
+
+    const originalAttributeTypes = originalConfig['attribute types']
+    const newAttributeTypes = newConfig['attribute types']
+
+    if (originalAttributeTypes?.length && newAttributeTypes?.length) {
+      /**
+       * Remove `values` property from `newConfig` if it was not present in `originalConfig` and only an empty array is provided.
+       * This happens when saving a configuration:
+       * - If an attribute does not have `values` in the original config,
+       *   an empty `values` array may be added to `newConfig` during the saving process.
+       * - Since this does not represent an actual semantic change, delete this empty `values` property
+       *   from `newConfig` to avoid creating unnecessary diffs.
+       */
+
+      for (let i = 0; i < originalAttributeTypes.length; i++) {
+        const isOriginalValueBlank = !Object.prototype.hasOwnProperty.call(
+          originalAttributeTypes[i],
+          'values'
+        )
+        const isNewValueEmptyArray =
+          newAttributeTypes[i]['values']?.length === 0
+
+        if (isOriginalValueBlank && isNewValueEmptyArray) {
+          delete newConfig['attribute types'][i]['values']
+        }
+      }
+    }
+
+    return newConfig
   }
 }
