@@ -40,7 +40,7 @@
     "eslint": "^9.11.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-unused-imports": "^4.1.4",
-    "globals": "^15.9.0",
+    "globals": "^15.10.0",
     "husky": "^9.1.6",
     "less": "^4.2.0",
     "less-watch-compiler": "1.16.3",
