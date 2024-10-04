@@ -395,7 +395,7 @@ export default class SpanInstanceContainer {
       } else if (span.end < end) {
         // Span movement in this section is prohibited.
         continue
-      } else if (end < span.begin) {
+      } else if (end <= span.begin) {
         // Change both the begin and end of the span
         span.offset(offset, offset)
         effected.push(span)
