@@ -1,6 +1,13 @@
 import Observable from 'observ'
 
 export default class TypeDictionary {
+  #eventEmitter
+  #denotationContainer
+  #blockContainer
+  #relationContainer
+  #attributeContainer
+  #lockStateObservable = new Observable(false)
+
   /**
    *
    * @param {import('../AttributeDefinitionContainer').default} attribute
@@ -13,83 +20,82 @@ export default class TypeDictionary {
     attribute,
     configLocked = true
   ) {
-    this._eventEmitter = eventEmitter
-    this._denotationContainer = denotation
-    this._blockContainer = block
-    this._relationContainer = relation
-    this._attributeContainer = attribute
+    this.#eventEmitter = eventEmitter
+    this.#denotationContainer = denotation
+    this.#blockContainer = block
+    this.#relationContainer = relation
+    this.#attributeContainer = attribute
 
-    this._lockStateObservable = new Observable(false)
-    this._lockStateObservable(() =>
-      this._eventEmitter.emit(`textae-event.type-definition.lock`)
+    this.#lockStateObservable(() =>
+      this.#eventEmitter.emit(`textae-event.type-definition.lock`)
     )
-    this._lockStateObservable.set(configLocked)
+    this.#lockStateObservable.set(configLocked)
   }
 
   get denotation() {
-    return this._denotationContainer
+    return this.#denotationContainer
   }
 
   get block() {
-    return this._blockContainer
+    return this.#blockContainer
   }
 
   get relation() {
-    return this._relationContainer
+    return this.#relationContainer
   }
 
   get attribute() {
-    return this._attributeContainer
+    return this.#attributeContainer
   }
 
   get config() {
     const ret = {}
 
-    if (this._denotationContainer.config.length) {
-      ret['entity types'] = this._denotationContainer.config
+    if (this.#denotationContainer.config.length) {
+      ret['entity types'] = this.#denotationContainer.config
     }
 
-    if (this._relationContainer.config.length) {
-      ret['relation types'] = this._relationContainer.config
+    if (this.#relationContainer.config.length) {
+      ret['relation types'] = this.#relationContainer.config
     }
 
-    if (this._attributeContainer.config.length) {
-      ret['attribute types'] = this._attributeContainer.config
+    if (this.#attributeContainer.config.length) {
+      ret['attribute types'] = this.#attributeContainer.config
     }
 
-    if (this._blockContainer.config.length) {
-      ret['block types'] = this._blockContainer.config
+    if (this.#blockContainer.config.length) {
+      ret['block types'] = this.#blockContainer.config
     }
 
     return ret
   }
 
   get isLock() {
-    return this._lockStateObservable()
+    return this.#lockStateObservable()
   }
 
   lockEdit() {
-    this._lockStateObservable.set(true)
+    this.#lockStateObservable.set(true)
   }
   unlockEdit() {
-    this._lockStateObservable.set(false)
+    this.#lockStateObservable.set(false)
   }
 
   setTypeConfig(config) {
     if (config) {
-      this._denotationContainer.definedTypes = config['entity types'] || []
-      this._relationContainer.definedTypes = config['relation types'] || []
-      this._attributeContainer.definedTypes = config['attribute types'] || []
-      this._blockContainer.definedTypes = config['block types'] || []
+      this.#denotationContainer.definedTypes = config['entity types'] || []
+      this.#relationContainer.definedTypes = config['relation types'] || []
+      this.#attributeContainer.definedTypes = config['attribute types'] || []
+      this.#blockContainer.definedTypes = config['block types'] || []
       this.autocompletionWs = config['autocompletion_ws']
     } else {
-      this._denotationContainer.definedTypes = []
-      this._relationContainer.definedTypes = []
-      this._attributeContainer.definedTypes = []
-      this._blockContainer.definedTypes = []
+      this.#denotationContainer.definedTypes = []
+      this.#relationContainer.definedTypes = []
+      this.#attributeContainer.definedTypes = []
+      this.#blockContainer.definedTypes = []
       this.autocompletionWs = ''
     }
 
-    this._eventEmitter.emit(`textae-event.type-definition.reset`)
+    this.#eventEmitter.emit(`textae-event.type-definition.reset`)
   }
 }
