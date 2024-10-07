@@ -1,6 +1,6 @@
 {
   "config": {
-    "autocompletion_ws": "aabc/dev/autocomplete?order=desc",
+    "autocompletion_ws": "/dev/autocomplete?order=desc",
     "autosave": true,
     "autolineheight": false,
     "boundarydetection": true,
