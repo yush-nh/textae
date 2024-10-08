@@ -2,7 +2,7 @@ import isURI from '../../isURI'
 import getMatchPrefix from '../getMatchPrefix'
 import getDisplayNameFromUri from './getDisplayNameFromUri'
 
-export default function (namespace, value, displayName) {
+export default function getDisplayName(namespace, value, displayName) {
   // When a type id has label attribute.
   if (displayName) {
     return displayName
