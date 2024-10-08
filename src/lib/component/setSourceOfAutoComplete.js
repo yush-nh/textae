@@ -31,7 +31,6 @@ export default function (
     select: (_, { item }) => {
       inputElement.value = item.id
 
-      console.log(123)
       if (labelSpan) {
         if (labelSpan instanceof HTMLInputElement) {
           labelSpan.value = item.label
