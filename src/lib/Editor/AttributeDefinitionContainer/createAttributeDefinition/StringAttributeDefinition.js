@@ -13,7 +13,7 @@ export default class StringAttributeDefinition extends AttributeDefinition {
   }
 
   getLabel(obj) {
-    const def = this._getMatchedValue(obj)
+    const def = this.#getMatchedValue(obj)
 
     if (def && def.label) {
       return def.label
@@ -25,7 +25,7 @@ export default class StringAttributeDefinition extends AttributeDefinition {
   }
 
   getColor(obj) {
-    const def = this._getMatchedValue(obj)
+    const def = this.#getMatchedValue(obj)
 
     if (def && def.color) {
       return def.color
@@ -34,7 +34,7 @@ export default class StringAttributeDefinition extends AttributeDefinition {
     return null
   }
 
-  _getMatchedValue(obj) {
+  #getMatchedValue(obj) {
     const match = this._values
       .filter((a) => a.pattern !== 'default')
       .find((a) => new RegExp(a.pattern).test(obj))
