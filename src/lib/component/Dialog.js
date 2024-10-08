@@ -31,7 +31,7 @@ export default class Dialog {
   open() {
     this._$dialog.dialog({
       ...{
-        dialogClass: 'textae-editor__dialog',
+        classes: { 'ui-dialog': 'textae-editor__dialog' },
         height: 'auto',
         modal: true,
         resizable: false,
