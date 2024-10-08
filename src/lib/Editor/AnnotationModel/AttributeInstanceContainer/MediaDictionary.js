@@ -1,17 +1,15 @@
 // The browser cache is not available until the HTTP request is returned.
 // To make only one request for a single URL, have an application-level cache.
 export default class MediaDictionary {
-  constructor() {
-    this._cache = new Map()
-  }
+  #cache = new Map()
 
   acquireContentTypeOf(url) {
     if (!url) {
       return Promise.resolve(false)
     }
 
-    if (this._cache.has(url)) {
-      return this._cache.get(url)
+    if (this.#cache.has(url)) {
+      return this.#cache.get(url)
     }
 
     // Use GET method.
@@ -45,7 +43,7 @@ export default class MediaDictionary {
     // Cache the promise of results, not the results themselves.
     // Caching the result causes an immediate redraw at the caller;
     // it does not wait for the HTTP response to arrive.
-    this._cache.set(url, promiseOfResult)
+    this.#cache.set(url, promiseOfResult)
 
     return promiseOfResult
   }
@@ -55,10 +53,10 @@ export default class MediaDictionary {
       return false
     }
 
-    if (!this._cache.has(url)) {
+    if (!this.#cache.has(url)) {
       return false
     }
 
-    return this._cache.get(url).value
+    return this.#cache.get(url).value
   }
 }
