@@ -3,7 +3,7 @@
 export default class MediaDictionary {
   #cache = new Map()
 
-  acquireContentTypeOf(url) {
+  async acquireContentTypeOf(url) {
     if (!url) {
       return Promise.resolve(false)
     }
