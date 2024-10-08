@@ -22,7 +22,7 @@ export default class NumericAttributeDefinition extends AttributeDefinition {
   }
 
   getLabel(obj) {
-    const def = this._getMatchedValue(obj)
+    const def = this.#getMatchedValue(obj)
 
     if (def && def.label) {
       return def.label
@@ -34,7 +34,7 @@ export default class NumericAttributeDefinition extends AttributeDefinition {
   }
 
   getColor(obj) {
-    const def = this._getMatchedValue(obj)
+    const def = this.#getMatchedValue(obj)
 
     if (def && def.color) {
       return def.color
@@ -43,7 +43,7 @@ export default class NumericAttributeDefinition extends AttributeDefinition {
     return null
   }
 
-  _getMatchedValue(obj) {
+  #getMatchedValue(obj) {
     const match = this._values
       .filter((a) => a.range !== 'default')
       .find((a) => new IntervalNotation(a.range).test(obj))
