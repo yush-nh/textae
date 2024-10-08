@@ -55388,6 +55388,13 @@
     var observ = __webpack_require__(504)
     var observ_default = /*#__PURE__*/ __webpack_require__.n(observ) // ./src/lib/Editor/AnnotationModel/TypeDictionary.js
     class TypeDictionary {
+      #eventEmitter
+      #denotationContainer
+      #blockContainer
+      #relationContainer
+      #attributeContainer
+      #lockStateObservable = new (observ_default())(false)
+
       /**
        *
        * @param {import('../AttributeDefinitionContainer').default} attribute
@@ -55400,85 +55407,84 @@
         attribute,
         configLocked = true
       ) {
-        this._eventEmitter = eventEmitter
-        this._denotationContainer = denotation
-        this._blockContainer = block
-        this._relationContainer = relation
-        this._attributeContainer = attribute
+        this.#eventEmitter = eventEmitter
+        this.#denotationContainer = denotation
+        this.#blockContainer = block
+        this.#relationContainer = relation
+        this.#attributeContainer = attribute
 
-        this._lockStateObservable = new (observ_default())(false)
-        this._lockStateObservable(() =>
-          this._eventEmitter.emit(`textae-event.type-definition.lock`)
+        this.#lockStateObservable(() =>
+          this.#eventEmitter.emit(`textae-event.type-definition.lock`)
         )
-        this._lockStateObservable.set(configLocked)
+        this.#lockStateObservable.set(configLocked)
       }
 
       get denotation() {
-        return this._denotationContainer
+        return this.#denotationContainer
       }
 
       get block() {
-        return this._blockContainer
+        return this.#blockContainer
       }
 
       get relation() {
-        return this._relationContainer
+        return this.#relationContainer
       }
 
       get attribute() {
-        return this._attributeContainer
+        return this.#attributeContainer
       }
 
       get config() {
         const ret = {}
 
-        if (this._denotationContainer.config.length) {
-          ret['entity types'] = this._denotationContainer.config
+        if (this.#denotationContainer.config.length) {
+          ret['entity types'] = this.#denotationContainer.config
         }
 
-        if (this._relationContainer.config.length) {
-          ret['relation types'] = this._relationContainer.config
+        if (this.#relationContainer.config.length) {
+          ret['relation types'] = this.#relationContainer.config
         }
 
-        if (this._attributeContainer.config.length) {
-          ret['attribute types'] = this._attributeContainer.config
+        if (this.#attributeContainer.config.length) {
+          ret['attribute types'] = this.#attributeContainer.config
         }
 
-        if (this._blockContainer.config.length) {
-          ret['block types'] = this._blockContainer.config
+        if (this.#blockContainer.config.length) {
+          ret['block types'] = this.#blockContainer.config
         }
 
         return ret
       }
 
       get isLock() {
-        return this._lockStateObservable()
+        return this.#lockStateObservable()
       }
 
       lockEdit() {
-        this._lockStateObservable.set(true)
+        this.#lockStateObservable.set(true)
       }
       unlockEdit() {
-        this._lockStateObservable.set(false)
+        this.#lockStateObservable.set(false)
       }
 
       setTypeConfig(config) {
         if (config) {
-          this._denotationContainer.definedTypes = config['entity types'] || []
-          this._relationContainer.definedTypes = config['relation types'] || []
-          this._attributeContainer.definedTypes =
+          this.#denotationContainer.definedTypes = config['entity types'] || []
+          this.#relationContainer.definedTypes = config['relation types'] || []
+          this.#attributeContainer.definedTypes =
             config['attribute types'] || []
-          this._blockContainer.definedTypes = config['block types'] || []
+          this.#blockContainer.definedTypes = config['block types'] || []
           this.autocompletionWs = config['autocompletion_ws']
         } else {
-          this._denotationContainer.definedTypes = []
-          this._relationContainer.definedTypes = []
-          this._attributeContainer.definedTypes = []
-          this._blockContainer.definedTypes = []
+          this.#denotationContainer.definedTypes = []
+          this.#relationContainer.definedTypes = []
+          this.#attributeContainer.definedTypes = []
+          this.#blockContainer.definedTypes = []
           this.autocompletionWs = ''
         }
 
-        this._eventEmitter.emit(`textae-event.type-definition.reset`)
+        this.#eventEmitter.emit(`textae-event.type-definition.reset`)
       }
     } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/formatForPallet/index.js
 
@@ -55849,11 +55855,15 @@
       get _valuesClone() {
         console.assert(this._values, 'this._values is necessary to clone!')
 
-        const values = []
-        for (const value of this._values) {
-          values.push({ ...value })
+        if (Array.isArray(this._values) && this._values.length === 0) {
+          return undefined
         }
-        return values
+
+        const result = []
+        for (const value of this._values) {
+          result.push({ ...value })
+        }
+        return result
       }
     } // ./src/lib/Editor/AttributeDefinitionContainer/createAttributeDefinition/FlagAttributeDefinition.js
 
@@ -66140,7 +66150,7 @@
       bindChangeLockConfig(content, typeDictionary)
     } // ./package.json
 
-    const package_namespaceObject = { rE: '13.4.0' } // ./src/lib/component/SettingDialog/template.js
+    const package_namespaceObject = { rE: '13.4.1' } // ./src/lib/component/SettingDialog/template.js
     function SettingDialog_template_template(context) {
       const {
         typeGap,
@@ -67149,7 +67159,7 @@ Moves across surrogate pairs, extending characters (when
 `includeExtending` is true), characters joined with zero-width
 joiners, and flag emoji.
 */
-    function findClusterBreak(
+    function dist_findClusterBreak(
       str,
       pos,
       forward = true,
@@ -69821,12 +69831,12 @@ just break things.
         let start = pos - from,
           end = pos - from
         while (start > 0) {
-          let prev = findClusterBreak(text, start, false)
+          let prev = dist_findClusterBreak(text, start, false)
           if (cat(text.slice(prev, start)) != dist_CharCategory.Word) break
           start = prev
         }
         while (end < length) {
-          let next = findClusterBreak(text, end)
+          let next = dist_findClusterBreak(text, end)
           if (cat(text.slice(end, next)) != dist_CharCategory.Word) break
           end = next
         }
@@ -71006,7 +71016,7 @@ taking extending characters and tab size into account.
           i++
         } else {
           n++
-          i = findClusterBreak(string, i)
+          i = dist_findClusterBreak(string, i)
         }
       }
       return n
@@ -71023,7 +71033,7 @@ situation.
         if (n >= col) return i
         if (i == string.length) break
         n += string.charCodeAt(i) == 9 ? tabSize - (n % tabSize) : 1
-        i = findClusterBreak(string, i)
+        i = dist_findClusterBreak(string, i)
       }
       return strict === true ? -1 : string.length
     } // ./node_modules/style-mod/src/style-mod.js
@@ -74217,7 +74227,7 @@ Represents a contiguous range of text that has a single direction
         startIndex = span.side(!forward, dir)
         spanEnd = span.side(forward, dir)
       }
-      let nextIndex = findClusterBreak(
+      let nextIndex = dist_findClusterBreak(
         line.text,
         startIndex,
         span.forward(forward, dir)
@@ -75253,7 +75263,7 @@ class, which describe what happened, whenever the view is updated.
           off = childOff
         }
         if (!(child instanceof TextView)) return null
-        let end = findClusterBreak(child.text, off)
+        let end = dist_findClusterBreak(child.text, off)
         if (end == off) return null
         let rects = textRange(child.dom, off, end).getClientRects()
         for (let i = 0; i < rects.length; i++) {
@@ -75583,16 +75593,16 @@ class, which describe what happened, whenever the view is updated.
       else if (linePos == line.length) bias = -1
       let from = linePos,
         to = linePos
-      if (bias < 0) from = findClusterBreak(line.text, linePos, false)
-      else to = findClusterBreak(line.text, linePos)
+      if (bias < 0) from = dist_findClusterBreak(line.text, linePos, false)
+      else to = dist_findClusterBreak(line.text, linePos)
       let cat = categorize(line.text.slice(from, to))
       while (from > 0) {
-        let prev = findClusterBreak(line.text, from, false)
+        let prev = dist_findClusterBreak(line.text, from, false)
         if (categorize(line.text.slice(prev, from)) != cat) break
         from = prev
       }
       while (to < line.length) {
-        let next = findClusterBreak(line.text, to)
+        let next = dist_findClusterBreak(line.text, to)
         if (categorize(line.text.slice(to, next)) != cat) break
         to = next
       }
@@ -92813,6 +92823,35 @@ Move the selection one character forward.
 Move the selection one character backward.
 */
     const cursorCharBackward = (view) => cursorByChar(view, false)
+    function byCharLogical(state, range, forward) {
+      let pos = range.head,
+        line = state.doc.lineAt(pos)
+      if (pos == (forward ? line.to : line.from))
+        pos = forward
+          ? Math.min(state.doc.length, line.to + 1)
+          : Math.max(0, line.from - 1)
+      else
+        pos = line.from + findClusterBreak(line.text, pos - line.from, forward)
+      return EditorSelection.cursor(pos, forward ? -1 : 1)
+    }
+    function moveByCharLogical(target, forward) {
+      return moveSel(target, (range) =>
+        range.empty
+          ? byCharLogical(target.state, range, forward)
+          : rangeEnd(range, forward)
+      )
+    }
+    /**
+Move the selection one character forward, in logical
+(non-text-direction-aware) string index order.
+*/
+    const cursorCharForwardLogical = (target) => moveByCharLogical(target, true)
+    /**
+Move the selection one character backward, in logical string index
+order.
+*/
+    const cursorCharBackwardLogical = (target) =>
+      moveByCharLogical(target, false)
     function cursorByGroup(view, forward) {
       return moveSel(view, (range) =>
         range.empty
@@ -93151,8 +93190,8 @@ head is currently on, if any.
 */
     const selectMatchingBracket = ({ state, dispatch }) =>
       toMatchingBracket(state, dispatch, true)
-    function extendSel(view, how) {
-      let selection = updateSel(view.state.selection, (range) => {
+    function extendSel(target, how) {
+      let selection = updateSel(target.state.selection, (range) => {
         let head = how(range)
         return dist_EditorSelection.range(
           range.anchor,
@@ -93161,8 +93200,8 @@ head is currently on, if any.
           head.bidiLevel || undefined
         )
       })
-      if (selection.eq(view.state.selection)) return false
-      view.dispatch(setSel(view.state, selection))
+      if (selection.eq(target.state.selection)) return false
+      target.dispatch(setSel(target.state, selection))
       return true
     }
     function selectByChar(view, forward) {
@@ -93185,6 +93224,18 @@ Move the selection head one character forward.
 Move the selection head one character backward.
 */
     const selectCharBackward = (view) => selectByChar(view, false)
+    /**
+Move the selection head one character forward by logical
+(non-direction aware) string index order.
+*/
+    const selectCharForwardLogical = (target) =>
+      extendSel(target, (range) => byCharLogical(target.state, range, true))
+    /**
+Move the selection head one character backward by logical string
+index order.
+*/
+    const selectCharBackwardLogical = (target) =>
+      extendSel(target, (range) => byCharLogical(target.state, range, false))
     function selectByGroup(view, forward) {
       return extendSel(view, (range) => view.moveByGroup(range, forward))
     }
@@ -93479,8 +93530,12 @@ non-empty, convert it to a cursor selection.
           targetPos = pos
         } else {
           targetPos =
-            findClusterBreak(line.text, pos - line.from, forward, forward) +
-            line.from
+            dist_findClusterBreak(
+              line.text,
+              pos - line.from,
+              forward,
+              forward
+            ) + line.from
           if (
             targetPos == pos &&
             line.number != (forward ? state.doc.lines : 1)
@@ -93493,8 +93548,12 @@ non-empty, convert it to a cursor selection.
             )
           )
             targetPos =
-              findClusterBreak(line.text, targetPos - line.from, false, false) +
-              line.from
+              dist_findClusterBreak(
+                line.text,
+                targetPos - line.from,
+                false,
+                false
+              ) + line.from
         }
         return targetPos
       })
@@ -93529,7 +93588,8 @@ Delete the selection or the character after the cursor.
             break
           }
           let next =
-            findClusterBreak(line.text, pos - line.from, forward) + line.from
+            dist_findClusterBreak(line.text, pos - line.from, forward) +
+            line.from
           let nextChar = line.text.slice(
             Math.min(pos, next) - line.from,
             Math.max(pos, next) - line.from
@@ -93651,11 +93711,13 @@ Flip the characters before and after the cursor(s).
         let from =
           pos == line.from
             ? pos - 1
-            : findClusterBreak(line.text, pos - line.from, false) + line.from
+            : dist_findClusterBreak(line.text, pos - line.from, false) +
+              line.from
         let to =
           pos == line.to
             ? pos + 1
-            : findClusterBreak(line.text, pos - line.from, true) + line.from
+            : dist_findClusterBreak(line.text, pos - line.from, true) +
+              line.from
         return {
           changes: {
             from,
@@ -94127,7 +94189,7 @@ property changed to `mac`.)
  - End: [`cursorLineBoundaryForward`](https://codemirror.net/6/docs/ref/#commands.cursorLineBoundaryForward) ([`selectLineBoundaryForward`](https://codemirror.net/6/docs/ref/#commands.selectLineBoundaryForward) with Shift)
  - Ctrl-Home (Cmd-Home on macOS): [`cursorDocStart`](https://codemirror.net/6/docs/ref/#commands.cursorDocStart) ([`selectDocStart`](https://codemirror.net/6/docs/ref/#commands.selectDocStart) with Shift)
  - Ctrl-End (Cmd-Home on macOS): [`cursorDocEnd`](https://codemirror.net/6/docs/ref/#commands.cursorDocEnd) ([`selectDocEnd`](https://codemirror.net/6/docs/ref/#commands.selectDocEnd) with Shift)
- - Enter: [`insertNewlineAndIndent`](https://codemirror.net/6/docs/ref/#commands.insertNewlineAndIndent)
+ - Enter and Shift-Enter: [`insertNewlineAndIndent`](https://codemirror.net/6/docs/ref/#commands.insertNewlineAndIndent)
  - Ctrl-a (Cmd-a on macOS): [`selectAll`](https://codemirror.net/6/docs/ref/#commands.selectAll)
  - Backspace: [`deleteCharBackward`](https://codemirror.net/6/docs/ref/#commands.deleteCharBackward)
  - Delete: [`deleteCharForward`](https://codemirror.net/6/docs/ref/#commands.deleteCharForward)
@@ -94207,7 +94269,11 @@ property changed to `mac`.)
         preventDefault: true
       },
       { key: 'Mod-End', run: cursorDocEnd, shift: selectDocEnd },
-      { key: 'Enter', run: insertNewlineAndIndent },
+      {
+        key: 'Enter',
+        run: insertNewlineAndIndent,
+        shift: insertNewlineAndIndent
+      },
       { key: 'Mod-a', run: selectAll },
       { key: 'Backspace', run: deleteCharBackward, shift: deleteCharBackward },
       { key: 'Delete', run: deleteCharForward },
@@ -95179,10 +95245,10 @@ A search query. Part of the editor's search state.
       )
     }
     function charBefore(str, index) {
-      return str.slice(findClusterBreak(str, index, false), index)
+      return str.slice(dist_findClusterBreak(str, index, false), index)
     }
     function charAfter(str, index) {
-      return str.slice(index, findClusterBreak(str, index))
+      return str.slice(index, dist_findClusterBreak(str, index))
     }
     function regexpWordTest(categorizer) {
       return (_from, _to, match) =>
@@ -105954,20 +106020,6 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
       }
 
       return config
-    } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/fillDefaultValueOfStringAttributes.js
-
-    /* harmony default export */ function fillDefaultValueOfStringAttributes(
-      config
-    ) {
-      config = patchConfiguration_clone(config)
-
-      for (const a of config.filter((a) => a['value type'] === 'string')) {
-        if (!Object.prototype.hasOwnProperty.call(a, 'default')) {
-          a.default = ''
-        }
-      }
-
-      return config
     } // ./src/lib/Editor/UseCase/patchConfiguration/AttributeConfigurationGenerator/index.js
 
     class AttributeConfigurationGenerator {
@@ -105982,7 +106034,6 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
           this._annotations
         )
         newConfig = fillMandatoryValueOfNumericAttributes(newConfig)
-        newConfig = fillDefaultValueOfStringAttributes(newConfig)
         newConfig = fillDefaultValueOfSelectionAttributes(
           newConfig,
           this._annotations
@@ -106025,7 +106076,7 @@ reference: http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     var ajv_formats_dist = __webpack_require__(8182)
     var dist_default = /*#__PURE__*/ __webpack_require__.n(ajv_formats_dist) // ./src/lib/Editor/UseCase/validateConfigurationAndAlert/validateConfiguration/configurationScheme.json
     const configurationScheme_namespaceObject = /*#__PURE__*/ JSON.parse(
-      '{"$schema":"http://json-schema.org/draft-07/schema#","title":"JSON schema for texta configuration files","definitions":{"characters":{"type":"array","items":{"type":"string","minLength":1,"maxLength":1}},"color":{"pattern":"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$","type":"string"},"default":{"type":"boolean"},"denote":{"type":"object","required":["id"],"properties":{"id":{"type":"string"},"label":{"type":"string"},"color":{"$ref":"#/definitions/color"},"default":{"$ref":"#/definitions/default"}}},"types":{"type":"array","items":{"$ref":"#/definitions/denote"}},"autocompletion_ws":{"type":"string","format":"uri-reference"}},"type":"object","properties":{"delimiter characters":{"$ref":"#/definitions/characters"},"non-edge characters":{"$ref":"#/definitions/characters"},"autocompletion_ws":{"$ref":"#/definitions/autocompletion_ws"},"autosave":{"type":"boolean"},"autolineheight":{"type":"boolean"},"boundarydetection":{"type":"boolean"},"entity types":{"$ref":"#/definitions/types"},"relation types":{"$ref":"#/definitions/types"},"attribute types":{"type":"array","items":{"type":"object","required":["pred","value type"],"properties":{"pred":{"type":"string"},"value type":{"enum":["flag","selection","string","numeric"]}},"allOf":[{"if":{"properties":{"value type":{"const":"flag"}}},"then":{"properties":{"color":{"$ref":"#/definitions/color"},"label":{"type":"string"}}}},{"if":{"properties":{"value type":{"const":"selection"}}},"then":{"required":["values"],"properties":{"values":{"type":"array","items":{"$ref":"#/definitions/denote"}}}}},{"if":{"properties":{"value type":{"const":"string"}}},"then":{"required":["default"],"properties":{"autocompletion_ws":{"$ref":"#/definitions/autocompletion_ws"},"default":{"type":"string"},"values":{"type":"array","items":{"type":"object","required":["pattern"],"properties":{"pattern":{"type":"string","format":"regex"},"label":{"type":"string"},"color":{"$ref":"#/definitions/color"}}}}}}},{"if":{"properties":{"value type":{"const":"numeric"}}},"then":{"required":["default","step"],"properties":{"default":{"type":"number"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"values":{"type":"array","items":{"type":"object","required":["range"],"properties":{"range":{"type":"string"},"label":{"type":"string"},"color":{"$ref":"#/definitions/color"}}}}}}}]}},"function availability":{"type":"object","properties":{"read":{"type":"boolean"},"write":{"type":"boolean"},"write-auto":{"type":"boolean"},"view":{"type":"boolean"},"term":{"type":"boolean"},"block":{"type":"boolean"},"relation":{"type":"boolean"},"simple":{"type":"boolean"},"line-height":{"type":"boolean"},"line-height-auto":{"type":"boolean"},"undo":{"type":"boolean"},"redo":{"type":"boolean"},"replicate":{"type":"boolean"},"replicate-auto":{"type":"boolean"},"boundary-detection":{"type":"boolean"},"create-span-by-touch":{"type":"boolean"},"expand-span-by-touch":{"type":"boolean"},"shrink-span-by-touch":{"type":"boolean"},"entity":{"type":"boolean"},"pallet":{"type":"boolean"},"edit-properties":{"type":"boolean"},"delete":{"type":"boolean"},"copy":{"type":"boolean"},"cut":{"type":"boolean"},"paste":{"type":"boolean"},"setting":{"type":"boolean"},"help":{"type":"boolean"}}}}}'
+      '{"$schema":"http://json-schema.org/draft-07/schema#","title":"JSON schema for texta configuration files","definitions":{"characters":{"type":"array","items":{"type":"string","minLength":1,"maxLength":1}},"color":{"pattern":"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$","type":"string"},"default":{"type":"boolean"},"denote":{"type":"object","required":["id"],"properties":{"id":{"type":"string"},"label":{"type":"string"},"color":{"$ref":"#/definitions/color"},"default":{"$ref":"#/definitions/default"}}},"types":{"type":"array","items":{"$ref":"#/definitions/denote"}},"autocompletion_ws":{"type":"string","format":"uri-reference"}},"type":"object","properties":{"delimiter characters":{"$ref":"#/definitions/characters"},"non-edge characters":{"$ref":"#/definitions/characters"},"autocompletion_ws":{"$ref":"#/definitions/autocompletion_ws"},"autosave":{"type":"boolean"},"autolineheight":{"type":"boolean"},"boundarydetection":{"type":"boolean"},"entity types":{"$ref":"#/definitions/types"},"relation types":{"$ref":"#/definitions/types"},"attribute types":{"type":"array","items":{"type":"object","required":["pred","value type"],"properties":{"pred":{"type":"string"},"value type":{"enum":["flag","selection","string","numeric"]}},"allOf":[{"if":{"properties":{"value type":{"const":"flag"}}},"then":{"properties":{"color":{"$ref":"#/definitions/color"},"label":{"type":"string"}}}},{"if":{"properties":{"value type":{"const":"selection"}}},"then":{"required":["values"],"properties":{"values":{"type":"array","items":{"$ref":"#/definitions/denote"}}}}},{"if":{"properties":{"value type":{"const":"string"}}},"then":{"properties":{"autocompletion_ws":{"$ref":"#/definitions/autocompletion_ws"},"default":{"type":"string"},"values":{"type":"array","items":{"type":"object","required":["pattern"],"properties":{"pattern":{"type":"string","format":"regex"},"label":{"type":"string"},"color":{"$ref":"#/definitions/color"}}}}}}},{"if":{"properties":{"value type":{"const":"numeric"}}},"then":{"required":["default","step"],"properties":{"default":{"type":"number"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"values":{"type":"array","items":{"type":"object","required":["range"],"properties":{"range":{"type":"string"},"label":{"type":"string"},"color":{"$ref":"#/definitions/color"}}}}}}}]}},"function availability":{"type":"object","properties":{"read":{"type":"boolean"},"write":{"type":"boolean"},"write-auto":{"type":"boolean"},"view":{"type":"boolean"},"term":{"type":"boolean"},"block":{"type":"boolean"},"relation":{"type":"boolean"},"simple":{"type":"boolean"},"line-height":{"type":"boolean"},"line-height-auto":{"type":"boolean"},"undo":{"type":"boolean"},"redo":{"type":"boolean"},"replicate":{"type":"boolean"},"replicate-auto":{"type":"boolean"},"boundary-detection":{"type":"boolean"},"create-span-by-touch":{"type":"boolean"},"expand-span-by-touch":{"type":"boolean"},"shrink-span-by-touch":{"type":"boolean"},"entity":{"type":"boolean"},"pallet":{"type":"boolean"},"edit-properties":{"type":"boolean"},"delete":{"type":"boolean"},"copy":{"type":"boolean"},"cut":{"type":"boolean"},"paste":{"type":"boolean"},"setting":{"type":"boolean"},"help":{"type":"boolean"}}}}}'
     ) // ./src/lib/Editor/UseCase/validateConfigurationAndAlert/validateConfiguration/toErrorMessage.js
     /* harmony default export */ function toErrorMessage(errors) {
       for (const e of errors) {

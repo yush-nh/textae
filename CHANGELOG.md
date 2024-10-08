@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.4.1](https://github.com/pubannotation/textae/compare/v13.4.0...v13.4.1) (2024-10-08)
+
+
+### Bug Fixes
+
+* Changed to not fill default value of string attributes to avoid creating unnecessary diffs ([e2f5009](https://github.com/pubannotation/textae/commit/e2f5009a8e22e93c7ce8b565f11c7ec541d09f2d))
+* Creating unnecessary diff on configuration attributes ([252da3e](https://github.com/pubannotation/textae/commit/252da3eae0dd0136ae139798ed82875a443566ec))
+
 ## [13.4.0](https://github.com/pubannotation/textae/compare/v13.3.3...v13.4.0) (2024-10-04)
 
 
