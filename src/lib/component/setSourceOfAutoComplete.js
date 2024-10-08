@@ -4,7 +4,7 @@ import customizeJqueryUiAutocomplete from './customize-jquery-ui-autocomplete'
 
 customizeJqueryUiAutocomplete()
 
-export default function (
+export default function setSourceOfAutoComplete(
   inputElement,
   labelSpan,
   autocompletionWs,
