@@ -3,7 +3,7 @@ import getMatchPrefix from '../getMatchPrefix'
 import getDisplayNameFromUri from './getDisplayNameFromUri'
 
 export default function (namespace, value, displayName) {
-  // When a type id has label attrdute.
+  // When a type id has label attribute.
   if (displayName) {
     return displayName
   }
