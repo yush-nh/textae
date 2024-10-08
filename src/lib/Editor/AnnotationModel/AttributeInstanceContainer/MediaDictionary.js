@@ -55,6 +55,10 @@ export default class MediaDictionary {
       return false
     }
 
+    if (!this._cache.has(url)) {
+      return false
+    }
+
     return this._cache.get(url).value
   }
 }
