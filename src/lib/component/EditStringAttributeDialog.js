@@ -4,7 +4,7 @@ import setSourceOfAutoComplete from './setSourceOfAutoComplete'
 import anemone from './anemone'
 
 function template(context) {
-  const { subjects, pred, value } = context
+  const { subjects, pred, value, label } = context
 
   return anemone`
 <div class="textae-editor__edit-string-attribute-dialog__container">
@@ -36,7 +36,7 @@ function template(context) {
     <label>Label</label>
     <input
       class="textae-editor__edit-string-attribute-dialog__label"
-      value="" disabled="disabled">
+      value="${label}" disabled="disabled">
   </div>
 </div>`
 }
@@ -81,7 +81,8 @@ export default class EditStringAttributeDialog extends PromiseDialog {
           .map(({ subj }) => subj || '-')
           .join(', ')}`,
         pred: attribute.pred,
-        value: attribute.obj
+        value: attribute.obj,
+        label: attrDef.getDisplayName(attribute.obj)
       }),
       { buttons },
       () => {
