@@ -84,8 +84,28 @@ app
     ) {
       const rawData = [
         {
-          id: 'http://dbpedia.org/ontology/parent',
-          label: 'parent'
+          id: 'http://dbpedia.org/ontology/super_long_long_name_items/parent0',
+          label: 'parent0'
+        },
+        {
+          id: 'http://dbpedia.org/ontology/parent1',
+          label: 'parent1'
+        },
+        {
+          id: 'http://dbpedia.org/ontology/parent2',
+          label: 'parent2'
+        },
+        {
+          id: 'http://dbpedia.org/ontology/parent3',
+          label: 'parent3'
+        },
+        {
+          id: 'http://dbpedia.org/ontology/parent4',
+          label: 'parent4'
+        },
+        {
+          id: 'http://dbpedia.org/ontology/parent5',
+          label: 'parent5'
         },
         {
           id: 'http://dbpedia.org/ontology/productionCompany',
