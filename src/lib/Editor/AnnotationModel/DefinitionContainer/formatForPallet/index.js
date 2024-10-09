@@ -12,7 +12,7 @@ export default function (
     label: definedTypes.getLabelOf(id) || undefined,
     defaultType: id === defaultType,
     uri: getUrlMatches(id) ? id : undefined,
-    color: (definedTypes.has(id) && definedTypes.get(id).color) || defaultColor,
+    color: definedTypes.getColorOf(id) || defaultColor,
     useNumber: countMap.get(id).usage
   }))
 }
