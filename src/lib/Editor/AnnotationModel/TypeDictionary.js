@@ -85,13 +85,13 @@ export default class TypeDictionary {
     if (config) {
       this.#denotationContainer.config = config['entity types']
       this.#relationContainer.config = config['relation types']
-      this.#attributeContainer.config = config['attribute types'] || []
+      this.#attributeContainer.config = config['attribute types']
       this.#blockContainer.config = config['block types']
       this.autocompletionWs = config['autocompletion_ws']
     } else {
       this.#denotationContainer.config = null
       this.#relationContainer.config = null
-      this.#attributeContainer.config = []
+      this.#attributeContainer.config = null
       this.#blockContainer.config = null
       this.autocompletionWs = ''
     }
