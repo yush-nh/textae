@@ -11,7 +11,11 @@ export default class AttributeDefinitionContainer {
     this.#getAllInstanceFunc = getAllInstanceFunc
   }
 
-  set definedTypes(attributes) {
+  get config() {
+    return this.attributes.map((a) => a.externalFormat)
+  }
+
+  set config(attributes) {
     this.#definedTypes = new Map(
       (attributes || []).map((a) => [
         a.pred,
@@ -114,10 +118,6 @@ export default class AttributeDefinitionContainer {
 
   get attributes() {
     return Array.from(this.#definedTypes.values()) || []
-  }
-
-  get config() {
-    return this.attributes.map((a) => a.externalFormat)
   }
 
   isSelectionAttributeValueIndelible(pred, id) {
