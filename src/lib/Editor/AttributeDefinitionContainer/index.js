@@ -66,7 +66,7 @@ export default class AttributeDefinitionContainer {
 
   update(oldPred, attrDef) {
     // Predicate as key of map may be changed.
-    // Keep oreder of attributes.
+    // Keep order of attributes.
     // So that re-create an map instance.
     this.#definedTypes = new Map(
       Array.from(this.#definedTypes.entries()).map(([key, val]) => {
@@ -106,7 +106,7 @@ export default class AttributeDefinitionContainer {
     const { pred } =
       this.attributes[newIndex === -1 ? this.attributes.length - 1 : newIndex]
 
-    // When an attribute definition move is undoed,
+    // When an attribute definition move is done,
     // it fires an event to notify the palette to immediately reflect the display content.
     this.#eventEmitter.emit(`textae-event.type-definition.attribute.move`, pred)
   }
