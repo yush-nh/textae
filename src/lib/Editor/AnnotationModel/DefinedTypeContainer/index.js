@@ -1,3 +1,4 @@
+import DefinedType from './DefinedType'
 import getForwardMatchType from './getForwardMatchType'
 
 export default class DefinedTypeContainer {
@@ -6,10 +7,14 @@ export default class DefinedTypeContainer {
 
   // Expected values is an array of object.
   // An example of object is {"id": "Regulation","color": "#FFFF66","default": true}.
-  constructor(values) {
+  constructor(values = []) {
     // If the order of the type definitions changes,
     // it will be treated as a change, so preserve the order.
-    this.#definedTypes = values || []
+
+    this.#definedTypes = values.map(
+      (value) =>
+        new DefinedType(value.id, value.color, value.label, value.default)
+    )
   }
 
   has(id) {
@@ -28,7 +33,16 @@ export default class DefinedTypeContainer {
     const index = this.#definedTypes.findIndex((elem) => elem.id === id)
 
     if (index !== -1) {
-      this.#definedTypes.splice(index, 1, newType)
+      this.#definedTypes.splice(
+        index,
+        1,
+        new DefinedType(
+          newType.id,
+          newType.color,
+          newType.label,
+          newType.default
+        )
+      )
     } else {
       this.#definedTypes.push(newType)
     }
@@ -62,7 +76,7 @@ export default class DefinedTypeContainer {
   }
 
   get map() {
-    return new Map(this.#definedTypes.map((type) => [type.id, type]))
+    return new Map(this.#definedTypes.map((type) => [type.id, type.toJSON()]))
   }
 
   #getConfigOf(id) {
