@@ -1,6 +1,7 @@
 import getConfig from './getConfig'
 
 export default class DefinedTypeContainer {
+  /** @type {Array} **/
   #list
 
   // Expected values is an array of object.
@@ -41,6 +42,11 @@ export default class DefinedTypeContainer {
     return getConfig(this, id)
   }
 
+  /**
+   * Returns list of label includes the term.
+   * @param {string} term
+   * @returns {Array}
+   */
   labelIncludes(term) {
     return this.#list
       .filter((t) => t.label)
