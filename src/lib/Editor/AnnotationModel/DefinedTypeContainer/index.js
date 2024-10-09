@@ -21,10 +21,6 @@ export default class DefinedTypeContainer {
     return this.map.has(id)
   }
 
-  get(id) {
-    return { ...this.map.get(id).toJSON() }
-  }
-
   get default() {
     return this.#definedTypes.find((type) => type.default === true)
   }
@@ -82,7 +78,7 @@ export default class DefinedTypeContainer {
   #getConfigOf(id) {
     // Return value if perfectly matched
     if (this.has(id)) {
-      return this.get(id)
+      return this.map.get(id)
     }
 
     // Return value if forward matched
