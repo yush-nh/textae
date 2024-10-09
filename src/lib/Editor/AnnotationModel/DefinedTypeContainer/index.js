@@ -1,4 +1,4 @@
-import DefinedType from './DefinedType'
+import DefinedType from '../DefinedType'
 import getForwardMatchID from './getForwardMatchID'
 
 export default class DefinedTypeContainer {

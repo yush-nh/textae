@@ -2,7 +2,7 @@ import getUrlMatches from '../../getUrlMatches'
 import formatForPallet from './formatForPallet'
 import sortByCountAndName from './sortByCountAndName'
 import countUsage from './countUsage'
-import DefinedType from '../DefinedTypeContainer/DefinedType'
+import DefinedType from '../DefinedType'
 
 export default class DefinitionContainer {
   #eventEmitter
