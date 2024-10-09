@@ -42,14 +42,12 @@ export default class DefinedTypeContainer {
     return this.map.keys()
   }
 
-  getConfig(id) {
-    // Return value if perfectly matched
-    if (this.has(id)) {
-      return this.get(id)
-    }
+  getColorOf(id) {
+    return this.#getConfigOf(id)?.color
+  }
 
-    // Return value if forward matched
-    return getForwardMatchType(this, id)
+  getLabelOf(id) {
+    return this.#getConfigOf(id)?.label
   }
 
   /**
@@ -65,5 +63,15 @@ export default class DefinedTypeContainer {
 
   get map() {
     return this.#list.reduce((acc, cur) => acc.set(cur.id, cur), new Map())
+  }
+
+  #getConfigOf(id) {
+    // Return value if perfectly matched
+    if (this.has(id)) {
+      return this.get(id)
+    }
+
+    // Return value if forward matched
+    return getForwardMatchType(this, id)
   }
 }

@@ -122,13 +122,11 @@ export default class DefinitionContainer {
   }
 
   getColor(id) {
-    const config = this.#definedTypes.getConfig(id)
-    return (config && config.color) || this.#defaultColor
+    return this.#definedTypes.getColorOf(id) || this.#defaultColor
   }
 
   getLabel(id) {
-    const config = this.#definedTypes.getConfig(id)
-    return config && config.label
+    return this.#definedTypes.getLabelOf(id)
   }
 
   getURI(id) {
