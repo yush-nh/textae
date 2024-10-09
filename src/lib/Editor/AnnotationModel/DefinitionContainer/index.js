@@ -2,6 +2,7 @@ import getUrlMatches from '../../getUrlMatches'
 import formatForPallet from './formatForPallet'
 import sortByCountAndName from './sortByCountAndName'
 import countUsage from './countUsage'
+import DefinedType from '../DefinedTypeContainer/DefinedType'
 
 export default class DefinitionContainer {
   #eventEmitter
@@ -156,7 +157,7 @@ export default class DefinitionContainer {
     // Make default type and delete default type from original configuration.
     for (const [key, type] of types.entries()) {
       // Make a copy so as not to destroy the original object.
-      const copy = { ...type }
+      const copy = { ...type.toJSON() }
       if (type.id === this.defaultType) {
         copy.default = true
       } else {
@@ -176,7 +177,7 @@ export default class DefinitionContainer {
     // Get types from instances.
     for (const { typeName } of this.#getAllInstanceFunc()) {
       if (!types.has(typeName)) {
-        types.set(typeName, { id: typeName })
+        types.set(typeName, new DefinedType(typeName))
       }
     }
 
