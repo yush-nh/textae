@@ -47,7 +47,7 @@ export default class DefinedTypeContainer {
    * @param {string} term
    * @returns {Array}
    */
-  labelIncludes(term) {
+  labelsIncludes(term) {
     return this.#list
       .filter((t) => t.label)
       .filter((t) => t.label.includes(term))
