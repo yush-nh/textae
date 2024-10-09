@@ -150,7 +150,7 @@ export default class DefinitionContainer {
   }
 
   findByLabel(term) {
-    return this.definedTypes.labelsIncludes(term)
+    return this.#definedTypes.labelsIncludes(term)
   }
 
   get pallet() {
