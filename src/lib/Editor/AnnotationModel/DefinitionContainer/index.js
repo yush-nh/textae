@@ -56,13 +56,6 @@ export default class DefinitionContainer {
     }
   }
 
-  /**
-   * @returns {import('../DefinedTypeContainer').default}
-   */
-  get definedTypes() {
-    return this.#definedTypes
-  }
-
   has(id) {
     return this.#definedTypes.has(id)
   }
