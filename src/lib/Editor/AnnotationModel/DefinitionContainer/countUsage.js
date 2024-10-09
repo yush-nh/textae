@@ -1,4 +1,4 @@
-export default function (map, instances) {
+export default function countUsage(map, instances) {
   for (const [key, value] of map.entries()) {
     map.set(key, { ...value, usage: 0 })
   }
