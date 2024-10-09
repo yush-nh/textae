@@ -3,6 +3,7 @@ import formatForPallet from './formatForPallet'
 import sortByCountAndName from './sortByCountAndName'
 import countUsage from './countUsage'
 import DefinedType from '../DefinedType'
+import DefinedTypeContainer from '../DefinedTypeContainer'
 
 export default class DefinitionContainer {
   #eventEmitter
@@ -23,6 +24,28 @@ export default class DefinitionContainer {
 
   get annotationType() {
     return this.#annotationType
+  }
+
+  get config() {
+    const types = this.#typeMap
+
+    // Make default type and delete default type from original configuration.
+    for (const [key, type] of types.entries()) {
+      // Make a copy so as not to destroy the original object.
+      const copy = type.toJSON()
+      if (type.id === this.defaultType) {
+        copy.default = true
+      } else {
+        delete copy.default
+      }
+      types.set(key, copy)
+    }
+
+    return [...types.values()]
+  }
+
+  set config(values) {
+    this.definedTypes = new DefinedTypeContainer(values)
   }
 
   /**
@@ -149,24 +172,6 @@ export default class DefinitionContainer {
       this.defaultType,
       this.#defaultColor
     )
-  }
-
-  get config() {
-    const types = this.#typeMap
-
-    // Make default type and delete default type from original configuration.
-    for (const [key, type] of types.entries()) {
-      // Make a copy so as not to destroy the original object.
-      const copy = type.toJSON()
-      if (type.id === this.defaultType) {
-        copy.default = true
-      } else {
-        delete copy.default
-      }
-      types.set(key, copy)
-    }
-
-    return [...types.values()]
   }
 
   get #typeMap() {
