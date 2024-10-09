@@ -6,7 +6,7 @@ import countUsage from './countUsage'
 export default class DefinitionContainer {
   #eventEmitter
   #annotationType
-  /** @type {DefinedTypeContainer} **/
+  /** @type {import('../DefinedTypeContainer').default} **/
   #definedTypes
   #getAllInstanceFunc
   #defaultColor
@@ -25,14 +25,14 @@ export default class DefinitionContainer {
   }
 
   /**
-   * @returns {DefinedTypeContainer}
+   * @returns {import('../DefinedTypeContainer').default}
    */
   get definedTypes() {
     return this.#definedTypes
   }
 
   /**
-   * @param {DefinedTypeContainer} value
+   * @param {import('../DefinedTypeContainer').default} value
    */
   set definedTypes(value) {
     this.#definedTypes = value
