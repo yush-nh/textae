@@ -1,4 +1,4 @@
-export default function (typeIds) {
+export default function getLongestIdMatchType(typeIds) {
   let longestMatchId = ''
 
   for (const id of typeIds) {
