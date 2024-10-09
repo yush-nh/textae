@@ -5,40 +5,47 @@ import sortByCountAndName from './sortByCountAndName'
 import countUsage from './countUsage'
 
 export default class DefinitionContainer {
+  #eventEmitter
+  #annotationType
+  #definedTypes
+  #getAllInstanceFunc
+  #defaultColor
+  #defaultType
+
   constructor(eventEmitter, annotationType, getAllInstanceFunc, defaultColor) {
-    this._eventEmitter = eventEmitter
-    this._annotationType = annotationType
+    this.#eventEmitter = eventEmitter
+    this.#annotationType = annotationType
     /** @type {DefinedTypeContainer} **/
-    this._definedTypes = null
-    this._getAllInstanceFunc = getAllInstanceFunc
-    this._defaultColor = defaultColor
+    this.#definedTypes = null
+    this.#getAllInstanceFunc = getAllInstanceFunc
+    this.#defaultColor = defaultColor
   }
 
   get annotationType() {
-    return this._annotationType
+    return this.#annotationType
   }
 
   set definedTypes(value) {
-    this._definedTypes = new DefinedTypeContainer(value)
+    this.#definedTypes = new DefinedTypeContainer(value)
 
     // Set default type
     const defaultType = value.find((type) => type.default === true)
     if (defaultType) {
       delete defaultType.default
-      this._defaultType = defaultType.id
+      this.#defaultType = defaultType.id
     } else {
-      this._defaultType = null
+      this.#defaultType = null
     }
   }
 
   has(id) {
-    return this._definedTypes.has(id)
+    return this.#definedTypes.has(id)
   }
 
   get(id) {
-    const type = { ...this._definedTypes.get(id) }
+    const type = { ...this.#definedTypes.get(id) }
 
-    if (this._defaultType === id) {
+    if (this.#defaultType === id) {
       type.default = true
       return type
     } else {
@@ -48,9 +55,9 @@ export default class DefinitionContainer {
   }
 
   replace(id, newType) {
-    this._definedTypes.replace(id, newType)
-    this._eventEmitter.emit(
-      `textae-event.type-definition.${this._annotationType}.change`,
+    this.#definedTypes.replace(id, newType)
+    this.#eventEmitter.emit(
+      `textae-event.type-definition.${this.#annotationType}.change`,
       newType.id
     )
   }
@@ -58,7 +65,7 @@ export default class DefinitionContainer {
   addDefinedType(newType) {
     if (typeof newType.color === 'undefined') {
       const forwardMatchColor = this.getColor(newType.id)
-      if (forwardMatchColor !== this._defaultColor) {
+      if (forwardMatchColor !== this.#defaultColor) {
         newType.color = forwardMatchColor
       }
     }
@@ -71,25 +78,25 @@ export default class DefinitionContainer {
     }
 
     if (newType.default) {
-      this._defaultType = newType.id
+      this.#defaultType = newType.id
     }
 
     this.replace(newType.id, newType)
   }
 
   get definedTypes() {
-    return this._definedTypes
+    return this.#definedTypes
   }
 
   // Return the type that has the default property or the most used type.
   get defaultType() {
-    if (this._defaultType) {
-      return this._defaultType
+    if (this.#defaultType) {
+      return this.#defaultType
     }
 
-    if (this._getAllInstanceFunc().length > 0) {
+    if (this.#getAllInstanceFunc().length > 0) {
       return sortByCountAndName(
-        countUsage(this._typeMap, this._getAllInstanceFunc())
+        countUsage(this.#typeMap, this.#getAllInstanceFunc())
       )[0]
     }
 
@@ -98,24 +105,24 @@ export default class DefinitionContainer {
 
   // The default value can be removed.
   set defaultType(id) {
-    this._defaultType = id
-    this._eventEmitter.emit(
-      `textae-event.type-definition.${this._annotationType}.change-default`,
+    this.#defaultType = id
+    this.#eventEmitter.emit(
+      `textae-event.type-definition.${this.#annotationType}.change-default`,
       id
     )
   }
 
   get defaultColor() {
-    return this._defaultColor
+    return this.#defaultColor
   }
 
   getColor(id) {
-    const config = this._definedTypes.getConfig(id)
-    return (config && config.color) || this._defaultColor
+    const config = this.#definedTypes.getConfig(id)
+    return (config && config.color) || this.#defaultColor
   }
 
   getLabel(id) {
-    const config = this._definedTypes.getConfig(id)
+    const config = this.#definedTypes.getConfig(id)
     return config && config.label
   }
 
@@ -128,20 +135,20 @@ export default class DefinitionContainer {
   }
 
   get pallet() {
-    const countMap = countUsage(this._typeMap, this._getAllInstanceFunc())
+    const countMap = countUsage(this.#typeMap, this.#getAllInstanceFunc())
     const types = sortByCountAndName(countMap)
 
     return formatForPallet(
       types,
       countMap,
-      this._definedTypes,
+      this.#definedTypes,
       this.defaultType,
-      this._defaultColor
+      this.#defaultColor
     )
   }
 
   get config() {
-    const types = this._typeMap
+    const types = this.#typeMap
 
     // Make default type and delete defalut type from original configuratian.
     for (const [key, type] of types.entries()) {
@@ -158,13 +165,13 @@ export default class DefinitionContainer {
     return [...types.values()]
   }
 
-  get _typeMap() {
+  get #typeMap() {
     // Get type definitions.
     // Copy map to add definitions from instance.
-    const types = this._definedTypes.map
+    const types = this.#definedTypes.map
 
     // Get types from instances.
-    for (const { typeName } of this._getAllInstanceFunc()) {
+    for (const { typeName } of this.#getAllInstanceFunc()) {
       if (!types.has(typeName)) {
         types.set(typeName, { id: typeName })
       }
@@ -174,10 +181,10 @@ export default class DefinitionContainer {
   }
 
   delete(id, defaultType) {
-    this._definedTypes.delete(id)
-    this._defaultType = defaultType
-    this._eventEmitter.emit(
-      `textae-event.type-definition.${this._annotationType}.delete`,
+    this.#definedTypes.delete(id)
+    this.#defaultType = defaultType
+    this.#eventEmitter.emit(
+      `textae-event.type-definition.${this.#annotationType}.delete`,
       id
     )
   }
