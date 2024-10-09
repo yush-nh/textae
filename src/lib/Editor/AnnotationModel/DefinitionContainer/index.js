@@ -1,6 +1,5 @@
 import getUrlMatches from '../../getUrlMatches'
 import formatForPallet from './formatForPallet'
-import DefinedTypeContainer from './DefinedTypeContainer'
 import sortByCountAndName from './sortByCountAndName'
 import countUsage from './countUsage'
 
@@ -33,13 +32,13 @@ export default class DefinitionContainer {
   }
 
   /**
-   * @param {Array} value
+   * @param {DefinedTypeContainer} value
    */
   set definedTypes(value) {
-    this.#definedTypes = new DefinedTypeContainer(value)
+    this.#definedTypes = value
 
     // Set default type
-    const defaultType = value.find((type) => type.default === true)
+    const defaultType = value.default
     if (defaultType) {
       delete defaultType.default
       this.#defaultType = defaultType.id

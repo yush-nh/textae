@@ -1,4 +1,5 @@
 import Observable from 'observ'
+import DefinedTypeContainer from './DefinitionContainer/DefinedTypeContainer'
 
 export default class TypeDictionary {
   #eventEmitter
@@ -83,16 +84,22 @@ export default class TypeDictionary {
 
   setTypeConfig(config) {
     if (config) {
-      this.#denotationContainer.definedTypes = config['entity types'] || []
-      this.#relationContainer.definedTypes = config['relation types'] || []
+      this.#denotationContainer.definedTypes = new DefinedTypeContainer(
+        config['entity types'] || []
+      )
+      this.#relationContainer.definedTypes = new DefinedTypeContainer(
+        config['relation types'] || []
+      )
       this.#attributeContainer.definedTypes = config['attribute types'] || []
-      this.#blockContainer.definedTypes = config['block types'] || []
+      this.#blockContainer.definedTypes = new DefinedTypeContainer(
+        config['block types'] || []
+      )
       this.autocompletionWs = config['autocompletion_ws']
     } else {
-      this.#denotationContainer.definedTypes = []
-      this.#relationContainer.definedTypes = []
+      this.#denotationContainer.definedTypes = new DefinedTypeContainer([])
+      this.#relationContainer.definedTypes = new DefinedTypeContainer([])
       this.#attributeContainer.definedTypes = []
-      this.#blockContainer.definedTypes = []
+      this.#blockContainer.definedTypes = new DefinedTypeContainer([])
       this.autocompletionWs = ''
     }
 

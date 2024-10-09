@@ -20,6 +20,10 @@ export default class DefinedTypeContainer {
     return { ...this.map.get(id) }
   }
 
+  get default() {
+    return this.#list.find((type) => type.default === true)
+  }
+
   replace(id, newType) {
     const index = this.#list.findIndex((elem) => elem.id === id)
 
