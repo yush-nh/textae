@@ -1,4 +1,4 @@
-import getForwardMatchType from './getConfig/getForwardMatchType'
+import getForwardMatchType from './getForwardMatchType'
 
 export default class DefinedTypeContainer {
   /** @type {Array} **/
