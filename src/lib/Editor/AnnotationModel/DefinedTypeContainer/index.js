@@ -1,5 +1,5 @@
 import DefinedType from './DefinedType'
-import getForwardMatchType from './getForwardMatchType'
+import getForwardMatchID from './getForwardMatchID'
 
 export default class DefinedTypeContainer {
   /** @type {Array} **/
@@ -86,6 +86,7 @@ export default class DefinedTypeContainer {
     }
 
     // Return value if forward matched
-    return getForwardMatchType(this, id)
+    const forwardMatchId = getForwardMatchID(this.ids(), id)
+    return forwardMatchId ? this.get(forwardMatchId) : undefined
   }
 }
