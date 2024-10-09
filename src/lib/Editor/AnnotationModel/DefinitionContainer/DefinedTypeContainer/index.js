@@ -9,7 +9,7 @@ export default class DefinedTypeContainer {
   constructor(values) {
     // If the order of the type definitions changes,
     // it will be treated as a change, so preserve the order.
-    this.#list = values
+    this.#list = values || []
   }
 
   has(id) {

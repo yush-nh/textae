@@ -85,21 +85,21 @@ export default class TypeDictionary {
   setTypeConfig(config) {
     if (config) {
       this.#denotationContainer.definedTypes = new DefinedTypeContainer(
-        config['entity types'] || []
+        config['entity types']
       )
       this.#relationContainer.definedTypes = new DefinedTypeContainer(
-        config['relation types'] || []
+        config['relation types']
       )
       this.#attributeContainer.definedTypes = config['attribute types'] || []
       this.#blockContainer.definedTypes = new DefinedTypeContainer(
-        config['block types'] || []
+        config['block types']
       )
       this.autocompletionWs = config['autocompletion_ws']
     } else {
-      this.#denotationContainer.definedTypes = new DefinedTypeContainer([])
-      this.#relationContainer.definedTypes = new DefinedTypeContainer([])
+      this.#denotationContainer.definedTypes = new DefinedTypeContainer()
+      this.#relationContainer.definedTypes = new DefinedTypeContainer()
       this.#attributeContainer.definedTypes = []
-      this.#blockContainer.definedTypes = new DefinedTypeContainer([])
+      this.#blockContainer.definedTypes = new DefinedTypeContainer()
       this.autocompletionWs = ''
     }
 
