@@ -157,7 +157,7 @@ export default class DefinitionContainer {
     // Make default type and delete default type from original configuration.
     for (const [key, type] of types.entries()) {
       // Make a copy so as not to destroy the original object.
-      const copy = { ...type.toJSON() }
+      const copy = type.toJSON()
       if (type.id === this.defaultType) {
         copy.default = true
       } else {
