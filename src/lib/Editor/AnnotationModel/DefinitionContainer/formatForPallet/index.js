@@ -1,6 +1,6 @@
 import getUrlMatches from '../../../getUrlMatches'
 
-export default function (
+export default function formatForPallet(
   types,
   countMap,
   definedTypes,
