@@ -155,7 +155,7 @@ export default class DefinitionContainer {
   get config() {
     const types = this.#typeMap
 
-    // Make default type and delete defalut type from original configuratian.
+    // Make default type and delete default type from original configuration.
     for (const [key, type] of types.entries()) {
       // Make a copy so as not to destroy the original object.
       const copy = { ...type }
