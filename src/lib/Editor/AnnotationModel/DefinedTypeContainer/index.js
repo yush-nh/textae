@@ -22,7 +22,7 @@ export default class DefinedTypeContainer {
   }
 
   get(id) {
-    return { ...this.map.get(id) }
+    return { ...this.map.get(id).toJSON() }
   }
 
   get default() {
@@ -76,7 +76,7 @@ export default class DefinedTypeContainer {
   }
 
   get map() {
-    return new Map(this.#definedTypes.map((type) => [type.id, type.toJSON()]))
+    return new Map(this.#definedTypes.map((type) => [type.id, type]))
   }
 
   #getConfigOf(id) {
