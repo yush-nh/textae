@@ -26,6 +26,13 @@ export default class DefinitionContainer {
   }
 
   /**
+   * @returns {DefinedTypeContainer}
+   */
+  get definedTypes() {
+    return this.#definedTypes
+  }
+
+  /**
    * @param {Array} value
    */
   set definedTypes(value) {
@@ -85,13 +92,6 @@ export default class DefinitionContainer {
     }
 
     this.replace(newType.id, newType)
-  }
-
-  /**
-   * @returns {DefinedTypeContainer}
-   */
-  get definedTypes() {
-    return this.#definedTypes
   }
 
   // Return the type that has the default property or the most used type.
