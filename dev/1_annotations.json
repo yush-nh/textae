@@ -57,7 +57,7 @@
       },
       {
         "color": "#666666",
-        "id": "New"
+        "id": "New*"
       },
       {
         "color": "#0000FF",
@@ -598,7 +598,7 @@
         "begin": 217,
         "end": 302
       },
-      "obj": "Protein"
+      "obj": "NewProtein"
     },
     {
       "id": "E29",
