@@ -1,12 +1,14 @@
 import getConfig from './getConfig'
 
 export default class DefinedTypeContainer {
+  #list
+
   // Expected values is an array of object.
   // An example of object is {"id": "Regulation","color": "#FFFF66","default": true}.
   constructor(values) {
     // If the order of the type definitions changes,
     // it will be treated as a change, so preserve the order.
-    this._list = values
+    this.#list = values
   }
 
   has(id) {
@@ -18,17 +20,17 @@ export default class DefinedTypeContainer {
   }
 
   replace(id, newType) {
-    const index = this._list.findIndex((elem) => elem.id === id)
+    const index = this.#list.findIndex((elem) => elem.id === id)
 
     if (index !== -1) {
-      this._list.splice(index, 1, newType)
+      this.#list.splice(index, 1, newType)
     } else {
-      this._list.push(newType)
+      this.#list.push(newType)
     }
   }
 
   delete(id) {
-    this._list = this._list.filter((elem) => elem.id !== id)
+    this.#list = this.#list.filter((elem) => elem.id !== id)
   }
 
   ids() {
@@ -40,12 +42,12 @@ export default class DefinedTypeContainer {
   }
 
   labelIncludes(term) {
-    return this._list
+    return this.#list
       .filter((t) => t.label)
       .filter((t) => t.label.includes(term))
   }
 
   get map() {
-    return this._list.reduce((acc, cur) => acc.set(cur.id, cur), new Map())
+    return this.#list.reduce((acc, cur) => acc.set(cur.id, cur), new Map())
   }
 }
