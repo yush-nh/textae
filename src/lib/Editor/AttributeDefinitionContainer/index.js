@@ -2,13 +2,17 @@ import { arrayMoveImmutable } from 'array-move'
 import createAttributeDefinition from './createAttributeDefinition'
 
 export default class AttributeDefinitionContainer {
+  #eventEmitter
+  #getAllInstanceFunc
+  #definedTypes = new Map()
+
   constructor(eventEmitter, getAllInstanceFunc) {
-    this._eventEmitter = eventEmitter
-    this._getAllInstanceFunc = getAllInstanceFunc
+    this.#eventEmitter = eventEmitter
+    this.#getAllInstanceFunc = getAllInstanceFunc
   }
 
   set definedTypes(attributes) {
-    this._definedTypes = new Map(
+    this.#definedTypes = new Map(
       (attributes || []).map((a) => [
         a.pred,
         createAttributeDefinition(a['value type'], a)
@@ -22,9 +26,9 @@ export default class AttributeDefinitionContainer {
     // Note: 0 is false in JavaScript
     // When index and the number of attribute definitions are the same,
     // the position of the deleted definition is the last. Add to the end of the attribute definition.
-    if (index !== null && this._definedTypes.size !== index) {
-      this._definedTypes = new Map(
-        Array.from(this._definedTypes.entries()).reduce(
+    if (index !== null && this.#definedTypes.size !== index) {
+      this.#definedTypes = new Map(
+        Array.from(this.#definedTypes.entries()).reduce(
           (acc, [key, val], i) => {
             if (i === index) {
               acc.push([
@@ -40,28 +44,28 @@ export default class AttributeDefinitionContainer {
         )
       )
     } else {
-      this._definedTypes.set(
+      this.#definedTypes.set(
         attrDef.pred,
         createAttributeDefinition(valueType, attrDef)
       )
     }
 
-    this._eventEmitter.emit(
+    this.#eventEmitter.emit(
       `textae-event.type-definition.attribute.create`,
       attrDef.pred
     )
   }
 
   get(pred) {
-    return this._definedTypes.get(pred)
+    return this.#definedTypes.get(pred)
   }
 
   update(oldPred, attrDef) {
     // Predicate as key of map may be changed.
     // Keep oreder of attributes.
     // So that re-create an map instance.
-    this._definedTypes = new Map(
-      Array.from(this._definedTypes.entries()).map(([key, val]) => {
+    this.#definedTypes = new Map(
+      Array.from(this.#definedTypes.entries()).map(([key, val]) => {
         if (key === oldPred) {
           return [
             attrDef.pred,
@@ -73,7 +77,7 @@ export default class AttributeDefinitionContainer {
       })
     )
 
-    this._eventEmitter.emit(
+    this.#eventEmitter.emit(
       `textae-event.type-definition.attribute.change`,
       attrDef.pred
     )
@@ -87,7 +91,7 @@ export default class AttributeDefinitionContainer {
   }
 
   move(oldIndex, newIndex) {
-    this._definedTypes = new Map(
+    this.#definedTypes = new Map(
       arrayMoveImmutable(this.attributes, oldIndex, newIndex).map((a) => [
         a.pred,
         a
@@ -100,16 +104,16 @@ export default class AttributeDefinitionContainer {
 
     // When an attribute definition move is undoed,
     // it fires an event to notify the palette to immediately reflect the display content.
-    this._eventEmitter.emit(`textae-event.type-definition.attribute.move`, pred)
+    this.#eventEmitter.emit(`textae-event.type-definition.attribute.move`, pred)
   }
 
   delete(pred) {
-    this._definedTypes.delete(pred)
-    this._eventEmitter.emit(`textae-event.type-definition.attribute.delete`)
+    this.#definedTypes.delete(pred)
+    this.#eventEmitter.emit(`textae-event.type-definition.attribute.delete`)
   }
 
   get attributes() {
-    return Array.from(this._definedTypes.values()) || []
+    return Array.from(this.#definedTypes.values()) || []
   }
 
   get config() {
@@ -122,7 +126,7 @@ export default class AttributeDefinitionContainer {
     }
 
     // If there is an instance that uses a selection attribute, do not delete it.
-    if (this._getAllInstanceFunc().some((a) => a.equalsTo(pred, id))) {
+    if (this.#getAllInstanceFunc().some((a) => a.equalsTo(pred, id))) {
       return true
     }
 
@@ -131,7 +135,7 @@ export default class AttributeDefinitionContainer {
 
   getLabel(pred, obj) {
     console.assert(
-      this._definedTypes.has(pred),
+      this.#definedTypes.has(pred),
       `There is no attribute definition for ${pred}.`
     )
 
@@ -140,7 +144,7 @@ export default class AttributeDefinitionContainer {
 
   getDisplayName(pred, obj) {
     console.assert(
-      this._definedTypes.has(pred),
+      this.#definedTypes.has(pred),
       `There is no attribute definition for ${pred}.`
     )
 
@@ -148,19 +152,19 @@ export default class AttributeDefinitionContainer {
   }
 
   getColor(pred, obj) {
-    if (this._definedTypes.has(pred)) {
+    if (this.#definedTypes.has(pred)) {
       return this.get(pred).getColor(obj)
     }
   }
 
   getIndexOf(pred) {
-    return Array.from(this._definedTypes.values()).findIndex(
+    return Array.from(this.#definedTypes.values()).findIndex(
       (a) => a.pred === pred
     )
   }
 
   getAttributeAt(number) {
-    return Array.from(this._definedTypes.values())[number - 1]
+    return Array.from(this.#definedTypes.values())[number - 1]
   }
 
   attributeCompareFunction(a, b) {
