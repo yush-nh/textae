@@ -9,7 +9,7 @@ export default function (
 ) {
   return types.map((id) => ({
     id,
-    label: (definedTypes.has(id) && definedTypes.get(id).label) || undefined,
+    label: definedTypes.getLabelOf(id) || undefined,
     defaultType: id === defaultType,
     uri: getUrlMatches(id) ? id : undefined,
     color: (definedTypes.has(id) && definedTypes.get(id).color) || defaultColor,
