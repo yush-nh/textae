@@ -2,14 +2,14 @@ import getForwardMatchType from './getForwardMatchType'
 
 export default class DefinedTypeContainer {
   /** @type {Array} **/
-  #list
+  #definedTypes
 
   // Expected values is an array of object.
   // An example of object is {"id": "Regulation","color": "#FFFF66","default": true}.
   constructor(values) {
     // If the order of the type definitions changes,
     // it will be treated as a change, so preserve the order.
-    this.#list = values || []
+    this.#definedTypes = values || []
   }
 
   has(id) {
@@ -21,21 +21,21 @@ export default class DefinedTypeContainer {
   }
 
   get default() {
-    return this.#list.find((type) => type.default === true)
+    return this.#definedTypes.find((type) => type.default === true)
   }
 
   replace(id, newType) {
-    const index = this.#list.findIndex((elem) => elem.id === id)
+    const index = this.#definedTypes.findIndex((elem) => elem.id === id)
 
     if (index !== -1) {
-      this.#list.splice(index, 1, newType)
+      this.#definedTypes.splice(index, 1, newType)
     } else {
-      this.#list.push(newType)
+      this.#definedTypes.push(newType)
     }
   }
 
   delete(id) {
-    this.#list = this.#list.filter((elem) => elem.id !== id)
+    this.#definedTypes = this.#definedTypes.filter((elem) => elem.id !== id)
   }
 
   ids() {
@@ -56,13 +56,13 @@ export default class DefinedTypeContainer {
    * @returns {Array}
    */
   labelsIncludes(term) {
-    return this.#list
+    return this.#definedTypes
       .filter((t) => t.label)
       .filter((t) => t.label.includes(term))
   }
 
   get map() {
-    return new Map(this.#list.map((type) => [type.id, type]))
+    return new Map(this.#definedTypes.map((type) => [type.id, type]))
   }
 
   #getConfigOf(id) {
