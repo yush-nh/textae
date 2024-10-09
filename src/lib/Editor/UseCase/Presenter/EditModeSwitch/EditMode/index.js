@@ -11,6 +11,7 @@ export default class EditMode {
   }
   applyTextSelectionWithTouchDevice() {}
   manipulateAttribute() {}
+  showPallet() {}
   hidePallet() {}
   get isPalletShown() {
     return false
