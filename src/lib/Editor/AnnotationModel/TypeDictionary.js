@@ -1,5 +1,5 @@
 import Observable from 'observ'
-import DefinedTypeContainer from './DefinitionContainer/DefinedTypeContainer'
+import DefinedTypeContainer from './DefinedTypeContainer'
 
 export default class TypeDictionary {
   #eventEmitter
