@@ -87,6 +87,6 @@ export default class DefinedTypeContainer {
 
     // Return value if forward matched
     const forwardMatchId = getForwardMatchID(this.ids(), id)
-    return forwardMatchId ? this.get(forwardMatchId) : undefined
+    return this.map.get(forwardMatchId)
   }
 }
