@@ -62,7 +62,7 @@ export default class DefinedTypeContainer {
   }
 
   get map() {
-    return this.#list.reduce((acc, cur) => acc.set(cur.id, cur), new Map())
+    return new Map(this.#list.map((type) => [type.id, type]))
   }
 
   #getConfigOf(id) {
