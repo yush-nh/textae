@@ -1,4 +1,4 @@
-import getConfig from './getConfig'
+import getForwardMatchType from './getConfig/getForwardMatchType'
 
 export default class DefinedTypeContainer {
   /** @type {Array} **/
@@ -43,7 +43,13 @@ export default class DefinedTypeContainer {
   }
 
   getConfig(id) {
-    return getConfig(this, id)
+    // Return value if perfectly matched
+    if (this.has(id)) {
+      return this.get(id)
+    }
+
+    // Return value if forward matched
+    return getForwardMatchType(this, id)
   }
 
   /**
