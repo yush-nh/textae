@@ -45,7 +45,16 @@ export default class DefinitionContainer {
   }
 
   set config(values) {
-    this.definedTypes = new DefinedTypeContainer(values)
+    this.#definedTypes = new DefinedTypeContainer(values)
+
+    // Set default type
+    const defaultType = this.#definedTypes.default
+    if (defaultType) {
+      delete defaultType.default
+      this.#defaultType = defaultType.id
+    } else {
+      this.#defaultType = null
+    }
   }
 
   /**
@@ -53,22 +62,6 @@ export default class DefinitionContainer {
    */
   get definedTypes() {
     return this.#definedTypes
-  }
-
-  /**
-   * @param {import('../DefinedTypeContainer').default} value
-   */
-  set definedTypes(value) {
-    this.#definedTypes = value
-
-    // Set default type
-    const defaultType = value.default
-    if (defaultType) {
-      delete defaultType.default
-      this.#defaultType = defaultType.id
-    } else {
-      this.#defaultType = null
-    }
   }
 
   has(id) {
