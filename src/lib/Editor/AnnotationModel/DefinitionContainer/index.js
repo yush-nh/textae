@@ -3,12 +3,12 @@ import formatForPallet from './formatForPallet'
 import sortByCountAndName from './sortByCountAndName'
 import countUsage from './countUsage'
 import DefinedType from '../DefinedType'
-import DefinedTypeContainer from '../DefinedTypeContainer'
+import DefinedTypeContainer from './DefinedTypeContainer'
 
 export default class DefinitionContainer {
   #eventEmitter
   #annotationType
-  /** @type {import('../DefinedTypeContainer').default} **/
+  /** @type {import('./DefinedTypeContainer').default} **/
   #definedTypes = new DefinedTypeContainer([])
   #getAllInstanceFunc
   #defaultColor
