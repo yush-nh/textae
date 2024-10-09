@@ -7,6 +7,7 @@ import countUsage from './countUsage'
 export default class DefinitionContainer {
   #eventEmitter
   #annotationType
+  /** @type {DefinedTypeContainer} **/
   #definedTypes
   #getAllInstanceFunc
   #defaultColor
@@ -15,7 +16,6 @@ export default class DefinitionContainer {
   constructor(eventEmitter, annotationType, getAllInstanceFunc, defaultColor) {
     this.#eventEmitter = eventEmitter
     this.#annotationType = annotationType
-    /** @type {DefinedTypeContainer} **/
     this.#definedTypes = null
     this.#getAllInstanceFunc = getAllInstanceFunc
     this.#defaultColor = defaultColor
@@ -25,6 +25,9 @@ export default class DefinitionContainer {
     return this.#annotationType
   }
 
+  /**
+   * @param {Array} value
+   */
   set definedTypes(value) {
     this.#definedTypes = new DefinedTypeContainer(value)
 
@@ -84,6 +87,9 @@ export default class DefinitionContainer {
     this.replace(newType.id, newType)
   }
 
+  /**
+   * @returns {DefinedTypeContainer}
+   */
   get definedTypes() {
     return this.#definedTypes
   }
