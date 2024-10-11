@@ -26,19 +26,17 @@ export default class DefinedTypeContainer {
   }
 
   replace(id, newType) {
+    newType = new DefinedType(
+      newType.id,
+      newType.color,
+      newType.label,
+      newType.default
+    )
+
     const index = this.#types.findIndex((elem) => elem.id === id)
 
     if (index !== -1) {
-      this.#types.splice(
-        index,
-        1,
-        new DefinedType(
-          newType.id,
-          newType.color,
-          newType.label,
-          newType.default
-        )
-      )
+      this.#types.splice(index, 1, newType)
     } else {
       this.#types.push(newType)
     }
