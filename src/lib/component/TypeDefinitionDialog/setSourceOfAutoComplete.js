@@ -5,7 +5,11 @@ import select from './select'
 
 customizeJqueryUiAutocomplete()
 
-export default function (el, autocompletionWs, getLocalData) {
+export default function setSourceOfAutoComplete(
+  el,
+  autocompletionWs,
+  getLocalData
+) {
   const inputs = el.querySelectorAll('input')
 
   // Update the source
