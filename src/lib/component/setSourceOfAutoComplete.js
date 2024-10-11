@@ -6,9 +6,9 @@ customizeJqueryUiAutocomplete()
 
 export default function setSourceOfAutoComplete(
   inputElement,
-  labelElement,
   autocompletionWs,
-  getLocalData
+  getLocalData,
+  onSelect
 ) {
   $(inputElement).autocomplete({
     source: (request, response) => {
@@ -21,14 +21,7 @@ export default function setSourceOfAutoComplete(
     },
     minLength: 3,
     select: (_, { item }) => {
-      inputElement.value = item.id
-
-      if (labelElement instanceof HTMLInputElement) {
-        labelElement.value = item.label
-      } else if (labelElement instanceof HTMLSpanElement) {
-        labelElement.innerText = item.label
-      }
-
+      onSelect(item.id, item.label)
       return false
     }
   })

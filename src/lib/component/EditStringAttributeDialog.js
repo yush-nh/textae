@@ -111,15 +111,20 @@ export default class EditStringAttributeDialog extends PromiseDialog {
       )
     }
 
+    const inputElement = super.el.querySelector(
+      '.textae-editor__edit-string-attribute-dialog__value'
+    )
+    const labelElement = super.el.querySelector(
+      '.textae-editor__edit-string-attribute-dialog__label'
+    )
     setSourceOfAutoComplete(
-      super.el.querySelector(
-        '.textae-editor__edit-string-attribute-dialog__value'
-      ),
-      super.el.querySelector(
-        '.textae-editor__edit-string-attribute-dialog__label'
-      ),
+      inputElement,
       attrDef.autocompletionWs,
-      () => []
+      () => [],
+      (id, label) => {
+        inputElement.value = id
+        labelElement.value = label
+      }
     )
   }
 }
