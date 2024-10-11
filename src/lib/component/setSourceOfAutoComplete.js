@@ -12,12 +12,10 @@ export default function setSourceOfAutoComplete(
 ) {
   $(inputElement).autocomplete({
     source: (request, response) => {
-      if (labelSpan) {
-        if (labelSpan instanceof HTMLInputElement) {
-          labelSpan.value = ''
-        } else {
-          labelSpan.innerText = ''
-        }
+      if (labelSpan instanceof HTMLInputElement) {
+        labelSpan.value = ''
+      } else {
+        labelSpan.innerText = ''
       }
 
       searchTerm(
@@ -31,12 +29,10 @@ export default function setSourceOfAutoComplete(
     select: (_, { item }) => {
       inputElement.value = item.id
 
-      if (labelSpan) {
-        if (labelSpan instanceof HTMLInputElement) {
-          labelSpan.value = item.label
-        } else {
-          labelSpan.innerText = item.label
-        }
+      if (labelSpan instanceof HTMLInputElement) {
+        labelSpan.value = item.label
+      } else {
+        labelSpan.innerText = item.label
       }
 
       return false
