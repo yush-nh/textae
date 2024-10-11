@@ -6,16 +6,16 @@ customizeJqueryUiAutocomplete()
 
 export default function setSourceOfAutoComplete(
   inputElement,
-  labelSpan,
+  labelElement,
   autocompletionWs,
   getLocalData
 ) {
   $(inputElement).autocomplete({
     source: (request, response) => {
-      if (labelSpan instanceof HTMLInputElement) {
-        labelSpan.value = ''
+      if (labelElement instanceof HTMLInputElement) {
+        labelElement.value = ''
       } else {
-        labelSpan.innerText = ''
+        labelElement.innerText = ''
       }
 
       searchTerm(
@@ -29,10 +29,10 @@ export default function setSourceOfAutoComplete(
     select: (_, { item }) => {
       inputElement.value = item.id
 
-      if (labelSpan instanceof HTMLInputElement) {
-        labelSpan.value = item.label
-      } else {
-        labelSpan.innerText = item.label
+      if (labelElement instanceof HTMLInputElement) {
+        labelElement.value = item.label
+      } else if (labelElement instanceof HTMLSpanElement) {
+        labelElement.innerText = item.label
       }
 
       return false
