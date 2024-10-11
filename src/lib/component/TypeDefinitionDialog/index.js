@@ -22,33 +22,20 @@ export default class TypeDefinitionDialog extends PromiseDialog {
     })
 
     const [idElement, labelElement] = super.el.querySelectorAll('input')
-    setSourceOfAutoComplete(
-      idElement,
-      (term, onResult) =>
-        searchTerm(
-          autocompletionWs,
-          (term) => definitionContainer.findByLabel(term),
-          term,
-          onResult
-        ),
-      (id, label) => {
-        idElement.value = id
-        labelElement.value = label
-      }
-    )
-    setSourceOfAutoComplete(
-      labelElement,
-      (term, onResult) =>
-        searchTerm(
-          autocompletionWs,
-          (term) => definitionContainer.findByLabel(term),
-          term,
-          onResult
-        ),
-      (id, label) => {
-        idElement.value = id
-        labelElement.value = label
-      }
-    )
+    const onSearch = (term, onResult) =>
+      searchTerm(
+        autocompletionWs,
+        (term) => definitionContainer.findByLabel(term),
+        term,
+        onResult
+      )
+    setSourceOfAutoComplete(idElement, onSearch, (id, label) => {
+      idElement.value = id
+      labelElement.value = label
+    })
+    setSourceOfAutoComplete(labelElement, onSearch, (id, label) => {
+      idElement.value = id
+      labelElement.value = label
+    })
   }
 }
