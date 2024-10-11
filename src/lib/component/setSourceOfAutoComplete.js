@@ -12,12 +12,6 @@ export default function setSourceOfAutoComplete(
 ) {
   $(inputElement).autocomplete({
     source: (request, response) => {
-      if (labelElement instanceof HTMLInputElement) {
-        labelElement.value = ''
-      } else {
-        labelElement.innerText = ''
-      }
-
       searchTerm(
         autocompletionWs,
         getLocalData(request.term),
