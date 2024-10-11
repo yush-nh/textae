@@ -12,7 +12,7 @@ export default function setSourceOfAutoComplete(
 ) {
   $(inputElement).autocomplete({
     source: ({ term }, response) => {
-      searchTerm(autocompletionWs, getLocalData(term), term, response)
+      searchTerm(autocompletionWs, getLocalData, term, response)
     },
     minLength: 3,
     select: (_, { item }) => {

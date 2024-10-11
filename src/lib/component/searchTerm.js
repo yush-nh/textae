@@ -1,4 +1,6 @@
-export default function (autocompletionWs, localData, term, done) {
+export default function (autocompletionWs, getLocalData, term, done) {
+  const localData = getLocalData(term)
+
   if (!autocompletionWs) {
     done(localData)
     return
