@@ -11,13 +11,8 @@ export default function setSourceOfAutoComplete(
   onSelect
 ) {
   $(inputElement).autocomplete({
-    source: (request, response) => {
-      searchTerm(
-        autocompletionWs,
-        getLocalData(request.term),
-        request.term,
-        response
-      )
+    source: ({ term }, response) => {
+      searchTerm(autocompletionWs, getLocalData(term), term, response)
     },
     minLength: 3,
     select: (_, { item }) => {
