@@ -1,4 +1,5 @@
 import PromiseDialog from '../PromiseDialog'
+import searchTerm from '../searchTerm'
 import setSourceOfAutoComplete from '../setSourceOfAutoComplete'
 import template from './template'
 
@@ -23,8 +24,13 @@ export default class TypeDefinitionDialog extends PromiseDialog {
     const [idElement, labelElement] = super.el.querySelectorAll('input')
     setSourceOfAutoComplete(
       idElement,
-      autocompletionWs,
-      (term) => definitionContainer.findByLabel(term),
+      (term, onResult) =>
+        searchTerm(
+          autocompletionWs,
+          (term) => definitionContainer.findByLabel(term),
+          term,
+          onResult
+        ),
       (id, label) => {
         idElement.value = id
         labelElement.value = label
@@ -32,8 +38,13 @@ export default class TypeDefinitionDialog extends PromiseDialog {
     )
     setSourceOfAutoComplete(
       labelElement,
-      autocompletionWs,
-      (term) => definitionContainer.findByLabel(term),
+      (term, onResult) =>
+        searchTerm(
+          autocompletionWs,
+          (term) => definitionContainer.findByLabel(term),
+          term,
+          onResult
+        ),
       (id, label) => {
         idElement.value = id
         labelElement.value = label

@@ -2,6 +2,7 @@ import delegate from 'delegate'
 import PromiseDialog from './PromiseDialog'
 import setSourceOfAutoComplete from './setSourceOfAutoComplete'
 import anemone from './anemone'
+import searchTerm from './searchTerm'
 
 function template(context) {
   const { subjects, pred, value, label } = context
@@ -119,8 +120,8 @@ export default class EditStringAttributeDialog extends PromiseDialog {
     )
     setSourceOfAutoComplete(
       inputElement,
-      attrDef.autocompletionWs,
-      () => [],
+      (term, onResult) =>
+        searchTerm(attrDef.autocompletionWs, () => [], term, onResult),
       (id, label) => {
         inputElement.value = id
         labelElement.value = label

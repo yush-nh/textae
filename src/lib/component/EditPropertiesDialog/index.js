@@ -7,6 +7,7 @@ import SelectionAttributePallet from '../SelectionAttributePallet'
 import EditNumericAttributeDialog from '../EditNumericAttributeDialog'
 import EditStringAttributeDialog from '../EditStringAttributeDialog'
 import mergedTypeValuesOf from './mergedTypeValuesOf'
+import searchTerm from '../searchTerm'
 
 export default class EditPropertiesDialog extends PromiseDialog {
   constructor(
@@ -167,8 +168,13 @@ export default class EditPropertiesDialog extends PromiseDialog {
     )
     setSourceOfAutoComplete(
       typeNameElement,
-      autocompletionWs,
-      (term) => entityContainer.findByLabel(term),
+      (term, onResult) =>
+        searchTerm(
+          autocompletionWs,
+          (term) => entityContainer.findByLabel(term),
+          term,
+          onResult
+        ),
       (id, label) => {
         typeNameElement.value = id
         typeLabelElement.innerText = label
