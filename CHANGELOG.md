@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.5.0](https://github.com/pubannotation/textae/compare/v13.4.1...v13.5.0) (2024-10-15)
+
+
+### Features
+
+* Display labels in the string attribute edit dialog ([80ac49e](https://github.com/pubannotation/textae/commit/80ac49ee58a8ad18d660be3226149314cafa39b5))
+* Enable to select text-edit mode on StartUpOptions ([aa14c2e](https://github.com/pubannotation/textae/commit/aa14c2e61571d03e482f9575e4ca195a3adfb14f))
+
+
+### Bug Fixes
+
+* Changing the value of the string attribute to a URL string causes an error. ([e99aea6](https://github.com/pubannotation/textae/commit/e99aea628e81f0b96376358188ac1323902c585e))
+* Error when clicking the pencil button in the Edit Properties dialog ([292db3b](https://github.com/pubannotation/textae/commit/292db3b2d3196f6b38636502a7cc416b1013484b))
+* Give correct argument to EditModeState#toTextEditMode ([aff1066](https://github.com/pubannotation/textae/commit/aff10668524858d5fe5851ee58ea2ea2cd932fb6))
+* If you enter the shortcut key Q in view mode, an error will occur. ([833dc07](https://github.com/pubannotation/textae/commit/833dc07eed591c90eb8beedde464e41813ecf603))
+
 ### [13.4.1](https://github.com/pubannotation/textae/compare/v13.4.0...v13.4.1) (2024-10-08)
 
 

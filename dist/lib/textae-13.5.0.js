@@ -48803,7 +48803,7 @@
       open() {
         this._$dialog.dialog({
           ...{
-            dialogClass: 'textae-editor__dialog',
+            classes: { 'ui-dialog': 'textae-editor__dialog' },
             height: 'auto',
             modal: true,
             resizable: false,
@@ -51442,12 +51442,8 @@
       return type
     } // ./src/lib/Editor/getDisplayName/index.js
 
-    /* harmony default export */ function getDisplayName(
-      namespace,
-      value,
-      displayName
-    ) {
-      // When a type id has label attrdute.
+    function getDisplayName(namespace, value, displayName) {
+      // When a type id has label attribute.
       if (displayName) {
         return displayName
       }
@@ -51777,17 +51773,15 @@
     // The browser cache is not available until the HTTP request is returned.
     // To make only one request for a single URL, have an application-level cache.
     class MediaDictionary {
-      constructor() {
-        this._cache = new Map()
-      }
+      #cache = new Map()
 
-      acquireContentTypeOf(url) {
+      async acquireContentTypeOf(url) {
         if (!url) {
           return Promise.resolve(false)
         }
 
-        if (this._cache.has(url)) {
-          return this._cache.get(url)
+        if (this.#cache.has(url)) {
+          return this.#cache.get(url)
         }
 
         // Use GET method.
@@ -51821,7 +51815,7 @@
         // Cache the promise of results, not the results themselves.
         // Caching the result causes an immediate redraw at the caller;
         // it does not wait for the HTTP response to arrive.
-        this._cache.set(url, promiseOfResult)
+        this.#cache.set(url, promiseOfResult)
 
         return promiseOfResult
       }
@@ -51831,7 +51825,11 @@
           return false
         }
 
-        return this._cache.get(url).value
+        if (!this.#cache.has(url)) {
+          return false
+        }
+
+        return this.#cache.get(url).value
       }
     } // ./src/lib/Editor/AnnotationModel/AttributeInstanceContainer/index.js
 
@@ -55470,17 +55468,16 @@
 
       setTypeConfig(config) {
         if (config) {
-          this.#denotationContainer.definedTypes = config['entity types'] || []
-          this.#relationContainer.definedTypes = config['relation types'] || []
-          this.#attributeContainer.definedTypes =
-            config['attribute types'] || []
-          this.#blockContainer.definedTypes = config['block types'] || []
+          this.#denotationContainer.config = config['entity types']
+          this.#relationContainer.config = config['relation types']
+          this.#attributeContainer.config = config['attribute types']
+          this.#blockContainer.config = config['block types']
           this.autocompletionWs = config['autocompletion_ws']
         } else {
-          this.#denotationContainer.definedTypes = []
-          this.#relationContainer.definedTypes = []
-          this.#attributeContainer.definedTypes = []
-          this.#blockContainer.definedTypes = []
+          this.#denotationContainer.config = null
+          this.#relationContainer.config = null
+          this.#attributeContainer.config = null
+          this.#blockContainer.config = null
           this.autocompletionWs = ''
         }
 
@@ -55488,7 +55485,7 @@
       }
     } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/formatForPallet/index.js
 
-    /* harmony default export */ function formatForPallet(
+    function formatForPallet(
       types,
       countMap,
       definedTypes,
@@ -55497,116 +55494,12 @@
     ) {
       return types.map((id) => ({
         id,
-        label:
-          (definedTypes.has(id) && definedTypes.get(id).label) || undefined,
+        label: definedTypes.getLabelOf(id) || undefined,
         defaultType: id === defaultType,
         uri: getUrlMatches(id) ? id : undefined,
-        color:
-          (definedTypes.has(id) && definedTypes.get(id).color) || defaultColor,
+        color: definedTypes.getColorOf(id) || defaultColor,
         useNumber: countMap.get(id).usage
       }))
-    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/getForwardMatchTypes.js
-
-    /* harmony default export */ function getForwardMatchTypes(typeIds, id) {
-      const forwardMatchTypes = []
-
-      for (const definedType of typeIds) {
-        if (
-          definedType.indexOf('*') !== -1 &&
-          id.indexOf(definedType.slice(0, -1)) === 0
-        ) {
-          forwardMatchTypes.push(definedType)
-        }
-      }
-
-      return forwardMatchTypes
-    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/getLongestIdMatchType.js
-
-    /* harmony default export */ function getLongestIdMatchType(typeIds) {
-      let longestMatchId = ''
-
-      for (const id of typeIds) {
-        if (id.length > longestMatchId.length) {
-          longestMatchId = id
-        }
-      }
-
-      return longestMatchId
-    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/getForwardMatchType.js
-
-    /* harmony default export */ function getForwardMatchType(
-      definedTypes,
-      id
-    ) {
-      // '*' at the last char of id means wildcard.
-      const forwardMatchTypes = getForwardMatchTypes(definedTypes.ids(), id)
-
-      if (forwardMatchTypes.length === 0) {
-        return null
-      }
-
-      // If some wildcard-id are matched, return the type of the most longest matched.
-      return definedTypes.get(getLongestIdMatchType(forwardMatchTypes))
-    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getConfig/index.js
-
-    /* harmony default export */ function getConfig(definedTypes, id) {
-      // Return value if perfectly matched
-      if (definedTypes.has(id)) {
-        return definedTypes.get(id)
-      }
-
-      // Return value if forward matched
-      return getForwardMatchType(definedTypes, id)
-    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/index.js
-
-    class DefinedTypeContainer {
-      // Expected values is an array of object.
-      // An example of object is {"id": "Regulation","color": "#FFFF66","default": true}.
-      constructor(values) {
-        // If the order of the type definitions changes,
-        // it will be treated as a change, so preserve the order.
-        this._list = values
-      }
-
-      has(id) {
-        return this.map.has(id)
-      }
-
-      get(id) {
-        return { ...this.map.get(id) }
-      }
-
-      replace(id, newType) {
-        const index = this._list.findIndex((elem) => elem.id === id)
-
-        if (index !== -1) {
-          this._list.splice(index, 1, newType)
-        } else {
-          this._list.push(newType)
-        }
-      }
-
-      delete(id) {
-        this._list = this._list.filter((elem) => elem.id !== id)
-      }
-
-      ids() {
-        return this.map.keys()
-      }
-
-      getConfig(id) {
-        return getConfig(this, id)
-      }
-
-      labelIncludes(term) {
-        return this._list
-          .filter((t) => t.label)
-          .filter((t) => t.label.includes(term))
-      }
-
-      get map() {
-        return this._list.reduce((acc, cur) => acc.set(cur.id, cur), new Map())
-      }
     } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/sortByCountAndName.js
 
     /* harmony default export */ function sortByCountAndName(countTypeUse) {
@@ -55621,7 +55514,7 @@
       return typeNames
     } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/countUsage.js
 
-    /* harmony default export */ function countUsage(map, instances) {
+    function countUsage(map, instances) {
       for (const [key, value] of map.entries()) {
         map.set(key, { ...value, usage: 0 })
       }
@@ -55631,48 +55524,234 @@
 
         return countMap
       }, map)
+    } // ./src/lib/Editor/AnnotationModel/DefinedType.js
+
+    class DefinedType {
+      #id
+      #color
+      #label
+      #default
+
+      constructor(id, color, label, isDefault) {
+        this.#id = id
+        this.#color = color
+        this.#label = label
+        this.#default = isDefault
+      }
+
+      get id() {
+        return this.#id
+      }
+
+      get color() {
+        return this.#color
+      }
+
+      get label() {
+        return this.#label
+      }
+
+      get default() {
+        return this.#default
+      }
+
+      toJSON() {
+        return {
+          id: this.#id,
+          color: this.#color,
+          label: this.#label,
+          default: this.#default
+        }
+      }
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getForwardMatchID/getForwardMatchTypes.js
+
+    function getForwardMatchTypes(typeIds, id) {
+      const forwardMatchTypes = []
+
+      for (const definedType of typeIds) {
+        if (
+          definedType.indexOf('*') !== -1 &&
+          id.indexOf(definedType.slice(0, -1)) === 0
+        ) {
+          forwardMatchTypes.push(definedType)
+        }
+      }
+
+      return forwardMatchTypes
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getForwardMatchID/getLongestIdMatchType.js
+
+    function getLongestIdMatchType(typeIds) {
+      let longestMatchId = ''
+
+      for (const id of typeIds) {
+        if (id.length > longestMatchId.length) {
+          longestMatchId = id
+        }
+      }
+
+      return longestMatchId
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/getForwardMatchID/index.js
+
+    function getForwardMatchID(typeIds, id) {
+      // '*' at the last char of id means wildcard.
+      const forwardMatchTypes = getForwardMatchTypes(typeIds, id)
+
+      if (forwardMatchTypes.length === 0) {
+        return null
+      }
+
+      // If some wildcard-id are matched, return the id of the most longest matched.
+      return getLongestIdMatchType(forwardMatchTypes)
+    } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/DefinedTypeContainer/index.js
+
+    class DefinedTypeContainer {
+      /** @type {Array} **/
+      #types
+
+      // Expected values is an array of object.
+      // An example of object is {"id": "Regulation","color": "#FFFF66","default": true}.
+      constructor(values = []) {
+        // If the order of the type definitions changes,
+        // it will be treated as a change, so preserve the order.
+
+        this.#types = values.map(
+          (value) =>
+            new DefinedType(value.id, value.color, value.label, value.default)
+        )
+      }
+
+      has(id) {
+        return this.map.has(id)
+      }
+
+      get default() {
+        return this.#types.find((type) => type.default === true)
+      }
+
+      replace(id, newType) {
+        newType = new DefinedType(
+          newType.id,
+          newType.color,
+          newType.label,
+          newType.default
+        )
+
+        const index = this.#types.findIndex((elem) => elem.id === id)
+
+        if (index !== -1) {
+          this.#types.splice(index, 1, newType)
+        } else {
+          this.#types.push(newType)
+        }
+      }
+
+      delete(id) {
+        this.#types = this.#types.filter((elem) => elem.id !== id)
+      }
+
+      ids() {
+        return this.map.keys()
+      }
+
+      getColorOf(id) {
+        return this.#getConfigOf(id)?.color
+      }
+
+      getLabelOf(id) {
+        return this.#getConfigOf(id)?.label
+      }
+
+      /**
+       * Returns list of label includes the term.
+       * @param {string} term
+       * @returns {Array}
+       */
+      labelsIncludes(term) {
+        return this.#types
+          .filter((t) => t.label)
+          .filter((t) => t.label.includes(term))
+      }
+
+      get map() {
+        return new Map(this.#types.map((type) => [type.id, type]))
+      }
+
+      #getConfigOf(id) {
+        // Return value if perfectly matched
+        if (this.has(id)) {
+          return this.map.get(id)
+        }
+
+        // Return value if forward matched
+        const forwardMatchId = getForwardMatchID(this.ids(), id)
+        return this.map.get(forwardMatchId)
+      }
     } // ./src/lib/Editor/AnnotationModel/DefinitionContainer/index.js
 
     class DefinitionContainer {
+      #eventEmitter
+      #annotationType
+      /** @type {import('./DefinedTypeContainer').default} **/
+      #definedTypes = new DefinedTypeContainer([])
+      #getAllInstanceFunc
+      #defaultColor
+      #defaultType
+
       constructor(
         eventEmitter,
         annotationType,
         getAllInstanceFunc,
         defaultColor
       ) {
-        this._eventEmitter = eventEmitter
-        this._annotationType = annotationType
-        /** @type {DefinedTypeContainer} **/
-        this._definedTypes = null
-        this._getAllInstanceFunc = getAllInstanceFunc
-        this._defaultColor = defaultColor
+        this.#eventEmitter = eventEmitter
+        this.#annotationType = annotationType
+        this.#getAllInstanceFunc = getAllInstanceFunc
+        this.#defaultColor = defaultColor
       }
 
       get annotationType() {
-        return this._annotationType
+        return this.#annotationType
       }
 
-      set definedTypes(value) {
-        this._definedTypes = new DefinedTypeContainer(value)
+      get config() {
+        const types = this.#typeMap
+
+        // Make default type and delete default type from original configuration.
+        for (const [key, type] of types.entries()) {
+          // Make a copy so as not to destroy the original object.
+          const copy = type.toJSON()
+          if (type.id === this.defaultType) {
+            copy.default = true
+          } else {
+            delete copy.default
+          }
+          types.set(key, copy)
+        }
+
+        return [...types.values()]
+      }
+
+      set config(values) {
+        this.#definedTypes = new DefinedTypeContainer(values)
 
         // Set default type
-        const defaultType = value.find((type) => type.default === true)
+        const defaultType = this.#definedTypes.default
         if (defaultType) {
           delete defaultType.default
-          this._defaultType = defaultType.id
+          this.#defaultType = defaultType.id
         } else {
-          this._defaultType = null
+          this.#defaultType = null
         }
       }
 
       has(id) {
-        return this._definedTypes.has(id)
+        return this.#definedTypes.has(id)
       }
 
       get(id) {
-        const type = { ...this._definedTypes.get(id) }
+        const type = { ...this.#definedTypes.map.get(id) }
 
-        if (this._defaultType === id) {
+        if (this.#defaultType === id) {
           type.default = true
           return type
         } else {
@@ -55682,9 +55761,9 @@
       }
 
       replace(id, newType) {
-        this._definedTypes.replace(id, newType)
-        this._eventEmitter.emit(
-          `textae-event.type-definition.${this._annotationType}.change`,
+        this.#definedTypes.replace(id, newType)
+        this.#eventEmitter.emit(
+          `textae-event.type-definition.${this.#annotationType}.change`,
           newType.id
         )
       }
@@ -55692,7 +55771,7 @@
       addDefinedType(newType) {
         if (typeof newType.color === 'undefined') {
           const forwardMatchColor = this.getColor(newType.id)
-          if (forwardMatchColor !== this._defaultColor) {
+          if (forwardMatchColor !== this.#defaultColor) {
             newType.color = forwardMatchColor
           }
         }
@@ -55705,25 +55784,21 @@
         }
 
         if (newType.default) {
-          this._defaultType = newType.id
+          this.#defaultType = newType.id
         }
 
         this.replace(newType.id, newType)
       }
 
-      get definedTypes() {
-        return this._definedTypes
-      }
-
       // Return the type that has the default property or the most used type.
       get defaultType() {
-        if (this._defaultType) {
-          return this._defaultType
+        if (this.#defaultType) {
+          return this.#defaultType
         }
 
-        if (this._getAllInstanceFunc().length > 0) {
+        if (this.#getAllInstanceFunc().length > 0) {
           return sortByCountAndName(
-            countUsage(this._typeMap, this._getAllInstanceFunc())
+            countUsage(this.#typeMap, this.#getAllInstanceFunc())
           )[0]
         }
 
@@ -55732,25 +55807,23 @@
 
       // The default value can be removed.
       set defaultType(id) {
-        this._defaultType = id
-        this._eventEmitter.emit(
-          `textae-event.type-definition.${this._annotationType}.change-default`,
+        this.#defaultType = id
+        this.#eventEmitter.emit(
+          `textae-event.type-definition.${this.#annotationType}.change-default`,
           id
         )
       }
 
       get defaultColor() {
-        return this._defaultColor
+        return this.#defaultColor
       }
 
       getColor(id) {
-        const config = this._definedTypes.getConfig(id)
-        return (config && config.color) || this._defaultColor
+        return this.#definedTypes.getColorOf(id) || this.#defaultColor
       }
 
       getLabel(id) {
-        const config = this._definedTypes.getConfig(id)
-        return config && config.label
+        return this.#definedTypes.getLabelOf(id)
       }
 
       getURI(id) {
@@ -55758,49 +55831,31 @@
       }
 
       findByLabel(term) {
-        return this.definedTypes.labelIncludes(term)
+        return this.#definedTypes.labelsIncludes(term)
       }
 
       get pallet() {
-        const countMap = countUsage(this._typeMap, this._getAllInstanceFunc())
+        const countMap = countUsage(this.#typeMap, this.#getAllInstanceFunc())
         const types = sortByCountAndName(countMap)
 
         return formatForPallet(
           types,
           countMap,
-          this._definedTypes,
+          this.#definedTypes,
           this.defaultType,
-          this._defaultColor
+          this.#defaultColor
         )
       }
 
-      get config() {
-        const types = this._typeMap
-
-        // Make default type and delete defalut type from original configuratian.
-        for (const [key, type] of types.entries()) {
-          // Make a copy so as not to destroy the original object.
-          const copy = { ...type }
-          if (type.id === this.defaultType) {
-            copy.default = true
-          } else {
-            delete copy.default
-          }
-          types.set(key, copy)
-        }
-
-        return [...types.values()]
-      }
-
-      get _typeMap() {
+      get #typeMap() {
         // Get type definitions.
         // Copy map to add definitions from instance.
-        const types = this._definedTypes.map
+        const types = this.#definedTypes.map
 
         // Get types from instances.
-        for (const { typeName } of this._getAllInstanceFunc()) {
+        for (const { typeName } of this.#getAllInstanceFunc()) {
           if (!types.has(typeName)) {
-            types.set(typeName, { id: typeName })
+            types.set(typeName, new DefinedType(typeName))
           }
         }
 
@@ -55808,10 +55863,10 @@
       }
 
       delete(id, defaultType) {
-        this._definedTypes.delete(id)
-        this._defaultType = defaultType
-        this._eventEmitter.emit(
-          `textae-event.type-definition.${this._annotationType}.delete`,
+        this.#definedTypes.delete(id)
+        this.#defaultType = defaultType
+        this.#eventEmitter.emit(
+          `textae-event.type-definition.${this.#annotationType}.delete`,
           id
         )
       }
@@ -55988,7 +56043,7 @@
       }
 
       getLabel(obj) {
-        const def = this._getMatchedValue(obj)
+        const def = this.#getMatchedValue(obj)
 
         if (def && def.label) {
           return def.label
@@ -56000,7 +56055,7 @@
       }
 
       getColor(obj) {
-        const def = this._getMatchedValue(obj)
+        const def = this.#getMatchedValue(obj)
 
         if (def && def.color) {
           return def.color
@@ -56009,7 +56064,7 @@
         return null
       }
 
-      _getMatchedValue(obj) {
+      #getMatchedValue(obj) {
         const match = this._values
           .filter((a) => a.range !== 'default')
           .find((a) => new IntervalNotation(a.range).test(obj))
@@ -56052,7 +56107,7 @@
       }
 
       getLabel(obj) {
-        const def = this._getMatchedValue(obj)
+        const def = this.#getMatchedValue(obj)
 
         if (def && def.label) {
           return def.label
@@ -56064,7 +56119,7 @@
       }
 
       getColor(obj) {
-        const def = this._getMatchedValue(obj)
+        const def = this.#getMatchedValue(obj)
 
         if (def && def.color) {
           return def.color
@@ -56081,7 +56136,7 @@
         return this._values.length === 1
       }
 
-      _getMatchedValue(obj) {
+      #getMatchedValue(obj) {
         return this.values.find((a) => a.id == obj)
       }
 
@@ -56108,7 +56163,7 @@
       }
 
       getLabel(obj) {
-        const def = this._getMatchedValue(obj)
+        const def = this.#getMatchedValue(obj)
 
         if (def && def.label) {
           return def.label
@@ -56120,7 +56175,7 @@
       }
 
       getColor(obj) {
-        const def = this._getMatchedValue(obj)
+        const def = this.#getMatchedValue(obj)
 
         if (def && def.color) {
           return def.color
@@ -56129,7 +56184,7 @@
         return null
       }
 
-      _getMatchedValue(obj) {
+      #getMatchedValue(obj) {
         const match = this._values
           .filter((a) => a.pattern !== 'default')
           .find((a) => new RegExp(a.pattern).test(obj))
@@ -56181,13 +56236,21 @@
     } // ./src/lib/Editor/AttributeDefinitionContainer/index.js
 
     class AttributeDefinitionContainer {
+      #eventEmitter
+      #getAllInstanceFunc
+      #definedTypes = new Map()
+
       constructor(eventEmitter, getAllInstanceFunc) {
-        this._eventEmitter = eventEmitter
-        this._getAllInstanceFunc = getAllInstanceFunc
+        this.#eventEmitter = eventEmitter
+        this.#getAllInstanceFunc = getAllInstanceFunc
       }
 
-      set definedTypes(attributes) {
-        this._definedTypes = new Map(
+      get config() {
+        return this.attributes.map((a) => a.externalFormat)
+      }
+
+      set config(attributes) {
+        this.#definedTypes = new Map(
           (attributes || []).map((a) => [
             a.pred,
             createAttributeDefinition(a['value type'], a)
@@ -56201,9 +56264,9 @@
         // Note: 0 is false in JavaScript
         // When index and the number of attribute definitions are the same,
         // the position of the deleted definition is the last. Add to the end of the attribute definition.
-        if (index !== null && this._definedTypes.size !== index) {
-          this._definedTypes = new Map(
-            Array.from(this._definedTypes.entries()).reduce(
+        if (index !== null && this.#definedTypes.size !== index) {
+          this.#definedTypes = new Map(
+            Array.from(this.#definedTypes.entries()).reduce(
               (acc, [key, val], i) => {
                 if (i === index) {
                   acc.push([
@@ -56219,28 +56282,28 @@
             )
           )
         } else {
-          this._definedTypes.set(
+          this.#definedTypes.set(
             attrDef.pred,
             createAttributeDefinition(valueType, attrDef)
           )
         }
 
-        this._eventEmitter.emit(
+        this.#eventEmitter.emit(
           `textae-event.type-definition.attribute.create`,
           attrDef.pred
         )
       }
 
       get(pred) {
-        return this._definedTypes.get(pred)
+        return this.#definedTypes.get(pred)
       }
 
       update(oldPred, attrDef) {
         // Predicate as key of map may be changed.
-        // Keep oreder of attributes.
+        // Keep order of attributes.
         // So that re-create an map instance.
-        this._definedTypes = new Map(
-          Array.from(this._definedTypes.entries()).map(([key, val]) => {
+        this.#definedTypes = new Map(
+          Array.from(this.#definedTypes.entries()).map(([key, val]) => {
             if (key === oldPred) {
               return [
                 attrDef.pred,
@@ -56252,7 +56315,7 @@
           })
         )
 
-        this._eventEmitter.emit(
+        this.#eventEmitter.emit(
           `textae-event.type-definition.attribute.change`,
           attrDef.pred
         )
@@ -56266,7 +56329,7 @@
       }
 
       move(oldIndex, newIndex) {
-        this._definedTypes = new Map(
+        this.#definedTypes = new Map(
           arrayMoveImmutable(this.attributes, oldIndex, newIndex).map((a) => [
             a.pred,
             a
@@ -56279,25 +56342,21 @@
             newIndex === -1 ? this.attributes.length - 1 : newIndex
           ]
 
-        // When an attribute definition move is undoed,
+        // When an attribute definition move is done,
         // it fires an event to notify the palette to immediately reflect the display content.
-        this._eventEmitter.emit(
+        this.#eventEmitter.emit(
           `textae-event.type-definition.attribute.move`,
           pred
         )
       }
 
       delete(pred) {
-        this._definedTypes.delete(pred)
-        this._eventEmitter.emit(`textae-event.type-definition.attribute.delete`)
+        this.#definedTypes.delete(pred)
+        this.#eventEmitter.emit(`textae-event.type-definition.attribute.delete`)
       }
 
       get attributes() {
-        return Array.from(this._definedTypes.values()) || []
-      }
-
-      get config() {
-        return this.attributes.map((a) => a.externalFormat)
+        return Array.from(this.#definedTypes.values()) || []
       }
 
       isSelectionAttributeValueIndelible(pred, id) {
@@ -56306,7 +56365,7 @@
         }
 
         // If there is an instance that uses a selection attribute, do not delete it.
-        if (this._getAllInstanceFunc().some((a) => a.equalsTo(pred, id))) {
+        if (this.#getAllInstanceFunc().some((a) => a.equalsTo(pred, id))) {
           return true
         }
 
@@ -56315,7 +56374,7 @@
 
       getLabel(pred, obj) {
         console.assert(
-          this._definedTypes.has(pred),
+          this.#definedTypes.has(pred),
           `There is no attribute definition for ${pred}.`
         )
 
@@ -56324,7 +56383,7 @@
 
       getDisplayName(pred, obj) {
         console.assert(
-          this._definedTypes.has(pred),
+          this.#definedTypes.has(pred),
           `There is no attribute definition for ${pred}.`
         )
 
@@ -56332,19 +56391,19 @@
       }
 
       getColor(pred, obj) {
-        if (this._definedTypes.has(pred)) {
+        if (this.#definedTypes.has(pred)) {
           return this.get(pred).getColor(obj)
         }
       }
 
       getIndexOf(pred) {
-        return Array.from(this._definedTypes.values()).findIndex(
+        return Array.from(this.#definedTypes.values()).findIndex(
           (a) => a.pred === pred
         )
       }
 
       getAttributeAt(number) {
-        return Array.from(this._definedTypes.values())[number - 1]
+        return Array.from(this.#definedTypes.values())[number - 1]
       }
 
       attributeCompareFunction(a, b) {
@@ -60611,6 +60670,7 @@
       }
       applyTextSelectionWithTouchDevice() {}
       manipulateAttribute() {}
+      showPallet() {}
       hidePallet() {}
       get isPalletShown() {
         return false
@@ -60832,37 +60892,6 @@
         )
         commander.invoke(command)
       }
-    } // ./src/lib/component/searchTerm.js
-
-    /* harmony default export */ function searchTerm(
-      autocompletionWs,
-      localData,
-      term,
-      done
-    ) {
-      if (!autocompletionWs) {
-        done(localData)
-        return
-      }
-
-      const url = new URL(autocompletionWs, location)
-      url.searchParams.append('term', term)
-
-      fetch(url.href)
-        .then((response) => {
-          if (response.ok) {
-            return response.json()
-          }
-        })
-        .then((data) => {
-          // Prior local data if duplicated
-          const filteredData = data.filter(
-            (newDatum) =>
-              !localData.some((localDatum) => newDatum.id === localDatum.id)
-          )
-
-          done(localData.concat(filteredData))
-        })
     }
 
     // EXTERNAL MODULE: ./node_modules/jquery-ui/ui/widgets/autocomplete.js
@@ -60895,49 +60924,52 @@
 
     customize_jquery_ui_autocomplete()
 
-    /* harmony default export */ function setSourceOfAutoComplete(
-      inputElement,
-      labelSpan,
-      autocompletionWs,
-      getLocalData
-    ) {
+    function setSourceOfAutoComplete(inputElement, searchFunction, onSelect) {
       jquery_default()(inputElement).autocomplete({
-        source: (request, response) => {
-          if (labelSpan) {
-            if (labelSpan instanceof HTMLInputElement) {
-              labelSpan.value = ''
-            } else {
-              labelSpan.innerText = ''
-            }
-          }
-
-          searchTerm(
-            autocompletionWs,
-            getLocalData(request.term),
-            request.term,
-            response
-          )
-        },
+        source: ({ term }, response) => searchFunction(term, response),
         minLength: 3,
         select: (_, { item }) => {
-          inputElement.value = item.id
-
-          console.log(123)
-          if (labelSpan) {
-            if (labelSpan instanceof HTMLInputElement) {
-              labelSpan.value = item.label
-            } else {
-              labelSpan.innerText = item.label
-            }
-          }
-
+          onSelect(item.id, item.label)
           return false
         }
       })
+    } // ./src/lib/component/searchTerm.js
+
+    /* harmony default export */ function searchTerm(
+      autocompletionWs,
+      getLocalData,
+      term,
+      done
+    ) {
+      const localData = getLocalData(term)
+
+      if (!autocompletionWs) {
+        done(localData)
+        return
+      }
+
+      const url = new URL(autocompletionWs, location)
+      url.searchParams.append('term', term)
+
+      fetch(url.href)
+        .then((response) => {
+          if (response.ok) {
+            return response.json()
+          }
+        })
+        .then((data) => {
+          // Prior local data if duplicated
+          const filteredData = data.filter(
+            (newDatum) =>
+              !localData.some((localDatum) => newDatum.id === localDatum.id)
+          )
+
+          done(localData.concat(filteredData))
+        })
     } // ./src/lib/component/EditStringAttributeDialog.js
 
     function EditStringAttributeDialog_template(context) {
-      const { subjects, pred, value } = context
+      const { subjects, pred, value, label } = context
 
       return anemone`
 <div class="textae-editor__edit-string-attribute-dialog__container">
@@ -60969,7 +61001,7 @@
     <label>Label</label>
     <input
       class="textae-editor__edit-string-attribute-dialog__label"
-      value="" disabled="disabled">
+      value="${label}" disabled="disabled">
   </div>
 </div>`
     }
@@ -61015,7 +61047,8 @@
               .map(({ subj }) => subj || '-')
               .join(', ')}`,
             pred: attribute.pred,
-            value: attribute.obj
+            value: attribute.obj,
+            label: attrDef.getDisplayName(attribute.obj)
           }),
           { buttons },
           () => {
@@ -61044,15 +61077,20 @@
           )
         }
 
+        const inputElement = super.el.querySelector(
+          '.textae-editor__edit-string-attribute-dialog__value'
+        )
+        const labelElement = super.el.querySelector(
+          '.textae-editor__edit-string-attribute-dialog__label'
+        )
         setSourceOfAutoComplete(
-          super.el.querySelector(
-            '.textae-editor__edit-string-attribute-dialog__value'
-          ),
-          super.el.querySelector(
-            '.textae-editor__edit-string-attribute-dialog__label'
-          ),
-          attrDef.autocompletionWs,
-          () => []
+          inputElement,
+          (term, onResult) =>
+            searchTerm(attrDef.autocompletionWs, () => [], term, onResult),
+          (id, label) => {
+            inputElement.value = id
+            labelElement.value = label
+          }
         )
       }
     } // ./src/lib/openEditStringAttributeDialog.js
@@ -61946,9 +61984,17 @@
         )
         setSourceOfAutoComplete(
           typeNameElement,
-          typeLabelElement,
-          autocompletionWs,
-          (term) => entityContainer.findByLabel(term)
+          (term, onResult) =>
+            searchTerm(
+              autocompletionWs,
+              (term) => entityContainer.findByLabel(term),
+              term,
+              onResult
+            ),
+          (id, label) => {
+            typeNameElement.value = id
+            typeLabelElement.innerText = label
+          }
         )
       }
 
@@ -62057,51 +62103,6 @@
       }
 
       return delegator
-    } // ./src/lib/component/TypeDefinitionDialog/select.js
-
-    /* harmony default export */ function TypeDefinitionDialog_select(
-      inputId,
-      inputLabel,
-      { item }
-    ) {
-      inputId.value = item.id
-      inputLabel.value = item.label
-      return false
-    } // ./src/lib/component/TypeDefinitionDialog/setSourceOfAutoComplete.js
-
-    customize_jquery_ui_autocomplete()
-
-    /* harmony default export */ function TypeDefinitionDialog_setSourceOfAutoComplete(
-      el,
-      autocompletionWs,
-      getLocalData
-    ) {
-      const inputs = el.querySelectorAll('input')
-
-      // Update the source
-      jquery_default()(inputs[0]).autocomplete({
-        source: (request, response) =>
-          searchTerm(
-            autocompletionWs,
-            getLocalData(request.term),
-            request.term,
-            response
-          ),
-        minLength: 3,
-        select: (_, ui) => TypeDefinitionDialog_select(inputs[0], inputs[1], ui)
-      })
-
-      jquery_default()(inputs[1]).autocomplete({
-        source: (request, response) =>
-          searchTerm(
-            autocompletionWs,
-            getLocalData(request.term),
-            request.term,
-            response
-          ),
-        minLength: 3,
-        select: (_, ui) => TypeDefinitionDialog_select(inputs[0], inputs[1], ui)
-      })
     } // ./src/lib/component/TypeDefinitionDialog/template.js
 
     function template_template(context) {
@@ -62154,11 +62155,22 @@
           )
         })
 
-        TypeDefinitionDialog_setSourceOfAutoComplete(
-          super.el,
-          autocompletionWs,
-          (term) => definitionContainer.findByLabel(term)
-        )
+        const [idElement, labelElement] = super.el.querySelectorAll('input')
+        const onSearch = (term, onResult) =>
+          searchTerm(
+            autocompletionWs,
+            (term) => definitionContainer.findByLabel(term),
+            term,
+            onResult
+          )
+        setSourceOfAutoComplete(idElement, onSearch, (id, label) => {
+          idElement.value = id
+          labelElement.value = label
+        })
+        setSourceOfAutoComplete(labelElement, onSearch, (id, label) => {
+          idElement.value = id
+          labelElement.value = label
+        })
       }
     } // ./src/lib/component/CreateTypeDefinitionDialog.js
 
@@ -65930,6 +65942,13 @@
           return
         }
 
+        if (this.#startUpOptions.isTextEditMode) {
+          this.#editModeState.toTextEditMode(
+            this.#annotationModel.relationInstanceContainer.some
+          )
+          return
+        }
+
         this.#editModeState.toViewMode(
           this.#annotationModel.relationInstanceContainer.some
         )
@@ -66150,7 +66169,7 @@
       bindChangeLockConfig(content, typeDictionary)
     } // ./package.json
 
-    const package_namespaceObject = { rE: '13.4.1' } // ./src/lib/component/SettingDialog/template.js
+    const package_namespaceObject = { rE: '13.5.0' } // ./src/lib/component/SettingDialog/template.js
     function SettingDialog_template_template(context) {
       const {
         typeGap,
@@ -92038,7 +92057,7 @@ if available, otherwise falling back to block comments.
     const toggleComment = (target) => {
       let { state } = target,
         line = state.doc.lineAt(state.selection.main.from),
-        config = dist_getConfig(target.state, line.from)
+        config = getConfig(target.state, line.from)
       return config.line
         ? toggleLineComment(target)
         : config.block
@@ -92106,7 +92125,7 @@ block comments.
       (o, s) => changeBlockComment(o, s, selectedLineRanges(s)),
       0 /* CommentOption.Toggle */
     )
-    function dist_getConfig(state, pos) {
+    function getConfig(state, pos) {
       let data = state.languageDataAt('commentTokens', pos)
       return data.length ? data[0] : {}
     }
@@ -92182,7 +92201,7 @@ state.
       state,
       ranges = state.selection.ranges
     ) {
-      let tokens = ranges.map((r) => dist_getConfig(state, r.from).block)
+      let tokens = ranges.map((r) => getConfig(state, r.from).block)
       if (!tokens.every((c) => c)) return null
       let comments = ranges.map((r, i) =>
         findBlockComment(state, tokens[i], r.from, r.to)
@@ -92233,7 +92252,7 @@ state.
       for (let { from, to } of ranges) {
         let startI = lines.length,
           minIndent = 1e9
-        let token = dist_getConfig(state, from).line
+        let token = getConfig(state, from).line
         if (!token) continue
         for (let pos = from; pos <= to; ) {
           let line = state.doc.lineAt(pos)
@@ -109616,6 +109635,7 @@ data-button-type="${type}">
           case 'term-edit':
           case 'block-edit':
           case 'relation-edit':
+          case 'text-edit':
             return true
 
           default:
@@ -109637,6 +109657,10 @@ data-button-type="${type}">
 
       get isEditRelationMode() {
         return this.#readAttribute('mode') === 'relation-edit'
+      }
+
+      get isTextEditMode() {
+        return this.#readAttribute('mode') === 'text-edit'
       }
 
       get statusBar() {
