@@ -121,7 +121,7 @@ export default class EditStringAttributeDialog extends PromiseDialog {
     setSourceOfAutoComplete(
       inputElement,
       (term, onResult) =>
-        searchTerm(term, onResult, attrDef.autocompletionWs, () => []),
+        searchTerm(term, onResult, attrDef.autocompletionWs, []),
       (id, label) => {
         inputElement.value = id
         labelElement.value = label
