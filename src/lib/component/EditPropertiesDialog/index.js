@@ -14,7 +14,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
     editorHTMLElement,
     annotationType,
     palletName,
-    entityContainer,
+    definitionContainer,
     attributeContainer,
     autocompletionWs,
     selectedItems,
@@ -25,7 +25,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
     const contentHtml = createContentHTML(
       typeName,
       attributes,
-      entityContainer,
+      definitionContainer,
       attributeContainer,
       palletName
     )
@@ -68,7 +68,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
                   typeName,
                   attributes,
                   attributeContainer,
-                  entityContainer
+                  definitionContainer
                 )
               })
             break
@@ -81,7 +81,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
                   typeName,
                   attributes,
                   attributeContainer,
-                  entityContainer
+                  definitionContainer
                 )
               })
             break
@@ -99,7 +99,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
                   typeName,
                   attributes,
                   attributeContainer,
-                  entityContainer
+                  definitionContainer
                 )
               })
             break
@@ -122,7 +122,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
           typeName,
           attributes.filter((_, i) => i !== indexOfAttribute),
           attributeContainer,
-          entityContainer
+          definitionContainer
         )
       }
     )
@@ -154,7 +154,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
             .concat({ pred, obj: defaultValue, id: '' })
             .sort((a, b) => attributeContainer.attributeCompareFunction(a, b)),
           attributeContainer,
-          entityContainer
+          definitionContainer
         )
       }
     )
@@ -173,7 +173,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
           term,
           onResult,
           autocompletionWs,
-          entityContainer.findByLabel(term)
+          definitionContainer.findByLabel(term)
         ),
       (id, label) => {
         typeNameElement.value = id
