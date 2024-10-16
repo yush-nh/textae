@@ -48,7 +48,6 @@ export default class Presenter {
       commander,
       menuState,
       startUpOptions,
-      functionAvailability,
       mousePoint,
       editModeState
     )

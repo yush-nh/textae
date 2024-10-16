@@ -28,7 +28,6 @@ export default class EditModeSwitch {
     commander,
     menuState,
     startUpOptions,
-    functionAvailability,
     mousePoint,
     editModeState
   ) {
