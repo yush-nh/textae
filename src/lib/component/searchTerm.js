@@ -1,4 +1,9 @@
-export default function searchTerm(term, done, autocompletionWs, localData) {
+export default function searchTerm(
+  term,
+  done,
+  autocompletionWs,
+  localData = []
+) {
   if (!autocompletionWs) {
     done(localData)
     return
