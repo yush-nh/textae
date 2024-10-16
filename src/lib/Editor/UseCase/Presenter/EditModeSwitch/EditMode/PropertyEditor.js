@@ -20,7 +20,6 @@ export default class PropertyEditor {
     definitionContainer,
     annotationModel,
     annotationType,
-
     getAutocompletionWs
   ) {
     this.#editorHTMLElement = editorHTMLElement
