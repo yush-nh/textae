@@ -44,10 +44,6 @@ export default class StartUpOptions {
     return null
   }
 
-  get autocompletionWS() {
-    return this.#readAttributeAsURL('autocompletion_ws')
-  }
-
   get config() {
     return this.#readAttributeAsURL('config')
   }
