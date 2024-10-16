@@ -27,13 +27,12 @@ export default class TermEditMode extends EditMode {
     commander,
     menuState,
     spanConfig,
-    autocompletionWs,
     mousePoint
   ) {
     super()
 
     const getAutocompletionWs = () =>
-      autocompletionWs || annotationModel.typeDictionary.autocompletionWs
+      annotationModel.typeDictionary.autocompletionWs
 
     this.#pallet = PalletFactory.create(
       editorHTMLElement,
