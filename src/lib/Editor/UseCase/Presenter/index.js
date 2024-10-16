@@ -35,7 +35,6 @@ export default class Presenter {
     clipBoard,
     menuState,
     startUpOptions,
-    functionAvailability,
     mousePoint,
     editModeState
   ) {

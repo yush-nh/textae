@@ -94,7 +94,6 @@ export default class UseCase {
       clipBoard,
       menuState,
       startUpOptions,
-      functionAvailability,
       mousePoint,
       editModeState
     )
