@@ -60,7 +60,6 @@ export default class EditModeSwitch {
       annotationModel,
       selectionModel,
       commander,
-      startUpOptions.autocompletionWs,
       menuState,
       mousePoint
     )
