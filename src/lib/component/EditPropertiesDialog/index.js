@@ -169,11 +169,8 @@ export default class EditPropertiesDialog extends PromiseDialog {
     setSourceOfAutoComplete(
       typeNameElement,
       (term, onResult) =>
-        searchTerm(
-          autocompletionWs,
-          (term) => entityContainer.findByLabel(term),
-          term,
-          onResult
+        searchTerm(term, onResult, autocompletionWs, (term) =>
+          entityContainer.findByLabel(term)
         ),
       (id, label) => {
         typeNameElement.value = id

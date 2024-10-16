@@ -1,4 +1,4 @@
-export default function searchTerm(autocompletionWs, getLocalData, term, done) {
+export default function searchTerm(term, done, autocompletionWs, getLocalData) {
   const localData = getLocalData(term)
 
   if (!autocompletionWs) {
