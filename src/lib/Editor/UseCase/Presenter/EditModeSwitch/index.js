@@ -50,7 +50,6 @@ export default class EditModeSwitch {
       spanConfig,
       commander,
       menuState,
-      startUpOptions.autocompletionWs,
       mousePoint
     )
 

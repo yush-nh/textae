@@ -27,13 +27,12 @@ export default class BlockEditMode extends EditMode {
     spanConfig,
     commander,
     menuState,
-    autocompletionWs,
     mousePoint
   ) {
     super()
 
     const getAutocompletionWs = () =>
-      autocompletionWs || annotationModel.typeDictionary.autocompletionWs
+      annotationModel.typeDictionary.autocompletionWs
 
     this.#pallet = PalletFactory.create(
       editorHTMLElement,
