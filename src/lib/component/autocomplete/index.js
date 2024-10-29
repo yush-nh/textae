@@ -24,18 +24,14 @@ export default class Autocomplete {
     this.#setEventHandlersToItemsContainer(this.#itemsContainer.element)
   }
 
-  #setEventHandlersToInput(inputElement) {
+  #setEventHandlersToInput(element) {
     const handleInput = debounce300((term) => {
       this.#model.term = term
     })
 
-    inputElement.addEventListener('input', ({ target }) =>
-      handleInput(target.value)
-    )
-    inputElement.addEventListener('keydown', (event) =>
-      this.#handleKeydown(event)
-    )
-    inputElement.addEventListener('keyup', (event) => this.#handleKeyup(event))
+    element.addEventListener('input', ({ target }) => handleInput(target.value))
+    element.addEventListener('keydown', (event) => this.#handleKeydown(event))
+    element.addEventListener('keyup', (event) => this.#handleKeyup(event))
   }
 
   #setEventHandlersToItemsContainer(element) {
