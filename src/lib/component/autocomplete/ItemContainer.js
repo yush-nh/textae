@@ -30,12 +30,10 @@ export default class ItemContainer {
   highlight(index) {
     this.#unhighlight() // Clear previous highlight.
 
-    const currentItem = this.#container.querySelector(
-      `li:nth-child(${index + 1})`
-    )
+    const target = this.#container.querySelector(`li:nth-child(${index + 1})`)
 
-    if (currentItem) {
-      currentItem.classList.add(
+    if (target) {
+      target.classList.add(
         'textae-editor__dialog__autocomplete__item--highlighted'
       )
     }
