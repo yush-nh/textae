@@ -2,35 +2,35 @@ import createResultElement from './createResultElement'
 
 export default class ItemContainer {
   #inputElement
-  #element
+  #container
 
   constructor(inputElement) {
     this.#inputElement = inputElement
-    this.#element = document.createElement('ul')
-    this.#element.setAttribute('popover', 'auto')
-    this.#element.classList.add('textae-editor__dialog__autocomplete')
-    inputElement.parentElement.appendChild(this.#element)
+    this.#container = document.createElement('ul')
+    this.#container.setAttribute('popover', 'auto')
+    this.#container.classList.add('textae-editor__dialog__autocomplete')
+    inputElement.parentElement.appendChild(this.#container)
   }
 
   get element() {
-    return this.#element
+    return this.#container
   }
 
   set items(items) {
     if (items.length > 0) {
-      this.#element.innerHTML = ''
+      this.#container.innerHTML = ''
       const elements = items.map(createResultElement)
-      this.#element.append(...elements)
+      this.#container.append(...elements)
       this.#showPopoverUnderInputElement()
     } else {
-      this.#element.hidePopover()
+      this.#container.hidePopover()
     }
   }
 
   highlight(index) {
     this.#unhighlight() // Clear previous highlight.
 
-    const currentItem = this.#element.querySelector(
+    const currentItem = this.#container.querySelector(
       `li:nth-child(${index + 1})`
     )
 
@@ -44,17 +44,17 @@ export default class ItemContainer {
   #showPopoverUnderInputElement() {
     const rect = this.#inputElement.getBoundingClientRect()
 
-    Object.assign(this.#element.style, {
+    Object.assign(this.#container.style, {
       position: 'absolute',
       top: `${rect.bottom + window.scrollY}px`,
       left: `${rect.left + window.scrollX}px`
     })
 
-    this.#element.showPopover()
+    this.#container.showPopover()
   }
 
   #unhighlight() {
-    const target = this.#element.querySelector(
+    const target = this.#container.querySelector(
       '.textae-editor__dialog__autocomplete__item--highlighted'
     )
 
