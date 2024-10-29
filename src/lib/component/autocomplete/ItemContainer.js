@@ -17,16 +17,14 @@ export default class ItemContainer {
   }
 
   set items(items) {
-    this.#element.innerHTML = ''
-
-    if (items.length === 0) {
+    if (items.length > 0) {
+      this.#element.innerHTML = ''
+      const elements = items.map(createResultElement)
+      this.#element.append(...elements)
+      this.#showPopoverUnderInputElement()
+    } else {
       this.#element.hidePopover()
-      return
     }
-
-    const elements = items.map(createResultElement)
-    this.#element.append(...elements)
-    this.#showPopoverUnderInputElement()
   }
 
   highlight(index) {
