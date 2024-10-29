@@ -21,7 +21,8 @@ export default class ItemContainer {
       this.#container.innerHTML = ''
       const elements = items.map(createResultElement)
       this.#container.append(...elements)
-      this.#showPopoverUnderInputElement()
+      this.#moveUnderInputElement()
+      this.#container.showPopover()
     } else {
       this.#container.hidePopover()
     }
@@ -39,7 +40,7 @@ export default class ItemContainer {
     }
   }
 
-  #showPopoverUnderInputElement() {
+  #moveUnderInputElement() {
     const rect = this.#inputElement.getBoundingClientRect()
 
     Object.assign(this.#container.style, {
@@ -47,8 +48,6 @@ export default class ItemContainer {
       top: `${rect.bottom + window.scrollY}px`,
       left: `${rect.left + window.scrollX}px`
     })
-
-    this.#container.showPopover()
   }
 
   #unhighlight() {
