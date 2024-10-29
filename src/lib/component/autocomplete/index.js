@@ -1,89 +1,56 @@
 import AutocompleteModel from './autocompleteModel'
-import createResultElement from './createResultElement'
 import debounce300 from '../debounce300'
 import delegate from 'delegate'
+import ItemContainer from './ItemContainer'
 
 export default class Autocomplete {
   #inputElement
   #onSelect
   #model
-  #resultsElement
+  #itemsContainer
 
   constructor(inputElement, onSearch, onSelect) {
     this.#inputElement = inputElement
     this.#onSelect = onSelect
+    this.#itemsContainer = new ItemContainer(inputElement)
 
     this.#model = new AutocompleteModel(
       (term) => onSearch(term, (results) => (this.#model.items = results)),
-      (items) => this.#renderItem(items),
-      (index) => this.#highlight(index)
+      (items) => (this.#itemsContainer.items = items),
+      (index) => this.#itemsContainer.highlight(index)
     )
 
-    this.#resultsElement = document.createElement('ul')
-    this.#resultsElement.setAttribute('popover', 'auto')
-    this.#resultsElement.classList.add('textae-editor__dialog__autocomplete')
-    inputElement.parentElement.appendChild(this.#resultsElement)
+    this.#setEventHandlersToInput(this.#inputElement)
+    this.#setEventHandlersToItemsContainer(this.#itemsContainer.element)
+  }
 
+  #setEventHandlersToInput(inputElement) {
     const handleInput = debounce300((term) => {
       this.#model.term = term
     })
 
-    this.#inputElement.addEventListener('input', ({ target }) =>
+    inputElement.addEventListener('input', ({ target }) =>
       handleInput(target.value)
     )
-    this.#inputElement.addEventListener('keydown', (event) =>
+    inputElement.addEventListener('keydown', (event) =>
       this.#handleKeydown(event)
     )
-    this.#inputElement.addEventListener('keyup', (event) =>
-      this.#handleKeyup(event)
-    )
-
-    // Hide popover when input is out of focus.
-    this.#inputElement.addEventListener('blur', () =>
-      this.#resultsElement.hidePopover()
-    )
-
-    this.#setEventHandlersToResults()
+    inputElement.addEventListener('keyup', (event) => this.#handleKeyup(event))
   }
 
-  #setEventHandlersToResults() {
-    delegate(this.#resultsElement, 'li', 'mousedown', ({ delegateTarget }) => {
+  #setEventHandlersToItemsContainer(element) {
+    delegate(element, 'li', 'mousedown', ({ delegateTarget }) => {
       this.#onSelect(delegateTarget.dataset.id, delegateTarget.dataset.label)
-      this.#resultsElement.hidePopover()
+      element.hidePopover()
     })
 
-    delegate(this.#resultsElement, 'li', 'mouseover', ({ delegateTarget }) => {
+    delegate(element, 'li', 'mouseover', ({ delegateTarget }) => {
       this.#model.highlightedIndex = Number(delegateTarget.dataset.index)
     })
 
-    delegate(this.#resultsElement, 'li', 'mouseout', () => {
+    delegate(element, 'li', 'mouseout', () => {
       this.#model.highlightedIndex = -1
     })
-  }
-
-  #renderItem(items) {
-    this.#resultsElement.innerHTML = ''
-
-    if (items.length === 0) {
-      this.#resultsElement.hidePopover()
-      return
-    }
-
-    const elements = items.map(createResultElement)
-    this.#resultsElement.append(...elements)
-    this.#showPopoverUnderInputElement()
-  }
-
-  #showPopoverUnderInputElement() {
-    const rect = this.#inputElement.getBoundingClientRect()
-
-    Object.assign(this.#resultsElement.style, {
-      position: 'absolute',
-      top: `${rect.bottom + window.scrollY}px`,
-      left: `${rect.left + window.scrollX}px`
-    })
-
-    this.#resultsElement.showPopover()
   }
 
   #handleKeydown(event) {
@@ -116,32 +83,6 @@ export default class Autocomplete {
       }
 
       this.#model.clearItems()
-    }
-  }
-
-  #highlight(index) {
-    this.#unhighlight() // Clear previous highlight.
-
-    const currentItem = this.#resultsElement.querySelector(
-      `li:nth-child(${index + 1})`
-    )
-
-    if (currentItem) {
-      currentItem.classList.add(
-        'textae-editor__dialog__autocomplete__item--highlighted'
-      )
-    }
-  }
-
-  #unhighlight() {
-    const target = this.#resultsElement.querySelector(
-      '.textae-editor__dialog__autocomplete__item--highlighted'
-    )
-
-    if (target) {
-      target.classList.remove(
-        'textae-editor__dialog__autocomplete__item--highlighted'
-      )
     }
   }
 }
