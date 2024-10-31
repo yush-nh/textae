@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.6.0](https://github.com/pubannotation/textae/compare/v13.5.0...v13.6.0) (2024-10-31)
+
+
+### Features
+
+* Add escape key operation ([13fdabc](https://github.com/pubannotation/textae/commit/13fdabcea31a05953bcb20471874af25722f33b6))
+* Add highlight for mouse hover ([62d8bf2](https://github.com/pubannotation/textae/commit/62d8bf28f46d7d2088daa3607211c1397e4ead97))
+* Add keyboard selection to autocomplete ([bd09b50](https://github.com/pubannotation/textae/commit/bd09b500be01124916c286c2b3dc05a3516f7d5f))
+* Add tab key operation on autocomplete ([bb3ea3d](https://github.com/pubannotation/textae/commit/bb3ea3d7d272ca1ac7f100bedd21b58a717da844))
+* Apply debounce to autocomplete search ([5e6f9cc](https://github.com/pubannotation/textae/commit/5e6f9cc43a33b626f1206560222ea1c49affa730))
+* Apply style to autocomplete ([de18d80](https://github.com/pubannotation/textae/commit/de18d8013377ef7264491adcb0e74fd758781f9a))
+* Recreate autocomplete function without using JQueryUI ([fa86019](https://github.com/pubannotation/textae/commit/fa860190f523fc9f56b094661b5c0f9c5930347a))
+* When the denotation span includes a line break, the line break is not displayed ([4dddbf7](https://github.com/pubannotation/textae/commit/4dddbf7a82ade1689207b5e8cf082416db7669f3))
+
+
+### Bug Fixes
+
+* Adjust key-down operation repetitions ([54489f6](https://github.com/pubannotation/textae/commit/54489f6bd413ec46ea92efc9faec1fd707d412d2))
+* Adjust style ([cd9f380](https://github.com/pubannotation/textae/commit/cd9f380be9b059d2c7802f8baa99e04dd1856e97))
+* Allow enterkey saving with label input ([2974c21](https://github.com/pubannotation/textae/commit/2974c2164839521a41e0fd22fdb97b048c5726c9))
+* Apply debounce to input instead search ([2b6e44f](https://github.com/pubannotation/textae/commit/2b6e44f765d630b23c4ef3b54167a69cc38aa538))
+* Apply preventDefault to each keydown ([378c560](https://github.com/pubannotation/textae/commit/378c56076da968560af6b6193ff38a9c7eccec08))
+* Change methods and properties private ([a2e1bf4](https://github.com/pubannotation/textae/commit/a2e1bf43aeaf0093335421f2c47924c549603b18))
+* Change to support previewing both id and label ([a382cc3](https://github.com/pubannotation/textae/commit/a382cc33f865f1a821662d93430743558a4f9049))
+* Changed behavior of up/down keys and added Enterkey operation ([43364c2](https://github.com/pubannotation/textae/commit/43364c2b3d146a7587adabe3f6476ecb9bc0e8e7))
+* Click event not working ([825fee3](https://github.com/pubannotation/textae/commit/825fee3433b5586abcee2b96872b75eaea005bfc))
+* Delete unnecessary keydown case ([f1573ee](https://github.com/pubannotation/textae/commit/f1573ee9ad6aa86757e6d9fcad6d4ade5a519be0))
+* Disable keydown operation when popover is not displayed ([2409db9](https://github.com/pubannotation/textae/commit/2409db952607a3d6a2102bb5c712dbb6b2e6684e))
+* Do not import by going through directories ([b730ca2](https://github.com/pubannotation/textae/commit/b730ca29be8130d308159506b5d36032ba0409fa))
+* Enter key click action not working ([6535d95](https://github.com/pubannotation/textae/commit/6535d9531845e2101ad914c710339da7d3e14a87))
+* Enterkey only closes popover when popover is visible ([464ae1b](https://github.com/pubannotation/textae/commit/464ae1bcdf804cc8ae93ec60cdddd8b8d825f97c))
+* Escape innerHTML elements ([a8eafe1](https://github.com/pubannotation/textae/commit/a8eafe15b36b439b740fe9d450ebb69206210c2e))
+* Hide popover when input is out of focus ([f23fe9d](https://github.com/pubannotation/textae/commit/f23fe9d427f2467dd20a21250b70dcb67816d7d4))
+* Hide popover when no result ([2cc6b51](https://github.com/pubannotation/textae/commit/2cc6b51d8708118597791982953d4313937e87cb))
+* Modified method name to plural ([328480b](https://github.com/pubannotation/textae/commit/328480b69196ebaa53ee30f9d4dff614bf2e277f))
+* Remove highlight when mouseout ([bec1ab1](https://github.com/pubannotation/textae/commit/bec1ab1c1e6a1f078b9cc57f6b0f9691a12634ba))
+* Remove preview function ([91d8982](https://github.com/pubannotation/textae/commit/91d8982e838222059f9240c1944919eaf471eddb))
+* Reset currentFocus by every search ([1e79c8a](https://github.com/pubannotation/textae/commit/1e79c8ae15ae507d70c725df443333478e5ac23a))
+* Resolved drag and drop not wokring ([d5c7ecb](https://github.com/pubannotation/textae/commit/d5c7ecb898a72fd4def74fb0ae45fc32673e9422))
+* Set default value to results property ([b2695de](https://github.com/pubannotation/textae/commit/b2695de386591f0dc65e50a1c55c6f953d5626b7))
+* Set event handler to result only once ([664cff6](https://github.com/pubannotation/textae/commit/664cff611ac906212dd912cd9791a12fdaeac2af))
+* Update input/label by keyboard selection ([60611a5](https://github.com/pubannotation/textae/commit/60611a51b9c7ebcf1370df3afa055c30c683c70b))
+
 ## [13.5.0](https://github.com/pubannotation/textae/compare/v13.4.1...v13.5.0) (2024-10-15)
 
 
