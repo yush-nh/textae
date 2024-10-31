@@ -22,7 +22,7 @@
     "dropzone": "5.9.3",
     "font-awesome": "4.7.0",
     "jquery": "^3.7.1",
-    "jquery-ui": "^1.14.0",
+    "jquery-ui": "^1.14.1",
     "jsondiffpatch": "0.6.0",
     "lodash.escape": "4.0.1",
     "observ": "0.2.0",
