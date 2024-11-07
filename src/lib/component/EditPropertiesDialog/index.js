@@ -120,6 +120,25 @@ export default class EditPropertiesDialog extends PromiseDialog {
     this.#setupAutocomplete(autocompletionWs, definitionContainer)
   }
 
+  #updateDisplay(
+    attributeContainer,
+    entityContainer,
+    autocompletionWs,
+    typeName,
+    typeLabel,
+    attributes
+  ) {
+    const contentHtml = createContentHTML(
+      typeName,
+      typeLabel,
+      attributes,
+      attributeContainer
+    )
+    super.el.closest('.ui-dialog-content').innerHTML = contentHtml
+
+    this.#setupAutocomplete(autocompletionWs, entityContainer)
+  }
+
   #setupAutocomplete(autocompletionWs, definitionContainer) {
     const typeNameElement = super.el.querySelector(
       '.textae-editor__edit-type-values-dialog__type-name'
@@ -141,24 +160,5 @@ export default class EditPropertiesDialog extends PromiseDialog {
         typeLabelElement.innerText = label
       }
     )
-  }
-
-  #updateDisplay(
-    attributeContainer,
-    entityContainer,
-    autocompletionWs,
-    typeName,
-    typeLabel,
-    attributes
-  ) {
-    const contentHtml = createContentHTML(
-      typeName,
-      typeLabel,
-      attributes,
-      attributeContainer
-    )
-    super.el.closest('.ui-dialog-content').innerHTML = contentHtml
-
-    this.#setupAutocomplete(autocompletionWs, entityContainer)
   }
 }
