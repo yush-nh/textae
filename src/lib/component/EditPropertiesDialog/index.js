@@ -54,7 +54,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
     }
 
     const element = super.el
-    const onEditAttributeClick = (e) => {
+    function onEditAttributeClick(e) {
       const { pred } = e.target.dataset
       const attrDef = attributeContainer.get(pred)
       const zIndex = parseInt(
