@@ -9,57 +9,72 @@ import EditStringAttributeDialog from '../EditStringAttributeDialog'
 import mergedTypeValuesOf from './mergedTypeValuesOf'
 import searchTerm from '../searchTerm'
 
-function onEditAttributeClick(
-  editorHTMLElement,
-  attributeContainer,
-  mousePoint,
-  element,
-  updateDisplay,
-  event
-) {
-  const { pred } = event.target.dataset
-  const attrDef = attributeContainer.get(pred)
-  const zIndex = parseInt(
-    element.closest('.textae-editor__dialog').style['z-index']
-  )
-  const { typeName, label, attributes } = getValues(element)
+class EditAttributeButtonHandler {
+  #edtiorHTMLElement
+  #attributeContainer
+  #mousePoint
+  #element
+  #updateDisplay
 
-  switch (attrDef.valueType) {
-    case 'numeric':
-      new EditNumericAttributeDialog(
-        attrDef,
-        attributes[event.target.dataset.index],
-        [attributes[event.target.dataset.index]]
-      )
-        .open()
-        .then(({ newObj }) => {
-          attributes[event.target.dataset.index].obj = newObj
-          updateDisplay(typeName, label, attributes)
-        })
-      break
-    case 'selection':
-      new SelectionAttributePallet(editorHTMLElement, mousePoint)
-        .show(attrDef, zIndex, event.target)
-        .then((newObj) => {
-          attributes[event.target.dataset.index].obj = newObj
-          updateDisplay(typeName, label, attributes)
-        })
-      break
-    case 'string':
-      new EditStringAttributeDialog(
-        attrDef,
-        attributes[event.target.dataset.index],
-        [attributes[event.target.dataset.index]]
-      )
-        .open()
-        .then(({ newObj, newLabel }) => {
-          attributes[event.target.dataset.index].obj = newObj
-          attributes[event.target.dataset.index].label = newLabel
-          updateDisplay(typeName, label, attributes)
-        })
-      break
-    default:
-      throw `${attrDef.valueType} is unknown attribute.`
+  constructor(
+    editorHTMLElement,
+    attributeContainer,
+    mousePoint,
+    element,
+    updateDisplay
+  ) {
+    this.#edtiorHTMLElement = editorHTMLElement
+    this.#attributeContainer = attributeContainer
+    this.#mousePoint = mousePoint
+    this.#element = element
+    this.#updateDisplay = updateDisplay
+  }
+
+  onClick(event) {
+    const { pred } = event.target.dataset
+    const attrDef = this.#attributeContainer.get(pred)
+    const zIndex = parseInt(
+      this.#element.closest('.textae-editor__dialog').style['z-index']
+    )
+    const { typeName, label, attributes } = getValues(this.#element)
+
+    switch (attrDef.valueType) {
+      case 'numeric':
+        new EditNumericAttributeDialog(
+          attrDef,
+          attributes[event.target.dataset.index],
+          [attributes[event.target.dataset.index]]
+        )
+          .open()
+          .then(({ newObj }) => {
+            attributes[event.target.dataset.index].obj = newObj
+            this.#updateDisplay(typeName, label, attributes)
+          })
+        break
+      case 'selection':
+        new SelectionAttributePallet(this.#edtiorHTMLElement, this.#mousePoint)
+          .show(attrDef, zIndex, event.target)
+          .then((newObj) => {
+            attributes[event.target.dataset.index].obj = newObj
+            this.#updateDisplay(typeName, label, attributes)
+          })
+        break
+      case 'string':
+        new EditStringAttributeDialog(
+          attrDef,
+          attributes[event.target.dataset.index],
+          [attributes[event.target.dataset.index]]
+        )
+          .open()
+          .then(({ newObj, newLabel }) => {
+            attributes[event.target.dataset.index].obj = newObj
+            attributes[event.target.dataset.index].label = newLabel
+            this.#updateDisplay(typeName, label, attributes)
+          })
+        break
+      default:
+        throw `${attrDef.valueType} is unknown attribute.`
+    }
   }
 }
 
@@ -108,21 +123,20 @@ export default class EditPropertiesDialog extends PromiseDialog {
     }
 
     const element = super.el
+    const editAttributeButtonHandler = new EditAttributeButtonHandler(
+      editorHTMLElement,
+      attributeContainer,
+      mousePoint,
+      element,
+      updateDisplay
+    )
 
     // Observe edit an attribute button.
     delegate(
       element,
       '.textae-editor__edit-type-values-dialog__edit-attribute',
       'click',
-      (e) =>
-        onEditAttributeClick(
-          editorHTMLElement,
-          attributeContainer,
-          mousePoint,
-          element,
-          updateDisplay,
-          e
-        )
+      (e) => editAttributeButtonHandler.onClick(e)
     )
 
     // Observe remove an attribute button.
