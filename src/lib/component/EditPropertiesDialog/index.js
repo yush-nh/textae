@@ -54,8 +54,8 @@ export default class EditPropertiesDialog extends PromiseDialog {
     }
 
     const element = super.el
-    function onEditAttributeClick(e) {
-      const { pred } = e.target.dataset
+    function onEditAttributeClick(element, updateDisplay, event) {
+      const { pred } = event.target.dataset
       const attrDef = attributeContainer.get(pred)
       const zIndex = parseInt(
         element.closest('.textae-editor__dialog').style['z-index']
@@ -66,33 +66,33 @@ export default class EditPropertiesDialog extends PromiseDialog {
         case 'numeric':
           new EditNumericAttributeDialog(
             attrDef,
-            attributes[e.target.dataset.index],
-            [attributes[e.target.dataset.index]]
+            attributes[event.target.dataset.index],
+            [attributes[event.target.dataset.index]]
           )
             .open()
             .then(({ newObj }) => {
-              attributes[e.target.dataset.index].obj = newObj
+              attributes[event.target.dataset.index].obj = newObj
               updateDisplay(typeName, label, attributes)
             })
           break
         case 'selection':
           new SelectionAttributePallet(editorHTMLElement, mousePoint)
-            .show(attrDef, zIndex, e.target)
+            .show(attrDef, zIndex, event.target)
             .then((newObj) => {
-              attributes[e.target.dataset.index].obj = newObj
+              attributes[event.target.dataset.index].obj = newObj
               updateDisplay(typeName, label, attributes)
             })
           break
         case 'string':
           new EditStringAttributeDialog(
             attrDef,
-            attributes[e.target.dataset.index],
-            [attributes[e.target.dataset.index]]
+            attributes[event.target.dataset.index],
+            [attributes[event.target.dataset.index]]
           )
             .open()
             .then(({ newObj, newLabel }) => {
-              attributes[e.target.dataset.index].obj = newObj
-              attributes[e.target.dataset.index].label = newLabel
+              attributes[event.target.dataset.index].obj = newObj
+              attributes[event.target.dataset.index].label = newLabel
               updateDisplay(typeName, label, attributes)
             })
           break
@@ -106,7 +106,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
       element,
       '.textae-editor__edit-type-values-dialog__edit-attribute',
       'click',
-      onEditAttributeClick
+      (e) => onEditAttributeClick(element, updateDisplay, e)
     )
 
     // Observe remove an attribute button.
