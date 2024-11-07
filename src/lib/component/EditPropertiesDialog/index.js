@@ -66,12 +66,12 @@ export default class EditPropertiesDialog extends PromiseDialog {
               .then(({ newObj }) => {
                 attributes[e.target.dataset.index].obj = newObj
                 this.#updateDisplay(
-                  typeName,
-                  label,
-                  attributes,
                   attributeContainer,
                   definitionContainer,
-                  autocompletionWs
+                  autocompletionWs,
+                  typeName,
+                  label,
+                  attributes
                 )
               })
             break
@@ -81,12 +81,12 @@ export default class EditPropertiesDialog extends PromiseDialog {
               .then((newObj) => {
                 attributes[e.target.dataset.index].obj = newObj
                 this.#updateDisplay(
-                  typeName,
-                  label,
-                  attributes,
                   attributeContainer,
                   definitionContainer,
-                  autocompletionWs
+                  autocompletionWs,
+                  typeName,
+                  label,
+                  attributes
                 )
               })
             break
@@ -101,12 +101,12 @@ export default class EditPropertiesDialog extends PromiseDialog {
                 attributes[e.target.dataset.index].obj = newObj
                 attributes[e.target.dataset.index].label = newLabel
                 this.#updateDisplay(
-                  typeName,
-                  label,
-                  attributes,
                   attributeContainer,
                   definitionContainer,
-                  autocompletionWs
+                  autocompletionWs,
+                  typeName,
+                  label,
+                  attributes
                 )
               })
             break
@@ -126,12 +126,12 @@ export default class EditPropertiesDialog extends PromiseDialog {
         const indexOfAttribute = parseInt(index)
         const { typeName, label, attributes } = getValues(super.el)
         this.#updateDisplay(
-          typeName,
-          label,
-          attributes.filter((_, i) => i !== indexOfAttribute),
           attributeContainer,
           definitionContainer,
-          autocompletionWs
+          autocompletionWs,
+          typeName,
+          label,
+          attributes.filter((_, i) => i !== indexOfAttribute)
         )
       }
     )
@@ -158,14 +158,14 @@ export default class EditPropertiesDialog extends PromiseDialog {
 
         const { typeName, label, attributes } = getValues(super.el)
         this.#updateDisplay(
+          attributeContainer,
+          definitionContainer,
+          autocompletionWs,
           typeName,
           label,
           attributes
             .concat({ pred, obj: defaultValue, id: '' })
-            .sort((a, b) => attributeContainer.attributeCompareFunction(a, b)),
-          attributeContainer,
-          definitionContainer,
-          autocompletionWs
+            .sort((a, b) => attributeContainer.attributeCompareFunction(a, b))
         )
       }
     )
@@ -198,12 +198,12 @@ export default class EditPropertiesDialog extends PromiseDialog {
   }
 
   #updateDisplay(
-    typeName,
-    typeLabel,
-    attributes,
     attributeContainer,
     entityContainer,
-    autocompletionWs
+    autocompletionWs,
+    typeName,
+    typeLabel,
+    attributes
   ) {
     const contentHtml = createContentHTML(
       typeName,
