@@ -53,13 +53,14 @@ export default class EditPropertiesDialog extends PromiseDialog {
       )
     }
 
+    const element = super.el
     const onEditAttributeClick = (e) => {
       const { pred } = e.target.dataset
       const attrDef = attributeContainer.get(pred)
       const zIndex = parseInt(
-        super.el.closest('.textae-editor__dialog').style['z-index']
+        element.closest('.textae-editor__dialog').style['z-index']
       )
-      const { typeName, label, attributes } = getValues(super.el)
+      const { typeName, label, attributes } = getValues(element)
 
       switch (attrDef.valueType) {
         case 'numeric':
@@ -102,7 +103,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
 
     // Observe edit an attribute button.
     delegate(
-      super.el,
+      element,
       '.textae-editor__edit-type-values-dialog__edit-attribute',
       'click',
       onEditAttributeClick
@@ -110,13 +111,13 @@ export default class EditPropertiesDialog extends PromiseDialog {
 
     // Observe remove an attribute button.
     delegate(
-      super.el,
+      element,
       '.textae-editor__edit-type-values-dialog__remove-attribute',
       'click',
       (e) => {
         const { index } = e.target.dataset
         const indexOfAttribute = parseInt(index)
-        const { typeName, label, attributes } = getValues(super.el)
+        const { typeName, label, attributes } = getValues(element)
         updateDisplay(
           typeName,
           label,
@@ -127,7 +128,7 @@ export default class EditPropertiesDialog extends PromiseDialog {
 
     // Observe open pallet button.
     delegate(
-      super.el,
+      element,
       '.textae-editor__edit-type-values-dialog__open-pallet',
       'click',
       () => {
@@ -138,14 +139,14 @@ export default class EditPropertiesDialog extends PromiseDialog {
 
     // Observe add an attribute button.
     delegate(
-      super.el,
+      element,
       '.textae-editor__edit-type-values-dialog__add-attribute',
       'click',
       (e) => {
         const { pred } = e.target.dataset
         const defaultValue = attributeContainer.get(pred).default
 
-        const { typeName, label, attributes } = getValues(super.el)
+        const { typeName, label, attributes } = getValues(element)
         updateDisplay(
           typeName,
           label,
