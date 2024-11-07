@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.6.1](https://github.com/pubannotation/textae/compare/v13.6.0...v13.6.1) (2024-11-07)
+
+
+### Bug Fixes
+
+* Autocomplete does not work after add predicate ([544e7be](https://github.com/pubannotation/textae/commit/544e7be8fb279f424cbba42c13b62d24fc1380cf))
+* Autocomplete does not work after display update ([1e98a3f](https://github.com/pubannotation/textae/commit/1e98a3ff676888ef52e9c4567c404d06a97ac6de))
+* Label dissappear after dialog update ([31e5a90](https://github.com/pubannotation/textae/commit/31e5a900eb7ab55f6f696a24a073617a89a1d5e1))
+
 ## [13.6.0](https://github.com/pubannotation/textae/compare/v13.5.0...v13.6.0) (2024-10-31)
 
 

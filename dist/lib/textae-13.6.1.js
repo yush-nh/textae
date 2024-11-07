@@ -47370,7 +47370,7 @@
   /******/
   /************************************************************************/
   var __webpack_exports__ = {}
-  // This entry need to be wrapped in an IIFE because it need to be in strict mode.
+  // This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
   ;(() => {
     'use strict'
 
@@ -60422,9 +60422,7 @@
       return { typeName, label, attributes }
     } // ./src/lib/component/EditPropertiesDialog/createContentHTML/toEntityHTML.js
 
-    /* harmony default export */ function toEntityHTML(value, entityContainer) {
-      const label = entityContainer.getLabel(value) || ''
-
+    /* harmony default export */ function toEntityHTML(value, label) {
       return () => anemone`
     <tr>
       <td rowspan="2"></td>
@@ -60557,8 +60555,8 @@
 
     /* harmony default export */ function createContentHTML(
       typeName,
+      typeLabel,
       attributes,
-      entityContainer,
       attributeContainer,
       palletName
     ) {
@@ -60573,7 +60571,7 @@
           </tr>
         </thead>
         <tbody>
-          ${toEntityHTML(typeName, entityContainer)}
+          ${toEntityHTML(typeName, typeLabel)}
           ${attributes.map((a, index, list) =>
             toAttributeHTML(a, index, list, attributeContainer)
           )}
@@ -60625,6 +60623,78 @@
       }
 
       return new TypeValues(typeName, mergedAttributes)
+    } // ./src/lib/component/EditPropertiesDialog/EditAttributeButtonHandler.js
+
+    class EditAttributeButtonHandler {
+      #edtiorHTMLElement
+      #attributeContainer
+      #mousePoint
+      #element
+      #updateDisplay
+
+      constructor(
+        editorHTMLElement,
+        attributeContainer,
+        mousePoint,
+        element,
+        updateDisplay
+      ) {
+        this.#edtiorHTMLElement = editorHTMLElement
+        this.#attributeContainer = attributeContainer
+        this.#mousePoint = mousePoint
+        this.#element = element
+        this.#updateDisplay = updateDisplay
+      }
+
+      onClick(event) {
+        const { pred } = event.target.dataset
+        const attrDef = this.#attributeContainer.get(pred)
+        const zIndex = parseInt(
+          this.#element.closest('.textae-editor__dialog').style['z-index']
+        )
+        const { typeName, label, attributes } = getValues(this.#element)
+
+        switch (attrDef.valueType) {
+          case 'numeric':
+            new EditNumericAttributeDialog(
+              attrDef,
+              attributes[event.target.dataset.index],
+              [attributes[event.target.dataset.index]]
+            )
+              .open()
+              .then(({ newObj }) => {
+                attributes[event.target.dataset.index].obj = newObj
+                this.#updateDisplay(typeName, label, attributes)
+              })
+            break
+          case 'selection':
+            new SelectionAttributePallet(
+              this.#edtiorHTMLElement,
+              this.#mousePoint
+            )
+              .show(attrDef, zIndex, event.target)
+              .then((newObj) => {
+                attributes[event.target.dataset.index].obj = newObj
+                this.#updateDisplay(typeName, label, attributes)
+              })
+            break
+          case 'string':
+            new EditStringAttributeDialog(
+              attrDef,
+              attributes[event.target.dataset.index],
+              [attributes[event.target.dataset.index]]
+            )
+              .open()
+              .then(({ newObj, newLabel }) => {
+                attributes[event.target.dataset.index].obj = newObj
+                attributes[event.target.dataset.index].label = newLabel
+                this.#updateDisplay(typeName, label, attributes)
+              })
+            break
+          default:
+            throw `${attrDef.valueType} is unknown attribute.`
+        }
+      }
     } // ./src/lib/component/EditPropertiesDialog/index.js
 
     class EditPropertiesDialog extends PromiseDialog {
@@ -60640,10 +60710,11 @@
         mousePoint
       ) {
         const { typeName, attributes } = mergedTypeValuesOf(selectedItems)
+        const typeLabel = definitionContainer.getLabel(typeName)
         const contentHtml = createContentHTML(
           typeName,
+          typeLabel,
           attributes,
-          definitionContainer,
           attributeContainer,
           palletName
         )
@@ -60659,95 +60730,54 @@
           () => getValues(super.el)
         )
 
+        const updateDisplay = (typeName, label, attributes) => {
+          this.#updateDisplay(
+            attributeContainer,
+            definitionContainer,
+            autocompletionWs,
+            typeName,
+            label,
+            attributes
+          )
+        }
+
+        const element = super.el
+        const editAttributeButtonHandler = new EditAttributeButtonHandler(
+          editorHTMLElement,
+          attributeContainer,
+          mousePoint,
+          element,
+          updateDisplay
+        )
+
         // Observe edit an attribute button.
         delegate_default()(
-          super.el,
+          element,
           '.textae-editor__edit-type-values-dialog__edit-attribute',
           'click',
-          (e) => {
-            const { pred } = e.target.dataset
-            const attrDef = attributeContainer.get(pred)
-            const zIndex = parseInt(
-              super.el.closest('.textae-editor__dialog').style['z-index']
-            )
-            const { typeName, attributes } = getValues(super.el)
-
-            switch (attrDef.valueType) {
-              case 'numeric':
-                new EditNumericAttributeDialog(
-                  attrDef,
-                  attributes[e.target.dataset.index],
-                  [attributes[e.target.dataset.index]]
-                )
-                  .open()
-                  .then(({ newObj }) => {
-                    attributes[e.target.dataset.index].obj = newObj
-                    this.#updateDisplay(
-                      typeName,
-                      attributes,
-                      attributeContainer,
-                      definitionContainer
-                    )
-                  })
-                break
-              case 'selection':
-                new SelectionAttributePallet(editorHTMLElement, mousePoint)
-                  .show(attrDef, zIndex, e.target)
-                  .then((newObj) => {
-                    attributes[e.target.dataset.index].obj = newObj
-                    this.#updateDisplay(
-                      typeName,
-                      attributes,
-                      attributeContainer,
-                      definitionContainer
-                    )
-                  })
-                break
-              case 'string':
-                new EditStringAttributeDialog(
-                  attrDef,
-                  attributes[e.target.dataset.index],
-                  [attributes[e.target.dataset.index]]
-                )
-                  .open()
-                  .then(({ newObj, newLabel }) => {
-                    attributes[e.target.dataset.index].obj = newObj
-                    attributes[e.target.dataset.index].label = newLabel
-                    this.#updateDisplay(
-                      typeName,
-                      attributes,
-                      attributeContainer,
-                      definitionContainer
-                    )
-                  })
-                break
-              default:
-                throw `${attrDef.valueType} is unknown attribute.`
-            }
-          }
+          (e) => editAttributeButtonHandler.onClick(e)
         )
 
         // Observe remove an attribute button.
         delegate_default()(
-          super.el,
+          element,
           '.textae-editor__edit-type-values-dialog__remove-attribute',
           'click',
           (e) => {
             const { index } = e.target.dataset
             const indexOfAttribute = parseInt(index)
-            const { typeName, attributes } = getValues(super.el)
-            this.#updateDisplay(
+            const { typeName, label, attributes } = getValues(element)
+            updateDisplay(
               typeName,
-              attributes.filter((_, i) => i !== indexOfAttribute),
-              attributeContainer,
-              definitionContainer
+              label,
+              attributes.filter((_, i) => i !== indexOfAttribute)
             )
           }
         )
 
         // Observe open pallet button.
         delegate_default()(
-          super.el,
+          element,
           '.textae-editor__edit-type-values-dialog__open-pallet',
           'click',
           () => {
@@ -60758,28 +60788,50 @@
 
         // Observe add an attribute button.
         delegate_default()(
-          super.el,
+          element,
           '.textae-editor__edit-type-values-dialog__add-attribute',
           'click',
           (e) => {
             const { pred } = e.target.dataset
             const defaultValue = attributeContainer.get(pred).default
 
-            const { typeName, attributes } = getValues(super.el)
-            this.#updateDisplay(
+            const { typeName, label, attributes } = getValues(element)
+            updateDisplay(
               typeName,
+              label,
               attributes
                 .concat({ pred, obj: defaultValue, id: '' })
                 .sort((a, b) =>
                   attributeContainer.attributeCompareFunction(a, b)
-                ),
-              attributeContainer,
-              definitionContainer
+                )
             )
           }
         )
 
         // Setup autocomplete
+        this.#setupAutocomplete(autocompletionWs, definitionContainer)
+      }
+
+      #updateDisplay(
+        attributeContainer,
+        entityContainer,
+        autocompletionWs,
+        typeName,
+        typeLabel,
+        attributes
+      ) {
+        const contentHtml = createContentHTML(
+          typeName,
+          typeLabel,
+          attributes,
+          attributeContainer
+        )
+        super.el.closest('.ui-dialog-content').innerHTML = contentHtml
+
+        this.#setupAutocomplete(autocompletionWs, entityContainer)
+      }
+
+      #setupAutocomplete(autocompletionWs, definitionContainer) {
         const typeNameElement = super.el.querySelector(
           '.textae-editor__edit-type-values-dialog__type-name'
         )
@@ -60800,21 +60852,6 @@
             typeLabelElement.innerText = label
           }
         )
-      }
-
-      #updateDisplay(
-        typeName,
-        attributes,
-        attributeContainer,
-        entityContainer
-      ) {
-        const contentHtml = createContentHTML(
-          typeName,
-          attributes,
-          entityContainer,
-          attributeContainer
-        )
-        super.el.closest('.ui-dialog-content').innerHTML = contentHtml
       }
     } // ./src/lib/Editor/UseCase/Presenter/EditModeSwitch/EditMode/PropertyEditor.js
 
@@ -64965,7 +65002,7 @@
       bindChangeLockConfig(content, typeDictionary)
     } // ./package.json
 
-    const package_namespaceObject = { rE: '13.6.0' } // ./src/lib/component/SettingDialog/template.js
+    const package_namespaceObject = { rE: '13.6.1' } // ./src/lib/component/SettingDialog/template.js
     function SettingDialog_template_template(context) {
       const {
         typeGap,
@@ -78382,7 +78419,7 @@ in the editor view.
           display: 'none'
         },
         '&dark .cm-cursor': {
-          borderLeftColor: '#444'
+          borderLeftColor: '#ddd'
         },
         '.cm-dropCursor': {
           position: 'absolute'
@@ -93278,19 +93315,24 @@ document.
             start = this.bufferStart + this.bufferPos
           this.bufferPos += codePointSize(next)
           let norm = this.normalize(str)
-          for (let i = 0, pos = start; ; i++) {
-            let code = norm.charCodeAt(i)
-            let match = this.match(code, pos, this.bufferPos + this.bufferStart)
-            if (i == norm.length - 1) {
-              if (match) {
-                this.value = match
-                return this
+          if (norm.length)
+            for (let i = 0, pos = start; ; i++) {
+              let code = norm.charCodeAt(i)
+              let match = this.match(
+                code,
+                pos,
+                this.bufferPos + this.bufferStart
+              )
+              if (i == norm.length - 1) {
+                if (match) {
+                  this.value = match
+                  return this
+                }
+                break
               }
-              break
+              if (pos == start && i < str.length && str.charCodeAt(i) == code)
+                pos++
             }
-            if (pos == start && i < str.length && str.charCodeAt(i) == code)
-              pos++
-          }
         }
       }
       match(code, pos, end) {
@@ -93995,9 +94037,17 @@ A search query. Part of the editor's search state.
           curTo,
           state.doc.length
         ).nextOverlapping()
-        if (cursor.done)
-          cursor = stringCursor(this.spec, state, 0, curFrom).nextOverlapping()
-        return cursor.done ? null : cursor.value
+        if (cursor.done) {
+          let end = Math.min(
+            state.doc.length,
+            curFrom + this.spec.unquoted.length
+          )
+          cursor = stringCursor(this.spec, state, 0, end).nextOverlapping()
+        }
+        return cursor.done ||
+          (cursor.value.from == curFrom && cursor.value.to == curTo)
+          ? null
+          : cursor.value
       }
       // Searching in reverse is, rather than implementing an inverted search
       // cursor, done by scanning chunk after chunk forward.
@@ -94016,10 +94066,16 @@ A search query. Part of the editor's search state.
         }
       }
       prevMatch(state, curFrom, curTo) {
-        return (
-          this.prevMatchInRange(state, 0, curFrom) ||
-          this.prevMatchInRange(state, curTo, state.doc.length)
-        )
+        let found = this.prevMatchInRange(state, 0, curFrom)
+        if (!found)
+          found = this.prevMatchInRange(
+            state,
+            Math.max(0, curTo - this.spec.unquoted.length),
+            state.doc.length
+          )
+        return found && (found.from != curFrom || found.to != curTo)
+          ? found
+          : null
       }
       getReplacement(_result) {
         return this.spec.unquote(this.spec.replace)
