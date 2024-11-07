@@ -42,78 +42,80 @@ export default class EditPropertiesDialog extends PromiseDialog {
       () => getValues(super.el)
     )
 
+    const onEditAttributeClick = (e) => {
+      const { pred } = e.target.dataset
+      const attrDef = attributeContainer.get(pred)
+      const zIndex = parseInt(
+        super.el.closest('.textae-editor__dialog').style['z-index']
+      )
+      const { typeName, label, attributes } = getValues(super.el)
+
+      switch (attrDef.valueType) {
+        case 'numeric':
+          new EditNumericAttributeDialog(
+            attrDef,
+            attributes[e.target.dataset.index],
+            [attributes[e.target.dataset.index]]
+          )
+            .open()
+            .then(({ newObj }) => {
+              attributes[e.target.dataset.index].obj = newObj
+              this.#updateDisplay(
+                attributeContainer,
+                definitionContainer,
+                autocompletionWs,
+                typeName,
+                label,
+                attributes
+              )
+            })
+          break
+        case 'selection':
+          new SelectionAttributePallet(editorHTMLElement, mousePoint)
+            .show(attrDef, zIndex, e.target)
+            .then((newObj) => {
+              attributes[e.target.dataset.index].obj = newObj
+              this.#updateDisplay(
+                attributeContainer,
+                definitionContainer,
+                autocompletionWs,
+                typeName,
+                label,
+                attributes
+              )
+            })
+          break
+        case 'string':
+          new EditStringAttributeDialog(
+            attrDef,
+            attributes[e.target.dataset.index],
+            [attributes[e.target.dataset.index]]
+          )
+            .open()
+            .then(({ newObj, newLabel }) => {
+              attributes[e.target.dataset.index].obj = newObj
+              attributes[e.target.dataset.index].label = newLabel
+              this.#updateDisplay(
+                attributeContainer,
+                definitionContainer,
+                autocompletionWs,
+                typeName,
+                label,
+                attributes
+              )
+            })
+          break
+        default:
+          throw `${attrDef.valueType} is unknown attribute.`
+      }
+    }
+
     // Observe edit an attribute button.
     delegate(
       super.el,
       '.textae-editor__edit-type-values-dialog__edit-attribute',
       'click',
-      (e) => {
-        const { pred } = e.target.dataset
-        const attrDef = attributeContainer.get(pred)
-        const zIndex = parseInt(
-          super.el.closest('.textae-editor__dialog').style['z-index']
-        )
-        const { typeName, label, attributes } = getValues(super.el)
-
-        switch (attrDef.valueType) {
-          case 'numeric':
-            new EditNumericAttributeDialog(
-              attrDef,
-              attributes[e.target.dataset.index],
-              [attributes[e.target.dataset.index]]
-            )
-              .open()
-              .then(({ newObj }) => {
-                attributes[e.target.dataset.index].obj = newObj
-                this.#updateDisplay(
-                  attributeContainer,
-                  definitionContainer,
-                  autocompletionWs,
-                  typeName,
-                  label,
-                  attributes
-                )
-              })
-            break
-          case 'selection':
-            new SelectionAttributePallet(editorHTMLElement, mousePoint)
-              .show(attrDef, zIndex, e.target)
-              .then((newObj) => {
-                attributes[e.target.dataset.index].obj = newObj
-                this.#updateDisplay(
-                  attributeContainer,
-                  definitionContainer,
-                  autocompletionWs,
-                  typeName,
-                  label,
-                  attributes
-                )
-              })
-            break
-          case 'string':
-            new EditStringAttributeDialog(
-              attrDef,
-              attributes[e.target.dataset.index],
-              [attributes[e.target.dataset.index]]
-            )
-              .open()
-              .then(({ newObj, newLabel }) => {
-                attributes[e.target.dataset.index].obj = newObj
-                attributes[e.target.dataset.index].label = newLabel
-                this.#updateDisplay(
-                  attributeContainer,
-                  definitionContainer,
-                  autocompletionWs,
-                  typeName,
-                  label,
-                  attributes
-                )
-              })
-            break
-          default:
-            throw `${attrDef.valueType} is unknown attribute.`
-        }
-      }
+      onEditAttributeClick
     )
 
     // Observe remove an attribute button.
