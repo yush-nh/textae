@@ -8,7 +8,10 @@ import searchTerm from '../searchTerm'
 import EditAttributeButtonHandler from './EditAttributeButtonHandler'
 
 export default class EditPropertiesDialog extends PromiseDialog {
-  #taypeName
+  #attributeContainer
+  #definitionContainer
+  #autocompletionWs
+  #typeName
   #typeLabel
   #attributes
 
@@ -44,15 +47,14 @@ export default class EditPropertiesDialog extends PromiseDialog {
       () => getValues(super.el)
     )
 
+    this.#attributeContainer = attributeContainer
+    this.#definitionContainer = definitionContainer
+    this.#autocompletionWs = autocompletionWs
     const updateDisplay = (typeName, label, attributes) => {
-      this.#taypeName = typeName
+      this.#typeName = typeName
       this.#typeLabel = label
       this.#attributes = attributes
-      this.#updateDisplay(
-        attributeContainer,
-        definitionContainer,
-        autocompletionWs
-      )
+      this.#updateDisplay()
     }
 
     const element = super.el
@@ -124,19 +126,16 @@ export default class EditPropertiesDialog extends PromiseDialog {
     this.#setupAutocomplete(autocompletionWs, definitionContainer)
   }
 
-  #updateDisplay(attributeContainer, entityContainer, autocompletionWs) {
-    const typeName = this.#taypeName
-    const typeLabel = this.#typeLabel
-    const attributes = this.#attributes
+  #updateDisplay() {
     const contentHtml = createContentHTML(
-      typeName,
-      typeLabel,
-      attributes,
-      attributeContainer
+      this.#typeName,
+      this.#typeLabel,
+      this.#attributes,
+      this.#attributeContainer
     )
     super.el.closest('.ui-dialog-content').innerHTML = contentHtml
 
-    this.#setupAutocomplete(autocompletionWs, entityContainer)
+    this.#setupAutocomplete(this.#autocompletionWs, this.#definitionContainer)
   }
 
   #setupAutocomplete(autocompletionWs, definitionContainer) {
