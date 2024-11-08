@@ -112,13 +112,12 @@ export default class EditPropertiesDialog extends PromiseDialog {
         const defaultValue = attributeContainer.get(pred).default
 
         const { typeName, label, attributes } = getValues(element)
-        updateDisplay(
-          typeName,
-          label,
-          attributes
-            .concat({ pred, obj: defaultValue, id: '' })
-            .sort((a, b) => attributeContainer.attributeCompareFunction(a, b))
-        )
+        this.#typeName = typeName
+        this.#typeLabel = label
+        this.#attributes = attributes
+          .concat({ pred, obj: defaultValue, id: '' })
+          .sort((a, b) => attributeContainer.attributeCompareFunction(a, b))
+        this.#updateDisplay()
       }
     )
 
