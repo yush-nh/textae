@@ -83,11 +83,10 @@ export default class EditPropertiesDialog extends PromiseDialog {
         const { index } = e.target.dataset
         const indexOfAttribute = parseInt(index)
         const { typeName, label, attributes } = getValues(element)
-        updateDisplay(
-          typeName,
-          label,
-          attributes.filter((_, i) => i !== indexOfAttribute)
-        )
+        this.#typeName = typeName
+        this.#typeLabel = label
+        this.#attributes = attributes.filter((_, i) => i !== indexOfAttribute)
+        this.#updateDisplay()
       }
     )
 
