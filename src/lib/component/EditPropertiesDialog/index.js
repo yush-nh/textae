@@ -8,6 +8,10 @@ import searchTerm from '../searchTerm'
 import EditAttributeButtonHandler from './EditAttributeButtonHandler'
 
 export default class EditPropertiesDialog extends PromiseDialog {
+  #taypeName
+  #typeLabel
+  #attributes
+
   constructor(
     editorHTMLElement,
     annotationType,
@@ -41,13 +45,13 @@ export default class EditPropertiesDialog extends PromiseDialog {
     )
 
     const updateDisplay = (typeName, label, attributes) => {
+      this.#taypeName = typeName
+      this.#typeLabel = label
+      this.#attributes = attributes
       this.#updateDisplay(
         attributeContainer,
         definitionContainer,
-        autocompletionWs,
-        typeName,
-        label,
-        attributes
+        autocompletionWs
       )
     }
 
@@ -120,14 +124,10 @@ export default class EditPropertiesDialog extends PromiseDialog {
     this.#setupAutocomplete(autocompletionWs, definitionContainer)
   }
 
-  #updateDisplay(
-    attributeContainer,
-    entityContainer,
-    autocompletionWs,
-    typeName,
-    typeLabel,
-    attributes
-  ) {
+  #updateDisplay(attributeContainer, entityContainer, autocompletionWs) {
+    const typeName = this.#taypeName
+    const typeLabel = this.#typeLabel
+    const attributes = this.#attributes
     const contentHtml = createContentHTML(
       typeName,
       typeLabel,
