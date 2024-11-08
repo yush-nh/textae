@@ -127,15 +127,17 @@ export default class EditPropertiesDialog extends PromiseDialog {
   }
 
   #updateDisplay() {
-    const contentHtml = createContentHTML(
+    super.el.closest('.ui-dialog-content').innerHTML = this.#contentHTML
+    this.#setupAutocomplete(this.#autocompletionWs, this.#definitionContainer)
+  }
+
+  get #contentHTML() {
+    return createContentHTML(
       this.#typeName,
       this.#typeLabel,
       this.#attributes,
       this.#attributeContainer
     )
-    super.el.closest('.ui-dialog-content').innerHTML = contentHtml
-
-    this.#setupAutocomplete(this.#autocompletionWs, this.#definitionContainer)
   }
 
   #setupAutocomplete(autocompletionWs, definitionContainer) {
