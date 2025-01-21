@@ -1,42 +1,61 @@
 export default class CollectionMap {
-  constructor() {
-    this.map = new Map()
-  }
+  #idMap = new Map()
+  #rangeMap = new Map()
+
+  constructor() {}
 
   set(key, value) {
-    if (!this.map.has(key)) {
-      this.map.set(key, new Set())
+    this.#idMap.set(key, value)
+
+    const rangeKey = value.begin & value.end
+    if (this.#rangeMap.has(rangeKey)) {
+      this.#rangeMap.get(rangeKey).add(value)
+    } else {
+      this.#rangeMap.set(rangeKey, new Set([value]))
     }
-    this.map.get(key).add(value)
-    return this // To allow chaining like Map
+
+    return this
   }
 
   get(key) {
-    const collection = this.map.get(key)
-    if (collection) {
-      return collection.values().next().value
-    }
-
-    return null
+    return this.#idMap.get(key)
   }
 
-  getCollection(key) {
-    return this.map.get(key) || new Set()
+  getSameRange(key) {
+    const entry = this.#idMap.get(key)
+    if (!entry) return null
+
+    const rangeKey = entry.begin & entry.end
+    return this.#rangeMap.get(rangeKey)
   }
 
   has(key) {
-    return this.map.has(key)
+    return this.#idMap.has(key)
   }
 
   delete(key) {
-    return this.map.delete(key)
+    const entry = this.#idMap.get(key)
+
+    if (entry) {
+      const rangeKey = entry.begin & entry.end
+      this.#rangeMap.get(rangeKey).delete(entry)
+
+      if (this.#rangeMap.get(rangeKey).size === 0) {
+        this.#rangeMap.delete(rangeKey)
+      }
+
+      return this.#idMap.delete(key)
+    }
+
+    return false
   }
 
   clear() {
-    this.map.clear()
+    this.#idMap.clear()
+    this.#rangeMap.clear()
   }
 
   values() {
-    return Array.from(this.map.values()).flatMap((set) => Array.from(set))
+    return this.#idMap.values()
   }
 }
