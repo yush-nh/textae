@@ -2,12 +2,10 @@ export default class CollectionMap {
   #idMap = new Map()
   #rangeMap = new Map()
 
-  constructor() {}
-
   set(key, value) {
     this.#idMap.set(key, value)
 
-    const rangeKey = value.begin & value.end
+    const rangeKey = this.#getRangeKey(value)
     if (this.#rangeMap.has(rangeKey)) {
       this.#rangeMap.get(rangeKey).add(value)
     } else {
@@ -25,7 +23,7 @@ export default class CollectionMap {
     const entry = this.#idMap.get(key)
     if (!entry) return null
 
-    const rangeKey = entry.begin & entry.end
+    const rangeKey = this.#getRangeKey(entry)
     return this.#rangeMap.get(rangeKey)
   }
 
@@ -37,7 +35,7 @@ export default class CollectionMap {
     const entry = this.#idMap.get(key)
 
     if (entry) {
-      const rangeKey = entry.begin & entry.end
+      const rangeKey = this.#getRangeKey(entry)
       this.#rangeMap.get(rangeKey).delete(entry)
 
       if (this.#rangeMap.get(rangeKey).size === 0) {
@@ -57,5 +55,9 @@ export default class CollectionMap {
 
   values() {
     return this.#idMap.values()
+  }
+
+  #getRangeKey(entry) {
+    return entry.begin & entry.end
   }
 }
