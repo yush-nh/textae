@@ -1,4 +1,4 @@
-export default class CollectionMap {
+export default class DenotationSpanMap {
   #idMap = new Map()
   #rangeMap = new Map()
 
