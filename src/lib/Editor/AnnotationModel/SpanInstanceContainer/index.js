@@ -251,12 +251,12 @@ export default class SpanInstanceContainer {
 
   // Since moving a span is deleting and adding span tags,
   // we will delete and add the instance as well.
-  moveDenotationSpan(id, begin, end) {
-    const oldSpan = this.#denotations.get(id)
-    console.assert(oldSpan, `There is no target for move for ${id}!`)
+  moveDenotationSpan(spanID, begin, end) {
+    const oldSpan = this.#denotations.get(spanID)
+    console.assert(oldSpan, `There is no target for move for ${spanID}!`)
     console.assert(
       oldSpan.begin !== begin || oldSpan.end !== end,
-      `Do not need move span:  ${id} ${begin} ${end}`
+      `Do not need move span:  ${spanID} ${begin} ${end}`
     )
 
     this.#removeDenotation(oldSpan)
