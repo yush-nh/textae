@@ -258,6 +258,7 @@ export default class AnnotationModel {
     return this.#typeDictionary
   }
 
+  /** @returns {import('./SpanInstanceContainer').default} */
   get spanInstanceContainer() {
     return this.#spanInstanceContainer
   }
