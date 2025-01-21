@@ -1,15 +1,20 @@
+// Denotations can have the same begin and end.
+// When expanding or shrinking a span,
+// We want to move the denotation spans with the same begin and end values together.
+// For this reason, we use a dedicated data structure
+// that can obtain a denotation spans with the same begin and end.
 export default class DenotationSpanMap {
   #idMap = new Map()
-  #rangeMap = new Map()
+  #beginEndMap = new Map()
 
   set(key, value) {
     this.#idMap.set(key, value)
 
-    const rangeKey = this.#getRangeKey(value)
-    if (this.#rangeMap.has(rangeKey)) {
-      this.#rangeMap.get(rangeKey).add(value)
+    const beginEndKey = this.#getBeginEndKey(value)
+    if (this.#beginEndMap.has(beginEndKey)) {
+      this.#beginEndMap.get(beginEndKey).add(value)
     } else {
-      this.#rangeMap.set(rangeKey, new Set([value]))
+      this.#beginEndMap.set(beginEndKey, new Set([value]))
     }
 
     return this
@@ -19,12 +24,12 @@ export default class DenotationSpanMap {
     return this.#idMap.get(key)
   }
 
-  getSameRange(key) {
+  getSameBeginEnd(key) {
     const entry = this.#idMap.get(key)
     if (!entry) return null
 
-    const rangeKey = this.#getRangeKey(entry)
-    return this.#rangeMap.get(rangeKey)
+    const beginEndKey = this.#getBeginEndKey(entry)
+    return this.#beginEndMap.get(beginEndKey)
   }
 
   has(key) {
@@ -35,11 +40,11 @@ export default class DenotationSpanMap {
     const entry = this.#idMap.get(key)
 
     if (entry) {
-      const rangeKey = this.#getRangeKey(entry)
-      this.#rangeMap.get(rangeKey).delete(entry)
+      const beginEndKey = this.#getBeginEndKey(entry)
+      this.#beginEndMap.get(beginEndKey).delete(entry)
 
-      if (this.#rangeMap.get(rangeKey).size === 0) {
-        this.#rangeMap.delete(rangeKey)
+      if (this.#beginEndMap.get(beginEndKey).size === 0) {
+        this.#beginEndMap.delete(beginEndKey)
       }
 
       return this.#idMap.delete(key)
@@ -50,14 +55,14 @@ export default class DenotationSpanMap {
 
   clear() {
     this.#idMap.clear()
-    this.#rangeMap.clear()
+    this.#beginEndMap.clear()
   }
 
   values() {
     return this.#idMap.values()
   }
 
-  #getRangeKey(entry) {
+  #getBeginEndKey(entry) {
     return entry.begin & entry.end
   }
 }
