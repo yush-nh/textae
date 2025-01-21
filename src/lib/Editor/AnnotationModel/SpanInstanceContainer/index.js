@@ -8,13 +8,14 @@ import isBoundaryCrossingWithOtherSpans from '../isBoundaryCrossingWithOtherSpan
 import rangeFrom from './rangeFrom'
 import getCurrentMaxHeight from './getCurrentMaxHeight'
 import TextSelection from './TextSelection'
+import CollectionMap from './CollectionMap'
 
 export default class SpanInstanceContainer {
   #editorID
   #editorHTMLElement
   #emitter
   #textBox
-  #denotations = new Map()
+  #denotations = new CollectionMap()
   #blocks = new Map()
   #styles = new Map()
 
