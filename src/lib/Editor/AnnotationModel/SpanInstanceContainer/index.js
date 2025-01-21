@@ -14,9 +14,9 @@ export default class SpanInstanceContainer {
   #editorHTMLElement
   #emitter
   #textBox
-  #denotations
-  #blocks
-  #styles
+  #denotations = new Map()
+  #blocks = new Map()
+  #styles = new Map()
 
   /**
    *
@@ -27,10 +27,6 @@ export default class SpanInstanceContainer {
     this.#editorHTMLElement = editorHTMLElement
     this.#emitter = emitter
     this.#textBox = textBox
-
-    this.#denotations = new Map()
-    this.#blocks = new Map()
-    this.#styles = new Map()
   }
 
   // expected span is like { "begin": 19, "end": 49 }
