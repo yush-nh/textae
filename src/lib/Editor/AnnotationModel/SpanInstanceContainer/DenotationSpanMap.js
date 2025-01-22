@@ -4,7 +4,11 @@
 // For this reason, we use a dedicated data structure
 // that can obtain a denotation spans with the same begin and end.
 export default class DenotationSpanMap {
+  // The map that has span id as a key and span instance as a value.
   #idMap = new Map()
+
+  // The map that has begin & end as a key
+  // and a set of span instances as a value.
   #beginEndMap = new Map()
 
   set(key, value) {
