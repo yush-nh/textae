@@ -2,7 +2,7 @@ import commandLog from './commandLog'
 import AnnotationCommand from './AnnotationCommand'
 
 export default class MoveBlockSpanCommand extends AnnotationCommand {
-  #annotationModel
+  #spanInstanceContainer
   #spanID
   #begin
   #end
@@ -10,9 +10,9 @@ export default class MoveBlockSpanCommand extends AnnotationCommand {
   #beginBeforeMove
   #endBeforeMove
 
-  constructor(annotationModel, spanID, begin, end) {
+  constructor(spanInstanceContainer, spanID, begin, end) {
     super()
-    this.#annotationModel = annotationModel
+    this.#spanInstanceContainer = spanInstanceContainer
     this.#spanID = spanID
     this.#begin = begin
     this.#end = end
@@ -20,12 +20,11 @@ export default class MoveBlockSpanCommand extends AnnotationCommand {
 
   execute() {
     // Update instance.
-    const { id, begin, end } =
-      this.#annotationModel.spanInstanceContainer.moveBlockSpan(
-        this.#spanID,
-        this.#begin,
-        this.#end
-      )
+    const { id, begin, end } = this.#spanInstanceContainer.moveBlockSpan(
+      this.#spanID,
+      this.#begin,
+      this.#end
+    )
 
     this.#newID = id
     this.#beginBeforeMove = begin
@@ -39,7 +38,7 @@ export default class MoveBlockSpanCommand extends AnnotationCommand {
 
   revert() {
     return new MoveBlockSpanCommand(
-      this.#annotationModel,
+      this.#spanInstanceContainer,
       this.#newID,
       this.#beginBeforeMove,
       this.#endBeforeMove

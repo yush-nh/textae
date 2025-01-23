@@ -213,7 +213,12 @@ export default class Factory {
   }
 
   moveBlockSpanCommand(spanId, begin, end) {
-    return new MoveBlockSpanCommand(this.#annotationModel, spanId, begin, end)
+    return new MoveBlockSpanCommand(
+      this.#annotationModel.spanInstanceContainer,
+      spanId,
+      begin,
+      end
+    )
   }
 
   moveDenotationSpanCommand(spanId, begin, end) {
