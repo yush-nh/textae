@@ -1,8 +1,9 @@
-// Denotations can have the same begin and end.
-// When expanding or shrinking a span,
-// We want to move the denotation spans with the same begin and end values together.
-// For this reason, we use a dedicated data structure
-// that can obtain a denotation spans with the same begin and end.
+// When a span is moved, a new ID is issued.
+// Redo of the operation works with the same parameters as the original operation.
+// When you undo the span move, the span ID changes.
+// If you specify the span to be moved by ID, redo will not work as expected.
+// If you specify it by begin and end positions, move, undo and redo will all work as expected.
+// For this reason, this data structure is designed to obtain spans by start and end.
 export default class SpanMap {
   // The map that has span id as a key and span instance as a value.
   #idMap = new Map()
