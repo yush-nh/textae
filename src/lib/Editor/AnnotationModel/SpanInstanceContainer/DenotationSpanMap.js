@@ -24,34 +24,34 @@ export default class DenotationSpanMap {
     return this
   }
 
-  get(key) {
-    return this.#idMap.get(key)
+  get(spanID) {
+    return this.#idMap.get(spanID)
   }
 
-  getSameBeginEnd(key) {
-    const entry = this.#idMap.get(key)
+  getSameBeginEnd(spanID) {
+    const entry = this.#idMap.get(spanID)
     if (!entry) return null
 
     const beginEndKey = this.#getBeginEndKey(entry)
     return this.#beginEndMap.get(beginEndKey)
   }
 
-  has(key) {
-    return this.#idMap.has(key)
+  has(spanID) {
+    return this.#idMap.has(spanID)
   }
 
-  delete(key) {
-    const entry = this.#idMap.get(key)
+  delete(spanID) {
+    const span = this.#idMap.get(spanID)
 
-    if (entry) {
-      const beginEndKey = this.#getBeginEndKey(entry)
-      this.#beginEndMap.get(beginEndKey).delete(entry)
+    if (span) {
+      const beginEndKey = this.#getBeginEndKey(span)
+      this.#beginEndMap.get(beginEndKey).delete(span)
 
       if (this.#beginEndMap.get(beginEndKey).size === 0) {
         this.#beginEndMap.delete(beginEndKey)
       }
 
-      return this.#idMap.delete(key)
+      return this.#idMap.delete(spanID)
     }
 
     return false
@@ -66,7 +66,7 @@ export default class DenotationSpanMap {
     return this.#idMap.values()
   }
 
-  #getBeginEndKey(entry) {
-    return entry.begin & entry.end
+  #getBeginEndKey(span) {
+    return span.begin & span.end
   }
 }
