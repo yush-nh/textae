@@ -20,8 +20,6 @@ export default class DenotationSpanMap {
     } else {
       this.#beginEndMap.set(beginEndKey, new Set([span]))
     }
-
-    return this
   }
 
   get(spanID) {
