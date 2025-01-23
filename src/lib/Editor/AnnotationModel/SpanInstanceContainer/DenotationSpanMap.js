@@ -11,14 +11,14 @@ export default class DenotationSpanMap {
   // and a set of span instances as a value.
   #beginEndMap = new Map()
 
-  set(key, value) {
-    this.#idMap.set(key, value)
+  set(spanID, span) {
+    this.#idMap.set(spanID, span)
 
-    const beginEndKey = this.#getBeginEndKey(value)
+    const beginEndKey = this.#getBeginEndKey(span)
     if (this.#beginEndMap.has(beginEndKey)) {
-      this.#beginEndMap.get(beginEndKey).add(value)
+      this.#beginEndMap.get(beginEndKey).add(span)
     } else {
-      this.#beginEndMap.set(beginEndKey, new Set([value]))
+      this.#beginEndMap.set(beginEndKey, new Set([span]))
     }
 
     return this
