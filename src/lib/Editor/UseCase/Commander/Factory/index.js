@@ -31,6 +31,7 @@ import ChangeTextAndMoveSpanCommand from './ChangeTextAndMoveSpanCommand'
 export default class Factory {
   #editorID
   #eventEmitter
+  /** @type {import('../../../AnnotationModel').default} */
   #annotationModel
   #selectionModel
 
