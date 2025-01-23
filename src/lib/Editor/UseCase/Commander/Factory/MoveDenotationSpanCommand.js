@@ -3,7 +3,7 @@ import AnnotationCommand from './AnnotationCommand'
 
 export default class MoveDenotationSpanCommand extends AnnotationCommand {
   /** @type {import('../../../AnnotationModel').default} */
-  #annotationModel
+  #spanInstanceContainer
   #spanID
   #begin
   #end
@@ -11,9 +11,9 @@ export default class MoveDenotationSpanCommand extends AnnotationCommand {
   #beginBeforeMove
   #endBeforeMove
 
-  constructor(annotationModel, spanID, begin, end) {
+  constructor(spanInstanceContainer, spanID, begin, end) {
     super()
-    this.#annotationModel = annotationModel
+    this.#spanInstanceContainer = spanInstanceContainer
     this.#spanID = spanID
     this.#begin = begin
     this.#end = end
@@ -21,12 +21,11 @@ export default class MoveDenotationSpanCommand extends AnnotationCommand {
 
   execute() {
     // Update instance.
-    const { id, begin, end } =
-      this.#annotationModel.spanInstanceContainer.moveDenotationSpan(
-        this.#spanID,
-        this.#begin,
-        this.#end
-      )
+    const { id, begin, end } = this.#spanInstanceContainer.moveDenotationSpan(
+      this.#spanID,
+      this.#begin,
+      this.#end
+    )
 
     this.#newID = id
     this.#beginBeforeMove = begin
@@ -40,7 +39,7 @@ export default class MoveDenotationSpanCommand extends AnnotationCommand {
 
   revert() {
     return new MoveDenotationSpanCommand(
-      this.#annotationModel,
+      this.#spanInstanceContainer,
       this.#newID,
       this.#beginBeforeMove,
       this.#endBeforeMove
