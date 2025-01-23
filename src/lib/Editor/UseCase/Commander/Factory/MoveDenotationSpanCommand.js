@@ -2,7 +2,7 @@ import commandLog from './commandLog'
 import AnnotationCommand from './AnnotationCommand'
 
 export default class MoveDenotationSpanCommand extends AnnotationCommand {
-  /** @type {import('../../../AnnotationModel').default} */
+  /** @type {import('../../../AnnotationModel/SpanInstanceContainer').default} */
   #spanInstanceContainer
   #spanID
   #begin
