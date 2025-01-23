@@ -263,6 +263,10 @@ export default class AnnotationModel {
     return this.#spanInstanceContainer
   }
 
+  getSpan(spanID) {
+    return this.#spanInstanceContainer.get(spanID)
+  }
+
   get entityInstanceContainer() {
     return this.#entityInstanceContainer
   }
