@@ -11,12 +11,12 @@ export default class MoveDenotationSpanCommand extends AnnotationCommand {
   #beginBeforeMove
   #endBeforeMove
 
-  constructor(spanInstanceContainer, spanID, begin, end) {
+  constructor(spanInstanceContainer, spanID, beginAfterMove, endAfterMove) {
     super()
     this.#spanInstanceContainer = spanInstanceContainer
     this.#spanID = spanID
-    this.#begin = begin
-    this.#end = end
+    this.#begin = beginAfterMove
+    this.#end = endAfterMove
   }
 
   execute() {
