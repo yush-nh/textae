@@ -5,6 +5,13 @@ import Factory from './Factory'
 // A command is an operation by user that is saved as history, and can undo and redo.
 // Users can edit model only via commands.
 export default class Commander {
+  #editorHTMLElement
+  #editorID
+  #eventEmitter
+  #annotationModel
+  #selectionModel
+  #history
+
   constructor(
     editorHTMLElement,
     editorID,
@@ -12,12 +19,12 @@ export default class Commander {
     annotationModel,
     selectionModel
   ) {
-    this._editorHTMLElement = editorHTMLElement
-    this._editorID = editorID
-    this._eventEmitter = eventEmitter
-    this._annotationModel = annotationModel
-    this._selectionModel = selectionModel
-    this._history = new History(eventEmitter)
+    this.#editorHTMLElement = editorHTMLElement
+    this.#editorID = editorID
+    this.#eventEmitter = eventEmitter
+    this.#annotationModel = annotationModel
+    this.#selectionModel = selectionModel
+    this.#history = new History(eventEmitter)
   }
 
   invoke(command) {
@@ -26,17 +33,17 @@ export default class Commander {
     }
 
     command.execute()
-    this._history.push(command)
+    this.#history.push(command)
   }
 
   undo() {
-    if (this._history.hasAnythingToUndo) {
+    if (this.#history.hasAnythingToUndo) {
       // Focus the editor.
       // Focus is lost when undo a creation.
-      this._selectionModel.removeAll()
-      this._editorHTMLElement.focus()
+      this.#selectionModel.removeAll()
+      this.#editorHTMLElement.focus()
 
-      const command = this._history.prev()
+      const command = this.#history.prev()
       if (command.kind.has('configuration_command')) {
         alertifyjs.success('configuration has been undone')
       }
@@ -46,11 +53,11 @@ export default class Commander {
   }
 
   redo() {
-    if (this._history.hasAnythingToRedo) {
+    if (this.#history.hasAnythingToRedo) {
       // Select only new element when redo a creation.
-      this._selectionModel.removeAll()
+      this.#selectionModel.removeAll()
 
-      const command = this._history.next()
+      const command = this.#history.next()
       if (command.kind.has('configuration_command')) {
         alertifyjs.success('configuration has been redo')
       }
@@ -61,11 +68,11 @@ export default class Commander {
 
   get factory() {
     return new Factory(
-      this._editorID,
-      this._eventEmitter,
-      this._annotationModel,
-      this._selectionModel,
-      this._annotationModel.typeDictionary
+      this.#editorID,
+      this.#eventEmitter,
+      this.#annotationModel,
+      this.#selectionModel,
+      this.#annotationModel.typeDictionary
     )
   }
 }
