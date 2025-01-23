@@ -16,7 +16,7 @@ export default class SpanInstanceContainer {
   #emitter
   #textBox
   #denotations = new SpanMap()
-  #blocks = new Map()
+  #blocks = new SpanMap()
   #styles = new Map()
 
   /**
