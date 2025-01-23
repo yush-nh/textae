@@ -3,7 +3,7 @@
 // We want to move the denotation spans with the same begin and end values together.
 // For this reason, we use a dedicated data structure
 // that can obtain a denotation spans with the same begin and end.
-export default class DenotationSpanMap {
+export default class SpanMap {
   // The map that has span id as a key and span instance as a value.
   #idMap = new Map()
 
