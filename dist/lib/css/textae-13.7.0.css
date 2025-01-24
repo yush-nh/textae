@@ -3403,6 +3403,12 @@ ul.jsondiffpatch-textdiff {
   border: solid 1px lightgray;
   border-radius: 4px;
 }
+.textae-editor__save-dialog__format {
+  display: flex;
+}
+.textae-editor__save-dialog__format-button {
+  margin-right: 5px;
+}
 .textae-editor__setting-dialog__container {
   display: flex;
   flex-direction: column;
@@ -3578,11 +3584,7 @@ ul.jsondiffpatch-textdiff {
 .textae-editor__dialog .ui-menu-item:hover div {
   overflow: visible;
 }
-.textae-editor__dialog .ui-widget.ui-autocomplete {
-  direction: rtl;
-  z-index: 102;
-}
-.textae-editor__dialog__autocomplete {
+.textae-editor__dialog .popover-autocomplete-container {
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -3590,12 +3592,12 @@ ul.jsondiffpatch-textdiff {
   background-color: #f3f3f3;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
-.textae-editor__dialog__autocomplete__item {
+.textae-editor__dialog .popover-autocomplete-item {
   color: #333333;
   padding: 3px 1em 3px 0.4em;
   cursor: pointer;
 }
-.textae-editor__dialog__autocomplete__item--highlighted {
+.textae-editor__dialog .popover-autocomplete-item-highlighted {
   color: orange;
   box-shadow: inset 0 0 0 1px orange;
   background-color: white;

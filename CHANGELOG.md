@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.7.0](https://github.com/pubannotation/textae/compare/v13.6.1...v13.7.0) (2025-01-24)
+
+
+### Features
+
+* Add function to download annotation in inline format ([15d5706](https://github.com/pubannotation/textae/commit/15d5706666346388ad72aff7eba72edd6f85358c))
+* Add function to preview inline annotation in save dialog ([e90f081](https://github.com/pubannotation/textae/commit/e90f081767ee1d58b91e30bba209baa9c8e0a3b0))
+* Add function to save annotation in inline format ([c041f1a](https://github.com/pubannotation/textae/commit/c041f1a35178cc80c3f90126747fb4da484172d0))
+* Add support to load SimpleInlineFormat from inline/queryparameter ([4bfc757](https://github.com/pubannotation/textae/commit/4bfc75722d9d9f559659ec23752cbe7c2ff571a2))
+* Convert to JSON when importing markdown annotation from local ([8bb7db6](https://github.com/pubannotation/textae/commit/8bb7db624c9e00ba56b537e1e552b2d781b2cafe))
+* Convert to JSON when importing non-JSON annotation from URL ([7e55092](https://github.com/pubannotation/textae/commit/7e55092038ec2e9612c8b76bc0b89b9c87b38eac))
+
+
+### Bug Fixes
+
+* Add exception handling for download annotation ([61b94a2](https://github.com/pubannotation/textae/commit/61b94a2056ec560ed82017e6fe58f3e94ca503ba))
+* An error occurs when a span with multiple denotations is expanded or shrinked. ([eafcc3f](https://github.com/pubannotation/textae/commit/eafcc3fdb3961cd26bfc0fac8598e262f49fa794))
+* An error occurs when you redo the operation to expand or shrink the block span. ([05ccb4d](https://github.com/pubannotation/textae/commit/05ccb4d5984dddd6a9db94e8ecc94202dbb43e6e))
+* Call onFailed callback correctly ([bcbd3e9](https://github.com/pubannotation/textae/commit/bcbd3e9c3c6fffa9c49af718221d20235c44ccc9))
+* Capitalize label for inline radio button ([77a1b7b](https://github.com/pubannotation/textae/commit/77a1b7b10e220195239fbd2e3f7b61d3356dc1a2))
+* Change download content-type to text/plain ([96e4193](https://github.com/pubannotation/textae/commit/96e4193dbf591bde87870587ef346c5dc1e8c638))
+* Changed error message to tell resource type ([8275ae8](https://github.com/pubannotation/textae/commit/8275ae861c2a80468e50c9de413813287ed5e56b))
+* Changed to not handle exception on TextToJSON conversion ([f8b4e3d](https://github.com/pubannotation/textae/commit/f8b4e3d568f5449c12eb8f145573b4984e1e0d36))
+* Changed to notice error on toast when annotation convert failed ([1be10cd](https://github.com/pubannotation/textae/commit/1be10cd45f12975feffec61f9ffba04a212218e8))
+* Changed to parse response when authenticating in AnnotationLoader ([2785799](https://github.com/pubannotation/textae/commit/2785799e68afdcf87ecf56dad700ad04112a583d))
+* Error message to show details ([636eeb2](https://github.com/pubannotation/textae/commit/636eeb2f64d33f468714a1bbd1f939d953d1d6f5))
+* Fail to load annotation for certain resource types ([fbca0b3](https://github.com/pubannotation/textae/commit/fbca0b311dd1a7efe0ec07d64ff43a393821b5d4))
+* Fix format with prettier ([0cb322e](https://github.com/pubannotation/textae/commit/0cb322e2ade8ef466f3718e0c62caba56e080636))
+* Fix url for json2inline ([7b55fb7](https://github.com/pubannotation/textae/commit/7b55fb7626df37ebae138479dcba7357ab32058d))
+* Fixed url for inline2json API ([e4ae169](https://github.com/pubannotation/textae/commit/e4ae169c1836d8b50c2a53a9b9e5691668de2e03))
+* Prevent error when annotation is null or undefined ([335e86c](https://github.com/pubannotation/textae/commit/335e86c4b3e6dcfab245ce8f908f2e6f2a8b360d))
+* Remove unnecessary error message ([ae663ea](https://github.com/pubannotation/textae/commit/ae663ea1982140db0fc2b71f28661c9602adf722))
+* Revert unnecessary async method to getter ([df68354](https://github.com/pubannotation/textae/commit/df68354520063257ec8eb55ef2f0bac61a0f0e44))
+* Specify content-type to post request ([dd6c591](https://github.com/pubannotation/textae/commit/dd6c591c58f88f4e1c745d3df520f4d9a20cf533))
+* Switch content-type by format ([9b8a717](https://github.com/pubannotation/textae/commit/9b8a717f22c783e1f9a0cb878778a5095a93127c))
+
 ### [13.6.1](https://github.com/pubannotation/textae/compare/v13.6.0...v13.6.1) (2024-11-07)
 
 
