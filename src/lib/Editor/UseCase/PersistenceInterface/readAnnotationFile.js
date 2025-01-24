@@ -5,7 +5,7 @@ import isMdFile from './isMdFile'
 import DataSource from '../../DataSource'
 import InlineAnnotationConverter from '../../InlineAnnotationConverter'
 
-export default async function (file, eventEmitter) {
+export default async function readAnnotationFile(file, eventEmitter) {
   const event = await readFile(file)
   const fileContent = event.target.result
 
