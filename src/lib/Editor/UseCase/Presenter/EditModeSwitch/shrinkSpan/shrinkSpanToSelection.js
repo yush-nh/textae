@@ -4,7 +4,7 @@ import alertifyjs from 'alertifyjs'
  *
  * @param {import('../../../../AnnotationModel/SpanInstanceContainer').default} spanInstanceContainer
  */
-export default function (
+export default function shrinkSpanToSelection(
   spanInstanceContainer,
   sourceDoc,
   commander,
