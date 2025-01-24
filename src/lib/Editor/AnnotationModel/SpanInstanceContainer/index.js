@@ -285,13 +285,10 @@ export default class SpanInstanceContainer {
   }
 
   moveBlockSpan(beginBeforeMove, endBeforeMove, beginAfterMove, endAfterMove) {
-    const oldSpans = this.#blocks.getSameBeginEnd(
+    const oldSpan = this.#blocks.getSingleOrThrowOn(
       beginBeforeMove,
       endBeforeMove
     )
-    console.assert(oldSpans.size == 1, `Block span must be unique.`)
-
-    const oldSpan = oldSpans.values().next().value
     console.assert(
       oldSpan.begin !== beginAfterMove || oldSpan.end !== endAfterMove,
       `Do not need move span:  ${oldSpan.id} ${beginAfterMove} ${endAfterMove}`

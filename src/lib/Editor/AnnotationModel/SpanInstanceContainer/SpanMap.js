@@ -32,6 +32,17 @@ export default class SpanMap {
     return this.#beginEndMap.get(beginEndKey)
   }
 
+  getSingleOrThrowOn(begin, end) {
+    const beginEndKey = this.#getBeginEndKey(begin, end)
+    const spans = this.#beginEndMap.get(beginEndKey)
+
+    if (spans.size === 1) {
+      return spans.values().next().value
+    }
+
+    throw new Error('The span is not unique.')
+  }
+
   has(spanID) {
     return this.#idMap.has(spanID)
   }
