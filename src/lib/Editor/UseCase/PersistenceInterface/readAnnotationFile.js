@@ -3,7 +3,7 @@ import isJSON from '../../../isJSON'
 import isTxtFile from './isTxtFile'
 import isMdFile from './isMdFile'
 import DataSource from '../../DataSource'
-import InlineAnnotationConverter from '../../../InlineAnnotationConverter'
+import InlineAnnotationConverter from '../../InlineAnnotationConverter'
 
 export default async function (file, eventEmitter) {
   const event = await readFile(file)

@@ -1,4 +1,4 @@
-import InlineAnnotationConverter from '../../InlineAnnotationConverter'
+import InlineAnnotationConverter from '../InlineAnnotationConverter'
 import isJSON from '../../isJSON'
 
 export default class AnnotationResource {
