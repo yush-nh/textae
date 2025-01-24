@@ -284,11 +284,17 @@ export default class SpanInstanceContainer {
     this.#emitter.emit('textae-event.annotation-data.span.move')
   }
 
-  moveBlockSpan(id, begin, end) {
-    const oldSpan = this.#blocks.get(id)
+  moveBlockSpan(beginBeforeMove, endBeforeMove, beginAfterMove, endAfterMove) {
+    const oldSpans = this.#blocks.getSameBeginEnd(
+      beginBeforeMove,
+      endBeforeMove
+    )
+    console.assert(oldSpans.size == 1, `Block span must be unique.`)
+
+    const oldSpan = oldSpans.values().next().value
     console.assert(
-      oldSpan.begin !== begin || oldSpan.end !== end,
-      `Do not need move span:  ${id} ${begin} ${end}`
+      oldSpan.begin !== beginAfterMove || oldSpan.end !== endAfterMove,
+      `Do not need move span:  ${oldSpan.id} ${beginAfterMove} ${endAfterMove}`
     )
 
     this.#removeBlock(oldSpan)
@@ -296,19 +302,13 @@ export default class SpanInstanceContainer {
     const newOne = new BlockSpanInstance(
       this.#editorID,
       this.#editorHTMLElement,
-      begin,
-      end,
+      beginAfterMove,
+      endAfterMove,
       this,
       this.#textBox
     )
     this.#addBlock(newOne, oldSpan)
     this.#emitter.emit('textae-event.annotation-data.span.move')
-
-    return {
-      begin: oldSpan.begin,
-      end: oldSpan.end,
-      id: newOne.id
-    }
   }
 
   isBoundaryCrossingWithOtherSpans(begin, end) {
