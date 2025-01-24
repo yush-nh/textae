@@ -222,9 +222,12 @@ export default class Factory {
   }
 
   moveDenotationSpanCommand(spanId, begin, end) {
+    const span = this.#annotationModel.getSpan(spanId)
+
     return new MoveDenotationSpanCommand(
       this.#annotationModel.spanInstanceContainer,
-      spanId,
+      span.begin,
+      span.end,
       begin,
       end
     )

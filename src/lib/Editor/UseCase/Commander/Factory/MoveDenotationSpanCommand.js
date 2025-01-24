@@ -4,43 +4,45 @@ import AnnotationCommand from './AnnotationCommand'
 export default class MoveDenotationSpanCommand extends AnnotationCommand {
   /** @type {import('../../../AnnotationModel/SpanInstanceContainer').default} */
   #spanInstanceContainer
-  #spanID
-  #begin
-  #end
-  #newID
   #beginBeforeMove
   #endBeforeMove
+  #beginAfterMove
+  #endAfterMove
 
-  constructor(spanInstanceContainer, spanID, beginAfterMove, endAfterMove) {
+  constructor(
+    spanInstanceContainer,
+    beginBeforeMove,
+    endBeforeMove,
+    beginAfterMove,
+    endAfterMove
+  ) {
     super()
     this.#spanInstanceContainer = spanInstanceContainer
-    this.#spanID = spanID
-    this.#begin = beginAfterMove
-    this.#end = endAfterMove
+    this.#beginBeforeMove = beginBeforeMove
+    this.#endBeforeMove = endBeforeMove
+    this.#beginAfterMove = beginAfterMove
+    this.#endAfterMove = endAfterMove
   }
 
   execute() {
-    // Update instance.
-    const { id, begin, end } = this.#spanInstanceContainer.moveDenotationSpan(
-      this.#spanID,
-      this.#begin,
-      this.#end
+    this.#spanInstanceContainer.moveDenotationSpan(
+      this.#beginBeforeMove,
+      this.#endBeforeMove,
+      this.#beginAfterMove,
+      this.#endAfterMove
     )
-
-    this.#newID = id
-    this.#beginBeforeMove = begin
-    this.#endBeforeMove = end
 
     commandLog(
       this,
-      `move span: ${this.#spanID} to {begin: ${this.#begin}, end: ${this.#end}}`
+      `move span: from {begin: ${this.#beginBeforeMove}, end: ${this.#endBeforeMove} } to {begin: ${this.#beginAfterMove}, end: ${this.#endAfterMove}}`
     )
   }
 
   revert() {
     return new MoveDenotationSpanCommand(
       this.#spanInstanceContainer,
-      this.#newID,
+      this.#beginAfterMove,
+      this.#endAfterMove,
       this.#beginBeforeMove,
       this.#endBeforeMove
     )

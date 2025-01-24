@@ -248,31 +248,40 @@ export default class SpanInstanceContainer {
 
   // Since moving a span is deleting and adding span tags,
   // we will delete and add the instance as well.
-  moveDenotationSpan(spanID, begin, end) {
-    const oldSpan = this.#denotations.get(spanID)
-    console.assert(oldSpan, `There is no target for move for ${spanID}!`)
-    console.assert(
-      oldSpan.begin !== begin || oldSpan.end !== end,
-      `Do not need move span:  ${spanID} ${begin} ${end}`
+  moveDenotationSpan(
+    beginBeforeMove,
+    endBeforeMove,
+    beginAfterMove,
+    endAfterMove
+  ) {
+    const oldSpans = this.#denotations.getSameBeginEnd(
+      beginBeforeMove,
+      endBeforeMove
     )
 
-    this.#removeDenotation(oldSpan)
+    for (const oldSpan of oldSpans) {
+      console.assert(
+        oldSpan,
+        `There is no target for move for begin: ${beginBeforeMove}, end: ${endBeforeMove}!`
+      )
+      console.assert(
+        oldSpan.begin !== beginAfterMove || oldSpan.end !== endAfterMove,
+        `Do not need move span: ${oldSpan.id} ${beginAfterMove} ${endAfterMove}`
+      )
 
-    const newOne = new DenotationSpanInstance(
-      this.#editorID,
-      this.#editorHTMLElement,
-      begin,
-      end,
-      this
-    )
-    this.#addDenotation(newOne, oldSpan)
-    this.#emitter.emit('textae-event.annotation-data.span.move')
+      this.#removeDenotation(oldSpan)
 
-    return {
-      begin: oldSpan.begin,
-      end: oldSpan.end,
-      id: newOne.id
+      const newOne = new DenotationSpanInstance(
+        this.#editorID,
+        this.#editorHTMLElement,
+        beginAfterMove,
+        endAfterMove,
+        this
+      )
+      this.#addDenotation(newOne, oldSpan)
     }
+
+    this.#emitter.emit('textae-event.annotation-data.span.move')
   }
 
   moveBlockSpan(id, begin, end) {
