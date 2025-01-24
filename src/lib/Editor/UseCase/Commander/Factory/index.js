@@ -213,24 +213,24 @@ export default class Factory {
   }
 
   moveBlockSpanCommand(spanId, beginAfterMove, endAfterMove) {
-    const span = this.#annotationModel.getSpan(spanId)
+    const { begin, end } = this.#annotationModel.getSpan(spanId)
 
     return new MoveBlockSpanCommand(
       this.#annotationModel.spanInstanceContainer,
-      span.begin,
-      span.end,
+      begin,
+      end,
       beginAfterMove,
       endAfterMove
     )
   }
 
   moveDenotationSpanCommand(spanId, beginAfterMove, endAfterMove) {
-    const span = this.#annotationModel.getSpan(spanId)
+    const { begin, end } = this.#annotationModel.getSpan(spanId)
 
     return new MoveDenotationSpanCommand(
       this.#annotationModel.spanInstanceContainer,
-      span.begin,
-      span.end,
+      begin,
+      end,
       beginAfterMove,
       endAfterMove
     )
