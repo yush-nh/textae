@@ -1,4 +1,4 @@
-import AnnotationConverter from '../../AnnotationConverter'
+import InlineAnnotationConverter from '../../InlineAnnotationConverter'
 import isJSON from '../../isJSON'
 
 export default class AnnotationResource {
@@ -36,7 +36,7 @@ export default class AnnotationResource {
       if (isJSON(this.#annotation)) {
         return JSON.parse(this.#annotation)
       } else {
-        return await AnnotationConverter.inline2json(this.#annotation)
+        return await InlineAnnotationConverter.toJSON(this.#annotation)
       }
     } catch {
       return null

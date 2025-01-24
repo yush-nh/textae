@@ -3,7 +3,7 @@ import isJSON from '../../../isJSON'
 import isTxtFile from './isTxtFile'
 import isMdFile from './isMdFile'
 import DataSource from '../../DataSource'
-import AnnotationConverter from '../../../AnnotationConverter'
+import InlineAnnotationConverter from '../../../InlineAnnotationConverter'
 
 export default async function (file, eventEmitter) {
   const event = await readFile(file)
@@ -22,7 +22,7 @@ export default async function (file, eventEmitter) {
   }
 
   if (isMdFile(file.name)) {
-    const annotation = await AnnotationConverter.inline2json(fileContent)
+    const annotation = await InlineAnnotationConverter.toJSON(fileContent)
 
     if (annotation && annotation.text) {
       eventEmitter.emit(
