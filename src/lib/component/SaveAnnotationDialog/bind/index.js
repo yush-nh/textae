@@ -1,4 +1,5 @@
 import delegate from 'delegate'
+import alertify from 'alertifyjs'
 import enableHTMLElement from '../../enableHTMLElement'
 import downloadAnnotationFile from './downloadAnnotationFile'
 import viewSource from './viewSource'
@@ -49,8 +50,14 @@ export default function (
     'click',
     async () => {
       const format = getFormat()
-      await viewSource(data, format, eventEmitter)
-      closeDialog()
+
+      try {
+        await viewSource(data, format, eventEmitter)
+      } catch (error) {
+        alertify.error(`Failed to view the source as ${format}.`)
+      } finally {
+        closeDialog()
+      }
     }
   )
 }
