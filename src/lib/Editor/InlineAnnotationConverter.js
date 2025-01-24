@@ -1,7 +1,11 @@
 export default class InlineAnnotationConverter {
-  static async toJSON(inlineAnnotation) {
-    const url = 'https://pubannotation.org/conversions/inline2json'
-    const response = await fetch(url, {
+  #url
+  constructor(url) {
+    this.#url = url
+  }
+
+  async toJSON(inlineAnnotation) {
+    const response = await fetch(this.#url, {
       method: 'POST',
       body: inlineAnnotation,
       headers: {

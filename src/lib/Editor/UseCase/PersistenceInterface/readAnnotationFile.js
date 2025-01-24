@@ -22,7 +22,9 @@ export default async function (file, eventEmitter) {
   }
 
   if (isMdFile(file.name)) {
-    const annotation = await InlineAnnotationConverter.toJSON(fileContent)
+    const annotation = await new InlineAnnotationConverter(
+      'https://pubannotation.org/conversions/inline2json'
+    ).toJSON(fileContent)
 
     if (annotation && annotation.text) {
       eventEmitter.emit(

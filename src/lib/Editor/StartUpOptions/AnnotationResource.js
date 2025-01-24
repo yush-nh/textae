@@ -36,7 +36,9 @@ export default class AnnotationResource {
       if (isJSON(this.#annotation)) {
         return JSON.parse(this.#annotation)
       } else {
-        return await InlineAnnotationConverter.toJSON(this.#annotation)
+        return await new InlineAnnotationConverter(
+          'https://pubannotation.org/conversions/inline2json'
+        ).toJSON(this.#annotation)
       }
     } catch {
       return null
