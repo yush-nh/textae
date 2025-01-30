@@ -140,7 +140,7 @@ export default class LoadConfigurationDialog extends Dialog {
 
     // Open JSON editor
     delegate(super.el, '[type="button"].edit', 'click', () => {
-      this._expandDialog()
+      this.#expandDialog()
       const textarea = super.el.querySelector(
         '.textae-editor__load-dialog__textarea'
       )
@@ -182,7 +182,7 @@ export default class LoadConfigurationDialog extends Dialog {
       )
       .on('addedfile', (file) => {
         revertMaximizeOverlay(overlayDropzone, zIndexOfOverlayDropzone)
-        this._showFilePreview(file)
+        this.#showFilePreview(file)
       })
 
     const dialogDropzone = new Dropzone(
@@ -190,11 +190,11 @@ export default class LoadConfigurationDialog extends Dialog {
       dropzoneConfig
     )
     dialogDropzone.on('addedfile', (file) => {
-      this._showFilePreview(file)
+      this.#showFilePreview(file)
     })
   }
 
-  _showFilePreview(file) {
+  #showFilePreview(file) {
     // Remove the previous file name.
     super.el
       .querySelector('.textae-editor__load-dialog__dz-file-preview')
@@ -213,7 +213,7 @@ export default class LoadConfigurationDialog extends Dialog {
     )
   }
 
-  _expandDialog() {
+  #expandDialog() {
     super.el
       .closest('.textae-editor__dialog')
       .classList.add('textae-editor__load-dialog--expanded')
