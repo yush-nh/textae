@@ -6,6 +6,7 @@ import isJSON from '../isJSON'
 import maximizeOverlay from './maximizeOverlay'
 import revertMaximizeOverlay from './revertMaximizeOverlay'
 import initJSONEditor from './initJSONEditor'
+import isUserConfirm from './isUserConfirm'
 
 function template(context) {
   const { url } = context
@@ -55,9 +56,6 @@ function template(context) {
 </div>`
 }
 
-const CONFIRM_DISCARD_CHANGE_MESSAGE =
-  'There is a change that has not been saved. If you procceed now, you will lose it.'
-
 export default class LoadConfigurationDialog extends Dialog {
   constructor(
     title,
@@ -95,16 +93,13 @@ export default class LoadConfigurationDialog extends Dialog {
       }
     )
 
-    const isUserConfirm = () =>
-      !hasChange || window.confirm(CONFIRM_DISCARD_CHANGE_MESSAGE)
-
     // Load from the URL.
     delegate(
       super.el,
       '.textae-editor__load-dialog__url-button',
       'click',
       (e) => {
-        if (isUserConfirm()) {
+        if (isUserConfirm(hasChange)) {
           loadFromServer(e.target.previousElementSibling.value)
         }
         super.close()
@@ -117,7 +112,7 @@ export default class LoadConfigurationDialog extends Dialog {
       '.textae-editor__load-dialog__local-button',
       'click',
       () => {
-        if (isUserConfirm()) {
+        if (isUserConfirm(hasChange)) {
           readFromFile(this._droppedFile)
         }
 
@@ -131,7 +126,7 @@ export default class LoadConfigurationDialog extends Dialog {
       const text = jsonEditor
         ? jsonEditor.state.doc.toString()
         : super.el.querySelector('.textae-editor__load-dialog__textarea').value
-      if (isUserConfirm()) {
+      if (isUserConfirm(hasChange)) {
         readFromText(text)
       }
 
